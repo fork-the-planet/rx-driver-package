@@ -5,11 +5,20 @@
 | RX Board BSP                                          | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | RX MCU Peripheral Functions Drivers                   | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | Renesas Middleware                                    | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
-| rm_zmod4xxx<br>(pre-compiled libraries)               | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://www.renesas.com/us/en/document/oth/disclaimer002)|
+| r_zmod4xxx_rx<br>(pre-compiled libraries)             | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://www.renesas.com/us/en/document/oth/disclaimer002)|
+| r_rsip_rx                                             | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://github.com/renesas/rx-driver-package/blob/V1.46/doc/license/RX_RSIP_SoftwareLicenseAgreement_ENG.pdf)|
+| r_t4_rx                                               | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| r_t4_driver_rx                                        | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| r_fwup                                                | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| rm_comms_uart_rx                                      | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| rm_comms_usb_pcdc_rx                                  | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| rm_rai_data_collector_rx                              | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| rm_rai_data_shipper_rx                                | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| r_wifi_da16xxx                                        | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
+| r_ble_da14531_rx                                      | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/V1.46/LICENSE)|
 |<tr> <td colspan="3"><strong>Third-Party components included in the packs<strong></td></tr>                                                                                               |
 | FatFs                                                 | ChaN              | Open License                                                                           |
 | [Aeropoint GUI](https://www.cri-mw.co.jp/business/product/embedded/aeropointgui/)      | CRI Middleware              | *Mass production requires a contract with CRI (fees apply).Please contact CRI for details.                           |
-| Bluetooth Mesh(crackle) | Mindtree(Mike Ryan) | BSD 2-Clause License                                                                                         |
 | [emWin](https://www.segger.com/products/user-interface/emwin/add-ons/emwin-support-renesas-rx-mcu/) | SEGGER-Renesas | Renesas Sub-license Agreement                   |
 | [TinyCrypt](https://github.com/intel/tinycrypt/)      | Intel Corporation     | BSD-3-Clause and BSD-2-Clause. See [LICENSE](https://github.com/intel/tinycrypt/blob/master/LICENSE)|
 | crackle | Mindtree | BSD 2-Clause License                                                                                         |
