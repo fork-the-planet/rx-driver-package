@@ -5,8 +5,6 @@
 | RX Board BSP                                          | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | RX MCU Peripheral Functions Drivers                   | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | QE Tool                                               | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
-| RX Smart Configurator                                 | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
-| Renesas Middleware                                    | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | r_zmod4xxx_rx<br>(pre-compiled libraries)             | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://www.renesas.com/us/en/document/oth/disclaimer002)|
 | r_rsip_rx                                             | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://github.com/renesas/rx-driver-package/blob/master/doc/license/RX_RSIP_SoftwareLicenseAgreement_ENG.pdf)|
 | r_t4_rx                                               | Renesas Electronics Corporation    | [MIT Licence](https://github.com/renesas/rx-driver-package/blob/master/LICENSE)|
@@ -25,6 +23,10 @@
 | [TinyCrypt](https://github.com/intel/tinycrypt/)      | Intel Corporation     | BSD-3-Clause and BSD-2-Clause. See [LICENSE](https://github.com/intel/tinycrypt/blob/master/LICENSE)|
 | crackle | Mindtree | BSD 2-Clause License                                                                                         |
 | TES Dave2D                                            | TES Electronics Solutions GmBH     | [Renesas Open License v1.0](#renesas-open-license-v10)                                      |
+|<tr> <td colspan="3"><strong>Renesas Development Tools<strong></td></tr>                                                                                               |
+| RX Smart Configurator                                 | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
+| Renesas Middleware                                    | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
+
 
 ## BSD 3-Clause License
 
