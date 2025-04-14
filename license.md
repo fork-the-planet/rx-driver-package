@@ -23,7 +23,7 @@
 | [TinyCrypt](https://github.com/intel/tinycrypt/)      | Intel Corporation     | BSD-3-Clause and BSD-2-Clause. See [LICENSE](https://github.com/intel/tinycrypt/blob/master/LICENSE)|
 | crackle | Mindtree | BSD 2-Clause License                                                                                         |
 | TES Dave2D                                            | TES Electronics Solutions GmBH     | [Renesas Open License v1.0](#renesas-open-license-v10)                                      |
-|<tr> <td colspan="3"><strong>Renesas Development Tools<strong></td></tr>                                                                                               |
+|<tr> <td colspan="3"><strong>Renesas Development Tools<strong></td></tr>                                                                                                                  |
 | QE Tool                                               | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | RX Smart Configurator                                 | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 
