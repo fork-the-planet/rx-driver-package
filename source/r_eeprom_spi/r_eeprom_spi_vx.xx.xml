@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+/***********************************************************************************************************************
+* Copyright (c) 2004 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+-->
 <refinfo>
 
     <!-- multiple versions permitted -->
@@ -9,6 +15,8 @@
         <version>3.01.00</version>
         <version>3.02.00</version>
         <version>3.04.00</version>
+        <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
@@ -16,6 +24,8 @@
         <version>4.08.04.201803</version>
         <version>8.03.00.202002</version>
         <version>8.03.00.202104</version>
+        <version>8.03.00.202405</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -23,6 +33,7 @@
         <version>4.10.01</version>
         <version>4.14.01</version>
         <version>4.20.03</version>
+        <version>5.10.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->
@@ -39,11 +50,11 @@
         <zipsource>r_eeprom_spi_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.20</version>
+            <version>7.52</version>
         </dependency>
         <dependency>
             <module>r_memdrv_rx</module>
-            <version>1.04</version>
+            <version>1.31</version>
         </dependency>
         <application>Communications</application>
         <application>Storage and Memory</application>

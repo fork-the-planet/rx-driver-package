@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/*​
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates​
+*​
+* SPDX-License-Identifier: BSD-3-Clause​
+*/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 2.0)
+           This is a description of a sample FIT module configuration file
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" xs:noNamespaceSchemaLocation="schema_mdf_2.00.xsd">
+    <fileVersion>1.00</fileVersion>
+    <formatVersion>2.00</formatVersion>
+
+    <fileTemplate></fileTemplate>
+    <configuration>
+        <property id="AES_CFG_BUILD_OPTION" display="AES Lib. Build Option" default="0" type="combobox">
+            <option id="AES_CFG_BUILD_OPTION.0" display="SPEED" value="0"/>
+            <option id="AES_CFG_BUILD_OPTION.1" display="SIZE" value="1"/>
+            <description>AES Lib. Build Option
+0 = SPEED
+1 = SIZE</description>
+        </property>
+    </configuration>
+</module>

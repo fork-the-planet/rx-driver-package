@@ -53,11 +53,11 @@
         <zipsource>r_usb_pmsc_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.41</version>
+            <version>7.53</version>
         </dependency>
         <dependency>
             <module>r_usb_basic</module>
-            <version>1.42</version>
+            <version>1.44</version>
         </dependency>
         <application>Connectivity</application>
         <desc>USB Peripheral Mass Storage Class</desc>

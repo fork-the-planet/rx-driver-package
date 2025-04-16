@@ -5,11 +5,11 @@ r_ctsu_qe
 
 Document Number 
 ---------------
-r01an4469jj0300
+r01an4469jj0311
 
 Version
 -------
-v3.00
+v3.11
 
 Overview
 --------
@@ -73,12 +73,12 @@ RX260, RX261
 Required Packages
 -----------------
 * r_bsp       v7.50
-* r_touch_qe  v3.00
+* r_touch_qe  v3.11
 
 
 Toolchain(s) Used
 -----------------
-* Renesas CC-RX 3.06
+* Renesas CC-RX 3.07
 
 
 File Structure

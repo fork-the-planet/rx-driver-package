@@ -5,13 +5,13 @@ r_src_api_rx
 
 Document Number 
 ---------------
-r01an2090jj0114
-r01an2090ej0114
+r01an2090jj0115
+r01an2090ej0115
 
 
 Version
 -------
-v1.14
+v1.15
 
 Overview
 --------
@@ -55,9 +55,9 @@ How to add to your project
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.02.00
-* GCC for Renesas RX 8.3.0.201904
-* IAR C/C++ Compiler for Renesas RX version 4.13.1
+* Renesas RX v3.07.00
+* GCC for Renesas RX 8.3.0.202411
+* IAR C/C++ Compiler for Renesas RX version 5.10.1
 
 File Structure
 --------------
@@ -67,13 +67,11 @@ r_src_api_rx
 |
 +---doc
 |   +---en
-|   |   r01an2090ej0114-rx-src.pdf
+|   |   r01an2090ej0115-rx-src.pdf
 |   |
 |   +---ja
-|       r01an2090jj0114-rx-src.pdf
+|       r01an2090jj0115-rx-src.pdf
 |
-+---ref
-|  r_src_api_rx_config_reference.h
 |
 \---src
    r_src_api_rx.c

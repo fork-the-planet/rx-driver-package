@@ -892,7 +892,7 @@ typedef struct st_ble_abs_api
      * @param[in]  p_ctrl       Pointer to control structure.
      * @param[in]  p_cfg        Pointer to pin configuration structure.
      */
-    fsp_err_t (* open)(ble_abs_ctrl_t * const p_ctrl, ble_abs_cfg_t const * const p_cfg);
+    fsp_err_t (* open)(ble_abs_ctrl_t * const p_ctrl, ble_abs_cfg_t * p_cfg);
 
     /** Close the BLE ABS.
      *

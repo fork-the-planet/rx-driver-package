@@ -1,33 +1,11 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.    
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /**********************************************************************************************************************
-* System Name  : MMC Driver
 * File Name    : r_mmcif_util.c
-* Version      : 1.07.00
-* Device       : RX64M (LQFP-176)
-* Abstract     : API & Sub module
-* Tool-Chain   : For RX64M Group
-*              :  e2 studio (Version 7.4.0)
-* OS           : not use
-* H/W Platform : RSK board for RX64M
 * Description  : Interface file for MMC API for RX
-* Limitation   : None
 **********************************************************************************************************************/
 /**********************************************************************************************************************
 * History      : DD.MM.YYYY Version Description
@@ -36,6 +14,9 @@
 *                                   Fixed coding style.
 *              : 30.07.2019 1.06    Add WAIT_LOOP.
 *              : 22.11.2019 1.07    Modified comment of API function to Doxygen style.
+*              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
+*                                   Updated file description.
+*              : 15.03.2025 1.21    Updated disclaimer.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -231,12 +212,13 @@ mmc_status_t r_mmcif_set_err(uint32_t channel, mmc_status_t error)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_ModeStatus
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**      
  * @brief This function acquires the transfer mode status.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[out] *p_mode
- *             Mode status information storage pointer (1 byte).
+ *             Mode status information storage pointer (1 byte). See section R_MMCIF_Get_ModeStatus() in the 
+ *             application note for details.
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error
  * @details   This function acquires the transfer mode status and stores it in the mode status information storage
@@ -302,12 +284,13 @@ mmc_status_t R_MMCIF_Get_ModeStatus(uint32_t channel, uint8_t * p_mode)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_CardStatus
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires the card status information.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[out] *p_mmc_CardStatus
- *             Card status information structure pointer (See section 3.12 in application note for structure details.)
+ *             Card status information structure pointer. See section R_MMCIF_Get_CardStatus() in application note for 
+ *             details.
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error
  * @details   This function gets the MMC card status information and stores it in a card status information structure.
@@ -361,12 +344,13 @@ mmc_status_t R_MMCIF_Get_CardStatus(uint32_t channel, mmc_card_status_t *p_mmc_C
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_CardInfo
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires the MMC register information.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[out] *p_mmc_CardReg
- *             MMC register information structure pointer
+ *             MMC register information structure pointer. See section R_MMCIF_Get_CardInfo() in application note for 
+ *             details.
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error
  * @details   This function acquires the MMC register information and stores it in the MMC register information 
@@ -469,15 +453,15 @@ mmc_status_t r_mmcif_get_size(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_ErrCode
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires the driver error codes.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
- * @return    Error code: See section 2.10 in application note.
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
+ * @return    Error code - See section R_MMCIF_Get_ErrCode() in application note for details.
  * @details   This function returns the error codes that occur when the R_MMCIF_Mount(), R_MMCIF_Read_Memory(), 
- *            and R_MMCIF_Write_Memory() function are executed. Note that the error code is cleared when a library
+ *            and R_MMCIF_Write_Memory() function* are executed. Note that the error code is cleared when a library
  *            function is executed again.\n 
- *            Note : The R_MMCIF_Read_Memory_Software_Trans() and R_MMCIF_Write_Memory_Software_Trans() functions
+ *            Note \* : The R_MMCIF_Read_Memory_Software_Trans() and R_MMCIF_Write_Memory_Software_Trans() functions
  *            operate similarly.
  * @note      Initialization by the R_MMCIF_Open() function is required before this function is executed.\n 
  *            Use this function when an application program needs to acquire the MMCIF driver error code.
@@ -511,16 +495,16 @@ mmc_status_t R_MMCIF_Get_ErrCode(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Control
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function performs driver control processing.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[in] *p_mmc_Cmd
- *             Control information structure
- * @return    MMC_SUCCESS:          Successful operation.\n
- *            Other than the above: Error termination(See section 2.10 in application note for details).
+ *             Control information structure. See section R_MMCIF_Control() in application note for details.
+ * @retval    MMC_SUCCESS           Successful operation.
+ * @return    Other than the above: Error termination (See section R_MMCIF_Control() in application note for details).
  * @details   This is an MMC control utility.\n 
- *            See section 3.10 in application note for the commands that can be controlled.
+ *            See section R_MMCIF_Control() in application note for details.
  * @note      Before running this function, driver open processing must be performed by the R_MMCIF_Open() function 
  *            and initialization by the R_MMCIF_Mount() function.\n 
  *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.
@@ -701,10 +685,10 @@ mmc_status_t r_mmcif_wait_rbusy(uint32_t channel, uint32_t time)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_BuffRegAddress
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires the address of the MMCIF data register (CEDATA).
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[out] *p_reg_buff
  *             Data register (CEDATA) address pointer
  * @retval    MMC_SUCCESS Successful operation
@@ -869,7 +853,7 @@ mmc_status_t r_mmcif_read_write_error(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_GetVersion
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires the version information for the driver.
  * @return    Upper 2 bytes:  Major version (decimal).\n
  *            Lower 2 bytes:  Minor version (decimal).
@@ -886,7 +870,7 @@ uint32_t  R_MMCIF_GetVersion(void)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Set_LogHdlAddress
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function sets the LONGQ FIT module handler address.
  * @param[in] user_long_que
  *             LONGQ FIT module handler address
@@ -950,7 +934,7 @@ uint32_t r_mmcif_log(uint32_t flg, uint32_t fid, uint32_t line)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Log
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires an error log.
  * @param[in] flg
  *             0x00000001 (Fixed value)

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+/***********************************************************************************************************************
+* Copyright (c) 2016 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+-->
 <refinfo>
 
     <!-- multiple versions permitted -->
@@ -23,6 +29,7 @@
         <version>3.04.00</version>
         <version>3.05.00</version>
         <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
@@ -37,6 +44,7 @@
         <version>8.03.00.202204</version>
         <version>8.03.00.202311</version>
         <version>8.03.00.202405</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -86,7 +94,7 @@
         <zipsource>r_lpc_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.51</version>
+            <version>7.52</version>
         </dependency>
         <application>Low Power Consumption</application>
         <desc>Control Low Power States.</desc>

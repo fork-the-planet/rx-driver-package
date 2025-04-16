@@ -1,56 +1,40 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
-/************************************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * File Name    : r_flash_spi_if.h
-* Version      : 3.40
+* Version      : 3.51
 * Description  : FLASH SPI driver interface header file
-*************************************************************************************************/
-/************************************************************************************************
-* History      : DD.MM.YYYY Version  Description
-*              : 23.07.2014 2.21     Created
-*              : 29.05.2015 2.32     Revised functions of same as Ver.2.32 of EEPROM SPI FIT module.
-*              : 24.12.2015 2.33     Added RX130, RX23T and RX24T.
-*              : 31.07.2017 2.34     Modified Application note.
-*              : 21.12.2018 3.00     Change flash drive interface to Memory Access Driver Interface
-*              : 20.05.2019 3.01     Added support for GNUC and ICCRX.
-*                                    Fixed coding style.
-*              : 10.12.2020 3.02     Changed version to 3.02.
-*              : 31.12.2021 3.03     Changed version to 3.03.
-*              : 30.06.2022 3.10     Added macros to specify the ports used for SS#.
-*              : 16.03.2023 3.20     Added support for AT25QF641B-SHB with Indirect Access Mode
-*                                    of QSPIX
-*                                    Added support for RSCI and QSPIX Memory Mapped Mode
-*                                    Removed the processing related to other unsupported flash 
-*                                    devices.
-*              : 15.06.2023 3.30     Updated and added new demo project.
-*              : 15.11.2023 3.40     Added support for reading across multiple banks in QSPIX
-*                                    Memory Mapped Mode.
-*                                    Updated according to GSCE Code Checker 6.50.
-*                                    Added support for MX25U6432F.
-*                                    Added features Advanced sector protection supporting
-*                                    for MX66L1G45 and MX25U6432F.
-*************************************************************************************************/
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+* History      : DD.MM.YYYY Version Description
+*              : 23.07.2014 2.21    Created
+*              : 29.05.2015 2.32    Revised functions of same as Ver.2.32 of EEPROM SPI FIT module.
+*              : 24.12.2015 2.33    Added RX130, RX23T and RX24T.
+*              : 31.07.2017 2.34    Modified Application note.
+*              : 21.12.2018 3.00    Change flash drive interface to Memory Access Driver Interface
+*              : 20.05.2019 3.01    Added support for GNUC and ICCRX.
+*                                   Fixed coding style.
+*              : 10.12.2020 3.02    Changed version to 3.02.
+*              : 31.12.2021 3.03    Changed version to 3.03.
+*              : 30.06.2022 3.10    Added macros to specify the ports used for SS#.
+*              : 16.03.2023 3.20    Added support for AT25QF641B-SHB with Indirect Access Mode of QSPIX
+*                                   Added support for RSCI and QSPIX Memory Mapped Mode
+*                                   Removed the processing related to other unsupported flash devices.
+*              : 15.06.2023 3.30    Updated and added new demo project.
+*              : 15.11.2023 3.40    Added support for reading across multiple banks in QSPIX
+*                                   Memory Mapped Mode.
+*                                   Updated according to GSCE Code Checker 6.50.
+*                                   Added support for MX25U6432F.
+*                                   Added features Advanced sector protection supporting for MX66L1G45 and MX25U6432F.
+*              : 20.12.2024 3.50    Updated the parameter checking of the Read Data operation.
+*                                   Modified comment of API function to Doxygen style.
+*                                   Added dependency modules to the options in MDF file.
+*                                   Updated demo projects.
+*              : 15.03.2025 3.51    Updated disclaimer.
+***********************************************************************************************************************/
 #ifndef FLASH_SPI_IF_H
 #define FLASH_SPI_IF_H
 
@@ -73,7 +57,7 @@ Macro definitions
 
 /* Driver version */
 #define FLASH_SPI_VERSION_MAJOR       (3)
-#define FLASH_SPI_VERSION_MINOR       (40)
+#define FLASH_SPI_VERSION_MINOR       (51)
 
 
 /*--------------- Define no. of slots ----------------*/

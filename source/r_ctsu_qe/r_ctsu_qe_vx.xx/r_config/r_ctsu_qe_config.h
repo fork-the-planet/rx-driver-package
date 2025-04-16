@@ -1,21 +1,8 @@
-/* Generated configuration header file - do not edit */
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
-* THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
-************************************************************************************************************************/
+/*
+* Copyright (c) 2018 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
  * File Name    : r_ctsu_qe_config.h
  * Description  : Configures the QE CTSU API module.
@@ -51,42 +38,56 @@
  */
 
 #ifndef QE_TOUCH_CONFIGURATION
-#if(TOUCH_CFG_SERIAL_TUNING_SUPPORT == 1)
-#define CTSU_CFG_NUM_SELF_ELEMENTS                (35)
-#define CTSU_CFG_NUM_MUTUAL_ELEMENTS              (255)
-#else
-#define CTSU_CFG_NUM_SELF_ELEMENTS                (1)
-#define CTSU_CFG_NUM_MUTUAL_ELEMENTS              (0)
-#endif
-#define CTSU_CFG_LOW_VOLTAGE_MODE                 (0)
-#define CTSU_CFG_PCLK_DIVISION                    (0)
-#define CTSU_CFG_TSCAP_PORT                       (0xFFFF)
-#define CTSU_CFG_VCC_MV                           (5000)
-#define CTSU_CFG_DIAG_SUPPORT_ENABLE              (0)
-#if defined(BSP_MCU_RX140) || defined(BSP_MCU_RX261) || defined(BSP_MCU_RX260)
-#define CTSU_CFG_NUM_CFC                          (0)
-#define CTSU_CFG_NUM_CFC_TX                       (0)
-#if(TOUCH_CFG_SERIAL_TUNING_SUPPORT == 1)
-#define CTSU_CFG_NUM_SUMULTI                      (1)
-#else
-#define CTSU_CFG_NUM_SUMULTI                      (3)
-#endif
-#if defined(BSP_MCU_RX260) || defined(BSP_MCU_RX261)
-#define CTSU_CFG_SUMULTI0                         (0x2F)
-#define CTSU_CFG_SUMULTI1                         (0x28)
-#define CTSU_CFG_SUMULTI2                         (0x36)
-#else
-#define CTSU_CFG_SUMULTI0                         (0x3F)
-#define CTSU_CFG_SUMULTI1                         (0x36)
-#define CTSU_CFG_SUMULTI2                         (0x48)
-#endif
-#define CTSU_CFG_TEMP_CORRECTION_SUPPORT          (0)
-#define CTSU_CFG_TEMP_CORRECTION_TS               (0)
-#define CTSU_CFG_TEMP_CORRECTION_TIME             (0)
-#define CTSU_CFG_CALIB_RTRIM_SUPPORT              (0)
-#else
-#define CTSU_CFG_NUM_SUMULTI                      (1)
-#endif
+ #if(TOUCH_CFG_SERIAL_TUNING_SUPPORT == 1)
+ #define CTSU_CFG_NUM_SELF_ELEMENTS                   (35)
+ #define CTSU_CFG_NUM_MUTUAL_ELEMENTS                 (255)
+ #else
+ #define CTSU_CFG_NUM_SELF_ELEMENTS                   (1)
+ #define CTSU_CFG_NUM_MUTUAL_ELEMENTS                 (0)
+ #endif
+ #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
+ #define CTSU_CFG_MAJORITY_MODE                       (2)
+ #define CTSU_CFG_NUM_AUTOJUDGE_SELF_ELEMENTS         (1)
+ #define CTSU_CFG_NUM_AUTOJUDGE_MUTUAL_ELEMENTS       (0)
+ #define CTSU_CFG_AUTO_CORRECTION_ENABLE              (1)
+ #else
+ #define CTSU_CFG_MAJORITY_MODE                       (1)
+ #define CTSU_CFG_NUM_AUTOJUDGE_SELF_ELEMENTS         (0)
+ #define CTSU_CFG_NUM_AUTOJUDGE_MUTUAL_ELEMENTS       (0)
+ #define CTSU_CFG_AUTO_CORRECTION_ENABLE              (0)
+ #endif
+#define CTSU_CFG_AUTO_MULTI_CLOCK_CORRECTION_ENABLE   (0)
+#define CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE (0)
+#define CTSU_CFG_LOW_VOLTAGE_MODE                     (0)
+#define CTSU_CFG_PCLK_DIVISION                        (0)
+#define CTSU_CFG_TSCAP_PORT                           (0xFFFF)
+#define CTSU_CFG_VCC_MV                               (5000)
+#define CTSU_CFG_DIAG_SUPPORT_ENABLE                  (0)
+ #if defined(BSP_MCU_RX140) || defined(BSP_MCU_RX261) || defined(BSP_MCU_RX260)
+ #define CTSU_CFG_NUM_CFC                             (0)
+ #define CTSU_CFG_NUM_CFC_TX                          (0)
+  #if(TOUCH_CFG_SERIAL_TUNING_SUPPORT == 1)
+  #define CTSU_CFG_NUM_SUMULTI                        (1)
+  #else
+  #define CTSU_CFG_NUM_SUMULTI                        (3)
+  #endif
+  #if defined(BSP_MCU_RX260) || defined(BSP_MCU_RX261)
+  #define CTSU_CFG_SUMULTI0                         (0x2F)
+  #define CTSU_CFG_SUMULTI1                         (0x28)
+  #define CTSU_CFG_SUMULTI2                         (0x36)
+  #else
+  #define CTSU_CFG_SUMULTI0                         (0x3F)
+  #define CTSU_CFG_SUMULTI1                         (0x36)
+  #define CTSU_CFG_SUMULTI2                         (0x48)
+  #endif
+ #define CTSU_CFG_TEMP_CORRECTION_SUPPORT          (0)
+ #define CTSU_CFG_TEMP_CORRECTION_TS               (0)
+ #define CTSU_CFG_TEMP_CORRECTION_TIME             (0)
+ #define CTSU_CFG_CALIB_RTRIM_SUPPORT              (0)
+ #else
+ #define CTSU_CFG_NUM_SUMULTI                      (1)
+ #define CTSU_CFG_DIAG_DAC_TS                      (0)
+ #endif
 #endif
 
 #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)

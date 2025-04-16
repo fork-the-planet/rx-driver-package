@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED  AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 27.06.2015 1.00     First Release
@@ -41,6 +28,8 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -74,6 +63,7 @@
 * @details       RX671 P512r1 ECDHE Key Exchange
 * @param[in]     InData_KeyIndex
 * @param[in]     InData_PubKey
+* @param[in]     InData_DomainParam
 * @param[out]    OutData_PubKey
 * @retval        TSIP_SUCCESS
 * @retval        TSIP_ERR_FAIL
@@ -81,7 +71,7 @@
 * @retval        TSIP_ERR_KEY_SET
 * @note          None
 */
-e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t *InData_PubKey, uint32_t *OutData_PubKey)
+e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t *InData_PubKey, const uint32_t *InData_DomainParam, uint32_t *OutData_PubKey)
 {
     int32_t iLoop = 0u, jLoop = 0u, kLoop = 0u, oLoop1 = 0u, oLoop2 = 0u, iLoop2 = 0u;
     uint32_t KEY_ADR = 0u, OFS_ADR = 0u;
@@ -173,12 +163,9 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
     {
         RX671_func100(change_endian_long(0x9727202eu), change_endian_long(0x8467b80bu), change_endian_long(0x471bd01eu), change_endian_long(0x36f73aa3u));
         TSIP.REG_28H.WORD = 0x008f0001u;
-        OFS_ADR = 796;
-        RX671_func040(OFS_ADR);
+        RX671_func040(InData_DomainParam);
         TSIP.REG_ECH.WORD = 0x00000bffu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_E0H.WORD = 0x8090001fu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_00H.WORD = 0x00008343u;
         TSIP.REG_2CH.WORD = 0x00000023u;
         /* WAIT_LOOP */
@@ -326,7 +313,7 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
         {
             /* waiting */
         }
-        RX671_func041(OFS_ADR);
+        RX671_func041(InData_DomainParam);
         TSIP.REG_34H.WORD = 0x00000802u;
         TSIP.REG_24H.WORD = 0x800088d0u;
         /* WAIT_LOOP */
@@ -342,9 +329,7 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
             /* waiting */
         }
         TSIP.REG_ECH.WORD = 0x00000bffu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_E0H.WORD = 0x8190001fu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_00H.WORD = 0x00003843u;
         TSIP.REG_2CH.WORD = 0x00000010u;
         /* WAIT_LOOP */
@@ -447,9 +432,7 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
             }
             TSIP.REG_18H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x00000bffu;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_E0H.WORD = 0x8190001fu;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_00H.WORD = 0x00003843u;
             TSIP.REG_2CH.WORD = 0x00000012u;
             /* WAIT_LOOP */
@@ -666,7 +649,7 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
             {
                 /* waiting */
             }
-            RX671_func040(OFS_ADR);
+            RX671_func040(InData_DomainParam);
             TSIP.REG_104H.WORD = 0x00001b62u;
             TSIP.REG_D0H.WORD = 0x00000600u;
             TSIP.REG_C4H.WORD = 0x02f08887u;
@@ -801,9 +784,7 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
                     /* waiting */
                 }
                 TSIP.REG_ECH.WORD = 0x00000bffu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_E0H.WORD = 0x8190001fu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_00H.WORD = 0x00003843u;
                 TSIP.REG_2CH.WORD = 0x00000010u;
                 /* WAIT_LOOP */
@@ -927,9 +908,7 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
                     }
                     TSIP.REG_18H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x00000bffu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_E0H.WORD = 0x8190001fu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_00H.WORD = 0x00003843u;
                     TSIP.REG_2CH.WORD = 0x00000012u;
                     /* WAIT_LOOP */
@@ -1029,5 +1008,5 @@ e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
     }
 }
 /**********************************************************************************************************************
- End of function ./input_dir/RX671/RX671_p93.prc
+ End of function ./input_dir/RX671/RX671_p93_r1.prc
  *********************************************************************************************************************/

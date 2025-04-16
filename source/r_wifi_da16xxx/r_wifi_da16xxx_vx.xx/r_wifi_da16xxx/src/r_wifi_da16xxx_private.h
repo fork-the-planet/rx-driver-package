@@ -58,6 +58,7 @@
 #define TEMP_BUF_MAX                   (256)                                   // RX temp buffer
 #define ATCMD_RESP_TIMEOUT             (1000)   // Timeout threshold for AT command response (msec)
 #define DA16XXX_AT_SOCK_TX_MAX         (4096)   // DA16XXX socket transmit max length
+#define DA16XXX_AT_TLS_CON_TIMEOUT     (60000)  // DA16XXX tls connection timeout
 #define DA16XXX_AT_CMD_BUF_MAX         (WIFI_CFG_AT_CMD_TX_BUFFER_SIZE)
 #define DA16XXX_AT_RESP_BUF_MAX        (WIFI_CFG_AT_CMD_RX_BUFFER_SIZE)
 

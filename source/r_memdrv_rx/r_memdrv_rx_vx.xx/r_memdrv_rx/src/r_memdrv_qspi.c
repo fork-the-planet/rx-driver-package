@@ -1,30 +1,12 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2018 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2018(2023) Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
-/************************************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * System Name  : MEMDRV software
 * File Name    : r_memdrv_qspi.c
-* Version      : 1.05
+* Version      : 1.31
 * Device       : -
 * Abstract     : IO I/F module
 * Tool-Chain   : -
@@ -32,15 +14,17 @@
 * H/W Platform : -
 * Description  : MEMDRV I/O file
 * Limitation   : None
-*************************************************************************************************/
-/************************************************************************************************
-* History      : DD.MM.YYYY Version  Description
-*              : 15.12.2018 1.00     Initial Release
-*              : 04.04.2019 1.01     Added support for GNUC and ICCRX.
-*                                    Fixed coding style.
-*              : 22.11.2019 1.02     Modified check driver interface.
-*              : 16.03.2023 1.05     Fixed coding style.
-*************************************************************************************************/
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+* History      : DD.MM.YYYY Version Description
+*              : 15.12.2018 1.00    Initial Release
+*              : 04.04.2019 1.01    Added support for GNUC and ICCRX.
+*                                   Fixed coding style.
+*              : 22.11.2019 1.02    Modified check driver interface.
+*              : 16.03.2023 1.05    Fixed coding style.
+*              : 20.12.2024 1.30    Updated the data count formulas.
+*              : 15.03.2025 1.31    Updated disclaimer.
+***********************************************************************************************************************/
 
 /************************************************************************************************
 Includes <System Includes> , "Project Includes"
@@ -1544,6 +1528,7 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
 #elif (MEMDRV_CFG_DEV0_TYPE == 0)  | (MEMDRV_CFG_DEV1_TYPE == 0)
 memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_info)
 {
+    st_memdrv_info_t            memdrv_info_dmac_dtc;
     qspi_smstr_info_t           tx_info;
     qspi_smstr_status_t         ret_drv      = QSPI_SMSTR_SUCCESS;
     uint32_t                    boundary_cnt = 0;
@@ -1558,7 +1543,7 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
     if (0 != ((uint32_t)tx_info.p_tx_data & 0x00000003))
     {
         boundary_cnt      = (0x00000004 - ((uint32_t)tx_info.p_tx_data & 0x00000003));
-        tx_info.data_cnt  = boundary_cnt;
+        tx_info.data_cnt  = (txcnt < boundary_cnt) ? txcnt : boundary_cnt;
         tx_info.tran_mode = QSPI_SMSTR_SW;
         if (MEMDRV_MODE_SINGLE == p_memdrv_info->io_mode)
         {
@@ -1587,8 +1572,8 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             /* QSPI_SMSTR_SUCCESS */
         }
 
-        tx_info.p_tx_data = (uint8_t *)(tx_info.p_tx_data + boundary_cnt);
-        txcnt -= boundary_cnt;
+        tx_info.p_tx_data = tx_info.p_tx_data + tx_info.data_cnt;
+        txcnt             = txcnt - tx_info.data_cnt;
     }
 
     /* Check the data count is multiple of 16.
@@ -1614,16 +1599,20 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
         {
             if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
+                memdrv_info_dmac_dtc.p_data = tx_info.p_tx_data;
+                memdrv_info_dmac_dtc.cnt    = tx_info.data_cnt;
                 if (r_memdrv_qspi_enable_tx_data_dmac(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
             }
             else if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
+                memdrv_info_dmac_dtc.p_data = tx_info.p_tx_data;
+                memdrv_info_dmac_dtc.cnt    = tx_info.data_cnt;
                 if (r_memdrv_qspi_enable_tx_data_dtc(devno,
-                                                    p_memdrv_info) != MEMDRV_SUCCESS)
+                                                    &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -1637,16 +1626,20 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
         {
             if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
+                memdrv_info_dmac_dtc.p_data = tx_info.p_tx_data;
+                memdrv_info_dmac_dtc.cnt    = tx_info.data_cnt;
                 if (r_memdrv_qspi_enable_tx_data_dmac(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
             }
             else if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
+                memdrv_info_dmac_dtc.p_data = tx_info.p_tx_data;
+                memdrv_info_dmac_dtc.cnt    = tx_info.data_cnt;
                 if (r_memdrv_qspi_enable_tx_data_dtc(devno,
-                                                     p_memdrv_info) != MEMDRV_SUCCESS)
+                                                     &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -1676,7 +1669,7 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
                 if (r_memdrv_qspi_disable_tx_data_dmac(devno,
-                                                       p_memdrv_info) != MEMDRV_SUCCESS)
+                                                       &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                    return MEMDRV_ERR_OTHER;
                 }
@@ -1684,7 +1677,7 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             else if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
                 if (r_memdrv_qspi_disable_tx_data_dtc(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -1699,7 +1692,7 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
                 if (r_memdrv_qspi_disable_tx_data_dmac(devno,
-                                                       p_memdrv_info) != MEMDRV_SUCCESS)
+                                                       &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -1707,7 +1700,7 @@ memdrv_err_t r_memdrv_qspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             else if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
                 if (r_memdrv_qspi_disable_tx_data_dtc(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -1883,6 +1876,7 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
 #elif (MEMDRV_CFG_DEV0_TYPE == 0)  | (MEMDRV_CFG_DEV1_TYPE == 0)
 memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_info)
 {
+    st_memdrv_info_t            memdrv_info_dmac_dtc;
     qspi_smstr_info_t           rx_info;
     qspi_smstr_status_t         ret_drv      = QSPI_SMSTR_SUCCESS;
     uint32_t                    dummy_buffer = 0xffffffff;
@@ -1899,7 +1893,7 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
     if (0 != ((uint32_t)rx_info.p_rx_data & 0x00000003))
     {
         boundary_cnt      = (0x00000004 - ((uint32_t)rx_info.p_rx_data & 0x00000003));
-        rx_info.data_cnt  = boundary_cnt;
+        rx_info.data_cnt  = (rxcnt < boundary_cnt) ? rxcnt : boundary_cnt;
         rx_info.tran_mode = QSPI_SMSTR_SW;
         if (MEMDRV_MODE_SINGLE == p_memdrv_info->io_mode)
         {
@@ -1928,8 +1922,8 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             /* QSPI_SMSTR_SUCCESS */
         }
 
-        rx_info.p_rx_data = (uint8_t *)(rx_info.p_rx_data + boundary_cnt);
-        rxcnt -= boundary_cnt;
+        rx_info.p_rx_data     = rx_info.p_rx_data + rx_info.data_cnt;
+        rxcnt                 = rxcnt - rx_info.data_cnt;
     }
 
     /* Check the data count is multiple of 16.
@@ -1956,16 +1950,20 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
         {
             if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
+                memdrv_info_dmac_dtc.p_data = rx_info.p_rx_data;
+                memdrv_info_dmac_dtc.cnt    = rx_info.data_cnt;
                 if (r_memdrv_qspi_enable_rx_data_dmac(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
             }
             else if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
+                memdrv_info_dmac_dtc.p_data = rx_info.p_rx_data;
+                memdrv_info_dmac_dtc.cnt    = rx_info.data_cnt;
                 if (r_memdrv_qspi_enable_rx_data_dtc(devno,
-                                                     p_memdrv_info) != MEMDRV_SUCCESS)
+                                                     &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -1979,16 +1977,20 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
         {
             if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
+                memdrv_info_dmac_dtc.p_data = rx_info.p_rx_data;
+                memdrv_info_dmac_dtc.cnt    = rx_info.data_cnt;
                 if (r_memdrv_qspi_enable_rx_data_dmac(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
             }
             else if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
+                memdrv_info_dmac_dtc.p_data = rx_info.p_rx_data;
+                memdrv_info_dmac_dtc.cnt    = rx_info.data_cnt;
                 if (r_memdrv_qspi_enable_rx_data_dtc(devno,
-                                                     p_memdrv_info) != MEMDRV_SUCCESS)
+                                                     &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -2018,7 +2020,7 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
                 if (r_memdrv_qspi_disable_rx_data_dmac(devno,
-                                                       p_memdrv_info) != MEMDRV_SUCCESS)
+                                                       &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -2026,7 +2028,7 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             else if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
                 if (r_memdrv_qspi_disable_rx_data_dtc(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -2041,7 +2043,7 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DMAC)
             {
                 if (r_memdrv_qspi_disable_rx_data_dmac(devno,
-                                                       p_memdrv_info) != MEMDRV_SUCCESS)
+                                                       &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }
@@ -2049,7 +2051,7 @@ memdrv_err_t r_memdrv_qspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             else if (MEMDRV_CFG_DEV1_MODE_TRNS & MEMDRV_TRNS_DTC)
             {
                 if (r_memdrv_qspi_disable_rx_data_dtc(devno,
-                                                      p_memdrv_info) != MEMDRV_SUCCESS)
+                                                      &memdrv_info_dmac_dtc) != MEMDRV_SUCCESS)
                 {
                     return MEMDRV_ERR_OTHER;
                 }

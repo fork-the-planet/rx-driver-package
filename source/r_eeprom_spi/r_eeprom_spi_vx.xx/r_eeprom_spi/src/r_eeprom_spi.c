@@ -1,30 +1,12 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2004 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2004(2005-2020) Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
-/************************************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * System Name  : EEPROM driver software
 * File Name    : r_eeprom_spi.c
-* Version      : 3.02
+* Version      : 3.21
 * Device       : -
 * Abstract     : User I/F file
 * Tool-Chain   : -
@@ -32,8 +14,8 @@
 * H/W Platform : -
 * Description  : SPI Renesas EEPROM User I/F file
 * Limitation   : None
-*************************************************************************************************/
-/************************************************************************************************
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * History      : Date          No.             Comment
 *              : 2004/12/06                    wrote it.
 *              : 2004/12/08                    eep_Write_Status()
@@ -69,11 +51,13 @@
 *              : 2013.09.30    Ver2.03 Modified R_EEPROM_SPI_Write_Protect().
 *              : 2013.09.30    Ver2.03 Modified R_EEPROM_SPI_Write_Data().
 *
-*              : DD.MM.YYYY Version  Description
-*              : 28.11.2014 2.30     Revised functions of same as Ver.2.30 of other middleware.
-*              : 30.01.2015 2.31     Added RX71M.
-*              : 10.12.2020 3.02     Modified comment of API function to Doxygen style.
-*************************************************************************************************/
+*              : DD.MM.YYYY Version Description
+*              : 28.11.2014 2.30    Revised functions of same as Ver.2.30 of other middleware.
+*              : 30.01.2015 2.31    Added RX71M.
+*              : 10.12.2020 3.02    Modified comment of API function to Doxygen style.
+*              : 29.11.2024 3.20    Modified comment of API function to Doxygen style.
+*              : 15.03.2025 3.21    Updated disclaimer.
+***********************************************************************************************************************/
 
 
 /************************************************************************************************
@@ -180,8 +164,8 @@ eeprom_status_t R_EEPROM_SPI_Close(uint8_t devno)
  * @retval    EEPROM_SPI_ERR_HARD   Hardware error
  * @retval    EEPROM_SPI_ERR_OTHER  Other task has acquired clock synchronous single master control software resources,
  *                                  or other error
- * @details   Reads the status register and stores the contents in p_status. See section 3.3 in the application note
- *            for details.
+ * @details   Reads the status register and stores the contents in p_status. Specify 1 byte as a read buffer.
+ *            See section R_EEPROM_SPI_Read_Status() in the application note for details.
  * @note      The clock synchronous single master control software resources are acquired at the start of the
  *            processing, and the resources are released and the end of the processing.
  */
@@ -258,7 +242,8 @@ eeprom_status_t R_EEPROM_SPI_Read_Status(uint8_t devno, uint8_t * p_status)
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in] wpsts
- *             Write protect setting data
+ *             Write protect setting data.
+ *             See section R_EEPROM_SPI_Set_Write_Protect() in the application note for details.
  * @retval    EEPROM_SPI_SUCCESS    Successful operation
  * @retval    EEPROM_SPI_ERR_PARAM  Parameter error
  * @retval    EEPROM_SPI_ERR_HARD   Hardware error
@@ -270,8 +255,8 @@ eeprom_status_t R_EEPROM_SPI_Read_Status(uint8_t devno, uint8_t * p_status)
  *            the next read or write processing while a write cycle is in progress, the EEPROM will not accept that
  *            processing.\n
  *            R_EEPROM_SPI_Polling() can be called at any time specified by the user. This makes it possible for the
- *            user application to perform other processing while a write cycle is in progress.See section 3.4 in the
- *            application note for details.
+ *            user application to perform other processing while a write cycle is in progress.
+ *            See section R_EEPROM_SPI_Set_Write_Protect() in the application note for details.
  * @note      The clock synchronous single master control software resources are acquired at the start of the
  *            processing, and the resources are released and the end of the processing.
  */
@@ -437,7 +422,7 @@ eeprom_status_t R_EEPROM_SPI_Write_Di(uint8_t devno)
  *             Device number (0, 1)
  * @param[in,out] *p_eeprom_info
  *             EEPROM information structure. Use the structure address aligned with a 4-byte boundary.
- *             See section 3.6 in the application note for details.
+ *             See section R_EEPROM_SPI_Read_Data() in the application note for details.
  * @retval    EEPROM_SPI_SUCCESS    Successful operation
  * @retval    EEPROM_SPI_ERR_PARAM  Parameter error
  * @retval    EEPROM_SPI_ERR_HARD   Hardware error
@@ -544,7 +529,7 @@ eeprom_status_t R_EEPROM_SPI_Read_Data(uint8_t devno, eeprom_info_t * p_eeprom_i
  *             Device number (0, 1)
  * @param[in, out] *p_eeprom_info
  *             EEPROM information structure. Use the structure address aligned with a 4-byte boundary.
- *             See section 3.7 in the application note for details.
+ *             See section R_EEPROM_SPI_Write_Data_Page() in the application note for details.
  * @retval    EEPROM_SPI_SUCCESS    Successful operation
  * @retval    EEPROM_SPI_ERR_PARAM  Parameter error
  * @retval    EEPROM_SPI_ERR_HARD   Hardware error
@@ -563,7 +548,7 @@ eeprom_status_t R_EEPROM_SPI_Read_Data(uint8_t devno, eeprom_info_t * p_eeprom_i
  *            DMAC transfer or DTC transfer occurs when the transfer size conditions of the clock synchronous single
  *            master control software are matched. Otherwise, operation switches to software transfer.\n
  *            When a byte count exceeding 1 page is specified, the remaining byte count and next address information
- *            remain in the EEPROM information stricture (p_eeprom_info) after processing of a single page write
+ *            remain in the EEPROM information structure (p_eeprom_info) after processing of a single page write
  *            finishes. It is possible to write the remaining bytes by specifying p_eeprom_info unmodified in this
  *            API function again.\n
  *            After this user API function finishes successfully, the EEPROM transitions to the write cycle. Do not
@@ -572,7 +557,7 @@ eeprom_status_t R_EEPROM_SPI_Read_Data(uint8_t devno, eeprom_info_t * p_eeprom_i
  *            processing. \n
  *            R_EEPROM_SPI_Polling() can be called at any time specified by the user. This makes it possible for the
  *            user application to perform other processing while a write cycle is in progress.\n
- *            See section 3.7 in the application note for details.
+ *            See section R_EEPROM_SPI_Write_Data_Page() in the application note for details.
  * @note      To speed up data transfers, align the start address with a 4-byte boundary when specifying data storage
  *            buffer pointers.\n
  *            The clock synchronous single master control software resources are acquired at the start of the
@@ -789,8 +774,9 @@ eeprom_status_t R_EEPROM_SPI_Polling(uint8_t devno)
  * @brief This function is used to fetch the serial EEPROM size information.
  * @param[in] devno
  *             Device number (0, 1)
- * @param[in,out] p_eeprom_mem_info
+ * @param[in,out] *p_eeprom_mem_info
  *             EEPROM size information structure. Use the structure address aligned with a 4-byte boundary.
+ *             See section R_EEPROM_SPI_GetMemoryInfo() in the application note for details.
  * @retval    EEPROM_SPI_SUCCESS    Successful operation
  * @retval    EEPROM_SPI_ERR_PARAM  Parameter error
  * @details   Fetches EEPROM size information for the device number specified by the argument devno.

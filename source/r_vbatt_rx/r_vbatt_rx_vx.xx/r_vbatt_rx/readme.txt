@@ -5,13 +5,13 @@ r_vbatt_rx
 
 Document Number
 ---------------
-R01AN2796JJ0230
-R01AN2796EJ0230
+R01AN2796JJ0231
+R01AN2796EJ0231
 
 
 Version
 -------
-v2.30
+v2.31
 
 
 Overview
@@ -69,7 +69,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.42
+* r_bsp     v7.52
 
 
 How to add to your project
@@ -117,8 +117,8 @@ For example, to run the demo on a RSKRX231 board, the user would uncomment the #
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.06.00
-* GCC for Renesas RX 8.03.00.202311
+* Renesas RX v3.07.00
+* GCC for Renesas RX 8.03.00.202411
 * IAR C/C++ Compiler for Renesas RX version 5.10.01
 
 
@@ -130,10 +130,10 @@ r_vbatt_rx
 |
 +---doc
 |   +---en
-|   |   r01an2796ej0230-rx-vbatt.pdf
+|   |   r01an2796ej0231-rx-vbatt.pdf
 |   |
 |   +---ja
-|       r01an2796jj0230-rx-vbatt.pdf
+|       r01an2796jj0231-rx-vbatt.pdf
 |
 +---src
     |

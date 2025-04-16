@@ -6,17 +6,17 @@
     <toolchain>
         <brand>Renesas</brand>
         <product>RXC</product>
-        <version>3.01.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
-        <version>4.08.04.201801</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
         <product>ICCRX</product>
-        <version>4.11.01</version>
+        <version>5.10.01</version>
     </toolchain>
 
 

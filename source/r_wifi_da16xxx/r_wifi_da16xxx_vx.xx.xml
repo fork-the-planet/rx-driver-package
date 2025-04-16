@@ -72,4 +72,7 @@
         <incdir>r_wifi_da16xxx</incdir>
         <incdir>r_wifi_da16xxx/src</incdir>
     </package>
+    <sampleapplicationnote>
+    <documentno>R01AN7173</documentno>
+    </sampleapplicationnote>
 </refinfo>

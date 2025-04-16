@@ -1,33 +1,11 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.    
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /**********************************************************************************************************************
-* System Name  : MMC Driver
 * File Name    : r_mmcif_int.c
-* Version      : 1.07.00
-* Device       : RX64M (LQFP-176)
-* Abstract     : API & Sub module
-* Tool-Chain   : For RX64M Group
-*              :  e2 studio (Version 7.4.0)
-* OS           : not use
-* H/W Platform : RSK board for RX64M
 * Description  : Interface file for MMC API for RX
-* Limitation   : None
 **********************************************************************************************************************/
 /**********************************************************************************************************************
 * History      : DD.MM.YYYY Version Description
@@ -35,6 +13,9 @@
 *              : 20.05.2019 1.05    Added support for GNUC and ICCRX.
 *                                   Fixed coding style.
 *              : 22.11.2019 1.07    Modified comment of API function to Doxygen style.
+*              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
+*                                   Updated file description.
+*              : 15.03.2025 1.21    Updated disclaimer.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -295,15 +276,15 @@ mmc_status_t r_mmcif_get_intstatus(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_IntCallback
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function registers an MMC protocol status interrupt callback function.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
- * @param[in] (*callback)(int32_t)
- *            Callback function to be registered.\n 
- *            If a null pointer is specified, no callback function is registered. If a callback function is to be used,
- *            register a callback function before the R_MMCIF_Mount() function is executed.\n 
- *            The value 0 is always stored in (int32_t).
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
+ * @param[in] callback
+ *             Callback function to be registered.\n 
+ *             If a null pointer is specified, no callback function is registered. If a callback function is 
+ *             to be used, register a callback function before the R_MMCIF_Mount() function is executed.\n 
+ *             The value 0 is always stored in (int32_t).
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error
  * @details   This function registers an MMC protocol status interrupt callback function.\n 

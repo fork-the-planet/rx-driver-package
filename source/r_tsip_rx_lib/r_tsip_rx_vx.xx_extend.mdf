@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
+* Copyright (c) 2015 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+-->
+<!--
+/***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
 ***********************************************************************************************************************/
@@ -307,9 +314,9 @@
 1 = Using TLS</description>
         </property>
         <property id="TSIP_SECURE_BOOT" display="Secure boot" default="0" type="combobox">
-            <option id="TSIP_SECURE_BOOT.0" display="No using Secure boot" value="0"/>
-            <option id="TSIP_SECURE_BOOT.1" display="Using Secure boot" value="1"/>
-            <description>0 = No using Secure boot
+            <option id="TSIP_SECURE_BOOT.0" display="No using section setting for Secure boot" value="0"/>
+            <option id="TSIP_SECURE_BOOT.1" display="Using section setting for Secure boot" value="1"/>
+            <description>0 = Generate section setting to use for Secure boot
 1 = Using Secure boot</description>
         </property>
         <property id="TSIP_FIRMWARE_UPDATE" display="Firmware update" default="1" type="combobox">

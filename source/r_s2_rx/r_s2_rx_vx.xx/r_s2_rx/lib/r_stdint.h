@@ -1,6 +1,11 @@
+/*
+* Copyright (C) 2011 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /*******************************************************************************
 * File Name     : r_stdint.h
-* Version       : 1.07
+* Version       : 1.08
 * Device(s)     : -
 * Tool-Chain    : -
 * H/W Platform  : -
@@ -16,6 +21,7 @@
 *               : 09.07.2014 1.05  Clean up.
 *               : 18.09.2014 1.06  Add armcc compiler.
 *               : 07.08.2015 1.07  Add ccrl compiler.
+*               : 20.03.2025 1.08  Changed the disclaimer in program sources
 ******************************************************************************/
 #ifndef __r_stdint_h__
 #define __r_stdint_h__

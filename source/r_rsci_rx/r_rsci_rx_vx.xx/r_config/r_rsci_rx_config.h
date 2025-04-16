@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name     : r_rsci_rx_config.h
@@ -29,6 +16,8 @@
 *           15.08.2022 2.30    Supported for RX26T.
 *           30.06.2023 2.40    Supported for RX26T-256KB.
 *           28.06.2024 2.60    Moved the source code which checks for RX26T devices support to r_rsci_rx26t_private.h.
+*           31.12.2024 2.70    Added support Nested Interrupt.
+*           15.03.2025 2.71    Updated disclaimer
 ***********************************************************************************************************************/
 #ifndef RSCI_CONFIG_H
 #define RSCI_CONFIG_H
@@ -111,6 +100,38 @@ Configuration Options
 * In Manchester mode, there are also Manchester code, preface, start bit, and receive Sync errors
 */
 #define RSCI_CFG_ERI_TEI_PRIORITY (3)     /* 1 lowest, 15 highest */
+
+/* SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TXI */
+/* 1=enable, 0=disable */
+#define RSCI_CFG_CH0_EN_TXI_NESTED_INT    (0)
+#define RSCI_CFG_CH8_EN_TXI_NESTED_INT    (0)
+#define RSCI_CFG_CH9_EN_TXI_NESTED_INT    (0)
+#define RSCI_CFG_CH10_EN_TXI_NESTED_INT   (0)
+#define RSCI_CFG_CH11_EN_TXI_NESTED_INT   (0)
+
+/* SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT RXI */
+/* 1=enable, 0=disable */
+#define RSCI_CFG_CH0_EN_RXI_NESTED_INT    (0)
+#define RSCI_CFG_CH8_EN_RXI_NESTED_INT    (0)
+#define RSCI_CFG_CH9_EN_RXI_NESTED_INT    (0)
+#define RSCI_CFG_CH10_EN_RXI_NESTED_INT   (0)
+#define RSCI_CFG_CH11_EN_RXI_NESTED_INT   (0)
+
+/* SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TEI */
+/* 1=enable, 0=disable */
+#define RSCI_CFG_CH0_EN_TEI_NESTED_INT    (0)
+#define RSCI_CFG_CH8_EN_TEI_NESTED_INT    (0)
+#define RSCI_CFG_CH9_EN_TEI_NESTED_INT    (0)
+#define RSCI_CFG_CH10_EN_TEI_NESTED_INT   (0)
+#define RSCI_CFG_CH11_EN_TEI_NESTED_INT   (0)
+
+/* SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT ERI */
+/* 1=enable, 0=disable */
+#define RSCI_CFG_CH0_EN_ERI_NESTED_INT    (0)
+#define RSCI_CFG_CH8_EN_ERI_NESTED_INT    (0)
+#define RSCI_CFG_CH9_EN_ERI_NESTED_INT    (0)
+#define RSCI_CFG_CH10_EN_ERI_NESTED_INT   (0)
+#define RSCI_CFG_CH11_EN_ERI_NESTED_INT   (0)
 
 /* ENABLE TX/RX FIFO; 1=included, 0=not */
 #define RSCI_CFG_CH10_FIFO_INCLUDED  (0)

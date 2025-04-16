@@ -10,7 +10,7 @@ R01AN2029JJ
 
 Version
 -------
-v1.42
+v1.44
 
 Overview
 --------
@@ -66,9 +66,9 @@ How to add to your project
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v.3.05.00
-* GCC for Renesas RX 4.08.04.201902
-* IAR C/C++ Compiler for Renesas version 4.12.01
+* Renesas RX v.3.07.00
+* GCC for Renesas RX 8.3.0.202411
+* IAR C/C++ Compiler for Renesas version 5.10.1
 
 File Structure
 --------------
@@ -79,9 +79,9 @@ r_usb_pmsc
 |
 +---doc
 |     \en
-|     |   r01an2029ej0142_usb.pdf
+|     |   r01an2029ej0144_usb.pdf
 |     \jp
-|         r01an2029jj0142_usb.pdf
+|         r01an2029jj0144_usb.pdf
 |
 +---ref
 |       r_usb_pmsc_config_reference.h

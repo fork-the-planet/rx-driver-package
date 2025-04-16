@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_qe_display_rx
-VERSION = 		1.10
+VERSION = 		1.11
 MDF = V1
 
 CONFIG_FOLDER = r_config

@@ -5,12 +5,12 @@ r_s2_rx
 
 Document Number
 ---------------
-R20AN0037JJ0304_RX_S2
-R20AN0037EJ0304_RX_S2
+R20AN0037JJ0305_RX_S2
+R20AN0037EJ0305_RX_S2
 
 Version
 -------
-v3.04
+v3.05
 
 Overview
 --------
@@ -62,12 +62,12 @@ None
 How to add to your project
 --------------------------
 Please refer to the Adding Firmware Integration Technology Modules to Projects.
-"r01an1723ju0111_rx.pdf/r01an1826jj0102_rx.pdf(R20AN0037JJ0304_RX_S2)"
-"r01an1723eu0111_rx.pdf/r01an1826eu0102_rx.pdf(R20AN0037EJ0304_RX_S2)".
+"r01an1723ju0111_rx.pdf/r01an1826jj0102_rx.pdf(R20AN0037JJ0305_RX_S2)"
+"r01an1723eu0111_rx.pdf/r01an1826eu0102_rx.pdf(R20AN0037EJ0305_RX_S2)".
 
 Toolchain(s) Used
 -----------------
-* Renesas RXC 2.04.01
+* Renesas RXC 3.07.00
 
 File Structure
 --------------
@@ -78,11 +78,11 @@ r_s2_rx
 +---doc
 |   |
 |   +---ja
-|   |     r20an0037jj0304_rx_s2.pdf
+|   |     r20an0037jj0305_rx_s2.pdf
 |   |     r20uw0079jj0100_s2.pdf
 |   |     r21an0002jj0100_adpcm_tool.pdf
 |   +---en
-|         r20an0037ej0304_rx_s2.pdf
+|         r20an0037ej0305_rx_s2.pdf
 |         r20uw0079ej0100_s2.pdf
 |         r21an0002ej0100_adpcm_tool.pdf
 |

@@ -1,24 +1,11 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2017-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx_private.h
- * Version      : 1.21
+ * Version      : 1.22
  * Description  : TSIP function private header file.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -37,13 +24,15 @@
  *         : 30.06.2021 1.12     Added support for RX23W chip version D
  *         : 31.08.2021 1.13     Added support for RX671
  *         : 22.10.2021 1.14     Added support for TLS1.3
- *         : 31.03.2022 1.15     Added support for TLS1.3(RX72M_RX72N_RX66N)
+ *         : 31.03.2022 1.15     Added support for TLS1.3(RX671)
  *         : 15.09.2022 1.16     Added support for RSA 3k/4k and updated support for TLS1.3
  *         : 20.01.2023 1.17     Added support for TLS1.3 server
  *         : 24.05.2023 1.18     Added support for RX26T
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -80,7 +69,7 @@
 #define TSIP_PRV_USE_TDES \
         (TSIP_TDES_ECB_ENCRYPT || TSIP_TDES_ECB_DECRYPT || TSIP_TDES_CBC_ENCRYPT || TSIP_TDES_CBC_DECRYPT)
 
-#define TSIP_PRV_USE_ARC4 (TSIP_TSIP_ARC4_ENCRYPT || TSIP_ARC4_DECRYPT)
+#define TSIP_PRV_USE_ARC4 (TSIP_ARC4_ENCRYPT || TSIP_ARC4_DECRYPT)
 
 #define TSIP_PRV_USE_HMAC (TSIP_SHA_1_HMAC || TSIP_SHA_256_HMAC)
 
@@ -111,7 +100,11 @@ extern uint32_t S_HEAP[R_TSIP_SHEAP_WORD_SIZE];
 extern uint32_t S_INST[R_TSIP_SINST_WORD_SIZE];
 extern uint32_t S_INST2[R_TSIP_SINST2_WORD_SIZE];
 
-extern TSIP_GEN_MAC_CB_FUNC_T TSIP_GEN_MAC_CB_FUNC;
+extern uint32_t const DomainParam_NIST_P256[188];
+extern uint32_t const DomainParam_NIST_P224[188];
+extern uint32_t const DomainParam_NIST_P192[188];
+extern uint32_t const DomainParam_NIST_P384[104];
+extern uint32_t const DomainParam_Brainpool_512r1[136];
 
 /**********************************************************************************************************************
  Exported global functions
@@ -345,7 +338,8 @@ e_tsip_err_t R_TSIP_GenerateRsa2048RandomKeyIndexSub(uint32_t MAX_CNT, uint32_t 
         uint32_t *OutData_PrivKeyIndex);
 e_tsip_err_t R_TSIP_GenerateTlsRsaInstallDataSub(uint32_t *InData_SharedKeyIndex, uint32_t *InData_SessionKey,
         uint32_t *InData_IV, uint32_t *InData_InstData, uint32_t *OutData_InstData);
-e_tsip_err_t R_TSIP_GenerateTlsP256EccKeyIndexSub(uint32_t *OutData_KeyIndex, uint32_t *OutData_PubKey);
+e_tsip_err_t R_TSIP_GenerateTlsP256EccKeyIndexSub(const uint32_t *InData_DomainParam, uint32_t *OutData_KeyIndex,
+        uint32_t *OutData_PubKey);
 e_tsip_err_t R_TSIP_GenerateEccPrivateKeyIndexSub(uint32_t *InData_SharedKeyIndex,
         uint32_t *InData_SessionKey, uint32_t *InData_Cmd, uint32_t *InData_IV,
         uint32_t *InData_InstData, uint32_t *OutData_KeyIndex);
@@ -356,9 +350,10 @@ e_tsip_err_t R_TSIP_GenerateEccPublicKeyIndexSub(uint32_t *InData_SharedKeyIndex
         uint32_t *OutData_KeyIndex);
 e_tsip_err_t R_TSIP_GenerateEccP384PublicKeyIndexSub(uint32_t *InData_SharedKeyIndex, uint32_t *InData_SessionKey,
         uint32_t *InData_IV, uint32_t *InData_InstData, uint32_t *OutData_KeyIndex);
-e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t *OutData_PubKeyIndex,
+e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, const uint32_t *InData_DomainParam,
+        uint32_t *OutData_PubKeyIndex, uint32_t *OutData_PrivKeyIndex);
+e_tsip_err_t R_TSIP_GenerateEccP384RandomKeyIndexSub(const uint32_t *InData_DomainParam, uint32_t *OutData_PubKeyIndex,
         uint32_t *OutData_PrivKeyIndex);
-e_tsip_err_t R_TSIP_GenerateEccP384RandomKeyIndexSub(uint32_t *OutData_PubKeyIndex, uint32_t *OutData_PrivKeyIndex);
 e_tsip_err_t R_TSIP_GenerateShaHmacKeyIndexSub(uint32_t *InData_SharedKeyIndex, uint32_t *InData_SessionKey,
         uint32_t *InData_Cmd, uint32_t *InData_IV, uint32_t *InData_InstData, uint32_t *OutData_KeyIndex);
 e_tsip_err_t R_TSIP_GenerateRandomNumberSub(uint32_t *OutData_Text);
@@ -394,10 +389,15 @@ e_tsip_err_t R_TSIP_UpdateShaHmacKeyIndexSub(uint32_t *InData_Cmd, uint32_t *InD
         uint32_t *OutData_KeyIndex);
 
 e_tsip_err_t R_TSIP_StartUpdateFirmwareSub(void);
-e_tsip_err_t R_TSIP_GenerateFirmwareMacSub(uint32_t *InData_KeyIndex, uint32_t *InData_SessionKey,
-        uint32_t *InData_UpProgram, uint32_t *InData_IV, uint32_t *OutData_Program, uint32_t MAX_CNT,
-        tsip_firmware_generate_mac_resume_handle_t *tsip_firmware_generate_mac_resume_handle);
-e_tsip_err_t R_TSIP_VerifyFirmwareMacSub(uint32_t *InData_Program, uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_GenerateFirmwareMacInitSub(uint32_t *InData_KeyIndex, uint32_t *InData_SessionKey,
+        uint32_t *InData_IV);
+e_tsip_err_t R_TSIP_GenerateFirmwareMacUpdateSub(uint32_t *InData_UpProgram, uint32_t *OutData_Program,
+        uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_GenerateFirmwareMacFinalSub(uint32_t *InData_UpProgram, uint32_t *InData_UpMAC,
+        uint32_t *OutData_Program, uint32_t *OutData_MAC, uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_VerifyFirmwareMacInitSub(void);
+e_tsip_err_t R_TSIP_VerifyFirmwareMacUpdateSub(uint32_t *InData_Program, uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_VerifyFirmwareMacFinalSub(uint32_t *InData_Program, uint32_t *InData_MAC, uint32_t MAX_CNT);
 
 e_tsip_err_t R_TSIP_Aes128EncryptDecryptInitSub(uint32_t *InData_KeyType, uint32_t *InData_Cmd,
         uint32_t *InData_KeyIndex, uint32_t *InData_IV);
@@ -480,7 +480,7 @@ e_tsip_err_t R_TSIP_Sha224256GenerateMessageDigestSub(uint32_t *InData_SHAInitVa
 e_tsip_err_t R_TSIP_Md5GenerateMessageDigestSub(uint32_t *InData_MD5InitVal, uint32_t *InData_PaddedMsg,
         uint32_t MAX_CNT, uint32_t *OutData_MsgDigest);
 
-e_tsip_err_t R_TSIP_Sha1HmacInitSub(uint32_t *InData_KeyType, uint32_t *InData_KeyIndex);
+e_tsip_err_t R_TSIP_Sha1HmacInitSub(uint32_t *InData_KeyType, uint32_t *InData_Cmd, uint32_t *InData_KeyIndex);
 void         R_TSIP_Sha1HmacUpdateSub(uint32_t *InData_PaddedMsg, uint32_t MAX_CNT);
 e_tsip_err_t R_TSIP_Sha1HmacFinalSub(uint32_t *InData_Cmd, uint32_t *InData_MAC, uint32_t *InData_length,
         uint32_t *OutData_MAC);
@@ -498,11 +498,11 @@ e_tsip_err_t R_TSIP_Arc4EncryptDecryptFinalSub(void);
 
 e_tsip_err_t R_TSIP_TlsRootCertificateVerificationSub(uint32_t *InData_Sel_PubKeyType, uint32_t *InData_Certificates,
         uint32_t *InData_CertificatesLength, uint32_t *InData_Signature, uint32_t *InData_CertificatesInfo,
-        uint32_t *OutData_PubKey);
+        const uint32_t *InData_DomainParam, uint32_t *OutData_PubKey);
 e_tsip_err_t R_TSIP_TlsCertificateVerificationSub(uint32_t *InData_Sel_InDataPubKeyType,
         uint32_t *InData_Sel_OutDataPubKeyType, uint32_t *InData_PubKey,
         uint32_t *InData_TBSCertificate, uint32_t *InData_TBSCertificateLength, uint32_t *InData_Signature,
-        uint32_t *InData_TBSCertificateInfo, uint32_t *OutData_PubKey);
+        uint32_t *InData_TBSCertificateInfo, const uint32_t *InData_DomainParam, uint32_t *OutData_PubKey);
 e_tsip_err_t R_TSIP_TlsEncryptPreMasterSecretSub(uint32_t *InData_PubKey, uint32_t *InData_PreMasterSecret,
         uint32_t *OutData_PreMasterSecret);
 e_tsip_err_t R_TSIP_TlsGeneratePreMasterSecretSub(uint32_t *OutData_PreMasterSecret);
@@ -516,18 +516,18 @@ e_tsip_err_t R_TSIP_TlsGenerateSessionKeySub(uint32_t *InData_Sel_CipherSuite, u
 e_tsip_err_t R_TSIP_TlsGenerateVerifyDataSub(uint32_t *InData_Sel_VerifyData, uint32_t *InData_MasterSecret,
         uint32_t *InData_HandShakeHash, uint32_t *OutData_VerifyData);
 e_tsip_err_t R_TSIP_TlsGeneratePreMasterSecretWithEccP256KeySub(uint32_t *InData_PubKey, uint32_t *InData_KeyIndex,
-        uint32_t *OutData_PreMasterSecretIndex);
+        const uint32_t *InData_DomainParam, uint32_t *OutData_PreMasterSecretIndex);
 e_tsip_err_t R_TSIP_TlsServersEphemeralEcdhPublicKeyRetrievesSub(uint32_t *InData_Sel_PubKeyType,
         uint32_t *InData_ClientRandom, uint32_t *InData_ServerRandom, uint32_t *InData_Sel_CompressType,
         uint32_t *InData_SKE_Message, uint32_t *InData_SKE_Signature, uint32_t *InData_PubKey,
-        uint32_t *OutData_EphemeralPubKey);
+        const uint32_t *InData_DomainParam, uint32_t *OutData_EphemeralPubKey);
 e_tsip_err_t R_TSIP_TlsGenerateExtendedMasterSecretSub(uint32_t *InData_Sel_CipherSuite,
         uint32_t *InData_PreMasterSecret, uint32_t *InData_MsgHash, uint32_t *OutData_ExMasterSecret);
 
 e_tsip_err_t R_TSIP_GenerateTls13P256EccKeyIndexSub(uint32_t * InData_Cmd, uint32_t * InData_Handle,
-        uint32_t * OutData_KeyIndex, uint32_t * OutData_PubKey);
+        const uint32_t *InData_DomainParam, uint32_t * OutData_KeyIndex, uint32_t * OutData_PubKey);
 e_tsip_err_t R_TSIP_Tls13GenerateEcdheSharedSecretSub(uint32_t * InData_Cmd, uint32_t * InData_PubKey,
-        uint32_t * InData_KeyIndex, uint32_t * OutData_SharedSecretKeyIndex);
+        uint32_t * InData_KeyIndex, const uint32_t *InData_DomainParam, uint32_t * OutData_SharedSecretKeyIndex);
 e_tsip_err_t R_TSIP_Tls13GenerateHandshakeSecretSub(uint32_t * InData_SharedSecretKeyIndex,
         uint32_t * OutData_Handshake_SecretKeyIndex);
 e_tsip_err_t R_TSIP_Tls13GenerateServerHandshakeTrafficKeySub(uint32_t * InData_Cmd,
@@ -565,29 +565,34 @@ e_tsip_err_t R_TSIP_Rsa2048DhKeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t
         uint32_t *InData_Message, uint32_t *InData_ModExp, uint32_t *OutData_ModExp);
 
 e_tsip_err_t R_TSIP_EcdsaSigunatureGenerateSub(uint32_t *InData_Cmd, uint32_t *InData_KeyIndex,
-        uint32_t *InData_MsgDgst, uint32_t *OutData_Signature);
+        uint32_t *InData_MsgDgst, const uint32_t *InData_DomainParam, uint32_t *OutData_Signature);
 e_tsip_err_t R_TSIP_EcdsaP384SigunatureGenerateSub(uint32_t *InData_KeyIndex,
-        uint32_t *InData_MsgDgst, uint32_t *OutData_Signature);
+        uint32_t *InData_MsgDgst, const uint32_t *InData_DomainParam, uint32_t *OutData_Signature);
 e_tsip_err_t R_TSIP_EcdsaSigunatureVerificationSub(uint32_t *InData_Cmd, uint32_t *InData_KeyIndex,
-        uint32_t *InData_MsgDgst, uint32_t *InData_Signature);
+        uint32_t *InData_MsgDgst, uint32_t *InData_Signature, const uint32_t *InData_DomainParam);
 e_tsip_err_t R_TSIP_EcdsaP384SigunatureVerificationSub(uint32_t *InData_KeyIndex,
-        uint32_t *InData_MsgDgst, uint32_t *InData_Signature);
+        uint32_t *InData_MsgDgst, uint32_t *InData_Signature, const uint32_t *InData_DomainParam);
 
 e_tsip_err_t R_TSIP_DlmsCosemQeuSignatureVerificationSub(uint32_t *InData_Cmd, uint32_t *InData_KeyIndex,
-        uint32_t *InData_data, uint32_t *InData_Signature, uint32_t *OutData_KeyIndex);
+        uint32_t *InData_data, uint32_t *InData_Signature, const uint32_t *InData_DomainParam,
+        uint32_t *OutData_KeyIndex);
 e_tsip_err_t R_TSIP_DlmsCosemQevSignatureGenerationSub(uint32_t *InData_Cmd, uint32_t *InData_KeyType,
-        uint32_t *InData_PubKeyIndex, uint32_t *InData_PrivKeyIndex, uint32_t *InData_key_id, uint32_t *OutData_data,
-        uint32_t *OutData_Signature, uint32_t *OutData_KeyIndex);
+        uint32_t *InData_PubKeyIndex, uint32_t *InData_PrivKeyIndex, uint32_t *InData_key_id,
+        const uint32_t *InData_DomainParam, uint32_t *OutData_data, uint32_t *OutData_Signature,
+        uint32_t *OutData_KeyIndex);
 e_tsip_err_t R_TSIP_DlmsCosemCalculateZSub(uint32_t *InData_KeyType, uint32_t *InData_PubKeyIndex,
-        uint32_t *InData_PrivKeyIndex, uint32_t *OutData_KeyIndex);
+        uint32_t *InData_PrivKeyIndex, const uint32_t *InData_DomainParam, uint32_t *OutData_KeyIndex);
 e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint32_t *InData_KeyIndex,
         uint32_t *InData_KDFType, uint32_t *InData_PaddedMsg, uint32_t MAX_CNT, uint32_t *InData_SaltKeyIndex,
         uint32_t *OutData_KeyIndex);
 e_tsip_err_t R_TSIP_EcdheP512KeyAgreementSub(uint32_t *InData_KeyIndex, uint32_t *InData_PubKey,
-        uint32_t *OutData_PubKey);
+        const uint32_t *InData_DomainParam, uint32_t *OutData_PubKey);
+e_tsip_err_t R_TSIP_EcdhP256SshKeyDerivationSub(uint32_t *InData_KeyIndexType, uint32_t *InData_KeyIndex,
+        uint32_t *InData_PaddedMsg, uint32_t *InData_PaddedMsgLength, uint32_t *OutData_KeyIndex1,
+        uint32_t *OutData_KeyIndex2, uint32_t *OutData_KeyIndex3, uint32_t *OutData_KeyIndex4, uint32_t *OutData_IV1,
+        uint32_t *OutData_IV2);
 
 void R_TSIP_TlsRootCertificateVerificationSubSub(void);
-void R_TSIP_TlsGenerateSubSub(void);
 
 void R_TSIP_SelfCheck1SubSub(void);
 void R_TSIP_SelfCheck2SubSub(void);
@@ -595,25 +600,26 @@ void R_TSIP_SelfCheck2SubSub(void);
 void RX671_func000(uint32_t *InData_PaddedMsg, int32_t MAX_CNT);
 void RX671_func001(void);
 void RX671_func002(void);
-void RX671_func003(uint32_t* ARG1);
-void RX671_func004(uint32_t ARG1);
-void RX671_func005(uint32_t ARG1);
+void RX671_func003(uint32_t *ARG1);
+void RX671_func004(const uint32_t *ARG1);
+void RX671_func005(const uint32_t *ARG1);
 void RX671_func006(void);
 void RX671_func007(void);
 void RX671_func008(void);
 void RX671_func009(void);
-void RX671_func010(uint32_t ARG1);
+void RX671_func010(const uint32_t *ARG1);
 void RX671_func011(uint32_t *ARG1);
 void RX671_func015(void);
 void RX671_func022(void);
 void RX671_func023(void);
-void RX671_func025(uint32_t ARG1);
-void RX671_func027(uint32_t ARG1);
-void RX671_func028(uint32_t ARG1);
+void RX671_func025(const uint32_t *ARG1);
+void RX671_func027(const uint32_t *ARG1);
+void RX671_func028(const uint32_t *ARG1);
 void RX671_func030(void);
 void RX671_func031(uint32_t *ARG1);
-void RX671_func040(uint32_t ARG1);
-void RX671_func041(uint32_t ARG1);
+void RX671_func032(void);
+void RX671_func040(const uint32_t *ARG1);
+void RX671_func041(const uint32_t *ARG1);
 void RX671_func050(uint32_t ARG1);
 void RX671_func051(void);
 void RX671_func052(uint32_t ARG1);
@@ -655,8 +661,16 @@ void RX671_func322(uint32_t ARG1);
 void RX671_func323(void);
 void RX671_func324(void);
 void RX671_func325(void);
-
-void firm_mac_read(uint32_t *InData_Program);
+void RX671_func401(void);
+void RX671_func402(void);
+void RX671_func401(void);
+void RX671_func402(void);
+void RX671_func403(uint32_t *ARG1, uint32_t *ARG2, uint32_t *ARG3, uint32_t *ARG4, uint32_t *ARG5,
+        uint32_t *ARG6, uint32_t *ARG7, const uint32_t *ARG8, uint32_t *ARG9);
+void RX671_func404(uint32_t *ARG1, uint32_t *ARG2, uint32_t *ARG3, uint32_t *ARG4, uint32_t *ARG5,
+        uint32_t *ARG6, uint32_t *ARG7, uint32_t *ARG8, uint32_t *ARG9, uint32_t *ARG10);
+void RX671_func405(uint32_t ARG1, uint32_t ARG2, uint32_t *ARG3, uint32_t *ARG4, uint32_t *ARG5,
+        uint32_t *ARG6, uint32_t *ARG7, const uint32_t *ARG8, uint32_t *ARG9);
 
 e_tsip_err_t rsassa_emsa_pss_encode(tsip_rsa_byte_data_t *message, uint8_t hash_type, uint32_t em_bits, uint8_t *em);
 

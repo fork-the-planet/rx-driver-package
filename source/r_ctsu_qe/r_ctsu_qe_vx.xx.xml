@@ -21,6 +21,7 @@
         <version>3.04.00</version>
         <version>3.05.00</version>
         <version>3.06.00</version>
+        <version>3.07.00</version>
 	</toolchain>
 	<toolchain>
         <brand>GNU</brand>
@@ -30,6 +31,8 @@
         <version>8.03.00.201904</version>
         <version>8.03.00.202104</version>
         <version>8.03.00.202311</version>
+        <version>8.03.00.202405</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>

@@ -1,29 +1,11 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/*
+* Copyright (c) 2018(2025) Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2018(2023) Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /************************************************************************************************
 * File Name    : r_flash_dm_rx_if.c
-* Version      : 2.10
+* Version      : 2.31
 * Description  : DATFRX interface source file
 *************************************************************************************************/
 /************************************************************************************************
@@ -31,6 +13,10 @@
 *              : 28.09.2018 2.00     First Release
 *              : 25.01.2019 2.01     English PDF added, Fixed blank check processing and Busy check procedure
 *              : 21.04.2023 2.10     Added macro constant judgment of "FLASH_TYPE_5"
+*              : 14.03.2024 2.30     Delete the following macro judgments.
+*                                    "FLASH_CFG_CODE_FLASH_ENABLE"
+*                                    "FLASH_CFG_CODE_FLASH_BGO"
+*              : 20.03.2025 2.31     Changed the disclaimer.
 *************************************************************************************************/
 
 /************************************************************************************************
@@ -69,12 +55,6 @@ static e_flash_dm_status_t r_flash_dm_d1_erase(void);
 static e_flash_dm_status_t r_flash_dm_d1_control(e_flash_dm_cmd_t cmd, uint32_t* pcfg);
 static e_flash_dm_status_t r_flash_dm_d1_format(void);
 static e_flash_dm_status_t r_flash_dm_1_get_writable_size(uint32_t* pcfg);
-
-#if (FLASH_CFG_CODE_FLASH_ENABLE == 1)
-static e_flash_dm_status_t r_flash_dm_cfprotect(uint32_t protect);
-static e_flash_dm_status_t r_flash_dm_cfromcache(uint8_t rom_cache);
-
-#endif /* FLASH_CFG_CODE_FLASH_ENABLE */
 
 static st_flash_dispatch_1_hndl_t* (g_flash_dm_handle);
 
@@ -183,9 +163,6 @@ e_flash_dm_status_t R_FLASH_DM_Open(uint32_t* p_flash_dm_work, p_flash_dm_callba
     return ret;
 } /* End of function R_FLASH_DM_Open() */
 
-#if (FLASH_CFG_CODE_FLASH_ENABLE == 1) && (FLASH_CFG_CODE_FLASH_BGO == 1)
-#pragma section FRAM
-#endif /* (FLASH_CFG_CODE_FLASH_ENABLE == 1) && (FLASH_CFG_CODE_FLASH_BGO == 1) */
 
 /************************************************************************************************
 * Function Name: R_FLASH_DM_Close
@@ -1174,19 +1151,6 @@ static e_flash_dm_status_t r_flash_dm_d1_control(e_flash_dm_cmd_t cmd, uint32_t*
             }
             break;
 
-#if (FLASH_CFG_CODE_FLASH_ENABLE == 1)
-            case FLASH_DM_CF_PROTECT:
-            {
-                ret = r_flash_dm_cfprotect(pcfg);
-            }
-            break;
-
-            case FLASH_DM_ROM_CACHE:
-            {
-                ret = r_flash_dm_cfromcache(pcfg);
-            }
-            break;
-#endif
             default:
             {
                 ret = FLASH_DM_ERR_ARGUMENT;
@@ -1769,9 +1733,5 @@ static e_flash_dm_status_t r_flash_dm_getactivity(uint32_t* pcfg)
     return ret;
 
 } /* End of function r_flash_dm_getactivity() */
-
-#if (FLASH_CFG_CODE_FLASH_ENABLE == 1) && (FLASH_CFG_CODE_FLASH_BGO == 1)
-#pragma section
-#endif /* (FLASH_CFG_CODE_FLASH_ENABLE == 1) && (FLASH_CFG_CODE_FLASH_BGO == 1) */
 
 /* End of File */

@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_usb_pcdc
-VERSION = 		1.42
+VERSION = 		1.44
 MDF = V2
 
 CONFIG_FOLDER = r_config

@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+* Copyright (c) 2022 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /**********************************************************************************************************************
 * File Name    : r_rsci_rx26t.c
@@ -24,6 +11,8 @@
 *           15.08.2022 1.00    Initial Release
 *           30.06.2023 2.40    Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *           29.03.2024 2.50    Fixed RSCI (CH8, CH9) hardware bug for RX26T.
+*           31.12.2024 2.70    Added support Nested Interrupt.
+*           15.03.2025 2.71    Updated disclaimer
 ***********************************************************************************************************************/
 
 /*****************************************************************************
@@ -1092,6 +1081,11 @@ ISRs
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci8_txi_isr, VECT(RSCI8,TXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci8_txi_isr(void)
 {
+#if RSCI_CFG_CH8_EN_TXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_txi_handler(&g_rsci_ch8_ctrl);
 } /* End of function rsci8_txi_isr() */
 #endif /* End of RSCI_CFG_CH8_INCLUDED */
@@ -1104,6 +1098,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci8_txi_isr(void)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci9_txi_isr, VECT(RSCI9,TXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci9_txi_isr(void)
 {
+#if RSCI_CFG_CH9_EN_TXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_txi_handler(&g_rsci_ch9_ctrl);
 } /* End of function rsci9_txi_isr() */
 #endif /* End of RSCI_CFG_CH9_INCLUDED */
@@ -1116,6 +1115,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci9_txi_isr(void)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci11_txi_isr, VECT(RSCI11, TXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_txi_isr(void)
 {
+#if RSCI_CFG_CH11_EN_TXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_txi_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_txi_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */
@@ -1139,6 +1143,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_txi_isr(void)
 ******************************************************************************/
 void rsci8_tei_isr(void *cb_args)
 {
+#if RSCI_CFG_CH8_EN_TEI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_tei_handler(&g_rsci_ch8_ctrl);
 } /* End of function rsci8_tei_isr() */
 #endif /* End of RSCI_CFG_CH8_INCLUDED */
@@ -1150,6 +1159,11 @@ void rsci8_tei_isr(void *cb_args)
 ******************************************************************************/
 void rsci9_tei_isr(void *cb_args)
 {
+#if RSCI_CFG_CH9_EN_TEI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_tei_handler(&g_rsci_ch9_ctrl);
 } /* End of function rsci9_tei_isr() */
 #endif /* End of RSCI_CFG_CH9_INCLUDED */
@@ -1161,6 +1175,11 @@ void rsci9_tei_isr(void *cb_args)
 ******************************************************************************/
 void rsci11_tei_isr(void *cb_args)
 {
+#if RSCI_CFG_CH11_EN_TEI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_tei_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_tei_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */
@@ -1181,6 +1200,11 @@ void rsci11_tei_isr(void *cb_args)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci8_rxi_isr, VECT(RSCI8,RXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci8_rxi_isr(void)
 {
+#if RSCI_CFG_CH8_EN_RXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_rxi_handler(&g_rsci_ch8_ctrl);
 } /* End of function rsci8_rxi_isr() */
 #endif /* End of RSCI_CFG_CH8_INCLUDED */
@@ -1193,6 +1217,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci8_rxi_isr(void)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci9_rxi_isr, VECT(RSCI9,RXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci9_rxi_isr(void)
 {
+#if RSCI_CFG_CH9_EN_RXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_rxi_handler(&g_rsci_ch9_ctrl);
 } /* End of function rsci9_rxi_isr() */
 #endif /* End of RSCI_CFG_CH9_INCLUDED */
@@ -1205,6 +1234,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci9_rxi_isr(void)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci11_rxi_isr, VECT(RSCI11, RXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_rxi_isr(void)
 {
+#if RSCI_CFG_CH11_EN_RXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_rxi_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_rxi_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */
@@ -1226,6 +1260,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_rxi_isr(void)
 ******************************************************************************/
 void rsci8_eri_isr(void *cb_args)
 {
+#if RSCI_CFG_CH8_EN_ERI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_eri_handler(&g_rsci_ch8_ctrl);
 } /* End of function rsci8_eri_isr() */
 #endif /* End of RSCI_CFG_CH8_INCLUDED */
@@ -1237,6 +1276,11 @@ void rsci8_eri_isr(void *cb_args)
 ******************************************************************************/
 void rsci9_eri_isr(void *cb_args)
 {
+#if RSCI_CFG_CH9_EN_ERI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_eri_handler(&g_rsci_ch9_ctrl);
 } /* End of function rsci9_eri_isr() */
 #endif /* End of RSCI_CFG_CH9_INCLUDED */
@@ -1248,6 +1292,11 @@ void rsci9_eri_isr(void *cb_args)
 ******************************************************************************/
 void rsci11_eri_isr(void *cb_args)
 {
+#if RSCI_CFG_CH11_EN_ERI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_eri_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_eri_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */

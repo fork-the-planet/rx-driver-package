@@ -35,8 +35,6 @@ r_scif_rx
 |   +-- ja
 |        +-- r01an2222jj{VERSION_NUMBER}-rx.pdf
 |
-+---ref
-|   +-- r_scif_rx_config_reference.h
 |
 +---src
     +-- r_scif_rx.c

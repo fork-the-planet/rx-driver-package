@@ -35,7 +35,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp_rx     v7.51 or greater (See platform.h)
+* r_bsp_rx     v7.52 or greater (See platform.h)
 
 File Structure
 --------------

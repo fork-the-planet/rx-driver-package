@@ -1,13 +1,16 @@
-/*""FILE COMMENT""*******************************************************************
+/*
+* Copyright (C) 2011 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+/************************************************************************************
 * File Name     : r_mw_version.h
 * Version       :
 * Device(s)     : Renesas MCUs
 * Tool-Chain    :
 * H/W Platform  :
 * Description   : Renesas Middleware library version information header file
-*************************************************************************************
-* History       : DD.MM.YYYY Version Description
-*""FILE COMMENT END""****************************************************************/
+*************************************************************************************/
 #ifndef _R_MW_VERSION_H_
 #define _R_MW_VERSION_H_
 

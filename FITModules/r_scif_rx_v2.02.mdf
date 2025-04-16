@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/*
+* Copyright (c) 2014 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 0.2)
+           This is a description of a sample FIT module for demonstration purposes only.
+***********************************************************************************************************************/
+-->
+
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.0" xs:noNamespaceSchemaLocation="mdf_schema.xsd">
+  <fileVersion>1.00</fileVersion>
+  <formatVersion>1.00</formatVersion>
+  <fileTemplate>r_pinset_type2</fileTemplate>
+  <resourceInfo>
+    <peripheral name="SCIF">
+      <channel number="SCIF8">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="SCK8">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TXD8">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RXD8">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="CTS8#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RTS8#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+      </channel>
+      <channel number="SCIF9">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="SCK9">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TXD9">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RXD9">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="CTS9#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RTS9#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+      </channel>
+      <channel number="SCIF10">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="SCK10">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TXD10">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RXD10">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="CTS10#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RTS10#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+      </channel>
+      <channel number="SCIF11">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="SCK11">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TXD11">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RXD11">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="CTS11#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="RTS11#">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+      </channel>
+    </peripheral>
+  </resourceInfo>
+</module>

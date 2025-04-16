@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_datfrx_rx
-VERSION = 		2.10
+VERSION = 		2.31
 MDF = V2
 
 CONFIG_FOLDER = r_config

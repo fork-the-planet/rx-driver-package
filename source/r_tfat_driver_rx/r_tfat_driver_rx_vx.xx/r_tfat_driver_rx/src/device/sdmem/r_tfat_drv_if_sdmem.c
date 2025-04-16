@@ -1,43 +1,24 @@
-/*******************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014(2015-2020) Renesas Electronics Corporation. All rights reserved.
-*******************************************************************************/
-/*******************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * File Name    : r_tfat_drv_if_sdmem.c
 * Description  : TFAT driver Interface for SD memory card.
-*******************************************************************************/
-/*******************************************************************************
-* History      : DD.MM.YYYY Version  Description
-*              : 01.12.2014 1.00     First Release
-*              : 22.06.2015 1.02     Added support MCU RX231.
-*              : 01.04.2016 1.03     Updated the xml file.
-*              : 29.06.2018 1.04     Modified SD card API.
-*              : 08.08.2019 2.00     Added support for FreeRTOS and 
-*                                    Renesas uITRON (RI600V4).
-*                                    Added support for GNUC and ICCRX.
-*              : 10.09.2020 2.20     Added support for the format function.
-*              : 30.09.2024 2.60     Changed the comment of API functions to
-*                                    the Doxygen style.
-*******************************************************************************/
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+* History      : DD.MM.YYYY Version Description
+*              : 01.12.2014 1.00    First Release
+*              : 22.06.2015 1.02    Added support MCU RX231.
+*              : 01.04.2016 1.03    Updated the xml file.
+*              : 29.06.2018 1.04    Modified SD card API.
+*              : 08.08.2019 2.00    Added support for FreeRTOS and Renesas uITRON (RI600V4).
+*                                   Added support for GNUC and ICCRX.
+*              : 10.09.2020 2.20    Added support for the format function.
+*              : 30.09.2024 2.60    Changed the comment of API functions to the Doxygen style.
+*              : 15.03.2025 2.61    Updated disclaimer.
+***********************************************************************************************************************/
 
 /******************************************************************************
 Includes   <System Includes> , "Project Includes"

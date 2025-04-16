@@ -5,12 +5,12 @@ r_datfrx_rx
 
 Document Number
 ---------------
-R20AN0507JJ0210-RX-DATFRX
-R20AN0507EJ0210-RX-DATFRX
+R20AN0507JJ0231-RX-DATFRX
+R20AN0507EJ0231-RX-DATFRX
 
 Version
 -------
-v2.10
+v2.31
 
 Overview
 --------
@@ -48,8 +48,8 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp      V7.30
-* r_flash_rx V5.00
+* r_bsp      V7.42
+* r_flash_rx V5.11
 
 How to add to your project
 --------------------------
@@ -79,7 +79,8 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 
 Toolchain(s) Used
 -----------------
-* Renesas RX Compiler V.3.05.00
+* Renesas RX Compiler V.3.06.00
+* Renesas RX Compiler V.3.07.00
 
 File Structure
 --------------
@@ -89,11 +90,11 @@ r_datfrx_rx
 |
 +---doc
 |   +---en
-|   |       r20an0507ej0201-rx-datfrx.pdf
-|   |       DATFRX_BockNnumberCalculation_e_Rev100.xlsx
+|   |       r20an0507ej0231-rx-datfrx.pdf
+|   |       DATFRX_BlockNumberCalculation_e_Rev110.xlsx
 |   \---ja
-|           r20an0507jj0201-rx-datfrx.pdf
-|           DATFRX_BockNnumberCalculation_j_Rev100.xlsx
+|           r20an0507jj0231-rx-datfrx.pdf
+|           DATFRX_BlockNumberCalculation_j_Rev110.xlsx
 |
 \---src
     |   r_flash_dm_private.h
@@ -102,9 +103,8 @@ r_datfrx_rx
     +---flash_type_1
     |       r_dispatch_1.c
     |       r_dispatch_1.h
-    |       r_dispatch_1_cf_1k.h
-    |       r_dispatch_1_cf_2k.h
     |       r_dispatch_1_df_1k.h
+    |       r_dispatch_1_df_256b.h
     |       r_dm_1.c
     |       r_dm_1.h
     |

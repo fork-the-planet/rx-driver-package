@@ -1,32 +1,14 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2008 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2008(2009-2020) Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
-/************************************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * File Name    : r_eeprom_spi_private.h
-* Version      : 3.02
+* Version      : 3.21
 * Description  : EEPROM driver private header file
-*************************************************************************************************/
-/************************************************************************************************
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * History      : Date          No.             Comment
 *              : 2008.09.09                    wrote it.
 *              : 2009.01.31    #### CF-0005    Divided between SIO processing and CRC calculation.
@@ -38,13 +20,14 @@
 *              : 2012.03.19    Ver2.02 --------------------------------------------------------
 *              : 2013.09.30    Ver2.03 Corrected comments.
 *
-*              : DD.MM.YYYY Version  Description
-*              : 28.11.2014 2.30     Revised functions of same as Ver.2.30 of other middleware.
-*              : 30.01.2015 2.31     Added RX71M.
-*              : 29.05.2015 2.32     Added RX231 and RX230.
-*              : 21.12.2018 3.00     Delete r_eeprom_spi_drvif_dev0.c and r_eeprom_spi_drvif_dev1.c related statement
-*              : 10.12.2020 3.02     Modified the header file name in the comment.
-*************************************************************************************************/
+*              : DD.MM.YYYY Version Description
+*              : 28.11.2014 2.30    Revised functions of same as Ver.2.30 of other middleware.
+*              : 30.01.2015 2.31    Added RX71M.
+*              : 29.05.2015 2.32    Added RX231 and RX230.
+*              : 21.12.2018 3.00    Delete r_eeprom_spi_drvif_dev0.c and r_eeprom_spi_drvif_dev1.c related statement
+*              : 10.12.2020 3.02    Modified the header file name in the comment.
+*              : 15.03.2025 3.21    Updated disclaimer.
+***********************************************************************************************************************/
 #ifndef __EEPROM_SPI_PRIVATE_H__
 #define __EEPROM_SPI_PRIVATE_H__
 

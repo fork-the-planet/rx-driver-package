@@ -5,7 +5,7 @@ r_dmaca_rx
 
 Version
 -------
-v3.30
+v3.41
 
 Overview
 --------
@@ -13,7 +13,6 @@ The DMACA driver provides a method to transmit the data using the Direct Memory 
 The driver includes API functions to initialize DMAC, create Transfer data, Control and get status of DMAC.
 The driver can be reduced in size by removing code used for parameter checking. 
 All configuration options can be found in "r_config\r_dmaca_rx_config.h". 
-An original copy of the configuration file is stored in "r_dmaca_rx\ref\r_dmaca_rx_config_reference.h".
 
 Features
 --------

@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name     : r_rspia_rx_config.c
@@ -25,6 +12,8 @@
 *                               Supported for RX671.
 *         : 30.06.2023 1.40     Supported for RX26T-256K.
 *         : 15.12.2023 1.50     Changed the default value of TX/RX FIFO Threshold.
+*         : 31.12.2024 1.60     Supported for Nested interrupt.
+*         : 15.03.2025 1.61     Updated disclaimer.
 ***********************************************************************************************************************/
 #ifndef RSPIA_CONFIG_HEADER_FILE
 #define RSPIA_CONFIG_HEADER_FILE
@@ -64,6 +53,15 @@ Configuration Options
 
 /* SET RX FIFO THRESHOLD; (RSPIA supported MCU ONLY) 0 lowest, 3 highest */
 #define RSPIA_CFG_CH0_RX_FIFO_THRESH (1)
+
+/* Specifies whether to include code for nested interrupt SPTI in channel 0 */
+#define RSPIA_CFG_CH0_SPTI_EN_NESTED_INT (0)
+
+/* Specifies whether to include code for nested interrupt SPRI in channel 0 */
+#define RSPIA_CFG_CH0_SPRI_EN_NESTED_INT (0)
+
+/* Specifies whether to include code for nested interrupt SPEI in channel 0 */
+#define RSPIA_CFG_CH0_SPEI_EN_NESTED_INT (0)
 
 /**********************************************************************************************************************/
 #endif /* RSPIA_CONFIG_HEADER_FILE */

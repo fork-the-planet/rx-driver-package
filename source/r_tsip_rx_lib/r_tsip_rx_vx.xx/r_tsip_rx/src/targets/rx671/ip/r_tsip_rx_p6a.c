@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED  AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 27.06.2015 1.00     First Release
@@ -41,6 +28,8 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -110,33 +99,25 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
     TSIP.REG_108H.WORD = 0x00000000u;
     TSIP.REG_104H.WORD = 0x00000168u;
     TSIP.REG_E0H.WORD = 0x80020100u;
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     /* WAIT_LOOP */
     while (1u != TSIP.REG_104H.BIT.B31)
     {
         /* waiting */
     }
     TSIP.REG_100H.WORD = InData_Cmd[0];
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     /* WAIT_LOOP */
     while (1u != TSIP.REG_104H.BIT.B31)
     {
         /* waiting */
     }
     TSIP.REG_100H.WORD = InData_WrappedKeyType[0];
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     TSIP.REG_ECH.WORD = 0x00003409u;
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     TSIP.REG_ECH.WORD = 0x3420a900u;
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     TSIP.REG_ECH.WORD = 0x00000002u;
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     TSIP.REG_E0H.WORD = 0x00000080u;
     TSIP.REG_1CH.WORD = 0x00A60000u;
     TSIP.REG_ECH.WORD = 0x3420a800u;
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     TSIP.REG_ECH.WORD = 0x00000003u;
-    TSIP.REG_1D0H.WORD = 0x00000000u;
     TSIP.REG_E0H.WORD = 0x00000080u;
     TSIP.REG_1CH.WORD = 0x00A60000u;
     RX671_func100(change_endian_long(0xedf4dc21u), change_endian_long(0xcd4bd8efu), change_endian_long(0x4b68329eu), change_endian_long(0x8904defau));
@@ -169,7 +150,6 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
         TSIP.REG_100H.WORD = InData_KeyIndex[2];
         TSIP.REG_100H.WORD = InData_KeyIndex[3];
         TSIP.REG_ECH.WORD = 0x38000d08u;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_E0H.WORD = 0x00000080u;
         TSIP.REG_1CH.WORD = 0x00260000u;
         RX671_func100(change_endian_long(0x43958ca9u), change_endian_long(0xe8a2aaefu), change_endian_long(0xf9d36ceeu), change_endian_long(0xc83090cdu));
@@ -292,7 +272,6 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
             TSIP.REG_100H.WORD = InData_WrappedKeyIndex[3];
             TSIP.REG_A4H.WORD = 0x000c0b0cu;
             TSIP.REG_E0H.WORD = 0x810100c0u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_00H.WORD = 0x00001807u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_00H.BIT.B25)
@@ -317,23 +296,14 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
             }
             TSIP.REG_100H.WORD = change_endian_long(0x00000000u);
             TSIP.REG_ECH.WORD = 0x0000b7e0u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x00000008u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x0000b780u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x00000010u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x00000bdeu;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x0000b760u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x00000004u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x0000a8e0u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_ECH.WORD = 0x00000008u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             for(iLoop = 0; iLoop < KEY_INDEX_SIZE-8; iLoop = iLoop + 4)
             {
                 TSIP.REG_A4H.WORD = 0x00f007bdu;
@@ -347,7 +317,6 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
                 TSIP.REG_100H.WORD = InData_WrappedKeyIndex[iLoop+4 + 2];
                 TSIP.REG_100H.WORD = InData_WrappedKeyIndex[iLoop+4 + 3];
                 TSIP.REG_E0H.WORD = 0x8084001fu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_00H.WORD = 0x00008113u;
                 /* WAIT_LOOP */
                 while (0u != TSIP.REG_00H.BIT.B25)
@@ -356,17 +325,13 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
                 }
                 TSIP.REG_1CH.WORD = 0x00001800u;
                 TSIP.REG_ECH.WORD = 0x000027fcu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x000027dbu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 RX671_func101(change_endian_long(0x0f6cbc24u), change_endian_long(0x064eeaf2u), change_endian_long(0x6e4b9232u), change_endian_long(0x9b2aed59u));
             }
             TSIP.REG_ECH.WORD = 0x38000bc7u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_E0H.WORD = 0x00000080u;
             TSIP.REG_1CH.WORD = 0x00260000u;
             TSIP.REG_1CH.WORD = 0x00402000u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_A4H.WORD = 0x000007bdu;
             /* WAIT_LOOP */
             while (1u != TSIP.REG_104H.BIT.B31)
@@ -405,36 +370,23 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
             else
             {
                 TSIP.REG_ECH.WORD = 0x0000b400u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0xa6a6a6a6u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00003420u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x0000b760u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000008u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x0000b780u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000004u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x0000b480u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000001u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000bdeu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 for(jLoop = 0; jLoop <= 5; jLoop = jLoop + 1)
                 {
                     TSIP.REG_ECH.WORD = 0x000037fbu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x00000bbdu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     for(iLoop = 1; iLoop <= (WRAPPED_KEY_SIZE-2)/2; iLoop = iLoop + 1)
                     {
                         TSIP.REG_A4H.WORD = 0x00008a85u;
                         TSIP.REG_E0H.WORD = 0x81020000u;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_00H.WORD = 0x0000180bu;
                         /* WAIT_LOOP */
                         while (0u != TSIP.REG_00H.BIT.B25)
@@ -443,7 +395,6 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
                         }
                         TSIP.REG_1CH.WORD = 0x00001800u;
                         TSIP.REG_E0H.WORD = 0x8182001fu;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_00H.WORD = 0x0000180bu;
                         /* WAIT_LOOP */
                         while (0u != TSIP.REG_00H.BIT.B25)
@@ -452,7 +403,6 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
                         }
                         TSIP.REG_1CH.WORD = 0x00001800u;
                         TSIP.REG_E0H.WORD = 0x80040000u;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_00H.WORD = 0x00008113u;
                         /* WAIT_LOOP */
                         while (0u != TSIP.REG_00H.BIT.B25)
@@ -461,74 +411,45 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
                         }
                         TSIP.REG_1CH.WORD = 0x00001800u;
                         TSIP.REG_ECH.WORD = 0x00000824u;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_ECH.WORD = 0x00003c5fu;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_ECH.WORD = 0x000027fcu;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_ECH.WORD = 0x00003c7fu;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_ECH.WORD = 0x000027fcu;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_ECH.WORD = 0x00002c80u;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         TSIP.REG_ECH.WORD = 0x00002fa0u;
-                        TSIP.REG_1D0H.WORD = 0x00000000u;
                         RX671_func101(change_endian_long(0xe2a5674eu), change_endian_long(0x5952d89fu), change_endian_long(0x6e0c86c2u), change_endian_long(0xed34d57du));
                     }
                     TSIP.REG_ECH.WORD = 0x38000ba5u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_E0H.WORD = 0x00000080u;
                     TSIP.REG_1CH.WORD = 0x00260000u;
                     TSIP.REG_1CH.WORD = 0x00402000u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x00002fc0u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     RX671_func101(change_endian_long(0x611445f8u), change_endian_long(0x8a1acd91u), change_endian_long(0x1ae20d5bu), change_endian_long(0x46c0dfabu));
                 }
                 TSIP.REG_ECH.WORD = 0x38008bc0u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000006u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_E0H.WORD = 0x00000080u;
                 TSIP.REG_1CH.WORD = 0x00260000u;
                 TSIP.REG_1CH.WORD = 0x00402000u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000bffu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00003c1fu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x000027fcu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00003c3fu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000bffu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000bdeu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x000037a5u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00002fa0u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x0000b780u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000008u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 for(iLoop = 0; iLoop < WRAPPED_KEY_SIZE; iLoop = iLoop + 2)
                 {
                     TSIP.REG_ECH.WORD = 0x000008c6u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x34202bddu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x2000d0c0u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x00007c06u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_1CH.WORD = 0x00602000u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     RX671_func100(change_endian_long(0x6b8faefbu), change_endian_long(0xc63e64f9u), change_endian_long(0xb60c7bf0u), change_endian_long(0xb9c22054u));
                     TSIP.REG_E0H.WORD = 0x8182001fu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_04H.WORD = 0x0000060au;
                     /* WAIT_LOOP */
                     while (1u != TSIP.REG_04H.BIT.B30)
@@ -543,17 +464,13 @@ e_tsip_err_t R_TSIP_AESKeyWrapSub(uint32_t *InData_Cmd, uint32_t *InData_KeyInde
                     }
                     OutData_Text[iLoop+1 + 0] = TSIP.REG_100H.WORD;
                     TSIP.REG_ECH.WORD = 0x000027fcu;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     TSIP.REG_ECH.WORD = 0x00002fc0u;
-                    TSIP.REG_1D0H.WORD = 0x00000000u;
                     RX671_func101(change_endian_long(0xcec55b72u), change_endian_long(0xaa50461au), change_endian_long(0x4f49cb4bu), change_endian_long(0x8daa5203u));
                 }
                 TSIP.REG_ECH.WORD = 0x38000bddu;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_E0H.WORD = 0x00000080u;
                 TSIP.REG_1CH.WORD = 0x00260000u;
                 TSIP.REG_1CH.WORD = 0x00402000u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 RX671_func102(change_endian_long(0xfa5c8398u), change_endian_long(0xd63de76du), change_endian_long(0xb3e24591u), change_endian_long(0xf2cdce7bu));
                 TSIP.REG_1B4H.WORD = 0x00000040u;
                 /* WAIT_LOOP */

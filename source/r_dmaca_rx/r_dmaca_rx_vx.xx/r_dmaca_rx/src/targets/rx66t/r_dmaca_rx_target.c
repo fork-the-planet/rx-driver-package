@@ -1,32 +1,10 @@
-/*******************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2018 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2018 Renesas Electronics Corporation. All rights reserved.
-*******************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /*******************************************************************************
 * File Name    : r_dmaca_rx_target.c
-* Device(s)    : RX
-* Tool-Chain   : Renesas RXC Toolchain v3.00.00
-* OS           : not use
-* H/W Platform : not use
 * Description  : Functions for DMACA driver
 *******************************************************************************/
 /*******************************************************************************
@@ -35,7 +13,10 @@
 *                                    Fixed to correspond to Renesas coding rule.
 *              : 20.05.2019 2.00     Added support for GNUC and ICCRX.
 *              : 30.12.2019 2.30     Added support for atomic control.
-*                                    Fixed to comply with GSCE Coding Standards Rev.6.00.
+*                                    Fixed to comply with GSCE Coding Standards
+*                                    Rev.6.00.
+*              : 06.09.2024 3.40     Added support Nested Interrupt.
+*              : 15.03.2025 3.41     Updated disclaimer.
 *******************************************************************************/
 
 /*******************************************************************************
@@ -146,6 +127,11 @@ bool r_dmaca_channel_valid_check(uint8_t channel)
 ************************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac0i_isr(void)
 {
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     /* If the pointer to function is not 'NULL' */
     if (((uint32_t)NULL != (uint32_t)g_pdmaci_handlers[DMACA_CH0]) &&
        /* If the pointer to function is not 'FIT_NO_FUNC' */
@@ -158,7 +144,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac0i_isr(void)
     {
         /* do something */
     }
-
+    
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
     return;
 }
 /**************************************************************************
@@ -177,6 +167,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac0i_isr(void)
 ************************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac1i_isr(void)
 {
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     /* If the pointer to function is not 'NULL' */
     if (((uint32_t)NULL != (uint32_t)g_pdmaci_handlers[DMACA_CH1]) &&
        /* If the pointer to function is not 'FIT_NO_FUNC' */
@@ -189,7 +184,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac1i_isr(void)
     {
         /* do something */
     }
-
+    
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
     return;
 }
 /**************************************************************************
@@ -208,6 +207,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac1i_isr(void)
 ************************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac2i_isr(void)
 {
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     /* If the pointer to function is not 'NULL' */
     if (((uint32_t)NULL != (uint32_t)g_pdmaci_handlers[DMACA_CH2]) &&
        /* If the pointer to function is not 'FIT_NO_FUNC' */
@@ -220,7 +224,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac2i_isr(void)
     {
         /* do something */
     }
-
+    
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
     return;
 }
 /**************************************************************************
@@ -239,6 +247,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac2i_isr(void)
 ************************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac3i_isr(void)
 {
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     /* If the pointer to function is not 'NULL' */
     if (((uint32_t)NULL != (uint32_t)g_pdmaci_handlers[DMACA_CH3]) &&
        /* If the pointer to function is not 'FIT_NO_FUNC' */
@@ -251,7 +264,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac3i_isr(void)
     {
         /* do something */
     }
-
+    
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
     return;
 }
 /**************************************************************************
@@ -270,6 +287,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac3i_isr(void)
 ************************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac74i_isr(void)
 {
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     uint8_t channel;
 
     /* Get DMAC interrupt status */
@@ -338,7 +360,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void r_dmaca_intdmac74i_isr(void)
             /* do something */
         }
     }
-
+    
+#if DMACA_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
     return;
 }
 /**************************************************************************
@@ -365,7 +391,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
         case DMACA_CH0:
         {
             /* Clear the DMAC0I interrupt Enable bit. */
-        	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC0I));
+            R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC0I));
 
             /* Clear the DMAC0I priority level. */
             IPR(DMAC, DMAC0I) = 0;
@@ -374,7 +400,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
         case DMACA_CH1:
         {
             /* Clear the DMAC1I interrupt Enable bit. */
-        	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC1I));
+            R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC1I));
 
             /* Clear the DMAC1I priority level. */
             IPR(DMAC, DMAC1I) = 0;
@@ -383,7 +409,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
         case DMACA_CH2:
         {
             /* Clear the DMAC2I interrupt Enable bit. */
-        	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC2I));
+            R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC2I));
 
             /* Clear the DMAC2I priority level. */
             IPR(DMAC, DMAC2I) = 0;
@@ -392,7 +418,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
         case DMACA_CH3:
         {
             /* Clear the DMAC3I interrupt Enable bit. */
-        	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC3I));
+            R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC3I));
 
             /* Clear the DMAC3I priority level. */
             IPR(DMAC, DMAC3I) = 0;
@@ -404,7 +430,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
             {
 
                 /* Clear the DMAC74I interrupt Enable bit. */
-            	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
+                R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
 
                 /* Clear the DMAC74I priority level. */
                 IPR(DMAC, DMAC74I) = 0;
@@ -417,7 +443,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
             {
 
                 /* Clear the DMAC74I interrupt Enable bit. */
-            	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
+                R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
 
                 /* Clear the DMAC74I priority level. */
                 IPR(DMAC, DMAC74I) = 0;
@@ -430,7 +456,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
             {
 
                 /* Clear the DMAC74I interrupt Enable bit. */
-            	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
+                R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
 
                 /* Clear the DMAC74I priority level. */
                 IPR(DMAC, DMAC74I) = 0;
@@ -443,7 +469,7 @@ dmaca_return_t r_dmaca_int_disable(uint8_t channel)
             {
 
                 /* Clear the DMAC74I interrupt Enable bit. */
-            	R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
+                R_BSP_InterruptRequestDisable(VECT(DMAC,DMAC74I));
 
                 /* Clear the DMAC74I priority level. */
                 IPR(DMAC, DMAC74I) = 0;

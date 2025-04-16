@@ -1,3 +1,9 @@
+/*
+* Copyright (c) __PUBLICATION_YEAR__ Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+
 /**
   * @file    rel_iaq.h
   * @author  Renesas Electronics Corporation

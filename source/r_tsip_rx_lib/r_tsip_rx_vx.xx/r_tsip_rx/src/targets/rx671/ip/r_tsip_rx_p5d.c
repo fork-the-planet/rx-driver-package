@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED  AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 27.06.2015 1.00     First Release
@@ -41,6 +28,8 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -205,33 +194,27 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
     {
         TSIP.REG_104H.WORD = 0x00000168u;
         TSIP.REG_E0H.WORD = 0x80020200u;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         /* WAIT_LOOP */
         while (1u != TSIP.REG_104H.BIT.B31)
         {
             /* waiting */
         }
         TSIP.REG_100H.WORD = InData_PaddedMsg[0];
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         /* WAIT_LOOP */
         while (1u != TSIP.REG_104H.BIT.B31)
         {
             /* waiting */
         }
         TSIP.REG_100H.WORD = InData_PaddedMsg[1];
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_104H.WORD = 0x00000068u;
         TSIP.REG_E0H.WORD = 0x800103e0u;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         /* WAIT_LOOP */
         while (1u != TSIP.REG_104H.BIT.B31)
         {
             /* waiting */
         }
         TSIP.REG_100H.WORD = InData_KDFType[0];
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_ECH.WORD = 0x00000bbdu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_7CH.WORD = 0x00000011u;
         TSIP.REG_7CH.WORD = 0x00000011u;
         TSIP.REG_104H.WORD = 0x00000754u;
@@ -251,7 +234,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
         TSIP.REG_100H.WORD = change_endian_long(0x5be0cd19u);
         TSIP.REG_74H.WORD = 0x00000002u;
         TSIP.REG_ECH.WORD = 0x38000fffu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_E0H.WORD = 0x00000080u;
         TSIP.REG_1CH.WORD = 0x00260000u;
         RX671_func100(change_endian_long(0xa7ee6a98u), change_endian_long(0xdcd0207au), change_endian_long(0x7e505b9eu), change_endian_long(0x2bbd6021u));
@@ -275,7 +257,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             }
             TSIP.REG_1CH.WORD = 0x00001800u;
             TSIP.REG_E0H.WORD = 0x81020200u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_00H.WORD = 0x0000580bu;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_00H.BIT.B25)
@@ -333,7 +314,7 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             TSIP.REG_1CH.WORD = 0x00001600u;
             TSIP.REG_74H.WORD = 0x00000000u;
             TSIP.REG_104H.WORD = 0x00000000u;
-            RX671_func101(change_endian_long(0xf06f5bb1u), change_endian_long(0x09c11125u), change_endian_long(0x65dfd13eu), change_endian_long(0x181e96ffu));
+            RX671_func101(change_endian_long(0x53757ee0u), change_endian_long(0x169b4969u), change_endian_long(0x7306ae85u), change_endian_long(0x4d43fd96u));
         }
         else
         {
@@ -377,7 +358,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             TSIP.REG_100H.WORD = InData_SaltKeyIndex[10];
             TSIP.REG_100H.WORD = InData_SaltKeyIndex[11];
             TSIP.REG_E0H.WORD = 0x80080000u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_00H.WORD = 0x00008123u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_00H.BIT.B25)
@@ -410,10 +390,8 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             if (1u == (TSIP.REG_1CH.BIT.B22))
             {
                 TSIP.REG_ECH.WORD = 0x0000b7a0u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_ECH.WORD = 0x00000001u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
-                RX671_func101(change_endian_long(0xc0fbde8eu), change_endian_long(0x51473446u), change_endian_long(0x859cc675u), change_endian_long(0x54753163u));
+                RX671_func101(change_endian_long(0x21f371f2u), change_endian_long(0x986f28d7u), change_endian_long(0x079ff77eu), change_endian_long(0x32feadf2u));
             }
             else
             {
@@ -434,7 +412,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
                 }
                 TSIP.REG_1CH.WORD = 0x00001800u;
                 TSIP.REG_E0H.WORD = 0x81020200u;
-                TSIP.REG_1D0H.WORD = 0x00000000u;
                 TSIP.REG_00H.WORD = 0x0000580bu;
                 /* WAIT_LOOP */
                 while (0u != TSIP.REG_00H.BIT.B25)
@@ -550,19 +527,18 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
                 }
                 TSIP.REG_74H.WORD = 0x00000000u;
                 TSIP.REG_1CH.WORD = 0x00001600u;
-                RX671_func101(change_endian_long(0x0ad17fc5u), change_endian_long(0x473e7f7cu), change_endian_long(0x74ec40bfu), change_endian_long(0x2610393au));
+                RX671_func101(change_endian_long(0x3987843fu), change_endian_long(0x92a1196cu), change_endian_long(0x2b8c5f8cu), change_endian_long(0xc081b47eu));
             }
         }
         TSIP.REG_ECH.WORD = 0x38000fbdu;
-        TSIP.REG_1D0H.WORD = 0x00000000u;
         TSIP.REG_E0H.WORD = 0x00000080u;
         TSIP.REG_1CH.WORD = 0x00A60000u;
-        RX671_func100(change_endian_long(0x5feace04u), change_endian_long(0x701f6eb8u), change_endian_long(0xb8e43018u), change_endian_long(0x8bcd06cfu));
+        RX671_func100(change_endian_long(0x9c095f3du), change_endian_long(0x7b603c0eu), change_endian_long(0x7d940771u), change_endian_long(0x806d3416u));
         TSIP.REG_1CH.WORD = 0x00400000u;
         TSIP.REG_1D0H.WORD = 0x00000000u;
         if (1u == (TSIP.REG_1CH.BIT.B22))
         {
-            RX671_func102(change_endian_long(0x096dffadu), change_endian_long(0xb427d04du), change_endian_long(0xd89c1f55u), change_endian_long(0xbe6a6630u));
+            RX671_func102(change_endian_long(0x61789cc9u), change_endian_long(0x5434978du), change_endian_long(0x87bc1febu), change_endian_long(0xcc9c0477u));
             TSIP.REG_1BCH.WORD = 0x00000040u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_18H.BIT.B12)
@@ -576,9 +552,9 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
         }
         else
         {
-            RX671_func100(change_endian_long(0xbecd9157u), change_endian_long(0x89622b1fu), change_endian_long(0x43c3e527u), change_endian_long(0x72f37cb5u));
+            RX671_func100(change_endian_long(0x446df94bu), change_endian_long(0x219438aau), change_endian_long(0xb0f22ce8u), change_endian_long(0x6e5cef11u));
             RX671_func103();
-            RX671_func100(change_endian_long(0x7482fe65u), change_endian_long(0xdd8441cau), change_endian_long(0xef0768ceu), change_endian_long(0xe6bac20au));
+            RX671_func100(change_endian_long(0xc7045c3fu), change_endian_long(0x5fabd2bdu), change_endian_long(0x121a8da7u), change_endian_long(0x0afc7900u));
             TSIP.REG_104H.WORD = 0x00000052u;
             TSIP.REG_C4H.WORD = 0x01000c84u;
             /* WAIT_LOOP */
@@ -588,7 +564,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             }
             TSIP.REG_100H.WORD = change_endian_long(0x00000000u);
             TSIP.REG_E0H.WORD = 0x80040000u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_00H.WORD = 0x00008213u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_00H.BIT.B25)
@@ -597,7 +572,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             }
             TSIP.REG_1CH.WORD = 0x00001800u;
             TSIP.REG_E0H.WORD = 0x81040000u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_04H.WORD = 0x00000612u;
             /* WAIT_LOOP */
             while (1u != TSIP.REG_04H.BIT.B30)
@@ -625,7 +599,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             OutData_KeyIndex[3] = TSIP.REG_100H.WORD;
             TSIP.REG_C4H.WORD = 0x000c2b0du;
             TSIP.REG_E0H.WORD = 0x81040000u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_00H.WORD = 0x00002813u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_00H.BIT.B25)
@@ -635,25 +608,28 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
             TSIP.REG_1CH.WORD = 0x00001800u;
             TSIP.REG_104H.WORD = 0x00000068u;
             TSIP.REG_E0H.WORD = 0x800103c0u;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             /* WAIT_LOOP */
             while (1u != TSIP.REG_104H.BIT.B31)
             {
                 /* waiting */
             }
             TSIP.REG_100H.WORD = InData_KeyIndexType[0];
-            TSIP.REG_1D0H.WORD = 0x00000000u;
+            TSIP.REG_ECH.WORD = 0x3020abc0u;
+            TSIP.REG_ECH.WORD = 0x00000003u;
+            TSIP.REG_ECH.WORD = 0x00060020u;
+            TSIP.REG_ECH.WORD = 0x0000b7c0u;
+            TSIP.REG_ECH.WORD = 0x00000002u;
+            TSIP.REG_ECH.WORD = 0x00000080u;
             RX671_func060();
             TSIP.REG_ECH.WORD = 0x38000fdeu;
-            TSIP.REG_1D0H.WORD = 0x00000000u;
             TSIP.REG_E0H.WORD = 0x00000080u;
             TSIP.REG_1CH.WORD = 0x00260000u;
-            RX671_func100(change_endian_long(0x5a9214c7u), change_endian_long(0x53470323u), change_endian_long(0x5c669c88u), change_endian_long(0x89c15940u));
+            RX671_func100(change_endian_long(0x4882b907u), change_endian_long(0x07d7436cu), change_endian_long(0xce84d634u), change_endian_long(0x6543623eu));
             TSIP.REG_1CH.WORD = 0x00400000u;
             TSIP.REG_1D0H.WORD = 0x00000000u;
             if (1u == (TSIP.REG_1CH.BIT.B22))
             {
-                RX671_func100(change_endian_long(0xbf5c1445u), change_endian_long(0xb3982245u), change_endian_long(0x45dae333u), change_endian_long(0x374f88abu));
+                RX671_func100(change_endian_long(0x0916ce78u), change_endian_long(0x298494c8u), change_endian_long(0x3c8d6d0fu), change_endian_long(0x055f50b2u));
                 TSIP.REG_C4H.WORD = 0x02e007bdu;
                 TSIP.REG_00H.WORD = 0x00002513u;
                 TSIP.REG_74H.WORD = 0x00000008u;
@@ -700,11 +676,11 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
                 OutData_KeyIndex[9] = TSIP.REG_100H.WORD;
                 OutData_KeyIndex[10] = TSIP.REG_100H.WORD;
                 OutData_KeyIndex[11] = TSIP.REG_100H.WORD;
-                RX671_func101(change_endian_long(0xd8ee4ae6u), change_endian_long(0x281b45b8u), change_endian_long(0x3a07d617u), change_endian_long(0x9ab29b8bu));
+                RX671_func101(change_endian_long(0xc018a69fu), change_endian_long(0xf061ac40u), change_endian_long(0xf2880eafu), change_endian_long(0xd3312a74u));
             }
             else
             {
-                RX671_func100(change_endian_long(0x1eb94818u), change_endian_long(0x9973642du), change_endian_long(0xed06ca89u), change_endian_long(0x458a6899u));
+                RX671_func100(change_endian_long(0x2d64f617u), change_endian_long(0xf1692009u), change_endian_long(0x2c76da94u), change_endian_long(0xbd676f36u));
                 TSIP.REG_D0H.WORD = 0x00000100u;
                 TSIP.REG_C4H.WORD = 0x02e087bfu;
                 TSIP.REG_00H.WORD = 0x00002523u;
@@ -754,9 +730,9 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
                 OutData_KeyIndex[13] = TSIP.REG_100H.WORD;
                 OutData_KeyIndex[14] = TSIP.REG_100H.WORD;
                 OutData_KeyIndex[15] = TSIP.REG_100H.WORD;
-                RX671_func101(change_endian_long(0x0e235a9au), change_endian_long(0x7a7e7ef2u), change_endian_long(0xa45c46b4u), change_endian_long(0x2df53290u));
+                RX671_func101(change_endian_long(0xe1197e53u), change_endian_long(0xe4fa32cau), change_endian_long(0x1fa09850u), change_endian_long(0xb28981b2u));
             }
-            RX671_func102(change_endian_long(0x4ee707deu), change_endian_long(0x8d63e3b4u), change_endian_long(0x7f7b8ec5u), change_endian_long(0x0cc359f9u));
+            RX671_func102(change_endian_long(0x7e84dc00u), change_endian_long(0x8384b263u), change_endian_long(0x3b18ecd0u), change_endian_long(0xdef95290u));
             TSIP.REG_1BCH.WORD = 0x00000040u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_18H.BIT.B12)
@@ -771,6 +747,6 @@ e_tsip_err_t R_TSIP_DlmsCosemCalculateKekSub(uint32_t *InData_KeyIndexType, uint
     }
 }
 /**********************************************************************************************************************
- End of function ./input_dir/RX671/RX671_p5d.prc
+ End of function ./input_dir/RX671/RX671_p5d_r1.prc
  *********************************************************************************************************************/
 #endif /* #if TSIP_ECDH_P256 == 1 */

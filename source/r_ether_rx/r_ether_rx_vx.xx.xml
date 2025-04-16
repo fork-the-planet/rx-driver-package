@@ -9,6 +9,7 @@
         <version>3.01.00</version>
         <version>3.02.00</version>
         <version>3.03.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
@@ -18,6 +19,7 @@
         <version>8.03.00.202002</version>
         <version>8.03.00.202004</version>
         <version>8.03.00.202102</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -27,6 +29,7 @@
         <version>4.12.01</version>
         <version>4.14.01</version>
         <version>4.20.01</version>
+        <version>5.10.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->
@@ -52,6 +55,7 @@
         <dependency>
             <module>r_bsp</module>
             <version>5.52</version>
+            <version>7.52</version>
         </dependency>
         <application>connectivity</application>
         <desc>Ethernet Driver.</desc>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 2.0)
+           This is a description of a sample FIT module configuration file
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" xs:noNamespaceSchemaLocation="schema_mdf_2.00.xsd">
+    <fileVersion>1.00</fileVersion>
+    <formatVersion>2.00</formatVersion>
+    <fileTemplate></fileTemplate>
+    <configuration>
+
+        <property id="RM_MCUBOOT_CFG_UPGRADE_MODE" display="Select the update mode" default="0" type="combobox">
+            <option id="RM_MCUBOOT_CFG_UPGRADE_MODE.0" display="Overwrite Only (default)" value="0"/>
+            <option id="RM_MCUBOOT_CFG_UPGRADE_MODE.1" display="Overwrite Only Fast" value="1"/>
+            <option id="RM_MCUBOOT_CFG_UPGRADE_MODE.2" display="Swap" value="2"/>
+            <option id="RM_MCUBOOT_CFG_UPGRADE_MODE.3" display="Direct XIP" value="3"/>
+            <description>Select the update mode.
+0: Overwrite Only (default)
+1: Overwrite Only Fast
+2: Swap
+3: Direct XIP
+            </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_VALIDATE_PRIMARY_SLOT" display="Enable signature verification of the Primary image." default="1" type="combobox">
+            <option id="RM_MCUBOOT_CFG_VALIDATE_PRIMARY_SLOT.0" display="Disabled" value="0"/>
+            <option id="RM_MCUBOOT_CFG_VALIDATE_PRIMARY_SLOT.1" display="Enabled (default)" value="1"/>
+            <description>Set this to 1 to perform signature verification of the Primary image.
+0: Disabled
+1: Enabled (default)
+            </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_DOWNGRADE_PREVENTION" display="Enable downgrade prevention when performing updates." default="0" type="combobox">
+            <constraint display="When Enable upgrade mode is Overwirite Only mode only" actionOnFail="disable">${RM_MCUBOOT_CFG_UPGRADE_MODE.1} >= ${RM_MCUBOOT_CFG_UPGRADE_MODE}</constraint>
+            <option id="RM_MCUBOOT_CFG_DOWNGRADE_PREVENTION.0" display="Disabled (default)" value="0"/>
+            <option id="RM_MCUBOOT_CFG_DOWNGRADE_PREVENTION.1" display="Enabled" value="1"/>
+            <description>Set this to 1 to prevent downgrades when performing updates.
+Can only be changed when the upgrade mode is set to overwrite only.
+0: Disabled (default)
+1: Enabled
+            </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_WATCHDOG_FEED_ENABLED" display="Enable user-defined watchdog feeds." default="0" type="combobox">
+            <option id="RM_MCUBOOT_CFG_WATCHDOG_FEED_ENABLED.0" display="Disabled (default)" value="0"/>
+            <option id="RM_MCUBOOT_CFG_WATCHDOG_FEED_ENABLED.1" display="Enabled" value="1"/>
+            <description>Set this to 1 when using a user-defined watchdog feed.
+0: Disabled (default)
+1: Enabled
+            </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_WATCHDOG_FEED_FUNCTION" display="Register a user-defined watch dog function." default="my_watchdog_feed_function" type="textbox">
+            <constraint display="When Enable user watchdog feed function is enable only." actionOnFail="disable">${RM_MCUBOOT_CFG_WATCHDOG_FEED_ENABLED} == ${RM_MCUBOOT_CFG_WATCHDOG_FEED_ENABLED.1}</constraint>
+            <constraint display="Please enter a valid function name without spaces or funny characters" actionOnFail="error">testSymbol("${RM_MCUBOOT_CFG_WATCHDOG_FEED_FUNCTION}")</constraint>
+            <description>Register a user-defined watch dog function.</description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_SIGN" display="Setting the authentication method for signature verification." default="1" type="combobox">
+            <option id="RM_MCUBOOT_CFG_SIGN.0" display="No signature verification is performed." value="0"/>
+            <option id="RM_MCUBOOT_CFG_SIGN.1" display="ECDSA P-256 (default)" value="1"/>
+            <option id="RM_MCUBOOT_CFG_SIGN.2" display="RSA 2048" value="2"/>
+            <constraint display="RSA cannot be selected in RSIP.">(('${Device.group}' !== 'RX261') || ('${Device.group}' === 'RX261' &amp;&amp; ${RM_MCUBOOT_CFG_SIGN} != ${RM_MCUBOOT_CFG_SIGN.2}))</constraint>
+            <description>Setting the authentication method for signature verification.
+If RM_MCUBOOT_CFG_VALIDATE_PRIMARY_SLOT is set to 1, perform primary image signature verification using the method set here.
+0: No signature verification is performed.
+1: ECDSA P-256 (default)
+2: RSA 2048
+            </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME" display="Set the decryption function for encrypted images." default="0" type="combobox">
+            <constraint display="When enable upgrade mode is not DirectXIP mode." actionOnFail="error">(${RM_MCUBOOT_CFG_UPGRADE_MODE} != ${RM_MCUBOOT_CFG_UPGRADE_MODE.3}) || (${RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME} != ${RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME.1})</constraint>
+            <option id="RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME.0" display="Encryption Disabled (default)" value="0"/>
+            <option id="RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME.1" display="Key Wrap" value="1"/>
+            <description>Set the decryption function for encrypted images.
+0: Encryption Disabled (default)
+1: Key Wrap
+            </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_DER_PUB_USER_KEY_ENABLE" display="Enable when using public key data in DER format." default="0" type="combobox">
+            <constraint display="Please set the signature verification authentication method." actionOnFail="disable">(${RM_MCUBOOT_CFG_SIGN} != ${RM_MCUBOOT_CFG_SIGN.0})</constraint>
+            <option id="RM_MCUBOOT_CFG_DER_PUB_USER_KEY_ENABLE.0" display="Disabled (default)" value="0"/>
+            <option id="RM_MCUBOOT_CFG_DER_PUB_USER_KEY_ENABLE.1" display="Enabled" value="1"/>
+            <description>Set this to 0 to use the sample DER format public key data.
+0: Disabled (default)
+1: Enabled
+            </description>
+		</property>
+        <property id="RM_MCUBOOT_CFG_VERIFY_KEY_ADDRESS" display="Set the address of the public key used for signature verification." default="NULL" type="textbox">
+            <constraint display="Please set the signature verification authentication method." actionOnFail="disable">(${RM_MCUBOOT_CFG_SIGN} != ${RM_MCUBOOT_CFG_SIGN.0})</constraint>
+            <constraint display="Value must be an integer or NULL">(testHexInteger("${RM_MCUBOOT_CFG_VERIFY_KEY_ADDRESS}")) || ("${RM_MCUBOOT_CFG_VERIFY_KEY_ADDRESS}" == "NULL")</constraint>
+            <constraint display="Value must be in the range 0x00000000 ~ 0xFFFFFFFF">(("${RM_MCUBOOT_CFG_VERIFY_KEY_ADDRESS}".replace(/[LUlu]+$/, '')  &gt;= 0) &amp;&amp; ("${RM_MCUBOOT_CFG_VERIFY_KEY_ADDRESS}".replace(/[LUlu]+$/, '')  &lt;= 0xFFFFFFFF)) || ("${RM_MCUBOOT_CFG_VERIFY_KEY_ADDRESS}" == "NULL")</constraint>
+            <description>Set the address of the public key used for signature verification.</description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_ENCRYPT_KEY_ADDRESS" display="Set the address of the key encryption key used for image decryption." default="NULL" type="textbox">
+            <constraint display="When enable upgrade mode is Swap mode." actionOnFail="disable">${RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME} != ${RM_MCUBOOT_CFG_APPLICATION_ENCRYPTION_SCHEME.0}</constraint>
+            <constraint display="Value must be an integer or NULL">(testHexInteger("${RM_MCUBOOT_CFG_ENCRYPT_KEY_ADDRESS}")) || ("${RM_MCUBOOT_CFG_ENCRYPT_KEY_ADDRESS}" == "NULL")</constraint>
+            <constraint display="Value must be in the range 0x00000000 ~ 0xFFFFFFFF">(("${RM_MCUBOOT_CFG_ENCRYPT_KEY_ADDRESS}".replace(/[LUlu]+$/, '')  &gt;= 0) &amp;&amp; ("${RM_MCUBOOT_CFG_ENCRYPT_KEY_ADDRESS}".replace(/[LUlu]+$/, '')  &lt;= 0xFFFFFFFF)) || ("${RM_MCUBOOT_CFG_ENCRYPT_KEY_ADDRESS}" == "NULL")</constraint>
+            <description>Set the address of the key encryption key used for image decryption.</description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_MCUBOOT_AREA_SIZE" display="Set the size of the area allocated to MCUboot." default="0x10000" type="textbox">
+            <constraint display="Value must be an integer">testHexInteger("${RM_MCUBOOT_CFG_MCUBOOT_AREA_SIZE}")</constraint>
+            <constraint display="Value must be in the range 0x00000000 ~ 0xFFFFFFFF">("${RM_MCUBOOT_CFG_MCUBOOT_AREA_SIZE}".replace(/[LUlu]+$/, '')  &gt;= 0) &amp;&amp; ("${RM_MCUBOOT_CFG_MCUBOOT_AREA_SIZE}".replace(/[LUlu]+$/, '')  &lt;= 0xFFFFFFFF)</constraint>
+            <description>Set the size of the area allocated to MCUboot.</description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_APPLICATION_AREA_SIZE" display="Set the size of the area allocated to the application image."
+            default="0xF0000"
+            conditionalDefault1=
+                    "if ('${Device.group}' === 'RX72N') {'0x1F0000';}
+                else if ('${Device.group}' === 'RX261') {'0x30000';}"
+            type="textbox">
+            <constraint display="Value must be an integer">testHexInteger("${RM_MCUBOOT_CFG_APPLICATION_AREA_SIZE}")</constraint>
+            <constraint display="Value must be in the range 0x00000000 ~ 0xFFFFFFFF">("${RM_MCUBOOT_CFG_APPLICATION_AREA_SIZE}".replace(/[LUlu]+$/, '')  &gt;= 0) &amp;&amp; ("${RM_MCUBOOT_CFG_APPLICATION_AREA_SIZE}".replace(/[LUlu]+$/, '')  &lt;= 0xFFFFFFFF)</constraint>
+            <description>Set the size of the area allocated to the application image.</description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_SCRATCH_AREA_SIZE" display="Set the scratch area size." default="0x10000" type="textbox">
+            <constraint display="When enable upgrade mode is Swap mode." actionOnFail="disable">${RM_MCUBOOT_CFG_UPGRADE_MODE} == ${RM_MCUBOOT_CFG_UPGRADE_MODE.2}</constraint>
+            <constraint display="Value must be an integer">testHexInteger("${RM_MCUBOOT_CFG_SCRATCH_AREA_SIZE}")</constraint>
+            <constraint display="Value must be in the range 0x00000000 ~ 0xFFFFFFFF">("${RM_MCUBOOT_CFG_SCRATCH_AREA_SIZE}".replace(/[LUlu]+$/, '')  &gt;= 0) &amp;&amp; ("${RM_MCUBOOT_CFG_SCRATCH_AREA_SIZE}".replace(/[LUlu]+$/, '')  &lt;= 0xFFFFFFFF)</constraint>
+            <description>Set the scratch area size.
+This setting is required when Swap is specified in upgrade mode.
+It is necessary to set an integral multiple of the flash sector size used as the scratch area.
+        </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_LOG_LEVEL" display="Log settings." default="0" type="combobox">
+            <option id="RM_MCUBOOT_CFG_LOG_LEVEL.0" display="Off (default)" value="0"/>
+            <option id="RM_MCUBOOT_CFG_LOG_LEVEL.1" display="Error" value="1"/>
+            <option id="RM_MCUBOOT_CFG_LOG_LEVEL.2" display="Warning" value="2"/>
+            <option id="RM_MCUBOOT_CFG_LOG_LEVEL.3" display="Info" value="3"/>
+            <option id="RM_MCUBOOT_CFG_LOG_LEVEL.4" display="Debug" value="4"/>
+            <description>Log settings.
+Logs of the specified level are output from MCUboot.
+0:Off (default)
+1:Error
+2:Warning
+3:Info
+4:Debug
+        </description>
+        </property>
+        <property id="RM_MCUBOOT_CFG_SELECT_SECURE_IP" display="Select Secure IP modules"
+            default="0"
+            conditionalDefault1=
+                    "if ('${Device.group}' === 'RX261') {'1';}"
+            type="combobox">
+            <option id="RM_MCUBOOT_CFG_SELECT_SECURE_IP.TSIP" display="TSIP" value="0" dependency="r_tsip_rx"/>
+            <option id="RM_MCUBOOT_CFG_SELECT_SECURE_IP.RSIP" display="RSIP" value="1" dependency="r_rsip_protected_rx"/>
+            <constraint display="Cannot be changed." actionOnFail="disable">(${RM_MCUBOOT_CFG_SELECT_SECURE_IP} == ${RM_MCUBOOT_CFG_SELECT_SECURE_IP.0} || ${RM_MCUBOOT_CFG_SELECT_SECURE_IP} == ${RM_MCUBOOT_CFG_SELECT_SECURE_IP.1})</constraint>
+            <description>Select the Secure IP module.
+TSIP = Used TSIP module
+RSIP = Used RSIP module
+        </description>
+        </property>
+    </configuration>
+</module>

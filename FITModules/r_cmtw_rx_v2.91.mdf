@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+-->
+<!--
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 0.2)
+           This is a description of a sample FIT module for demonstration purposes only.
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.0" xs:noNamespaceSchemaLocation="mdf_schema.xsd">
+  <fileVersion>1.00</fileVersion>
+  <formatVersion>1.00</formatVersion>
+  <fileTemplate>r_pinset_type2</fileTemplate>
+  <resourceInfo>
+    <peripheral name="CMTW">
+      <channel number="CMTW0">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="TIC0">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TIC1">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TOC0">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TOC1">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+      </channel>
+      <channel number="CMTW1">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="TIC2">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TIC3">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TOC2">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="TOC3">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+      </channel>
+    </peripheral>
+  </resourceInfo>
+</module>

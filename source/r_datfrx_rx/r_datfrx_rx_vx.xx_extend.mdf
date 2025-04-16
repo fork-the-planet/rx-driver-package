@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
+/*
+* Copyright (c) 2018 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
@@ -20,7 +25,8 @@ The settable value is from 1 to 15.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_BLOCK_NUM}")</constraint>
             <constraint display="Value must be in the range 3 ~ 1024">("${FLASH_DM_CFG_DF_BLOCK_NUM}" &gt;= 3) &amp;&amp; ("${FLASH_DM_CFG_DF_BLOCK_NUM}" &lt;= 1024)</constraint>
             <description>Please set the block address number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 3 to 8.
+   FLASH_TYPE1a = The settable value is from 3 to 8.
+   FLASH_TYPE1b = The settable value is from 3 to 32.
    FLASH_TYPE3,4,5 = The settable value is from 3 to 1024.</description>
         </property>
         <property id="FLASH_DM_CFG_DF_DATA_NUM" display="DATA FLASH : Data number to use" default="5" type="textbox">
@@ -34,7 +40,8 @@ The settable value is from 1 to 15.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO0}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO0}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO0}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -42,7 +49,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO1}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO1}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO1}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -50,7 +58,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO2}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO2}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO2}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -58,7 +67,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO3}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO3}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO3}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -66,7 +76,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO4}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO4}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO4}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -74,7 +85,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO5}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO5}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO5}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -82,7 +94,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO6}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO6}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO6}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -90,7 +103,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO7}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO7}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO7}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -98,7 +112,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO8}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO8}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO8}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -106,7 +121,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO9}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO9}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO9}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -114,7 +130,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO10}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO10}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO10}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -122,7 +139,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO11}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO11}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO11}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -130,7 +148,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO12}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO12}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO12}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -138,7 +157,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO13}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO13}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO13}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -146,7 +166,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO14}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO14}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO14}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -154,7 +175,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO15}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO15}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO15}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -162,7 +184,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO16}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO16}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO16}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -170,7 +193,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO17}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO17}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO17}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -178,7 +202,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO18}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO18}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO18}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -186,7 +211,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO19}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO19}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO19}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -194,7 +220,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO20}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO20}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO20}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -202,7 +229,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO21}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO21}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO21}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -210,7 +238,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO22}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO22}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO22}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -218,7 +247,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO23}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO23}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO23}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -226,7 +256,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO24}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO24}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO24}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -234,7 +265,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO25}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO25}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO25}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -242,7 +274,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO26}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO26}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO26}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -250,7 +283,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO27}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO27}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO27}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -258,7 +292,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO28}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO28}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO28}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -266,7 +301,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO29}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO29}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO29}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -274,7 +310,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO30}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO30}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO30}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024..
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -282,7 +319,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO31}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO31}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO31}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -290,7 +328,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO32}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO32}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO32}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -298,7 +337,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO33}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO33}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO33}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -306,7 +346,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO34}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO34}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO34}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -314,7 +355,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO35}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO35}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO35}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -322,7 +364,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO36}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO36}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO36}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -330,7 +373,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO37}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO37}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO37}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -338,7 +382,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO38}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO38}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO38}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>
@@ -346,7 +391,8 @@ The data size of the data number not to use is ignored.</description>
             <constraint display="Value must be an integer">testInteger("${FLASH_DM_CFG_DF_SIZE_NO39}")</constraint>
             <constraint display="Value must be in the range 1 ~ 1024">("${FLASH_DM_CFG_DF_SIZE_NO39}" &gt;= 1) &amp;&amp; ("${FLASH_DM_CFG_DF_SIZE_NO39}" &lt;= 1024)</constraint>
             <description>Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
 The data size of the data number not to use is ignored.</description>
         </property>

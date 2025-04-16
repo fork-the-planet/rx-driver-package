@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_vbatt_rx
-VERSION = 		2.30
+VERSION = 		2.31
 MDF = V2
 
 CONFIG_FOLDER = r_config

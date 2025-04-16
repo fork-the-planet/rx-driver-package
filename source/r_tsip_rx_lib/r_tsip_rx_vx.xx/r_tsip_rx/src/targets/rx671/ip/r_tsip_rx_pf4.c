@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED  AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 27.06.2015 1.00     First Release
@@ -41,6 +28,8 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -74,6 +63,7 @@
 *******************************************************************************************************************/ /**
 * @details       RX671 P-192/224/256 ECC Key Generation
 * @param[in]     InData_Cmd
+* @param[in]     InData_DomainParam
 * @param[out]    OutData_PubKeyIndex
 * @param[out]    OutData_PrivKeyIndex
 * @retval        TSIP_SUCCESS
@@ -81,7 +71,7 @@
 * @retval        TSIP_ERR_RESOURCE_CONFLICT
 * @note          None
 */
-e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t *OutData_PubKeyIndex, uint32_t *OutData_PrivKeyIndex)
+e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, const uint32_t *InData_DomainParam, uint32_t *OutData_PubKeyIndex, uint32_t *OutData_PrivKeyIndex)
 {
     int32_t iLoop = 0u, jLoop = 0u, kLoop = 0u, oLoop1 = 0u, oLoop2 = 0u, iLoop2 = 0u;
     uint32_t KEY_ADR = 0u, OFS_ADR = 0u;
@@ -105,7 +95,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
     TSIP.REG_84H.WORD = 0x0000f401u;
     TSIP.REG_108H.WORD = 0x00000000u;
-    RX671_func100(change_endian_long(0x1fda138bu), change_endian_long(0x50fb2fb7u), change_endian_long(0x8604a6b6u), change_endian_long(0x2d57e8e8u));
+    RX671_func100(change_endian_long(0x3d70ed69u), change_endian_long(0xff6c9df6u), change_endian_long(0xeb12f37du), change_endian_long(0x76a3fbfbu));
     TSIP.REG_104H.WORD = 0x00000068u;
     TSIP.REG_E0H.WORD = 0x80010380u;
     /* WAIT_LOOP */
@@ -114,35 +104,9 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         /* waiting */
     }
     TSIP.REG_100H.WORD = InData_Cmd[0];
-    TSIP.REG_ECH.WORD = 0x3020ab80u;
-    TSIP.REG_ECH.WORD = 0x00000003u;
-    TSIP.REG_ECH.WORD = 0x00060020u;
-    TSIP.REG_ECH.WORD = 0x0000b780u;
-    TSIP.REG_ECH.WORD = 0x00000002u;
-    TSIP.REG_ECH.WORD = 0x00000080u;
+    RX671_func402();
     TSIP.REG_28H.WORD = 0x00870001u;
-    TSIP.REG_ECH.WORD = 0x30003380u;
-    TSIP.REG_ECH.WORD = 0x00070020u;
-    TSIP.REG_ECH.WORD = 0x0000b400u;
-    TSIP.REG_ECH.WORD = 0x00000080u;
-    TSIP.REG_ECH.WORD = 0x00030040u;
-    TSIP.REG_ECH.WORD = 0x0000b400u;
-    TSIP.REG_ECH.WORD = 0x0000013Cu;
-    TSIP.REG_ECH.WORD = 0x00050040u;
-    TSIP.REG_ECH.WORD = 0x0000b400u;
-    TSIP.REG_ECH.WORD = 0x000001F8u;
-    TSIP.REG_ECH.WORD = 0x00000080u;
-    TSIP.REG_E0H.WORD = 0x81010000u;
-    TSIP.REG_04H.WORD = 0x00000606u;
-    /* WAIT_LOOP */
-    while (1u != TSIP.REG_04H.BIT.B30)
-    {
-        /* waiting */
-    }
-    S_RAM[0] = change_endian_long(TSIP.REG_100H.WORD);
-    OFS_ADR = S_RAM[0];
-    RX671_func100(change_endian_long(0x040b58e0u), change_endian_long(0x35118ba7u), change_endian_long(0xab4619c5u), change_endian_long(0x3301e43fu));
-    RX671_func004(OFS_ADR);
+    RX671_func004(InData_DomainParam);
     TSIP.REG_34H.WORD = 0x00000003u;
     TSIP.REG_24H.WORD = 0x800068d0u;
     /* WAIT_LOOP */
@@ -166,7 +130,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
     TSIP.REG_28H.WORD = 0x00890001u;
     RX671_func103();
-    RX671_func100(change_endian_long(0x2799f824u), change_endian_long(0x0bfe4debu), change_endian_long(0x64864c83u), change_endian_long(0xe1a67e9fu));
+    RX671_func100(change_endian_long(0x5b7a314au), change_endian_long(0xfa3e4bedu), change_endian_long(0x2d7afa59u), change_endian_long(0xe7a5e7dfu));
     TSIP.REG_104H.WORD = 0x00000052u;
     TSIP.REG_C4H.WORD = 0x01000c84u;
     /* WAIT_LOOP */
@@ -184,7 +148,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
     TSIP.REG_1CH.WORD = 0x00001800u;
     RX671_func103();
-    RX671_func100(change_endian_long(0x8978b226u), change_endian_long(0x2da8d032u), change_endian_long(0xa3979403u), change_endian_long(0x3a0601c3u));
+    RX671_func100(change_endian_long(0x59d8bcf9u), change_endian_long(0x81ee35d4u), change_endian_long(0xf8616ce4u), change_endian_long(0x7fbe7ed0u));
     TSIP.REG_104H.WORD = 0x00000052u;
     TSIP.REG_C4H.WORD = 0x01000c84u;
     /* WAIT_LOOP */
@@ -201,7 +165,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
     TSIP.REG_1CH.WORD = 0x00001800u;
     RX671_func103();
-    RX671_func100(change_endian_long(0xbc7366f2u), change_endian_long(0x9f52dc52u), change_endian_long(0xe04a0f5eu), change_endian_long(0xb828b175u));
+    RX671_func100(change_endian_long(0xed6b5674u), change_endian_long(0xe99447b6u), change_endian_long(0x3c132b2cu), change_endian_long(0xad35c214u));
     TSIP.REG_104H.WORD = 0x00000052u;
     TSIP.REG_C4H.WORD = 0x01000c84u;
     /* WAIT_LOOP */
@@ -230,17 +194,17 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     if (0x00000000u == (TSIP.REG_1CH.WORD & 0xff000000u))
     {
         TSIP.REG_28H.WORD = 0x00890001u;
-        RX671_func101(change_endian_long(0x22b5beb2u), change_endian_long(0x557ebb58u), change_endian_long(0x09e7846cu), change_endian_long(0xe0f9dc63u));
+        RX671_func101(change_endian_long(0x38616d7du), change_endian_long(0x5cd638f3u), change_endian_long(0xfad12621u), change_endian_long(0x2f009704u));
     }
     else if (0x01000000u == (TSIP.REG_1CH.WORD & 0xff000000u))
     {
         TSIP.REG_28H.WORD = 0x00880001u;
-        RX671_func101(change_endian_long(0x50973e50u), change_endian_long(0x9ec08477u), change_endian_long(0x397ba397u), change_endian_long(0x61a26384u));
+        RX671_func101(change_endian_long(0x3997d535u), change_endian_long(0x17fee858u), change_endian_long(0x348c68c1u), change_endian_long(0xc7c8582au));
     }
     else if (0x02000000u == (TSIP.REG_1CH.WORD & 0xff000000u))
     {
         TSIP.REG_28H.WORD = 0x00870001u;
-        RX671_func101(change_endian_long(0xc58d6d07u), change_endian_long(0xdfd3853bu), change_endian_long(0x570b6a1cu), change_endian_long(0x1ccf752fu));
+        RX671_func101(change_endian_long(0xc24763a8u), change_endian_long(0x1d601ffdu), change_endian_long(0x1b71836au), change_endian_long(0x3745eac6u));
     }
     TSIP.REG_24H.WORD = 0x000019c0u;
     /* WAIT_LOOP */
@@ -287,7 +251,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         /* waiting */
     }
     TSIP.REG_28H.WORD = 0x00870001u;
-    RX671_func100(change_endian_long(0x65a94dbeu), change_endian_long(0x45bd8d03u), change_endian_long(0xb526cd62u), change_endian_long(0x36a30e54u));
+    RX671_func100(change_endian_long(0xd7f54661u), change_endian_long(0x951c5ea5u), change_endian_long(0x01fce138u), change_endian_long(0xdc72f427u));
     TSIP.REG_24H.WORD = 0x0000dcd0u;
     /* WAIT_LOOP */
     while (0u != TSIP.REG_24H.BIT.B21)
@@ -313,8 +277,8 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     {
         /* waiting */
     }
-    RX671_func005(OFS_ADR);
-    RX671_func025(OFS_ADR);
+    RX671_func005(InData_DomainParam);
+    RX671_func025(InData_DomainParam);
     TSIP.REG_34H.WORD = 0x00000400u;
     TSIP.REG_24H.WORD = 0x8000b8d0u;
     /* WAIT_LOOP */
@@ -394,12 +358,12 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
     TSIP.REG_1CH.WORD = 0x00001f00u;
     TSIP.REG_1CH.WORD = 0x00210000u;
-    RX671_func100(change_endian_long(0xf20dfc04u), change_endian_long(0xefc6694fu), change_endian_long(0x9f2df7aau), change_endian_long(0x7e0819cfu));
+    RX671_func100(change_endian_long(0x97a4aff0u), change_endian_long(0xf3bf541fu), change_endian_long(0x0864ba42u), change_endian_long(0x24ffc0ecu));
     TSIP.REG_1CH.WORD = 0x00400000u;
     TSIP.REG_1D0H.WORD = 0x00000000u;
     if (1u == (TSIP.REG_1CH.BIT.B22))
     {
-        RX671_func102(change_endian_long(0x66de2f3eu), change_endian_long(0x8d226c4bu), change_endian_long(0x48e28c79u), change_endian_long(0x11988d8eu));
+        RX671_func102(change_endian_long(0x2516642bu), change_endian_long(0x3b0bc0fdu), change_endian_long(0xbd863c7au), change_endian_long(0xfa1a59bbu));
         TSIP.REG_1BCH.WORD = 0x00000040u;
         /* WAIT_LOOP */
         while (0u != TSIP.REG_18H.BIT.B12)
@@ -413,7 +377,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
     else
     {
-        RX671_func100(change_endian_long(0x4e5ba577u), change_endian_long(0xa4286e7eu), change_endian_long(0x2e33636au), change_endian_long(0x15410abbu));
+        RX671_func100(change_endian_long(0xbda1a608u), change_endian_long(0xe8e84acau), change_endian_long(0xcb991986u), change_endian_long(0x112f3ffeu));
         TSIP.REG_24H.WORD = 0x00009cd0u;
         /* WAIT_LOOP */
         while (0u != TSIP.REG_24H.BIT.B21)
@@ -539,9 +503,9 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         {
             /* waiting */
         }
-        RX671_func100(change_endian_long(0x32e4faabu), change_endian_long(0x8aec1e4fu), change_endian_long(0x7b256685u), change_endian_long(0x1bf38413u));
+        RX671_func100(change_endian_long(0xf188ca14u), change_endian_long(0x9a92640cu), change_endian_long(0x10840087u), change_endian_long(0x1f9a1795u));
         RX671_func103();
-        RX671_func100(change_endian_long(0xaedad613u), change_endian_long(0xbae969f1u), change_endian_long(0x833ec03cu), change_endian_long(0xd632e9a8u));
+        RX671_func100(change_endian_long(0x18382802u), change_endian_long(0x80a5a74au), change_endian_long(0x7357ffb9u), change_endian_long(0x34f82e93u));
         TSIP.REG_104H.WORD = 0x00000052u;
         TSIP.REG_C4H.WORD = 0x01000c84u;
         /* WAIT_LOOP */
@@ -597,7 +561,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         OutData_PrivKeyIndex[9] = TSIP.REG_100H.WORD;
         OutData_PrivKeyIndex[10] = TSIP.REG_100H.WORD;
         OutData_PrivKeyIndex[11] = TSIP.REG_100H.WORD;
-        RX671_func100(change_endian_long(0xb82a3a67u), change_endian_long(0xd61a40d5u), change_endian_long(0x49ccef72u), change_endian_long(0x0050e09eu));
+        RX671_func100(change_endian_long(0x97bd7a71u), change_endian_long(0xb7d052a2u), change_endian_long(0xf34f070fu), change_endian_long(0x4c6058f2u));
         TSIP.REG_104H.WORD = 0x00000052u;
         TSIP.REG_C4H.WORD = 0x00000c84u;
         /* WAIT_LOOP */
@@ -624,7 +588,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         OutData_PrivKeyIndex[13] = TSIP.REG_100H.WORD;
         OutData_PrivKeyIndex[14] = TSIP.REG_100H.WORD;
         OutData_PrivKeyIndex[15] = TSIP.REG_100H.WORD;
-        RX671_func100(change_endian_long(0x0f8d0b79u), change_endian_long(0x9190581au), change_endian_long(0x85d61dcdu), change_endian_long(0x2b6d80adu));
+        RX671_func100(change_endian_long(0xa6f2245bu), change_endian_long(0xbea8285cu), change_endian_long(0x3b76a36du), change_endian_long(0xaa69f744u));
         TSIP.REG_E0H.WORD = 0x81040000u;
         TSIP.REG_04H.WORD = 0x00000613u;
         /* WAIT_LOOP */
@@ -651,9 +615,9 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
             /* waiting */
         }
         OutData_PrivKeyIndex[3] = TSIP.REG_100H.WORD;
-        RX671_func100(change_endian_long(0x50f3458du), change_endian_long(0x16f4c493u), change_endian_long(0x438399dau), change_endian_long(0xc397940eu));
+        RX671_func100(change_endian_long(0xc27c8bf5u), change_endian_long(0x668e5fdeu), change_endian_long(0x07396585u), change_endian_long(0xe39d71a7u));
         RX671_func103();
-        RX671_func100(change_endian_long(0xc1d59e1bu), change_endian_long(0x857c1161u), change_endian_long(0xf6257ac7u), change_endian_long(0xd0d7fdcbu));
+        RX671_func100(change_endian_long(0x2ffe35d3u), change_endian_long(0x6692ddb0u), change_endian_long(0xba2dbe2eu), change_endian_long(0xe99e6e60u));
         TSIP.REG_104H.WORD = 0x00000052u;
         TSIP.REG_C4H.WORD = 0x01000c84u;
         /* WAIT_LOOP */
@@ -726,7 +690,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         OutData_PubKeyIndex[13] = TSIP.REG_100H.WORD;
         OutData_PubKeyIndex[14] = TSIP.REG_100H.WORD;
         OutData_PubKeyIndex[15] = TSIP.REG_100H.WORD;
-        RX671_func100(change_endian_long(0x8b2251b7u), change_endian_long(0xfb901220u), change_endian_long(0xb43700fbu), change_endian_long(0xc1628f41u));
+        RX671_func100(change_endian_long(0xffbe839bu), change_endian_long(0x0d406697u), change_endian_long(0xfe564d9du), change_endian_long(0xb63a168au));
         TSIP.REG_C4H.WORD = 0x0045094cu;
         /* WAIT_LOOP */
         while (1u != TSIP.REG_104H.BIT.B31)
@@ -752,7 +716,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         OutData_PubKeyIndex[17] = TSIP.REG_100H.WORD;
         OutData_PubKeyIndex[18] = TSIP.REG_100H.WORD;
         OutData_PubKeyIndex[19] = TSIP.REG_100H.WORD;
-        RX671_func100(change_endian_long(0x977b57d2u), change_endian_long(0xfb62d976u), change_endian_long(0xd8296921u), change_endian_long(0x5fc8ae69u));
+        RX671_func100(change_endian_long(0x54d13245u), change_endian_long(0x1a8fb7efu), change_endian_long(0xb73b2c9eu), change_endian_long(0xd8d6f57cu));
         TSIP.REG_104H.WORD = 0x00000052u;
         TSIP.REG_C4H.WORD = 0x00000cc4u;
         /* WAIT_LOOP */
@@ -771,7 +735,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
         OutData_PubKeyIndex[21] = TSIP.REG_100H.WORD;
         OutData_PubKeyIndex[22] = TSIP.REG_100H.WORD;
         OutData_PubKeyIndex[23] = TSIP.REG_100H.WORD;
-        RX671_func100(change_endian_long(0xa78f215bu), change_endian_long(0xcf869989u), change_endian_long(0xb6bf7347u), change_endian_long(0xd0a94a05u));
+        RX671_func100(change_endian_long(0x8006446bu), change_endian_long(0x51199f6cu), change_endian_long(0x9a925f2fu), change_endian_long(0x6dedc2efu));
         TSIP.REG_E0H.WORD = 0x81040000u;
         TSIP.REG_04H.WORD = 0x00000613u;
         /* WAIT_LOOP */
@@ -798,7 +762,7 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
             /* waiting */
         }
         OutData_PubKeyIndex[3] = TSIP.REG_100H.WORD;
-        RX671_func102(change_endian_long(0x803d7596u), change_endian_long(0x21de30b9u), change_endian_long(0xb9e4eab9u), change_endian_long(0x93a77da0u));
+        RX671_func102(change_endian_long(0x0ffdbf0cu), change_endian_long(0x1a3d986cu), change_endian_long(0x4566637fu), change_endian_long(0x6859db35u));
         TSIP.REG_1BCH.WORD = 0x00000040u;
         /* WAIT_LOOP */
         while (0u != TSIP.REG_18H.BIT.B12)
@@ -812,6 +776,6 @@ e_tsip_err_t R_TSIP_GenerateEccRandomKeyIndexSub(uint32_t *InData_Cmd, uint32_t 
     }
 }
 /**********************************************************************************************************************
- End of function ./input_dir/RX671/RX671_pf4.prc
+ End of function ./input_dir/RX671/RX671_pf4_r1.prc
  *********************************************************************************************************************/
 #endif /* #if (TSIP_PRV_USE_ECC == 1) || (TSIP_TLS == 1) */

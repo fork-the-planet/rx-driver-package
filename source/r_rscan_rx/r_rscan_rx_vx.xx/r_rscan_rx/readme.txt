@@ -5,13 +5,13 @@ r_rscan_rx
 
 Document Number 
 ---------------
-R01AN2805EU0280
-R01AN2805JU0280
+R01AN2805EU0291
+R01AN2805JU0291
 
 
 Version
 -------
-v2.80
+v2.91
 
 
 Overview
@@ -50,8 +50,8 @@ Features
 Supported MCUs
 --------------
 * RX140 Group
-* RX230, RX231 Group
-* RX24T-512 Group
+* RX231 Group
+* RX24T Group
 * RX24U Group
 * RX23E-A Group
 * RX23E-B Group
@@ -96,9 +96,9 @@ How to add to your project
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.05.00
-* GCC for Renesas RX 8.03.00.202305
-* IAR C/C++ Compiler for Renesas RX 4.20.03
+* Renesas RX v3.07.00
+* GCC for Renesas RX 8.03.00.202411
+* IAR C/C++ Compiler for Renesas RX 5.10.01
 
 
 File Structure

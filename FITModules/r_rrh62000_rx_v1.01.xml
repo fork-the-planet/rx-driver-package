@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<refinfo>
+  
+  <toolchain>
+    <brand>Renesas</brand>
+    <product>RXC</product>
+    <version>3.06.00</version>
+  </toolchain>
+  <toolchain>
+    <brand>GNU</brand>
+    <product>GNURX</product>
+    <version>8.3.0.202405</version>
+  </toolchain>
+  <toolchain>
+    <brand>IAR</brand>
+    <product>ICCRX</product>
+    <version>5.10.01</version>
+  </toolchain>
+  
+  <target>
+    <family omit_series="true">RX</family>
+  </target>
+  
+  
+  <package>
+    <type>fitmodule</type>
+    <name>r_rrh62000_rx</name>
+    <version>1.01</version>
+    <zipsource>r_rrh62000_rx_v1.01.zip</zipsource>
+    <dependency>
+      <module>r_bsp</module>
+      <version>7.51</version>
+    </dependency>
+    <dependency>
+      <module>r_comms_i2c_rx</module>
+      <version>1.22</version>
+    </dependency>
+    <application>Sensors</application>
+    <application>RRH62000 Air Quality Sensor</application>
+    <desc>RRH62000 Sensor Middleware</desc>
+    <details>The RRH62000 FIT module controls the Renesas Electronics RRH62000 sensors using RIIC FIT module and/or SCI_IIC FIT module.</details>
+    <function>RRH62000 Sensors IIC</function>
+    <incdir>r_config</incdir>
+    <incdir>r_rrh62000_rx</incdir>
+    <incdir>r_rrh62000_rx/inc/api</incdir>
+    <incdir>r_rrh62000_rx/inc/instances</incdir>
+  </package>
+  <sampleapplicationnote>
+    <documentno>R01AN7389</documentno>
+  </sampleapplicationnote>
+</refinfo>

@@ -53,11 +53,11 @@
         <zipsource>r_usb_phid_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.41</version>
+            <version>7.53</version>
         </dependency>
         <dependency>
             <module>r_usb_basic</module>
-            <version>1.42</version>7
+            <version>1.44</version>7
         </dependency>
         <application>Connectivity</application>
         <desc>USB Peripheral Human I/F Device Class</desc>

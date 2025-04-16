@@ -1,6 +1,11 @@
+/*
+* Copyright (C) 2011 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /*******************************************************************************
 * File Name     : r_adpcm.h
-* Version       : 3.04
+* Version       : 3.05
 * Device(s)     : -
 * Tool-Chain    : -
 * H/W Platform  : -
@@ -11,6 +16,7 @@
 *          : 11.08.2011 3.00    First Release
 *          : 20.09.2012 3.01    Added R_s2_version
 *          : 18.11.2015 3.04    Deleted NEAR FAR macro
+*          : 20.03.2025 3.05    Changed the disclaimer in program sources
 ******************************************************************************/
 #ifndef __R_ADPCM_H__
 #define __R_ADPCM_H__

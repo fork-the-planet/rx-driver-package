@@ -1,21 +1,8 @@
 /***********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
- * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2015 Renesas Electronics Corporation. All rights reserved.
- ***********************************************************************************************************************/
+* Copyright (c) 2015 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /***********************************************************************************************************************
  * File Name    : r_rscan_rx_config.h
  * Description  : Configures the RSCAN driver module for the RX231/RX23W/RX23E-A/RX140 MCU
@@ -26,6 +13,8 @@
 *         : 31.03.2020 2.21    Added support for RX23E-A
 *         : 11.11.2021 2.40    Added support for RX140 (products with 128-Kbyte or larger ROM).
 *         : 30.06.2022 2.41    Changed the default value of CAN clock source to PCLK.
+*         : 06.09.2024 2.90    Added support Nested Interrupt.
+*         : 15.03.2025 2.91    Updated disclaimer.
 ***********************************************************************************************************************/
 #ifndef RSCAN_CONFIG_HEADER_FILE
 #define RSCAN_CONFIG_HEADER_FILE
@@ -82,5 +71,12 @@
 #define CAN_CFG_INT_BUS_LOCK                (0)     /* CAN_EVT_CHANNEL_ERR      CAN_STAT_CH_ERROR */
 #define CAN_CFG_INT_ARB_LOST                (0)     /* CAN_EVT_CHANNEL_ERR      CAN_STAT_CH_ERROR */
 
+/* 
+ * Enable Nested Interrupt       
+ * 0 = disable nested interrupt.
+ * 1 = enable nested interrupt.
+ * (default value = 0)
+ */
+#define CAN_CFG_EN_NESTED_INT               (0)
 
 #endif /* RSCAN_CONFIG_HEADER_FILE */

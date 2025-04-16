@@ -1,29 +1,11 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_rspia_rx.c
-* Device(s)    : RX Family
-* Tool-Chain   : Renesas RX
-*                GCC for Renesas RX
-*                IAR C/C++ Compiler for Renesas RX
-* OS           : None
-* H/W Platform :
+
 * Description  : Functions for using RSPIA on RX devices.
 ************************************************************************************************************************
 * History : DD.MM.YYYY Version Description           
@@ -34,6 +16,8 @@
 *         : 30.06.2023 1.40     Fixed to comply GSCE coding standard revision 6.5.0.
 *         : 13.11.2023 1.41     Added WAIT_LOOP comments.
 *         : 15.12.2023 1.50     Added support RSPIA with DMAC/DTC.
+*         : 31.12.2024 1.60     Added support Nested interrupt.
+*         : 15.03.2025 1.61     Updated disclaimer.
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
@@ -2225,6 +2209,10 @@ void rspia_rx_common(uint8_t chan)
         R_RSPIA_IntSpriIerClear(&g_rspia_handles[chan]);
         R_RSPIA_DisableRSPI(&g_rspia_handles[chan]);
 
+#if RSPIA_CFG_CH0_SPRI_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
         /* Transfer complete. Call the user callback function passing pointer to the result structure. */
         if ((FIT_NO_FUNC != g_rspia_handles[chan].p_callback) && (NULL != g_rspia_handles[chan].p_callback))
         {
@@ -2252,12 +2240,16 @@ R_BSP_PRAGMA_STATIC_INTERRUPT (rspia0_spri_isr, VECT(RSPIA0, SPRI))
 ******************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void rspia0_spri_isr(void)
 {
+#if RSPIA_CFG_CH0_SPRI_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
     rspia_rx_common(RSPIA_CH0);
 }
 /******************************************************************************
  End of function rspia0_spri_isr
  *****************************************************************************/
-#endif
+#endif /* RSPIA_CFG_USE_CH0 */
 
 
 #if RSPIA_CFG_USE_CH0
@@ -2272,12 +2264,16 @@ R_BSP_PRAGMA_STATIC_INTERRUPT (rspia0_spti_isr, VECT(RSPIA0, SPTI))
 ******************************************************************************/
 R_BSP_ATTRIB_STATIC_INTERRUPT void rspia0_spti_isr(void)
 {
+#if RSPIA_CFG_CH0_SPTI_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
     rspia_tx_common(RSPIA_CH0);
 }
 /******************************************************************************
  End of function rspia0_spti_isr
  *****************************************************************************/
-#endif
+#endif /* RSPIA_CFG_USE_CH0 */
 
 
 /******************************************************************************
@@ -2373,6 +2369,10 @@ static void rspia_spei_isr_common(uint8_t chan)
 ******************************************************************************/
 void rspia_spei_grp_isr(void * pdata)
 {
+#if RSPIA_CFG_CH0_SPEI_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
     /* Called from BSP group interrupt handler. */
 #if RSPIA_CFG_USE_CH0
     /* RSPIA error */

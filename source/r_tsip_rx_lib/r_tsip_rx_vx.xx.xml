@@ -11,7 +11,7 @@
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
-        <version>8.03.00.202311</version>
+        <version>8.03.00.202405</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -64,14 +64,6 @@
         <function>TSIP(Trusted Secure IP) driver.</function>
         <incdir>r_config</incdir>
         <incdir>r_tsip_rx</incdir>
-        <section>
-            <address>0x00100000</address>
-            <name>C_FIRMWARE_UPDATE_CONTROL_BLOCK</name>
-        </section>
-        <section>
-            <address>0x00100000</address>
-            <name>C_FIRMWARE_UPDATE_CONTROL_BLOCK_MIRROR</name>
-        </section>
     </package>
 
 </refinfo>

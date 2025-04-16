@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
+* Copyright (c) 2018 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
 ***********************************************************************************************************************/
@@ -24,8 +29,8 @@ This option must be set to "enabled" for at least one device.</description>
         </property>
         <property id="MEMDRV_CFG_DEV0_MODE_TRNS" display="Device 0 data transfer mode" default="MEMDRV_TRNS_CPU" type="combobox">
             <option id="MEMDRV_CFG_DEV0_MODE_TRNS.MEMDRV_TRNS_CPU" display="CPU transfer (Software transfer)" value="MEMDRV_TRNS_CPU"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_TRNS.MEMDRV_TRNS_DMAC" display="DMAC transfer" value="MEMDRV_TRNS_DMAC"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_TRNS.MEMDRV_TRNS_DTC" display="DTC transfer" value="MEMDRV_TRNS_DTC"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_TRNS.MEMDRV_TRNS_DMAC" display="DMAC transfer" value="MEMDRV_TRNS_DMAC" dependency="r_dmaca_rx"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_TRNS.MEMDRV_TRNS_DTC" display="DTC transfer" value="MEMDRV_TRNS_DTC" dependency="r_dtc_rx"/>
             <constraint display="Used for device 0 only" actionOnFail="disable">"${MEMDRV_CFG_DEV0_INCLUDED}" == "${MEMDRV_CFG_DEV0_INCLUDED.1}"</constraint>
             <description>Defines the method used to transfer data to the MCU's on-chip RAM.
 Choose one of the following settings:
@@ -35,8 +40,8 @@ MEMDRV_TRNS_DTC: DTC transfer</description>
         </property>
         <property id="MEMDRV_CFG_DEV1_MODE_TRNS" display="Device 1 data transfer mode" default="MEMDRV_TRNS_CPU" type="combobox">
             <option id="MEMDRV_CFG_DEV1_MODE_TRNS.MEMDRV_TRNS_CPU" display="CPU transfer (Software transfer)" value="MEMDRV_TRNS_CPU"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_TRNS.MEMDRV_TRNS_DMAC" display="DMAC transfer" value="MEMDRV_TRNS_DMAC"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_TRNS.MEMDRV_TRNS_DTC" display="DTC transfer" value="MEMDRV_TRNS_DTC"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_TRNS.MEMDRV_TRNS_DMAC" display="DMAC transfer" value="MEMDRV_TRNS_DMAC" dependency="r_dmaca_rx"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_TRNS.MEMDRV_TRNS_DTC" display="DTC transfer" value="MEMDRV_TRNS_DTC" dependency="r_dtc_rx"/>
             <constraint display="Used for device 1 only" actionOnFail="disable">"${MEMDRV_CFG_DEV1_INCLUDED}" == "${MEMDRV_CFG_DEV1_INCLUDED.1}"</constraint>
             <description>Defines the method used to transfer data to the MCU's on-chip RAM.
 Choose one of the following settings:
@@ -45,12 +50,12 @@ MEMDRV_TRNS_DMAC: DMAC transfer
 MEMDRV_TRNS_DTC: DTC transfer</description>
         </property>
         <property id="MEMDRV_CFG_DEV0_MODE_DRVR" display="Device 0  driver" default="MEMDRV_DRVR_RX_FIT_RSPI" type="combobox">
-            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSPI" display="RSPI clock synchronous control FIT module" value="MEMDRV_DRVR_RX_FIT_RSPI"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPI_SMSTR" display="QSPI clock synchronous single-master control FIT module" value="MEMDRV_DRVR_RX_FIT_QSPI_SMSTR"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_SCI_SPI" display="SCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_SCI_SPI"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_IAM" display="QSPIX clock synchronous control FIT module(Indirect access mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_IAM"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_MMM" display="QSPIX clock synchronous control FIT module(Memory mapped mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_MMM"/>
-            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSCI_SPI" display="RSCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_RSCI_SPI"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSPI" display="RSPI clock synchronous control FIT module" value="MEMDRV_DRVR_RX_FIT_RSPI" dependency="r_rspi_rx"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPI_SMSTR" display="QSPI clock synchronous single-master control FIT module" value="MEMDRV_DRVR_RX_FIT_QSPI_SMSTR" dependency="r_qspi_smstr_rx"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_SCI_SPI" display="SCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_SCI_SPI" dependency="r_sci_rx;r_byteq"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_IAM" display="QSPIX clock synchronous control FIT module(Indirect access mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_IAM" dependency="r_qspix_rx"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_MMM" display="QSPIX clock synchronous control FIT module(Memory mapped mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_MMM" dependency="r_qspix_rx"/>
+            <option id="MEMDRV_CFG_DEV0_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSCI_SPI" display="RSCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_RSCI_SPI" dependency="r_rsci_rx;r_byteq"/>
             <constraint display="Used for device 0 only" actionOnFail="disable">"${MEMDRV_CFG_DEV0_INCLUDED}" == "${MEMDRV_CFG_DEV0_INCLUDED.1}"</constraint>
             <description>Defines the device driver used.
 Choose one of the following settings:
@@ -68,12 +73,12 @@ MEMDRV_DRVR_RX_FIT_RSCI_SPI:
 RSCI clock synchronous control FIT module(working in SPI mode)</description>
         </property>
         <property id="MEMDRV_CFG_DEV1_MODE_DRVR" display="Device 1 driver" default="MEMDRV_DRVR_RX_FIT_RSPI" type="combobox">
-            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSPI" display="RSPI clock synchronous control FIT module" value="MEMDRV_DRVR_RX_FIT_RSPI"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPI_SMSTR" display="QSPI clock synchronous single-master control FIT module" value="MEMDRV_DRVR_RX_FIT_QSPI_SMSTR"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_SCI_SPI" display="SCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_SCI_SPI"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_IAM" display="QSPIX clock synchronous control FIT module(Indirect access mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_IAM"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_MMM" display="QSPIX clock synchronous control FIT module(Memory mapped mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_MMM"/>
-            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSCI_SPI" display="RSCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_RSCI_SPI"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSPI" display="RSPI clock synchronous control FIT module" value="MEMDRV_DRVR_RX_FIT_RSPI" dependency="r_rspi_rx"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPI_SMSTR" display="QSPI clock synchronous single-master control FIT module" value="MEMDRV_DRVR_RX_FIT_QSPI_SMSTR" dependency="r_qspi_smstr_rx"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_SCI_SPI" display="SCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_SCI_SPI" dependency="r_sci_rx;r_byteq"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_IAM" display="QSPIX clock synchronous control FIT module(Indirect access mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_IAM" dependency="r_qspix_rx"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_QSPIX_MMM" display="QSPIX clock synchronous control FIT module(Memory mapped mode)" value="MEMDRV_DRVR_RX_FIT_QSPIX_MMM" dependency="r_qspix_rx"/>
+            <option id="MEMDRV_CFG_DEV1_MODE_DRVR.MEMDRV_DRVR_RX_FIT_RSCI_SPI" display="RSCI clock synchronous control FIT module(working in SPI mode)" value="MEMDRV_DRVR_RX_FIT_RSCI_SPI" dependency="r_rsci_rx;r_byteq"/>
             <constraint display="Used for device 1 only" actionOnFail="disable">"${MEMDRV_CFG_DEV1_INCLUDED}" == "${MEMDRV_CFG_DEV1_INCLUDED.1}"</constraint>
             <description>Defines the device driver used.
 Choose one of the following settings:
@@ -345,7 +350,7 @@ A setting of "1" means that parameter check processing is included in the code.<
         </property>
         <property id="MEMDRV_CFG_LONGQ_ENABLE" display="Enable debugging information" default="0" type="combobox">
             <option id="MEMDRV_CFG_LONGQ_ENABLE.0" display="disabled" value="0"/>
-            <option id="MEMDRV_CFG_LONGQ_ENABLE.1" display="enabled" value="1"/>
+            <option id="MEMDRV_CFG_LONGQ_ENABLE.1" display="enabled" value="1" dependency="r_longq"/>
             <description>When using the FIT module's BSP environment, you can specify whether or not to use debug error log acquisition processing (1: enabled, 0: disabled).
 When disabled, the processing is omitted from the code.
 When enabled, the processing is included in the code.

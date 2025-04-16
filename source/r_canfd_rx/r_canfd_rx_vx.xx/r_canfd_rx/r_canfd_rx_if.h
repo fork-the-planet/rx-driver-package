@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_canfd_rx_if.h
@@ -30,6 +17,7 @@
 *         : 13.12.2023 1.31    Added WAIT_LOOP comments.
 *         : 28.06.2024 1.40    Added support for RX261.
 *                              Fixed to comply with GSCE Coding Standards Rev.6.5.0.
+*         : 15.03.2025 1.41    Updated disclaimer.
 ***********************************************************************************************************************/
 #ifndef CAN_INTERFACE_HEADER_FILE
 #define CAN_INTERFACE_HEADER_FILE 
@@ -52,7 +40,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define CANFD_RX_VERSION_MAJOR           (1)
-#define CANFD_RX_VERSION_MINOR           (40)
+#define CANFD_RX_VERSION_MINOR           (41)
 /* The process of getting the version number is done through the macro below. The version number is encoded where the
    top 2 bytes are the major version number and the bottom 2 bytes are the minor version number. For example,
    Version 4.25 would be returned as 0x00040019. */

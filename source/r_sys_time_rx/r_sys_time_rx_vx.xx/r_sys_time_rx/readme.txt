@@ -23,9 +23,9 @@ r_sys_time_rx
 |
 +---doc
 |   +---ja
-|   |    r20an0431jj0101-rx-middle.pdf
+|   |    r20an0431jj0102-rx-middle.pdf
 |   +---en
-|        r20an0431ej0101-rx-middle.pdf
+|        r20an0431ej0102-rx-middle.pdf
 |
 +---ref
 |       r_sys_time_rx_config_reference.h

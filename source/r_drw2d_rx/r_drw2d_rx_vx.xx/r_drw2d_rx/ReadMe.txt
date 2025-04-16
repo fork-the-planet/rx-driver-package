@@ -15,6 +15,7 @@ DD.MM.YYYY Version Description
 31.03.2023 1.12    Fixed XML file.
                    Added the r_config folder and remove the ref folder.
 15.11.2024 1.13    Added WAIT_LOOP comment.
+20.03.2025 1.14    Changed the disclaimer.
 
 File Structure
 --------------

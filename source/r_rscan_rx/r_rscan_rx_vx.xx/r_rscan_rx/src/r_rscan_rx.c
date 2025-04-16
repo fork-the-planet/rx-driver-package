@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+* Copyright (c) 2015 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2015 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_rscan_rx.c
@@ -34,13 +21,17 @@
 *           17.11.2023 2.80    Added CAN_ERR_TIME_OUT return to while loop in R_CAN_Open, R_CAN_Control, and
 *                              R_CAN_SendMsg function.
 *                              Added WAIT_LOOP comments.
+*           06.09.2024 2.90    Added support Nested Interrupt.
+*                              Fixed to comply with GSCE Coding Standards Rev.6.5.0.
+*           15.03.2025 2.91    Updated disclaimer.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
-#include <string.h>         /* memset()*/
+#include <string.h>         /* memset() */
 
+/* Access to peripherals and board defines. */
 #include "platform.h"
 /* Interface file for this package. */
 #include "r_rscan_rx_if.h"
@@ -53,7 +44,7 @@ Includes   <System Includes> , "Project Includes"
 Macro definitions
 ***********************************************************************************************************************/
 #define CAN_BOX_TYPE_MASK           (0xF0000000)
-#define CAN_BOX_BUFNUM_MASK         (0x000001FF)    /* tx and rx buffer number*/
+#define CAN_BOX_BUFNUM_MASK         (0x000001FF)    /* tx and rx buffer number */
 #define CAN_BOX_RXFIFO_MASK         (0x000000FF)
 
 #define CAN_NUM_RXFIFOS             (2)
@@ -69,28 +60,22 @@ Typedef definitions
 /***********************************************************************************************************************
 Private global variables and functions
 ***********************************************************************************************************************/
-
 /* driver control block */
 static can_dcb_t    g_dcb = {FALSE, 0, 0, NULL};
 
 /* channel control block */
 static can_ccb_t    g_ccb = {FALSE, NULL};
 
-
-/* channel registers */
-/*static can_chan_t       *g_ch_regs = (can_chan_t *)&RSCAN0C0CFG;*/
-
 /* local functions */
-static void     can_enable_ints(void);
-static void     can_enable_rxfifos(void);
-static void     can_enable_chan_fifos(void);
+static void     can_enable_ints (void);
+static void     can_enable_rxfifos (void);
+static void     can_enable_chan_fifos (void);
 
 /* interrupts */
-R_BSP_ATTRIB_STATIC_INTERRUPT void can_global_err_isr(void);
-R_BSP_ATTRIB_STATIC_INTERRUPT void can_rxfifo_isr(void);
-R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_error_isr(void);
-R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_tx_isr(void);
-
+R_BSP_ATTRIB_STATIC_INTERRUPT void can_global_err_isr (void);
+R_BSP_ATTRIB_STATIC_INTERRUPT void can_rxfifo_isr (void);
+R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_error_isr (void);
+R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_tx_isr (void);
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_Open
@@ -110,19 +95,20 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_tx_isr(void);
  * @retval CAN_ERR_MISSING_CALLBACK: A callback function was not provided and
  * a main callback interrupt is enabled in config.h
  * @retval CAN_ERR_TIME_OUT: Time Out error
- * @details This function initializes the driver's internal structures, applies clock to the peripheral, and sets the Global
- * and Channel Modes to Reset. The timestamp is configured as per the p_cfg argument, and all receive mailboxes are initialized.\n
- * If interrupts are enabled in r_rscan_rx_config.h for receive FIFO thresholds, or DLC or FIFO overflow errors, a callback function
- * must be provided here. Otherwise, NULL is entered.
- * @note The ports pins used by the RSCAN peripheral should be initialized prior to calling R_CAN_Open(). Here are some examples:
+ * @details This function initializes the driver's internal structures, applies clock to the peripheral,
+ * and sets the Global and Channel Modes to Reset. The timestamp is configured as per the p_cfg argument,
+ * and all receive mailboxes are initialized.\n
+ * If interrupts are enabled in r_rscan_rx_config.h for receive FIFO thresholds, or DLC or FIFO overflow errors,
+ * a callback function must be provided here. Otherwise, NULL is entered.
+ * @note The ports pins used by the RSCAN peripheral should be initialized prior to calling R_CAN_Open().
  * See Section R_CAN_Open() in the application note for details.
  */
-can_err_t R_CAN_Open(can_cfg_t  *p_cfg, void(* const p_callback)(can_cb_evt_t   event,void *p_args))
+can_err_t R_CAN_Open(can_cfg_t  *p_cfg, void(* const p_callback)(can_cb_evt_t event, void *p_args))
 {
-can_err_t   err = CAN_SUCCESS;
-uint32_t    rscan_tmo_cnt;
+    can_err_t   err = CAN_SUCCESS;
+    uint32_t    rscan_tmo_cnt;
 #if ((R_BSP_VERSION_MAJOR == 5) && (R_BSP_VERSION_MINOR >= 30)) || (R_BSP_VERSION_MAJOR >= 6)
-bsp_int_ctrl_t int_ctrl;
+    bsp_int_ctrl_t int_ctrl;
 #endif
 
 #if CAN_CFG_PARAM_CHECKING_ENABLE
@@ -185,21 +171,18 @@ bsp_int_ctrl_t int_ctrl;
     /* Set register page/bank to NOT receive rules */
     RSCAN.GRWCR.BIT.RPAGE = 1;
 
-
     /* Set main clock and timestamp source */
+    RSCAN.GCFGL.BIT.DCS   = CAN_CFG_CLOCK_SOURCE;
 
-    RSCAN.GCFGL.BIT.DCS = CAN_CFG_CLOCK_SOURCE;
-
-    RSCAN.GCFGL.BIT.TSSS = p_cfg->timestamp_src;
-    RSCAN.GCFGL.BIT.TSP = p_cfg->timestamp_div;
-    RSCAN.GCTRH.BIT.TSRST = 1;  // reset timestamp counter
-
+    RSCAN.GCFGL.BIT.TSSS  = p_cfg->timestamp_src;
+    RSCAN.GCFGL.BIT.TSP   = p_cfg->timestamp_div;
+    RSCAN.GCTRH.BIT.TSRST = 1;    // reset timestamp counter
 
     /* Setup rest of global configuration */
-    RSCAN.GCFGL.BIT.TPRI = 1;   // transmit priority mailbox number based, not msg ID
-    RSCAN.GCFGL.BIT.DCE = 1;    // enable receive rule check DLC
-    RSCAN.GCFGL.BIT.DRE = 0;    // DLC replacement disabled
-    RSCAN.GCFGL.BIT.MME = 0;    // mirror function disabled
+    RSCAN.GCFGL.BIT.TPRI = 1;     // transmit priority mailbox number based, not msg ID
+    RSCAN.GCFGL.BIT.DCE  = 1;     // enable receive rule check DLC
+    RSCAN.GCFGL.BIT.DRE  = 0;     // DLC replacement disabled
+    RSCAN.GCFGL.BIT.MME  = 0;     // mirror function disabled
 
     /* interval timer prescaler (BIT.ITRCP) not used*/
 
@@ -207,20 +190,19 @@ bsp_int_ctrl_t int_ctrl;
     RSCAN.RMNB.WORD = 4;
 
     /* Configure global interrupts */
-    RSCAN.GCTRL.BIT.DEIE = CAN_CFG_INT_DLC_ERR;
-    RSCAN.GCTRL.BIT.MEIE = CAN_CFG_INT_FIFO_OVFL;
+    RSCAN.GCTRL.BIT.DEIE   = CAN_CFG_INT_DLC_ERR;
+    RSCAN.GCTRL.BIT.MEIE   = CAN_CFG_INT_FIFO_OVFL;
     RSCAN.GCTRL.BIT.THLEIE = CAN_CFG_INT_HIST_FIFO_OVFL;
 
     /* Save callback function pointer (may be NULL) */
     g_dcb.p_callback = p_callback;
 
-
     /* Set priority for all interrupt handlers, but enable later as needed */
     IPR(RSCAN, COMFRXINT) = CAN_CFG_INT_PRIORITY;       
-    IPR(RSCAN, RXFINT) = CAN_CFG_INT_PRIORITY;
-    IPR(RSCAN, TXINT) = CAN_CFG_INT_PRIORITY;
-    IPR(RSCAN, CHERRINT) = CAN_CFG_INT_PRIORITY;
-    IPR(RSCAN, GLERRINT) = CAN_CFG_INT_PRIORITY;
+    IPR(RSCAN, RXFINT)    = CAN_CFG_INT_PRIORITY;
+    IPR(RSCAN, TXINT)     = CAN_CFG_INT_PRIORITY;
+    IPR(RSCAN, CHERRINT)  = CAN_CFG_INT_PRIORITY;
+    IPR(RSCAN, GLERRINT)  = CAN_CFG_INT_PRIORITY;
 
     return err;
 }
@@ -233,8 +215,8 @@ bsp_int_ctrl_t int_ctrl;
 ********************************************************************************************************************//**
  * @brief This function sets the bit rate clock for the channel and initializes all of the transmit mailboxes.
  * @param[in] chan - Channel to initialize (0 is only valid value).
- * @param[in] p_baud - Pointer to bit rate structure. See the "Bit Timing Setting" section under CAN Module in the Hardware.
- * Manual for calculating settings. Some default values are provided in r_rscan_rx_if.h.
+ * @param[in] p_baud - Pointer to bit rate structure. See the "Bit Timing Setting" section under CAN Module 
+ * in the Hardware Manual for calculating settings. Some default values are provided in r_rscan_rx_if.h.
  * See Section R_CAN_InitChan() in the application note for details.
  * @param[in] p_chcallback - Optional pointer to channel callback function. Must be present if interrupts are enabled in
  * r_rscan_rx_config.h for TX mailboxes, TX FIFOs, History FIFOs, or bus errors. \n
@@ -247,7 +229,8 @@ bsp_int_ctrl_t int_ctrl;
  * @retval CAN_SUCCESS:                 Successful
  * @retval CAN_ERR_ILLEGAL_MODE:        Not in global reset mode (results from call to Open())
  * @retval CAN_ERR_INVALID_ARG:         An invalid argument was provided
- * @retval CAN_ERR_MISSING_CALLBACK:    A callback function was not provided and a channel interrupt is enabled in config.h
+ * @retval CAN_ERR_MISSING_CALLBACK:    A callback function was not provided and a channel interrupt 
+ *                                      is enabled in config.h
  * @details This function initializes all of the channel's transmit mailboxes, sets the bit rate, and enables interrupt
  * sources for the channel as specified in the r_rscan_rx_config.h file. Default values for p_baud are provided in
  * r_rscan_rx_if.h. \n
@@ -280,18 +263,18 @@ can_err_t   err         = CAN_SUCCESS;
         return CAN_ERR_INVALID_ARG;
     }
 
-    if ((NULL == p_chcallback) && ((CAN_CFG_INT_TXFIFO_THRESHOLD != 0)
+    if ((NULL == p_chcallback) && ((CAN_CFG_INT_TXFIFO_THRESHOLD    != 0)
                                 || (CAN_CFG_INT_HIST_FIFO_THRESHOLD != 0)
-                                || (CAN_CFG_INT_MBX_TX_COMPLETE != 0)
-                                || (CAN_CFG_INT_MBX_TX_ABORTED != 0)
-                                || (CAN_CFG_INT_BUS_ERROR != 0)
-                                || (CAN_CFG_INT_ERR_WARNING != 0)
-                                || (CAN_CFG_INT_ERR_PASSIVE != 0)
-                                || (CAN_CFG_INT_BUS_OFF_ENTRY != 0)
-                                || (CAN_CFG_INT_BUS_OFF_RECOVERY != 0)
-                                || (CAN_CFG_INT_OVERLOAD_FRAME_TX != 0)
-                                || (CAN_CFG_INT_BUS_LOCK != 0)
-                                || (CAN_CFG_INT_ARB_LOST != 0)))
+                                || (CAN_CFG_INT_MBX_TX_COMPLETE     != 0)
+                                || (CAN_CFG_INT_MBX_TX_ABORTED      != 0)
+                                || (CAN_CFG_INT_BUS_ERROR           != 0)
+                                || (CAN_CFG_INT_ERR_WARNING         != 0)
+                                || (CAN_CFG_INT_ERR_PASSIVE         != 0)
+                                || (CAN_CFG_INT_BUS_OFF_ENTRY       != 0)
+                                || (CAN_CFG_INT_BUS_OFF_RECOVERY    != 0)
+                                || (CAN_CFG_INT_OVERLOAD_FRAME_TX   != 0)
+                                || (CAN_CFG_INT_BUS_LOCK            != 0)
+                                || (CAN_CFG_INT_ARB_LOST            != 0)))
     {
         return CAN_ERR_MISSING_CALLBACK;
     }
@@ -303,7 +286,6 @@ can_err_t   err         = CAN_SUCCESS;
 #endif /* end of #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)*/
     g_ccb.initialized = TRUE;
 
-
     /* Apply clock to channel */
     RSCAN0.CTRL.BIT.CSLPR = 0;
 
@@ -311,10 +293,10 @@ can_err_t   err         = CAN_SUCCESS;
     RSCAN0.CTRL.BIT.CHMDC = CAN_CHMODE_RESET;       // also resets all transmit buffers
 
     /* Set bit rate */
-    RSCAN0.CFGL.BIT.BRP = p_baud->prescaler - 1;
+    RSCAN0.CFGL.BIT.BRP   = p_baud->prescaler - 1;
     RSCAN0.CFGH.BIT.TSEG1 = p_baud->tseg1 - 1;
     RSCAN0.CFGH.BIT.TSEG2 = p_baud->tseg2 - 1;
-    RSCAN0.CFGH.BIT.SJW = p_baud->sjw - 1;
+    RSCAN0.CFGH.BIT.SJW   = p_baud->sjw - 1;
 
     /* Configure channel interrupts */
     RSCAN0.CTRL.BIT.BEIE = CAN_CFG_INT_BUS_ERROR;
@@ -337,13 +319,11 @@ can_err_t   err         = CAN_SUCCESS;
     RSCAN0.CTRH.BIT.BOM = CAN_BO_RECOVERY_ISO;      // bus off recovery mode
     RSCAN0.CTRH.BIT.ERRD = 1;                       // error flags are accumulative (0/1)
 
-
     return err;
 }
 /******************************************************************************
  End of function R_CAN_InitChan
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_ConfigFIFO
@@ -372,7 +352,6 @@ can_err_t R_CAN_ConfigFIFO(can_box_t            fifo_id,
 uint32_t    i;
 can_err_t   err = CAN_SUCCESS;
 
-
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
     if ((0 != RSCAN.GCTRL.BIT.GSLPR)
         || (CAN_GLOBAL_MODE_RESET != RSCAN.GCTRL.BIT.GMDC))
@@ -400,10 +379,10 @@ can_err_t   err = CAN_SUCCESS;
     }
     else
     {
-        if ((CAN_FIFO_THRESHOLD_1 != threshold)
-         && (CAN_FIFO_THRESHOLD_2 != threshold)
-         && (CAN_FIFO_THRESHOLD_3 != threshold)
-         && (CAN_FIFO_THRESHOLD_FULL != threshold))
+        if ((CAN_FIFO_THRESHOLD_1    != threshold)
+        &&  (CAN_FIFO_THRESHOLD_2    != threshold)
+        &&  (CAN_FIFO_THRESHOLD_3    != threshold)
+        &&  (CAN_FIFO_THRESHOLD_FULL != threshold))
         {
             return CAN_ERR_INVALID_ARG;
         }
@@ -432,7 +411,6 @@ can_err_t   err = CAN_SUCCESS;
     }
 #endif /* end of (CAN_CFG_PARAM_CHECKING_ENABLE == 1)*/
 
-
     if (fifo_id & CAN_BOX_RXFIFO_MASK)
     {
         if (CAN_BOX_RXFIFO_0 == fifo_id)
@@ -442,11 +420,11 @@ can_err_t   err = CAN_SUCCESS;
             RSCAN.RFCC0.BIT.RFIE = CAN_CFG_INT_RXFIFO_THRESHOLD;
             if (CAN_FIFO_THRESHOLD_1 == threshold)
             {
-                RSCAN.RFCC0.BIT.RFIM = 1;               // set int flag at every message
+                RSCAN.RFCC0.BIT.RFIM = 1;                // set int flag at every message
             }
             else
             {
-                RSCAN.RFCC0.BIT.RFIM = 0;               // set int flag at threshold
+                RSCAN.RFCC0.BIT.RFIM   = 0;              // set int flag at threshold
                 RSCAN.RFCC0.BIT.RFIGCV = threshold;
             }
         }
@@ -457,11 +435,11 @@ can_err_t   err = CAN_SUCCESS;
             RSCAN.RFCC1.BIT.RFIE = CAN_CFG_INT_RXFIFO_THRESHOLD;
             if (CAN_FIFO_THRESHOLD_1 == threshold)
             {
-                RSCAN.RFCC1.BIT.RFIM = 1;               // set int flag at every message
+                RSCAN.RFCC1.BIT.RFIM = 1;                // set int flag at every message
             }
             else
             {
-                RSCAN.RFCC1.BIT.RFIM = 0;               // set int flag at threshold
+                RSCAN.RFCC1.BIT.RFIM   = 0;              // set int flag at threshold
                 RSCAN.RFCC1.BIT.RFIGCV = threshold;
             }
         }
@@ -472,11 +450,10 @@ can_err_t   err = CAN_SUCCESS;
     else if (CAN_BOX_TXFIFO == fifo_id)
     {
         /* set FIFO type, depth, threshold, and threshold int */
+        RSCAN0.CFCCL0.BIT.CFDC   = CAN_FIFO_DEPTH_4;
 
-        RSCAN0.CFCCL0.BIT.CFDC = CAN_FIFO_DEPTH_4;
-
-        RSCAN0.CFCCH0.BIT.CFM = CAN_FIFO_MODE_TRANSMIT;
-        RSCAN0.CFCCH0.BIT.CFITT = 0;                // interval timer off
+        RSCAN0.CFCCH0.BIT.CFM    = CAN_FIFO_MODE_TRANSMIT;
+        RSCAN0.CFCCH0.BIT.CFITT  = 0;               // interval timer off
         RSCAN0.CFCCL0.BIT.CFTXIE = CAN_CFG_INT_TXFIFO_THRESHOLD;
         RSCAN0.CFCCL0.BIT.CFRXIE = 0;
 
@@ -486,7 +463,7 @@ can_err_t   err = CAN_SUCCESS;
         }
         else
         {
-            RSCAN0.CFCCL0.BIT.CFIM = 0;             // set int flag at threshold
+            RSCAN0.CFCCL0.BIT.CFIM   = 0;           // set int flag at threshold
             RSCAN0.CFCCL0.BIT.CFIGCV = threshold;
         }
 
@@ -494,7 +471,8 @@ can_err_t   err = CAN_SUCCESS;
         RSCAN0.CFCCH0.BIT.CFTML = txmbx_id & CAN_BOX_BUFNUM_MASK;
 
         /* disable the interrupt associated with the mailbox (may or may not be set) */
-        i = txmbx_id & CAN_BOX_BUFNUM_MASK;         // get buffer number
+        i = txmbx_id & CAN_BOX_BUFNUM_MASK;           // get buffer number
+
         RSCAN0.TMIEC.WORD &= (~(1 << i));             // reset bit
     }
 
@@ -519,26 +497,25 @@ can_err_t   err = CAN_SUCCESS;
  End of function R_CAN_ConfigFIFO
  *****************************************************************************/
 
-
 /******************************************************************************
 * Function Name: can_enable_ints
 * Description  : This function enables all interrupts that are configured.
 * Arguments    : none
 * Return Value : none
 *******************************************************************************/
-void can_enable_ints(void)
+static void can_enable_ints(void)
 {
 
     if ((CAN_CFG_INT_DLC_ERR || CAN_CFG_INT_FIFO_OVFL || CAN_CFG_INT_HIST_FIFO_OVFL) != 0)
     {
-        IR(RSCAN,GLERRINT) = 0;
-        R_BSP_InterruptRequestEnable(VECT(RSCAN,GLERRINT));
+        IR(RSCAN, GLERRINT) = 0;
+        R_BSP_InterruptRequestEnable(VECT(RSCAN, GLERRINT));
     }
 
     if (CAN_CFG_INT_RXFIFO_THRESHOLD == 1)
     {
-        IR(RSCAN,RXFINT) = 0;
-        R_BSP_InterruptRequestEnable(VECT(RSCAN,RXFINT));
+        IR(RSCAN, RXFINT) = 0;
+        R_BSP_InterruptRequestEnable(VECT(RSCAN, RXFINT));
     }
 
     if ((CAN_CFG_INT_BUS_ERROR
@@ -550,8 +527,8 @@ void can_enable_ints(void)
     ||  CAN_CFG_INT_BUS_LOCK
     ||  CAN_CFG_INT_ARB_LOST) != 0)
     {
-        IR(RSCAN,CHERRINT) = 0;
-        R_BSP_InterruptRequestEnable(VECT(RSCAN,CHERRINT));
+        IR(RSCAN, CHERRINT) = 0;
+        R_BSP_InterruptRequestEnable(VECT(RSCAN, CHERRINT));
     }
 
     if ((CAN_CFG_INT_MBX_TX_COMPLETE
@@ -559,8 +536,8 @@ void can_enable_ints(void)
     ||  CAN_CFG_INT_TXFIFO_THRESHOLD
     ||  CAN_CFG_INT_HIST_FIFO_THRESHOLD) != 0)
     {
-        IR(RSCAN,TXINT) = 0;
-        R_BSP_InterruptRequestEnable(VECT(RSCAN,TXINT));
+        IR(RSCAN, TXINT) = 0;
+        R_BSP_InterruptRequestEnable(VECT(RSCAN, TXINT));
     }
 
     return;
@@ -568,7 +545,6 @@ void can_enable_ints(void)
 /******************************************************************************
  End of function can_enable_ints
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_AddRxRule
@@ -597,18 +573,19 @@ can_err_t R_CAN_AddRxRule(uint8_t       chan,
                           can_filter_t  *p_filter,
                           can_box_t     dst_box)
 {
-uint32_t        i;
-can_err_t       err = CAN_SUCCESS;
-can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
+    uint32_t        i;
+    can_err_t       err = CAN_SUCCESS;
 
+    /* Points to Receive Rule Entry Register */
+    can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
 
     /* Must clear here. Not documented as such. */
     if (0 == g_dcb.rule_count)
     {
         /* clear rule count */
-        RSCAN.GRWCR.BIT.RPAGE = 0;
+        RSCAN.GRWCR.BIT.RPAGE  = 0;
         RSCAN.GAFLCFG.BIT.RNC0 = 0;
-        RSCAN.GRWCR.BIT.RPAGE = 1;
+        RSCAN.GRWCR.BIT.RPAGE  = 1;
     }
 
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
@@ -630,7 +607,7 @@ can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
 
     /* verify RXMBX or RXFIFO for dst_box */
     if (((dst_box & CAN_FLG_RXMBX) == 0)
-    && (((dst_box & CAN_FLG_FIFO) == 0) || ((dst_box & CAN_BOX_RXFIFO_MASK) == 0)))
+    && (((dst_box & CAN_FLG_FIFO)  == 0) || ((dst_box & CAN_BOX_RXFIFO_MASK) == 0)))
     {
         return CAN_ERR_INVALID_ARG;
     }
@@ -652,25 +629,24 @@ can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
     /* Set page/bank to receive rule registers */
     RSCAN.GRWCR.BIT.RPAGE = 0;
 
-
     /* load rule info */
     i = RSCAN.GAFLCFG.BIT.RNC0;
 
-    p_rule_arr[i].GAFLIDL.BIT.GAFLID = p_filter->id & 0xFFFF;
+    p_rule_arr[i].GAFLIDL.BIT.GAFLID  = p_filter->id & 0xFFFF;
 
     p_rule_arr[i].GAFLIDH.BIT.GAFLIDE = p_filter->ide;
     p_rule_arr[i].GAFLIDH.BIT.GAFLRTR = p_filter->rtr;
-    p_rule_arr[i].GAFLIDH.BIT.GAFLID = (p_filter->id >> 16) & 0x1FFF;
-    p_rule_arr[i].GAFLIDH.BIT.GAFLLB = 0;         // no mirrored messages
+    p_rule_arr[i].GAFLIDH.BIT.GAFLID  = (p_filter->id >> 16) & 0x1FFF;
+    p_rule_arr[i].GAFLIDH.BIT.GAFLLB  = 0;        // no mirrored messages
 
-    p_rule_arr[i].GAFLML.BIT.GAFLIDM = p_filter->id_mask & 0xFFFF;
+    p_rule_arr[i].GAFLML.BIT.GAFLIDM  = p_filter->id_mask & 0xFFFF;
 
     p_rule_arr[i].GAFLMH.BIT.GAFLIDEM = p_filter->check_ide;
     p_rule_arr[i].GAFLMH.BIT.GAFLRTRM = p_filter->check_rtr;
-    p_rule_arr[i].GAFLMH.BIT.GAFLIDM = (p_filter->id_mask >> 16) & 0x1FFF;
+    p_rule_arr[i].GAFLMH.BIT.GAFLIDM  = (p_filter->id_mask >> 16) & 0x1FFF;
 
-    p_rule_arr[i].GAFLPH.BIT.GAFLDLC = p_filter->min_dlc;
-    p_rule_arr[i].GAFLPH.BIT.GAFLPTR = p_filter->label;
+    p_rule_arr[i].GAFLPH.BIT.GAFLDLC  = p_filter->min_dlc;
+    p_rule_arr[i].GAFLPH.BIT.GAFLPTR  = p_filter->label;
 
     if ((dst_box & CAN_FLG_RXMBX) != 0)
     {
@@ -688,7 +664,6 @@ can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
     RSCAN.GAFLCFG.BIT.RNC0++;
     g_dcb.rule_count++;
 
-
     /* Set page/bank to NOT receive rule registers */
     RSCAN.GRWCR.BIT.RPAGE = 1;
 
@@ -697,7 +672,6 @@ can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
 /******************************************************************************
  End of function R_CAN_AddRxRule
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_Control
@@ -734,9 +708,11 @@ can_rxrule_t    *p_rule_arr = (can_rxrule_t *)&RSCAN.GAFLIDL0.WORD;
 can_err_t R_CAN_Control(can_cmd_t   cmd,
                         uint32_t    arg1)
 {
-can_err_t   err = CAN_SUCCESS;
-can_tmcp_t  *p_tmcp_regs = (can_tmcp_t *)&RSCAN0.TMC0;
-uint32_t    rscan_tmo_cnt;
+    can_err_t   err = CAN_SUCCESS;
+
+    /* Points to Transmit Buffer Control Register */
+    can_tmcp_t  * p_tmcp_regs = (can_tmcp_t *)&RSCAN0.TMC0;
+    uint32_t      rscan_tmo_cnt;
 
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
     if (FALSE == g_dcb.opened)
@@ -986,7 +962,6 @@ uint32_t    rscan_tmo_cnt;
  End of function R_CAN_Control
  *****************************************************************************/
 
-
 /******************************************************************************
 * Function Name: can_enable_rxfifos
 * Description  : This function enables configured RXFIFOs.
@@ -996,7 +971,6 @@ uint32_t    rscan_tmo_cnt;
 *******************************************************************************/
 static void can_enable_rxfifos(void)
 {
-
     if ((g_dcb.fifo_mask & CAN_MASK_RXFIFO_0) != 0)
     {
         RSCAN.RFCC0.BIT.RFE = 1;
@@ -1011,7 +985,6 @@ static void can_enable_rxfifos(void)
  End of function can_enable_rxfifos
  *****************************************************************************/
 
-
 /******************************************************************************
 * Function Name: can_enable_chan_fifos
 * Description  : This function enables configured channel-specific FIFOs.
@@ -1021,7 +994,6 @@ static void can_enable_rxfifos(void)
 *******************************************************************************/
 static void can_enable_chan_fifos()
 {
-
     /* enable TX FIFO */
     if ((g_dcb.fifo_mask & CAN_MASK_TXFIFO) != 0)
     {
@@ -1037,7 +1009,6 @@ static void can_enable_chan_fifos()
 /******************************************************************************
  End of function can_enable_chan_fifos
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_SendMsg
@@ -1063,17 +1034,24 @@ static void can_enable_chan_fifos()
 can_err_t R_CAN_SendMsg(can_box_t   box_id,
                         can_txmsg_t *p_txmsg)
 {
-uint32_t        i;
-can_err_t       err = CAN_SUCCESS;
-can_tmstsp_t    *p_tmstsp_regs = (can_tmstsp_t *)&RSCAN0.TMSTS0;
-can_tmcp_t      *p_tmcp_regs = (can_tmcp_t *)&RSCAN0.TMC0;
-can_msg_t       *p_msg_regs;
-uint32_t        rscan_tmo_cnt;
+    uint32_t        i;
+    can_err_t       err = CAN_SUCCESS;
+
+    /* Points to Transmit Buffer Status Register */
+    can_tmstsp_t    * p_tmstsp_regs = (can_tmstsp_t *)&RSCAN0.TMSTS0;
+
+    /* Points to Transmit Buffer Control Register */
+    can_tmcp_t      * p_tmcp_regs = (can_tmcp_t *)&RSCAN0.TMC0;
+
+    /* Points to Message Structure */
+    can_msg_t       * p_msg_regs;
+    uint32_t          rscan_tmo_cnt;
 
     if (box_id & CAN_FLG_TXMBX)
     {
         /* get pointer to base of message registers and index for this TXMBX */
         p_msg_regs = (can_msg_t *)&RSCAN0.TMIDL0;
+        
         i = box_id & CAN_BOX_BUFNUM_MASK;       // buffer number
     }
     else if (CAN_BOX_TXFIFO == box_id)
@@ -1119,15 +1097,11 @@ uint32_t        rscan_tmo_cnt;
         }
     }
 
-
     /* load message into registers */
-
     p_msg_regs[i].IDL.BIT.ID = p_txmsg->id & 0xFFFF;
 
     p_msg_regs[i].IDH.BIT.IDE = p_txmsg->ide;
-
     p_msg_regs[i].IDH.BIT.RTR = p_txmsg->rtr;
-
     p_msg_regs[i].IDH.BIT.ID = (p_txmsg->id >> 16) & 0x1FFF;
 
     /* casting p_txmsg->log_history to uint16_t */
@@ -1187,8 +1161,6 @@ uint32_t        rscan_tmo_cnt;
 * End of function R_CAN_SendMsg
 *******************************************************************************/
 
-
-
 /***********************************************************************************************************************
 * Function Name: R_CAN_GetMsg
 ********************************************************************************************************************//**
@@ -1208,26 +1180,31 @@ uint32_t        rscan_tmo_cnt;
 can_err_t R_CAN_GetMsg(can_box_t   box_id,
                        can_rxmsg_t *p_rxmsg)
 {
-uint32_t            i;
-can_err_t           err = CAN_SUCCESS;
-can_fifo_stat_t     *p_rfstsx_regs = (can_fifo_stat_t *)&RSCAN.RFSTS0;
-volatile uint16_t   *p_rfpctrx_regs = (uint16_t *)&RSCAN.RFPCTR0;
-can_msg_t           *p_msg_regs;
-uint16_t            tmp;
+    uint32_t            i;
+    can_err_t           err = CAN_SUCCESS;
 
+    /* Points to Receive FIFO Status Register */
+    can_fifo_stat_t     * p_rfstsx_regs = (can_fifo_stat_t *)&RSCAN.RFSTS0;
+
+    /* Points to Receive FIFO Pointer Control Register */
+    volatile uint16_t   * p_rfpctrx_regs = (uint16_t *)&RSCAN.RFPCTR0;
+    
+    can_msg_t           * p_msg_regs;
+    uint16_t              tmp;
 
     if (box_id & CAN_FLG_RXMBX)
     {
         /* get pointer to base of message registers and index for this RXMBX */
         p_msg_regs = (can_msg_t *)&RSCAN.RMIDL0;
-        i = box_id & CAN_BOX_BUFNUM_MASK;           // buffer number
+        i          = box_id & CAN_BOX_BUFNUM_MASK;           // buffer number
     }
     else if (((box_id & CAN_FLG_FIFO) != 0) && ((box_id & CAN_BOX_RXFIFO_MASK) != 0))
     {
         /* get pointer to base of message registers and index for this RXFIFO */
         p_msg_regs = (can_msg_t *)&RSCAN.RFIDL0;
-        i = (CAN_BOX_RXFIFO_0 == box_id) ? 0 : 1;     // RXFIFO number
+        i          = (CAN_BOX_RXFIFO_0 == box_id) ? 0 : 1;     // RXFIFO number
     }
+
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
     else
     {
@@ -1257,26 +1234,24 @@ uint16_t            tmp;
         }
     }
 
-
     /* load message from registers */
-    p_rxmsg->ide = p_msg_regs[i].IDH.BIT.IDE;
-    p_rxmsg->rtr = p_msg_regs[i].IDH.BIT.RTR;
-    tmp = p_msg_regs[i].IDL.BIT.ID;
-    p_rxmsg->id = (p_msg_regs[i].IDH.BIT.ID << 16) | tmp;
-    p_rxmsg->label = p_msg_regs[i].PTR.BIT.PTR;
-    p_rxmsg->dlc = p_msg_regs[i].PTR.BIT.DLC;
+    p_rxmsg->ide       = p_msg_regs[i].IDH.BIT.IDE;
+    p_rxmsg->rtr       = p_msg_regs[i].IDH.BIT.RTR;
+    tmp                = p_msg_regs[i].IDL.BIT.ID;
+    p_rxmsg->id        = (p_msg_regs[i].IDH.BIT.ID << 16) | tmp;
+    p_rxmsg->label     = p_msg_regs[i].PTR.BIT.PTR;
+    p_rxmsg->dlc       = p_msg_regs[i].PTR.BIT.DLC;
     p_rxmsg->timestamp = p_msg_regs[i].TS.BIT.TS;
-    p_rxmsg->data[0] = p_msg_regs[i].DF0.BIT.DB0;
-    p_rxmsg->data[1] = p_msg_regs[i].DF0.BIT.DB1;
-    p_rxmsg->data[2] = p_msg_regs[i].DF1.BIT.DB2;
-    p_rxmsg->data[3] = p_msg_regs[i].DF1.BIT.DB3;
-    p_rxmsg->data[4] = p_msg_regs[i].DF2.BIT.DB4;
-    p_rxmsg->data[5] = p_msg_regs[i].DF2.BIT.DB5;
-    p_rxmsg->data[6] = p_msg_regs[i].DF3.BIT.DB6;
-    p_rxmsg->data[7] = p_msg_regs[i].DF3.BIT.DB7;
+    p_rxmsg->data[0]   = p_msg_regs[i].DF0.BIT.DB0;
+    p_rxmsg->data[1]   = p_msg_regs[i].DF0.BIT.DB1;
+    p_rxmsg->data[2]   = p_msg_regs[i].DF1.BIT.DB2;
+    p_rxmsg->data[3]   = p_msg_regs[i].DF1.BIT.DB3;
+    p_rxmsg->data[4]   = p_msg_regs[i].DF2.BIT.DB4;
+    p_rxmsg->data[5]   = p_msg_regs[i].DF2.BIT.DB5;
+    p_rxmsg->data[6]   = p_msg_regs[i].DF3.BIT.DB6;
+    p_rxmsg->data[7]   = p_msg_regs[i].DF3.BIT.DB7;
 
     /* clear message ready */
-
     if (box_id & CAN_FLG_RXMBX)
     {
         RSCAN.RMND0.WORD &= (~(1 << i));
@@ -1291,7 +1266,6 @@ uint16_t            tmp;
 /******************************************************************************
  End of function R_CAN_GetMsg
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_GetHistoryEntry
@@ -1313,9 +1287,8 @@ uint16_t            tmp;
 can_err_t R_CAN_GetHistoryEntry(can_box_t       box_id,
                                 can_history_t   *p_entry)
 {
-uint32_t    txbuf_num;
-can_err_t   err = CAN_SUCCESS;
-
+    uint32_t    txbuf_num;
+    can_err_t   err = CAN_SUCCESS;
 
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
     if (CAN_BOX_HIST_FIFO != box_id)
@@ -1362,7 +1335,6 @@ can_err_t   err = CAN_SUCCESS;
  End of function R_CAN_GetHistoryEntry
  *****************************************************************************/
 
-
 /***********************************************************************************************************************
 * Function Name: R_CAN_GetStatusMask
 ********************************************************************************************************************//**
@@ -1383,8 +1355,7 @@ uint32_t  R_CAN_GetStatusMask(can_stat_t    type,
                               uint8_t       chan,
                               can_err_t     *p_err)
 {
-can_fifo_mask_t stat;
-
+    can_fifo_mask_t stat;
 
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
     if ((type >= CAN_STAT_END_ENUM) || (NULL == p_err))
@@ -1398,20 +1369,20 @@ can_fifo_mask_t stat;
     {
         case CAN_STAT_FIFO_EMPTY:
         {
-            stat.uint32 = 0;
-            stat.bit.rxfifo_0 = RSCAN.RFSTS0.BIT.RFEMP;
-            stat.bit.rxfifo_1 = RSCAN.RFSTS1.BIT.RFEMP;
+            stat.uint32           = 0;
+            stat.bit.rxfifo_0     = RSCAN.RFSTS0.BIT.RFEMP;
+            stat.bit.rxfifo_1     = RSCAN.RFSTS1.BIT.RFEMP;
             stat.bit.ch0_txfifo_0 = RSCAN0.CFSTS0.BIT.CFEMP;
-            stat.bit.ch0_hist = RSCAN0.THLSTS0.BIT.THLEMP;
+            stat.bit.ch0_hist     = RSCAN0.THLSTS0.BIT.THLEMP;
             break;
         }
         case CAN_STAT_FIFO_THRESHOLD:
         {
-            stat.uint32 = 0;
-            stat.bit.rxfifo_0 = RSCAN.RFSTS0.BIT.RFIF;
-            stat.bit.rxfifo_1 = RSCAN.RFSTS1.BIT.RFIF;
+            stat.uint32           = 0;
+            stat.bit.rxfifo_0     = RSCAN.RFSTS0.BIT.RFIF;
+            stat.bit.rxfifo_1     = RSCAN.RFSTS1.BIT.RFIF;
             stat.bit.ch0_txfifo_0 = RSCAN0.CFSTS0.BIT.CFTXIF;
-            stat.bit.ch0_hist = RSCAN0.THLSTS0.BIT.THLIF;
+            stat.bit.ch0_hist     = RSCAN0.THLSTS0.BIT.THLIF;
 
             /* clear threshold interrupt flags */
             RSCAN.RFSTS0.BIT.RFIF = 0;
@@ -1479,6 +1450,10 @@ can_fifo_mask_t stat;
             RSCAN0.ERFLL.WORD = 0;
             break;
         }
+        default:
+        {
+            break;
+        }
     }
 
     *p_err = CAN_SUCCESS;
@@ -1487,7 +1462,6 @@ can_fifo_mask_t stat;
 /******************************************************************************
  End of function R_CAN_GetStatusMask
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_GetCountFIFO
@@ -1506,7 +1480,6 @@ can_fifo_mask_t stat;
 uint32_t R_CAN_GetCountFIFO(can_box_t  box_id,
                             can_err_t  *p_err)
 {
-
 #if (CAN_CFG_PARAM_CHECKING_ENABLE == 1)
     if (((box_id & CAN_BOX_TYPE_MASK) != CAN_FLG_FIFO)
      || (NULL == p_err))
@@ -1538,7 +1511,6 @@ uint32_t R_CAN_GetCountFIFO(can_box_t  box_id,
 /******************************************************************************
  End of function R_CAN_GetCountFIFO
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_GetCountErr
@@ -1584,7 +1556,6 @@ uint32_t R_CAN_GetCountErr(can_count_t  type,
  End of function R_CAN_GetCountErr
  *****************************************************************************/
 
-
 /***********************************************************************************************************************
 * Function Name: R_CAN_Close
 ********************************************************************************************************************//**
@@ -1610,12 +1581,12 @@ bsp_int_ctrl_t int_ctrl;
          */
 
         /* disable interrupts */
-        R_BSP_InterruptRequestDisable(VECT(RSCAN,GLERRINT));
-        R_BSP_InterruptRequestDisable(VECT(RSCAN,RXFINT));
-        R_BSP_InterruptRequestDisable(VECT(RSCAN,CHERRINT));
-        R_BSP_InterruptRequestDisable(VECT(RSCAN,TXINT));
+        R_BSP_InterruptRequestDisable(VECT(RSCAN, GLERRINT));
+        R_BSP_InterruptRequestDisable(VECT(RSCAN, RXFINT));
+        R_BSP_InterruptRequestDisable(VECT(RSCAN, CHERRINT));
+        R_BSP_InterruptRequestDisable(VECT(RSCAN, TXINT));
 
-        /* global stop mode */
+        /* set global stop mode */
         RSCAN.GCTRL.BIT.GSLPR = 1;
 
         /* WAIT_LOOP */
@@ -1624,10 +1595,10 @@ bsp_int_ctrl_t int_ctrl;
             R_BSP_NOP();
         }
 
-        /* clear internal structures*/
+        /* clear driver control block */
         memset((void*)&g_dcb, 0, sizeof(g_dcb));
+        /* clear channel control block */
         memset((void*)&g_ccb, 0, sizeof(g_ccb));
-
 
         /* Remove clock from the CAN interface */
         R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_LPC_CGC_SWR);
@@ -1639,13 +1610,11 @@ bsp_int_ctrl_t int_ctrl;
         R_BSP_InterruptControl(BSP_INT_SRC_EMPTY, BSP_INT_CMD_FIT_INTERRUPT_ENABLE, &int_ctrl);
 #endif
         R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_LPC_CGC_SWR);
-
     }
 }
 /******************************************************************************
  End of function R_CAN_Close
  *****************************************************************************/
-
 
 /***********************************************************************************************************************
 * Function Name: R_CAN_GetVersion
@@ -1667,7 +1636,6 @@ uint32_t  R_CAN_GetVersion(void)
  End of function R_CAN_GetVersion
  *****************************************************************************/
 
-
 /******************************************************************************
 * Function Name: can_global_err_isr
 * Description  : This function is executed when the INTCANGERR interrupt is
@@ -1675,22 +1643,30 @@ uint32_t  R_CAN_GetVersion(void)
 * Arguments    : none
 * Return Value : none
 ******************************************************************************/
-R_BSP_PRAGMA_STATIC_INTERRUPT(can_global_err_isr,VECT(RSCAN,GLERRINT))
+R_BSP_PRAGMA_STATIC_INTERRUPT (can_global_err_isr, VECT(RSCAN, GLERRINT))
 R_BSP_ATTRIB_STATIC_INTERRUPT void can_global_err_isr(void)
 {
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
 
     g_dcb.p_callback(CAN_EVT_GLOBAL_ERR, NULL);
 
     /* reset interrupt flags */
     RSCAN0.THLSTS0.BIT.THLELT = 0;      // clear HIST FIFO overflow flags (for THLES error)
-    RSCAN.RFSTS0.BIT.RFMLT = 0;         // clear RXFIFO overflow flags (for MES error)
-    RSCAN.RFSTS1.BIT.RFMLT = 0;
-    RSCAN.GERFLL.BIT.DEF = 0;           // clear dlc error flag (for DEF error)
+    RSCAN.RFSTS0.BIT.RFMLT    = 0;      // clear RXFIFO overflow flags (for MES error)
+    RSCAN.RFSTS1.BIT.RFMLT    = 0;
+    RSCAN.GERFLL.BIT.DEF      = 0;      // clear dlc error flag (for DEF error)
+
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
 }
 /******************************************************************************
  End of function can_global_err_isr
  *****************************************************************************/
-
 
 /******************************************************************************
 * Function Name: can_rxfifo_isr
@@ -1699,20 +1675,28 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void can_global_err_isr(void)
 * Arguments    : none
 * Return Value : none
 ******************************************************************************/
-R_BSP_PRAGMA_STATIC_INTERRUPT(can_rxfifo_isr, VECT(RSCAN,RXFINT))
+R_BSP_PRAGMA_STATIC_INTERRUPT (can_rxfifo_isr, VECT(RSCAN, RXFINT))
 R_BSP_ATTRIB_STATIC_INTERRUPT void can_rxfifo_isr(void)
 {
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
 
     g_dcb.p_callback(CAN_EVT_RXFIFO_THRESHOLD, NULL);
 
     /* reset interrupt flags */
     RSCAN.RFSTS0.BIT.RFIF = 0;
     RSCAN.RFSTS1.BIT.RFIF = 0;
+
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
 }
 /******************************************************************************
  End of function can_rxfifo_isr
  *****************************************************************************/
-
 
 /******************************************************************************
 * Function Name: can_ch0_error_isr
@@ -1721,20 +1705,27 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void can_rxfifo_isr(void)
 * Arguments    : none
 * Return Value : none
 ******************************************************************************/
-R_BSP_PRAGMA_STATIC_INTERRUPT(can_ch0_error_isr, VECT(RSCAN,CHERRINT))
+R_BSP_PRAGMA_STATIC_INTERRUPT (can_ch0_error_isr, VECT(RSCAN, CHERRINT))
 R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_error_isr(void)
 {
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
 
     g_ccb.p_chcallback(CAN_CH0, CAN_EVT_CHANNEL_ERR, NULL);
 
     /* reset interrupt flags */
     RSCAN0.ERFLL.WORD = 0;
 
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
 }
 /******************************************************************************
  End of function can_ch0_error_isr
  *****************************************************************************/
-
 
 /******************************************************************************
 * Function Name: can_ch0_tx_isr
@@ -1743,9 +1734,13 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_error_isr(void)
 * Arguments    : none
 * Return Value : none
 ******************************************************************************/
-R_BSP_PRAGMA_STATIC_INTERRUPT(can_ch0_tx_isr, VECT(RSCAN,TXINT))
+R_BSP_PRAGMA_STATIC_INTERRUPT (can_ch0_tx_isr, VECT(RSCAN, TXINT))
 R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_tx_isr(void)
 {
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
 
     g_ccb.p_chcallback(CAN_CH0, CAN_EVT_TRANSMIT, NULL);
 
@@ -1760,6 +1755,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void can_ch0_tx_isr(void)
 
     /* reset HIST FIFO threshold flag */
     RSCAN0.THLSTS0.BIT.THLIF = 0;
+
+#if CAN_CFG_EN_NESTED_INT == 1
+    /* clear bit PSW.I = 0 */
+    R_BSP_CLRPSW_I();
+#endif
 }
 /******************************************************************************
  End of function can_ch0_tx_isr

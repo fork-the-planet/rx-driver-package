@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_ble_rx23w
-VERSION = 		2.60
+VERSION = 		2.61
 MDF = V2
 
 CONFIG_FOLDER = r_config

@@ -1,27 +1,11 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.    
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 
 /**********************************************************************************************************************
 * File Name    : r_mmcif_rx_if.h
-* Device       : RX64M
-* Tool-Chain   : RX Family C Compiler
-* H/W Platform : RSK board for RX64M
 * Description  : Interface file for MMC API for RX
 ***********************************************************************************************************************
 * History      : DD.MM.YYYY Version Description
@@ -29,16 +13,19 @@
 *              : 28.12.2016 1.01    Added RX65N.
 *              : 31.07.2017 1.02    Supported RX65N-2MB.
 *              : 31.12.2017 1.03    The sample program corresponded to the pin setting of Smart Configurator.
-*              :                    There is no change in the FIT module.
+*                                   There is no change in the FIT module.
 *              : 01.02.2019 1.04    Changed Minor version to 1.04.
 *              : 20.05.2019 1.05    Added support for GNUC and ICCRX.
 *                                   Fixed coding style.
 *              : 30.07.2019 1.06    Changed Minor version to 1.06
-*              :                    Added RX72M.
+*                                   Added RX72M.
 *              : 22.11.2019 1.07    Changed Minor version to 1.07
-*              :                    Added RX72N and RX66N.
+*                                   Added RX72N and RX66N.
 *              : 27.12.2022 1.10    Added new demo projects
-                                    Updated slash format of included header file paths for Linux compatibility
+*                                   Updated slash format of included header file paths for Linux compatibility
+*              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
+*                                   Updated file description.
+*              : 15.03.2025 1.21    Updated disclaimer.
 **********************************************************************************************************************/
 
 #ifndef _MMC_IF_H
@@ -59,7 +46,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RX_MMC_API_VERSION_MAJOR            (1)
-#define RX_MMC_API_VERSION_MINOR            (10)
+#define RX_MMC_API_VERSION_MINOR            (21)
 
 /* ==== IP selection ==== */
 #define MMC_MMCMEM_MAX_TRANS                (65535)

@@ -1,37 +1,25 @@
 /***********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
- * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2016 Renesas Electronics Corporation. All rights reserved.
- ***********************************************************************************************************************/
+* Copyright (c) 2016 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /***********************************************************************************************************************
  * File Name    : r_pdc_rx_if.h
- * Version      : 2.06
+ * Version      : 2.07
  * Description  : PDC module device driver
  ***********************************************************************************************************************/
 /***********************************************************************************************************************
- * History : DD.MM.YYYY Version  Description
- *         : 01.10.2016 2.00     First Release
- *         : 02.10.2017 2.01     Added changes for RX65N-2MB.
- *         : 01.02.2019 2.02     Changed Minor version to 2.02.
- *         : 20.05.2019 2.03     Changed Minor version to 2.03.
- *         : 30.07.2019 2.04     Changed Minor version to 2.04.
- *                               Added changes for RX72M.
- *         : 22.11.2019 2.05     Changed Minor version to 2.05.
- *         : 07.01.2022 2.06     Changed Minor version to 2.06.
- *                               Added PDC_ERR_ONGOING to pdc_return_t.
+ * History : DD.MM.YYYY Version Description
+ *         : 01.10.2016 2.00    First Release
+ *         : 02.10.2017 2.01    Added changes for RX65N-2MB.
+ *         : 01.02.2019 2.02    Changed Minor version to 2.02.
+ *         : 20.05.2019 2.03    Changed Minor version to 2.03.
+ *         : 30.07.2019 2.04    Changed Minor version to 2.04.
+ *                              Added changes for RX72M.
+ *         : 22.11.2019 2.05    Changed Minor version to 2.05.
+ *         : 07.01.2022 2.06    Changed Minor version to 2.06.
+ *                              Added PDC_ERR_ONGOING to pdc_return_t.
+ *         : 15.03.2025 2.07    Updated disclaimer.
  ***********************************************************************************************************************/
 /* Guards against multiple inclusion. */
 #ifndef PDC_RX_IF_H
@@ -57,7 +45,7 @@
 
 /* Version Number of API. */
     #define PDC_RX_VERSION_MAJOR  (2)
-    #define PDC_RX_VERSION_MINOR  (6)
+    #define PDC_RX_VERSION_MINOR  (7)
 
 /* Selects the active sense of the VSYNC signal. */
     #define PDC_VSYNC_SIGNAL_POLARITY_HIGH    (0)

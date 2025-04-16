@@ -1,24 +1,11 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2023 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx_private.h
- * Version      : 1.18
+ * Version      : 1.22
  * Description  : TSIP-Lite function private header file.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -41,6 +28,8 @@
  *         : 15.09.2022 1.16     Added support for RSA 3k/4k and updated support for TLS1.3
  *         : 20.01.2023 1.17     Added support for TLS1.3 server
  *         : 24.05.2023 1.18     Added support for RX26T
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -86,8 +75,6 @@ extern uint32_t const S_FLASH[];
 extern uint32_t S_RAM[R_TSIP_SRAM_WORD_SIZE];
 extern uint32_t S_INST[R_TSIP_SINST_WORD_SIZE];
 extern uint32_t S_INST2[R_TSIP_SINST2_WORD_SIZE];
-
-extern TSIP_GEN_MAC_CB_FUNC_T TSIP_GEN_MAC_CB_FUNC;
 
 /**********************************************************************************************************************
  Exported global functions
@@ -219,10 +206,15 @@ e_tsip_err_t R_TSIP_UpdateAes128KeyIndexSub(uint32_t *InData_IV, uint32_t *InDat
 e_tsip_err_t R_TSIP_UpdateAes256KeyIndexSub(uint32_t *InData_IV, uint32_t *InData_InstData, uint32_t *OutData_KeyIndex);
 
 e_tsip_err_t R_TSIP_StartUpdateFirmwareSub(void);
-e_tsip_err_t R_TSIP_GenerateFirmwareMacSub(uint32_t *InData_KeyIndex, uint32_t *InData_SessionKey,
-        uint32_t *InData_UpProgram, uint32_t *InData_IV, uint32_t *OutData_Program, uint32_t MAX_CNT,
-        tsip_firmware_generate_mac_resume_handle_t *tsip_firmware_generate_mac_resume_handle);
-e_tsip_err_t R_TSIP_VerifyFirmwareMacSub(uint32_t *InData_Program, uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_GenerateFirmwareMacInitSub(uint32_t *InData_KeyIndex, uint32_t *InData_SessionKey,
+        uint32_t *InData_IV);
+e_tsip_err_t R_TSIP_GenerateFirmwareMacUpdateSub(uint32_t *InData_UpProgram, uint32_t *OutData_Program,
+        uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_GenerateFirmwareMacFinalSub(uint32_t *InData_UpProgram, uint32_t *InData_UpMAC,
+        uint32_t *OutData_Program, uint32_t *OutData_MAC, uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_VerifyFirmwareMacInitSub(void);
+e_tsip_err_t R_TSIP_VerifyFirmwareMacUpdateSub(uint32_t *InData_Program, uint32_t MAX_CNT);
+e_tsip_err_t R_TSIP_VerifyFirmwareMacFinalSub(uint32_t *InData_Program, uint32_t *InData_MAC, uint32_t MAX_CNT);
 
 e_tsip_err_t R_TSIP_Aes128EncryptDecryptInitSub(uint32_t *InData_Cmd, uint32_t *InData_KeyIndex, uint32_t *InData_IV);
 void         R_TSIP_Aes128EncryptDecryptUpdateSub(uint32_t *InData_Text, uint32_t *OutData_Text, uint32_t MAX_CNT);
@@ -300,8 +292,6 @@ void RX231_RX23W_function030(void);
 void RX231_RX23W_function205(void);
 void RX231_RX23W_function206(void);
 void RX231_RX23W_function207(void);
-
-void firm_mac_read(uint32_t *InData_Program);
 
 /**********************************************************************************************************************
  * Function Name: change_endian_long

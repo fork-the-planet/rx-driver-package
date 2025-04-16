@@ -10,7 +10,7 @@ R01AN2171JJ
 
 Version
 -------
-v1.30
+v1.31
 
 Overview
 --------
@@ -55,9 +55,9 @@ How to add to your project
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v.3.06.00
-* GCC for Renesas RX 8.3.0.202311
-* IAR C/C++ Compiler for Renesas version 4.20.3
+* Renesas RX v.3.07.00
+* GCC for Renesas RX 8.3.0.202411
+* IAR C/C++ Compiler for Renesas version 5.10.1
 
 File Structure
 --------------
@@ -67,9 +67,9 @@ r_usb_phid_mini
 |
 +---doc
 |     \en
-|     |   r01an2171ej0130_usb.pdf
+|     |   r01an2171ej0131_usb.pdf
 |     \jp
-|         r01an2171jj0130_usb.pdf
+|         r01an2171jj0131_usb.pdf
 |
 +---ref
 |       r_usb_phid_mini_config_reference.h

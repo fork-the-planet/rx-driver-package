@@ -1,30 +1,12 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
-/************************************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * System Name  : FLASH SPI driver software
 * File Name    : r_flash_spi_type.c
-* Version      : 3.40
+* Version      : 3.51
 * Device       : -
 * Abstract     : User I/F file
 * Tool-Chain   : -
@@ -32,20 +14,20 @@
 * H/W Platform : -
 * Description  : Flash memory type I/F file
 * Limitation   : None
-*************************************************************************************************/
-/************************************************************************************************
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * History      : DD.MM.YYYY Version  Description
 *              : 23.07.2014 2.21     Created
 *              : 29.05.2015 2.32     Revised functions of same as Ver.2.32 of EEPROM SPI FIT module.
 *              : 31.12.2021 3.03     Added variable "read_after_write" "read_after_write_add" and
 *                                    "read_after_write_data" for controlling SPI bus.
 *              : 16.03.2023 3.20     Added support for AT25QF641B-SHB.
-*                                    Removed the processing related to other unsupported flash 
-*                                    devices.
+*                                    Removed the processing related to other unsupported flash devices.
 *              : 15.11.2023 3.40     Added support for MX25U6432F.
-*                                    Added features Advanced sector protection supporting
-*                                    for MX66L1G45 and MX25U6432F.
-*************************************************************************************************/
+*                                    Added features Advanced sector protection supporting for MX66L1G45 and MX25U6432F.
+*              : 20.12.2024 3.50     Updated the parameter checking of the Read Data operation.
+*              : 15.03.2025 3.51     Updated disclaimer.
+***********************************************************************************************************************/
 
 
 /************************************************************************************************
@@ -741,6 +723,7 @@ flash_spi_status_t r_flash_spi_set_write_protect_advanced_sector (uint8_t devno,
     (FLASH_SPI_CFG_DEV1_MX25L == 1) || (FLASH_SPI_CFG_DEV1_MX25R == 1) || (FLASH_SPI_CFG_DEV1_AT25QF == 1))
             ret = FLASH_SPI_ERR_OTHER;
 #endif
+        break;
         default:
             /* Do nothing. */
         break;
@@ -853,6 +836,7 @@ flash_spi_status_t r_flash_spi_erase_write_protect_advanced_sector(uint8_t devno
     (FLASH_SPI_CFG_DEV1_MX25L == 1) || (FLASH_SPI_CFG_DEV1_MX25R == 1) || (FLASH_SPI_CFG_DEV1_AT25QF == 1))
             ret = FLASH_SPI_ERR_OTHER;
 #endif
+        break;
         default:
             /* Do nothing. */
         break;
@@ -1032,8 +1016,8 @@ flash_spi_status_t r_flash_spi_read_data(uint8_t devno, flash_spi_info_t * p_fla
         return FLASH_SPI_ERR_PARAM;
     }
 
-    if (0 != (((uint32_t)p_flash_spi_info & FLASH_SPI_ADDR_BOUNDARY) || 
-              ((uint32_t)p_flash_spi_info->p_data & FLASH_SPI_ADDR_BOUNDARY)))
+    /* Do not check the 4 bytes boundary of the buffer address in the Read Data operation. */
+    if (0 != ((uint32_t)p_flash_spi_info & FLASH_SPI_ADDR_BOUNDARY))
     {
         R_FLASH_SPI_Log_Func(FLASH_SPI_DEBUG_ERR_ID, (uint32_t)FLASH_SPI_TYPE, __LINE__);
         return FLASH_SPI_ERR_PARAM;
@@ -2849,8 +2833,8 @@ flash_spi_status_t r_flash_spi_read_data_security_page(uint8_t devno, flash_spi_
         return FLASH_SPI_ERR_PARAM;
     }
 
-    if (0 != (((uint32_t)p_flash_spi_info & FLASH_SPI_ADDR_BOUNDARY) ||
-              ((uint32_t)p_flash_spi_info->p_data & FLASH_SPI_ADDR_BOUNDARY)))
+    /* Do not check the 4 bytes boundary of the buffer address in the Read Data operation. */
+    if (0 != ((uint32_t)p_flash_spi_info & FLASH_SPI_ADDR_BOUNDARY))
     {
         R_FLASH_SPI_Log_Func(FLASH_SPI_DEBUG_ERR_ID, (uint32_t)FLASH_SPI_TYPE, __LINE__);
         return FLASH_SPI_ERR_PARAM;

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
+* Copyright (c) 2015 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
 ***********************************************************************************************************************/
@@ -167,6 +172,14 @@ GetStatusMask() Type : CAN_STAT_CH_ERROR</description>
             <description>Enables arbitration lost interrupt.
 Callback Event : CAN_EVT_CHANNEL_ERR
 GetStatusMask() Type : CAN_STAT_CH_ERROR</description>
+        </property>
+        <property id="CAN_CFG_EN_NESTED_INT" display="Using CAN nested interrupt" default="0" type="combobox">
+            <option id="CAN_CFG_EN_NESTED_INT.0" display="Do not use CAN nested interrupt" value="0"/>
+            <option id="CAN_CFG_EN_NESTED_INT.1" display="Use CAN nested interrupt" value="1"/>
+            <description>Specifies whether to include code for nested interrupt.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
         </property>
     </configuration>
 </module>

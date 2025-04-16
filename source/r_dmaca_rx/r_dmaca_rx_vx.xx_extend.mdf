@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+-->
+<!--
+/***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
 ***********************************************************************************************************************/
@@ -25,6 +32,12 @@ BSP_CFG_PARAM_CHECKING_ENABLE = System default.
             <description>SPECIFY WHETHER THE DTC DRIVER IS USED WITH DMACA DRIVER
 - 0 : DTC driver is not used with DMACA driver.
 - 1 : DTC driver is used with DMACA driver.</description>
+        </property>
+        <property id="DMACA_CFG_EN_NESTED_INT" display="Using DMAC nested interrupt" default="0" type="combobox">
+            <option id="DMACA_CFG_EN_NESTED_INT.0" display="Do not use DMAC nested interrupt" value="0"/>
+            <option id="DMACA_CFG_EN_NESTED_INT.1" display="Use DMAC nested interrupt" value="1"/>
+            <description>Set to 0 if not using the DMAC nested interrupts.
+Set to 1 to use the DMAC nested interrupts.</description>
         </property>
     </configuration>
 </module>

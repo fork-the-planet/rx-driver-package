@@ -10,7 +10,7 @@ R01AN2025JJ
 
 Version
 -------
-v1.43
+v1.44
 
 Overview
 --------
@@ -66,9 +66,9 @@ How to add to your project
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v.3.06.00
-* GCC for Renesas RX 8.3.0.202405
-* IAR C/C++ Compiler for Renesas version 4.20.1
+* Renesas RX v.3.07.00
+* GCC for Renesas RX 8.3.0.202411
+* IAR C/C++ Compiler for Renesas version 5.10.1
 
 File Structure
 --------------
@@ -78,9 +78,9 @@ r_usb_basic
 |
 +---doc
 |     \en
-|     |   r01an2025ej0143_usb.pdf
+|     |   r01an2025ej0144_usb.pdf
 |     \jp
-|         r01an2025jj0143_usb.pdf
+|         r01an2025jj0144_usb.pdf
 |
 +---ref
 |       r_usb_config_reference.h

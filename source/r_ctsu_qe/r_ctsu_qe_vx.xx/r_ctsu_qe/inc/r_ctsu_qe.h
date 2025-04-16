@@ -1,20 +1,8 @@
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
-* THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
-* Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
-************************************************************************************************************************/
+/*
+* Copyright (c) 2018 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
 * File Name    : r_ctsu_qe.h
 * Description  : This file contains the CTSU API and should be included by the application which uses this API.
@@ -234,6 +222,7 @@ typedef struct st_ctsu_correction_info
     ctsu_correction_status_t status;                               ///< Correction status
     ctsu_ctsuwr_t            ctsuwr;                               ///< Correction scan parameter
     volatile ctsu_self_buf_t scanbuf;                              ///< Correction scan buffer
+    uint8_t calculation_error;                                     ///< Overflow or underflow in correction calclation
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #if (CTSU_CFG_TEMP_CORRECTION_SUPPORT == 1)
     uint16_t scan_index;                                           ///< Scan point index
@@ -244,8 +233,8 @@ typedef struct st_ctsu_correction_info
     uint16_t base_value[CTSU_RANGE_NUM];                           ///< Value of internal registance measurement
     uint16_t error_rate[CTSU_RANGE_NUM];                           ///< Error rate of base vs DAC
     uint16_t range_ratio[CTSU_RANGE_NUM - 1];                      ///< Ratio between 160uA range and other ranges
-    uint16_t dac_value[CTSU_CORRECTION_POINT_NUM];                 ///< Value of internal DAC measurement
-    uint16_t ref_value[CTSU_RANGE_NUM][CTSU_CORRECTION_POINT_NUM]; ///< Value of reference
+    uint16_t dac_value[CTSU_RANGE_NUM][CTSU_CORRECTION_POINT_NUM]; ///< Value of internal DAC measurement with VDC path correction
+    uint16_t coef[CTSU_RANGE_NUM][CTSU_CORRECTION_POINT_NUM];      ///< Correction coefficients
 #else
     uint16_t first_val;                                            ///< 1st correction value
     uint16_t second_val;                                           ///< 2nd correction value
@@ -360,10 +349,13 @@ typedef struct st_ctsu_instance_ctrl
     ctsu_ctsuwr_t          * p_ctsuwr;           ///< CTSUWR write register value. g_ctsu_ctsuwr[] is set by Open API.
     ctsu_self_buf_t        * p_self_raw;         ///< Pointer to Self raw data. g_ctsu_self_raw[] is set by Open API.
     uint16_t               * p_self_corr;        ///< Pointer to Self correction data. g_ctsu_self_corr[] is set by Open API.
+    uint16_t               * p_self_mfc;         ///< Pointer to Self multi frequency correction data. g_ctsu_self_mfc[] is set by Open API.
     ctsu_data_t            * p_self_data;        ///< Pointer to Self moving average data. g_ctsu_self_data[] is set by Open API.
     ctsu_mutual_buf_t      * p_mutual_raw;       ///< Pointer to Mutual raw data. g_ctsu_mutual_raw[] is set by Open API.
-    uint16_t               * p_mutual_pri_corr;  ///< Pointer to Mutual primary correction data. g_ctsu_self_corr[] is set by Open API.
-    uint16_t               * p_mutual_snd_corr;  ///< Pointer to Mutual secondary correction data. g_ctsu_self_corr[] is set by Open API.
+    uint16_t               * p_mutual_pri_corr;  ///< Pointer to Mutual primary correction data. g_ctsu_mutual_pri_corr[] is set by Open API.
+    uint16_t               * p_mutual_snd_corr;  ///< Pointer to Mutual secondary correction data. g_ctsu_mutual_snd_corr[] is set by Open API.
+    uint16_t               * p_mutual_pri_mfc;   ///< Pointer to Mutual primary multi frequency correction data. g_ctsu_pri_mutual_mfc[] is set by Open API.
+    uint16_t               * p_mutual_snd_mfc;   ///< Pointer to Mutual primary multi frequency correction data. g_ctsu_pri_mutual_mfc[] is set by Open API.
     ctsu_data_t            * p_mutual_pri_data;  ///< Pointer to Mutual primary moving average data. g_ctsu_mutual_pri_data[] is set by Open API.
     ctsu_data_t            * p_mutual_snd_data;  ///< Pointer to Mutual secondary moving average data. g_ctsu_mutual_snd_data[] is set by Open API.
     ctsu_correction_info_t * p_correction_info;  ///< Pointer to correction info

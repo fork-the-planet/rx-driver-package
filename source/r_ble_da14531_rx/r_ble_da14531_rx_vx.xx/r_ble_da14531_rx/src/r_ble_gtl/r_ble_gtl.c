@@ -13,7 +13,7 @@
 
 #include "r_ble_gtl.h"
 #include "qe_ble_profile.h"
-
+#include "r_ble_gtl_security.h"
 #if BSP_CFG_RTOS_USED == 1
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -126,6 +126,18 @@
 #define R_BLE_GTL_GAPC_PARAM_UPDATE_REQ_IND     0x0E0F
 #define R_BLE_GTL_GAPC_PARAM_UPDATE_CFM         0x0E10
 #define R_BLE_GTL_GAPC_PARAM_UPDATED_IND        0x0E11
+
+
+#define R_BLE_GTL_GAPC_BOND_REQ_IND             0x0E13
+#define R_BLE_GTL_GAPC_BOND_CFM                 0x0E14
+#define R_BLE_GTL_GAPC_BOND_IND                 0x0E15
+
+#define R_BLE_GTL_GAPC_ENCRYPT_REQ_IND          0x0E17
+#define R_BLE_GTL_GAPC_ENCRYPT_CFM              0x0E18
+#define R_BLE_GTL_GAPC_ENCRYPT_IND              0x0E19
+
+#define R_BLE_GTL_GAPC_SECURITY_CMD             0x0E1A
+
 #define R_BLE_GTL_GAPC_CON_CHANNEL_MAP_IND      0x0E1D
 #define R_BLE_GTL_GAPC_LECB_CONNECT_CMD         0x0E20
 #define R_BLE_GTL_GAPC_LECB_ADD_CMD             0x0E24
@@ -135,6 +147,8 @@
 #define R_BLE_GTL_GAPC_LE_PKT_SIZE_IND          0x0E2C
 
 /* GTL Auxiliary Command ID's */
+#define R_BLE_GTL_GAPC_APP_RAND_REQ             0xA001
+#define R_BLE_GTL_APP_GEN_RAND_RSP              0xA002
 #define R_BLE_GTL_AUX_SET_TX_POWER_CMD          0xA005
 #define R_BLE_GTL_AUX_SET_TX_POWER_CMP_EVT      0xA006
 #define R_BLE_GTL_AUX_GET_TX_POWER_CMD          0xA007
@@ -385,14 +399,6 @@ typedef union r_ble_gtl_uuid_value
     uint8_t                         uuid128[BLE_GATT_128_BIT_UUID_SIZE];
 } r_ble_gtl_uuid_value_t;
 
-/* GTL message header */
-typedef struct r_ble_gtl_msg_hdr
-{
-    uint16_t                        msg_id;
-    uint16_t                        dest_id;
-    uint16_t                        src_id;
-    uint16_t                        param_length;
-} r_ble_gtl_msg_hdr_t;
 
 /* Common GTL GAPM message parameters */
 typedef struct r_ble_gtl_gapm_adv_host
@@ -1340,6 +1346,16 @@ static uint16_t             r_ble_gtl_is_ri_index(uint16_t db_index);
 static uint16_t             r_ble_gtl_get_ri_value_with_db_index(uint16_t db_index, uint16_t ** p_value);
 static void                 r_ble_gtl_init_ri_database(void);
 
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hdl, 
+                                                                r_ble_gtl_gapc_bond_req_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_bond_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_req_ind_handler(uint16_t conn_hdl, 
+                                                                   r_ble_gtl_gapc_encrypt_req_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_ind_handler(uint16_t conn_hdl, gapc_encrypt_ind_t *p_param);
+
+extern st_ble_gap_pairing_param_t  ble_pairing_param_local;
+extern st_ble_gap_key_dist_t       pair_key_dist_local;
+
 /***********************************************************************************************************************
  * Public Functions Implementation
  **********************************************************************************************************************/
@@ -2121,6 +2137,49 @@ ble_status_t R_BLE_GTL_GAP_GetRemDevInfo(uint16_t conn_hdl)
     return status;
 }
 
+ble_status_t R_BLE_GTL_GAP_SetPairingParams (st_ble_gap_pairing_param_t * p_pair_param)
+{
+#if BLE_CFG_PARAM_CHECKING_ENABLE
+
+    /* Check if param ptr is NULL*/
+    FSP_ERROR_RETURN(NULL != p_pair_param, BLE_ERR_INVALID_PTR);
+
+    /* IO capabilities of local device. */
+    FSP_ERROR_RETURN(p_pair_param->iocap < BLE_GAP_IOCAP_KEYBOARD_DISPLAY, BLE_ERR_INVALID_DATA);
+
+    /* MITM protection policy. */
+    FSP_ERROR_RETURN((p_pair_param->mitm == BLE_GAP_SEC_MITM_STRICT) ||
+                                            (p_pair_param->mitm == BLE_GAP_SEC_MITM_BEST_EFFORT), BLE_ERR_INVALID_DATA);
+
+    /* Bonding policy. */
+    FSP_ERROR_RETURN((p_pair_param->bonding == BLE_GAP_BONDING) || 
+                                                 (p_pair_param->bonding == BLE_GAP_BONDING_NONE), BLE_ERR_INVALID_DATA);
+
+    /* Maximum LTK size(in bytes). */
+    FSP_ERROR_RETURN((p_pair_param->max_key_size > 7) &&
+                                                (p_pair_param->max_key_size <= BLE_GAP_LTK_SIZE), BLE_ERR_INVALID_DATA);
+
+    /* Minimum LTK size(in bytes). */
+    FSP_ERROR_RETURN((p_pair_param->min_key_size > 7) &&
+                                                (p_pair_param->min_key_size <= BLE_GAP_LTK_SIZE), BLE_ERR_INVALID_DATA);
+
+    /* Determine whether to accept only Secure Connections or not. */
+    FSP_ERROR_RETURN((p_pair_param->sec_conn_only == BLE_GAP_SC_STRICT) ||
+                                         (p_pair_param->sec_conn_only == BLE_GAP_SC_BEST_EFFORT), BLE_ERR_INVALID_DATA);
+#endif
+
+    ble_pairing_param_local.iocap = p_pair_param->iocap;
+    ble_pairing_param_local.mitm = p_pair_param->mitm;
+    ble_pairing_param_local.bonding = p_pair_param->bonding;
+    ble_pairing_param_local.max_key_size = p_pair_param->max_key_size;
+    ble_pairing_param_local.min_key_size = p_pair_param->min_key_size;
+    ble_pairing_param_local.loc_key_dist = p_pair_param->loc_key_dist;
+    ble_pairing_param_local.rem_key_dist = p_pair_param->rem_key_dist;
+    ble_pairing_param_local.sec_conn_only = p_pair_param->sec_conn_only;
+
+    return BLE_SUCCESS;
+}
+
 ble_status_t R_BLE_GTL_GATTS_SetDbInst(st_ble_gatts_db_cfg_t * p_db_inst)
 {
 #if BLE_CFG_PARAM_CHECKING_ENABLE
@@ -2686,7 +2745,7 @@ ble_status_t R_BLE_GTL_GATTC_ReadChar(uint16_t conn_hdl, uint16_t value_hdl)
     bool                         complete = false;
     uint8_t                    * p_msg;
     r_ble_gtl_cb_evt_t         * p_cb_evt;
-    st_ble_gattc_rd_char_evt_t * p_rd_char;
+    st_ble_gattc_rd_char_evt_t * p_rd_char = NULL;
     r_ble_gtl_gattc_read_ind_t * p_read_ind;
 
     if (true == r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX))
@@ -2712,7 +2771,19 @@ ble_status_t R_BLE_GTL_GATTC_ReadChar(uint16_t conn_hdl, uint16_t value_hdl)
                             p_rd_char = p_cb_evt->data.gattc.p_param;
                             p_rd_char->read_data.attr_hdl        = value_hdl;
                             p_rd_char->read_data.value.value_len = p_read_ind->length;
-                            memcpy(p_rd_char->read_data.value.p_value, p_read_ind->value, p_read_ind->length);
+                            p_rd_char->read_data.value.p_value	=  r_ble_gtl_malloc(p_read_ind->length);
+                            /* Check if malloc failed*/
+                            if(NULL!=p_rd_char->read_data.value.p_value)
+                            {
+                                memcpy(p_rd_char->read_data.value.p_value, p_read_ind->value, p_read_ind->length);
+                            }
+                            else
+                            {
+                                r_ble_gtl_cb_evt_free(p_cb_evt);
+                                r_ble_gtl_msg_buffer_free(p_msg);
+                                r_ble_gtl_mutex_give(R_BLE_GTL_MUTEX_RX);
+                                return BLE_ERR_INVALID_PTR;
+                            } 
                         }
                         status = r_ble_gtl_cb_evt_queue_add(p_cb_evt);
                     }
@@ -2751,7 +2822,7 @@ ble_status_t R_BLE_GTL_GATTC_ReadCharUsingUuid(uint16_t                  conn_hd
     bool                         complete = false;
     uint8_t                    * p_msg;
     r_ble_gtl_cb_evt_t         * p_cb_evt;
-    st_ble_gattc_rd_char_evt_t * p_rd_char;
+    st_ble_gattc_rd_char_evt_t * p_rd_char = NULL;
     r_ble_gtl_gattc_read_ind_t * p_read_ind;
     r_ble_gtl_uuid_t             uuid;
 
@@ -2831,7 +2902,7 @@ ble_status_t R_BLE_GTL_GATTC_ReadLongChar(uint16_t conn_hdl, uint16_t value_hdl,
     bool                         complete = false;
     uint8_t                    * p_msg;
     r_ble_gtl_cb_evt_t         * p_cb_evt;
-    st_ble_gattc_rd_char_evt_t * p_rd_char;
+    st_ble_gattc_rd_char_evt_t * p_rd_char = NULL;
     r_ble_gtl_gattc_read_ind_t * p_read_ind;
 
     if (true == r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX))
@@ -2857,7 +2928,19 @@ ble_status_t R_BLE_GTL_GATTC_ReadLongChar(uint16_t conn_hdl, uint16_t value_hdl,
                             p_rd_char = p_cb_evt->data.gattc.p_param;
                             p_rd_char->read_data.attr_hdl        = value_hdl;
                             p_rd_char->read_data.value.value_len = p_read_ind->length;
-                            memcpy(p_rd_char->read_data.value.p_value, p_read_ind->value, p_read_ind->length);
+                            p_rd_char->read_data.value.p_value	=  r_ble_gtl_malloc(p_read_ind->length);
+                            /* Check if malloc failed*/
+                            if(NULL!=p_rd_char->read_data.value.p_value)
+                            {
+                                memcpy(p_rd_char->read_data.value.p_value, p_read_ind->value, p_read_ind->length);
+                            }
+                            else
+                            {
+                                r_ble_gtl_cb_evt_free(p_cb_evt);
+                                r_ble_gtl_msg_buffer_free(p_msg);
+                                r_ble_gtl_mutex_give(R_BLE_GTL_MUTEX_RX);
+                                return BLE_ERR_INVALID_PTR;
+                            }
                         }
                         status = r_ble_gtl_cb_evt_queue_add(p_cb_evt);
                     }
@@ -2892,7 +2975,7 @@ ble_status_t R_BLE_GTL_GATTC_ReadMultiChar(uint16_t conn_hdl, st_ble_gattc_rd_mu
     bool                         complete = false;
     uint8_t                    * p_msg;
     r_ble_gtl_cb_evt_t         * p_cb_evt;
-    st_ble_gattc_rd_char_evt_t * p_rd_char;
+    st_ble_gattc_rd_char_evt_t * p_rd_char = NULL;
     r_ble_gtl_gattc_read_ind_t * p_read_ind;
 
     if (true == r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX))
@@ -2918,7 +3001,19 @@ ble_status_t R_BLE_GTL_GATTC_ReadMultiChar(uint16_t conn_hdl, st_ble_gattc_rd_mu
                             p_rd_char = p_cb_evt->data.gattc.p_param;
                             p_rd_char->read_data.attr_hdl        = p_read_ind->handle;
                             p_rd_char->read_data.value.value_len = p_read_ind->length;
-                            memcpy(p_rd_char->read_data.value.p_value, p_read_ind->value, p_read_ind->length);
+                            p_rd_char->read_data.value.p_value	=  r_ble_gtl_malloc(p_read_ind->length);
+                            /* Check if malloc failed*/
+                            if(NULL!=p_rd_char->read_data.value.p_value)
+                            {
+                                memcpy(p_rd_char->read_data.value.p_value, p_read_ind->value, p_read_ind->length);
+                            }
+                            else
+                            {
+                                r_ble_gtl_cb_evt_free(p_cb_evt);
+                                r_ble_gtl_msg_buffer_free(p_msg);
+                                r_ble_gtl_mutex_give(R_BLE_GTL_MUTEX_RX);
+                                return BLE_ERR_INVALID_PTR;
+                            }
                         }
                         status = r_ble_gtl_cb_evt_queue_add(p_cb_evt);
                     }
@@ -3781,6 +3876,35 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_handler(uint8_t * p_gtl_msg)
             r_ble_gtl_gapc_param_update_req_ind_t * p_param = 
                                     (r_ble_gtl_gapc_param_update_req_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
             p_cb_evt = r_ble_gtl_gapc_parm_update_req_ind_handler(conn_hdl, p_param);
+            break;
+        }
+
+        case R_BLE_GTL_GAPC_BOND_REQ_IND:
+        {        
+            r_ble_gtl_gapc_bond_req_ind_t * p_param = 
+                                            (r_ble_gtl_gapc_bond_req_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            p_cb_evt = r_ble_gtl_gapc_bond_req_ind_handler(conn_hdl, p_param);
+            break;
+        }
+
+        case R_BLE_GTL_GAPC_BOND_IND:
+        {
+            r_ble_gtl_gapc_bond_ind_t * p_param = (r_ble_gtl_gapc_bond_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            p_cb_evt = r_ble_gtl_gapc_bond_ind_handler(conn_hdl, p_param);
+            break;
+        }
+
+        case R_BLE_GTL_GAPC_ENCRYPT_REQ_IND:
+        {
+            r_ble_gtl_gapc_encrypt_req_ind_t * p_param = 
+                                           (r_ble_gtl_gapc_encrypt_req_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            p_cb_evt = r_ble_gtl_gapc_encrypt_req_ind_handler(conn_hdl, p_param);
+            break;
+        }
+        case R_BLE_GTL_GAPC_ENCRYPT_IND:
+        {
+            gapc_encrypt_ind_t * p_param = (gapc_encrypt_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            p_cb_evt = r_ble_gtl_gapc_encrypt_ind_handler(conn_hdl, p_param);
             break;
         }
 
@@ -6910,6 +7034,32 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_cb_evt_allocate(uint16_t type, ble_status_
         /* Allocate memory for event parameters */
         switch (type & R_BLE_GTL_CB_EVT_TYPE_MASK)
         {
+            case R_BLE_GTL_CB_EVT_TYPE_L2CAP:
+            {
+                p_evt_cb->data.l2cap.p_param = r_ble_gtl_malloc(param_len);
+                if ( NULL != p_evt_cb->data.l2cap.p_param)
+                {
+                    allocated = true;
+                }
+                else
+                {
+                    p_evt_cb->data.gap.p_param = NULL;
+                    allocated = false; 
+                }
+                if (true == allocated)
+                {
+                    p_evt_cb->type                  = type;
+                    p_evt_cb->result                = result;
+                    p_evt_cb->data.l2cap.param_len  = param_len;
+                }
+                else
+                {
+                    r_ble_gtl_free(p_evt_cb);
+                    p_evt_cb = NULL;
+                }
+                break;
+            }
+
             case R_BLE_GTL_CB_EVT_TYPE_GAP:
             {
                 if (0 != param_len)
@@ -6919,6 +7069,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_cb_evt_allocate(uint16_t type, ble_status_
                     {
                         allocated = true;
                     }
+
                 }
                 else
                 {
@@ -8678,3 +8829,519 @@ static bool r_ble_gtl_fifo_get(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data, uin
     return removed;
 }
 #endif
+
+
+
+/*******************************************************************************************************************//**
+ *  Handle GAPC_BOND_REQ_IND indication message. Messages might generated a callback event.
+ *
+ * @param[in]  conn_hdl         Handle of connection on which message was received
+ * @param[in]  p_param          Pointer to buffer containing received GAP client connection request message
+ *
+ * @retval NULL                 No callback event generated by message processing
+ * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
+ **********************************************************************************************************************/
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hdl, 
+                                                                r_ble_gtl_gapc_bond_req_ind_t *p_param)
+{
+    r_ble_gtl_cb_evt_t      * p_cb_evt = NULL;
+
+    switch (p_param->request)
+    {
+        case R_BLE_GTL_GAPC_PAIRING_REQ:
+        {
+            st_ble_gap_pairing_req_evt_t *p_gapc_bond_req_ind_param;
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PAIRING_REQ, BLE_SUCCESS, 
+                                                 sizeof(st_ble_gap_pairing_req_evt_t));
+
+            if (NULL != p_cb_evt)
+            {
+                p_gapc_bond_req_ind_param = p_cb_evt->data.gap.p_param;
+                p_gapc_bond_req_ind_param->conn_hdl = conn_hdl;
+
+                p_gapc_bond_req_ind_param->auth_info.bonding = p_param->data.auth_req & R_BLE_GTL_GAP_AUTH_BOND;
+                if (p_param->data.auth_req & R_BLE_GTL_GAP_AUTH_SEC)
+                {
+                    p_gapc_bond_req_ind_param->auth_info.pair_mode = 0x02;
+                }
+                else
+                {
+                    p_gapc_bond_req_ind_param->auth_info.pair_mode = 0x01;
+                }
+
+                if(p_param->data.auth_req & R_BLE_GTL_GAP_AUTH_MITM)
+                {
+                    p_gapc_bond_req_ind_param->auth_info.security = 0x02;
+                }
+                else
+                {
+                    p_gapc_bond_req_ind_param->auth_info.security = 0x01;
+                }
+                p_gapc_bond_req_ind_param->auth_info.ekey_size = R_BLE_GTL_GAP_SEC_KEY_LEN;
+            }
+            break;
+        }
+        
+        case R_BLE_GTL_GAPC_LTK_EXCH:
+        {
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_EX_KEY_REQ, BLE_SUCCESS, 
+                                                 sizeof(st_ble_gap_ltk_req_evt_t));
+            break;
+        }
+
+        case R_BLE_GTL_GAPC_CSRK_EXCH:
+        {
+            /* Place holder for future functionality */
+            break;
+        }
+        
+        case R_BLE_GTL_GAPC_TK_EXCH:
+        {
+            st_ble_gap_conn_hdl_evt_t *p_gapc_bond_req_ind_param;
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PASSKEY_ENTRY_REQ, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_conn_hdl_evt_t));
+            
+            if (NULL != p_cb_evt)
+            {
+                p_gapc_bond_req_ind_param = p_cb_evt->data.gap.p_param;
+                p_gapc_bond_req_ind_param->conn_hdl = conn_hdl;
+            }
+            break;
+        }
+        default:
+        {
+            /* Should not reach this point */
+            break;
+        }
+    } // switch
+    return p_cb_evt;
+}
+
+/*******************************************************************************************************************//**
+ *  Handle GAPC_BOND_CFM confirmation message.
+ *
+ * @param[in]  conn_hdl         Connection Handle on which message will be send
+ * @param[in]  bond             Bond event type
+ * @param[in]  accept           Accert or reject pairing request
+ * @retval     ble_status_t
+ **********************************************************************************************************************/
+ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond_t bond, bool accept, uint32_t passkey)
+{
+    ble_status_t status = BLE_ERR_INVALID_ARG;
+    r_ble_gtl_gapc_bond_cfm_t *p_cmd;
+
+    switch (bond)
+    {
+        case R_BLE_GTL_GAPC_PAIRING_RSP:
+        {
+            p_cmd = (r_ble_gtl_gapc_bond_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_BOND_CFM,
+                                                                    R_BLE_GTL_TASK_ID_GAPC +(uint16_t)(conn_hdl << 8),
+                                                                    R_BLE_GTL_TASK_ID_GTL,
+                                                                    sizeof(r_ble_gtl_gapc_bond_cfm_t));
+            if (NULL != p_cmd)
+            {
+                p_cmd->request = (uint8_t)bond;
+
+                /* GTL for DA14531 has inverted logic for the accept parameter */
+                if (accept)
+                {
+                    p_cmd->accept = 0x00; /* BLE_GAP_PAIRING_REJECT(0x01) */
+                }
+                else
+                {
+                    p_cmd->accept = 0x01; /* BLE_GAP_PAIRING_ACCEPT(0x00) */
+                }
+
+                p_cmd->data.pairing_feat.iocap = ble_pairing_param_local.iocap;
+                if (ble_pairing_param_local.sec_conn_only)
+                {
+                    p_cmd->data.pairing_feat.oob = BLE_GAP_OOB_DATA_PRESENT;
+                }
+                else
+                {
+                    p_cmd->data.pairing_feat.oob = BLE_GAP_OOB_DATA_NOT_PRESENT;
+                }
+
+                p_cmd->data.pairing_feat.auth = (uint8_t)((ble_pairing_param_local.bonding << 0)
+                        | (ble_pairing_param_local.mitm << 2)
+                        | (ble_pairing_param_local.sec_conn_only <<3 ));
+                p_cmd->data.pairing_feat.key_size = ble_pairing_param_local.max_key_size;
+
+                /* These are set in reverse order */
+                p_cmd->data.pairing_feat.ikey_dist = ble_pairing_param_local.rem_key_dist;
+                p_cmd->data.pairing_feat.rkey_dist = ble_pairing_param_local.loc_key_dist;
+                p_cmd->data.pairing_feat.sec_req = get_security_requirements();
+
+                status = r_ble_gtl_msg_transmit((uint8_t *)p_cmd);
+            }
+        }
+        break;
+
+        case R_BLE_GTL_GAPC_TK_EXCH:
+        {
+            p_cmd = (r_ble_gtl_gapc_bond_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_BOND_CFM,
+                                                                    R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                                    R_BLE_GTL_TASK_ID_GTL,
+                                                                    sizeof(r_ble_gtl_gapc_bond_cfm_t));
+
+            if (NULL != p_cmd)
+            {
+                p_cmd->request = R_BLE_GTL_GAPC_TK_EXCH;
+                /* GTL for DA14531 has inverted logic for the accept parameter */
+                if (accept)
+                {
+                    p_cmd->accept = 0x00; /* BLE_GAP_PAIRING_REJECT(0x01) */
+                }
+                else
+                {
+                    p_cmd->accept = 0x01; /* BLE_GAP_PAIRING_ACCEPT(0x00) */
+                }
+
+                p_cmd->data.tk.key[0] = (uint8_t)passkey;
+                p_cmd->data.tk.key[1] = (uint8_t)(passkey >> 8);
+                p_cmd->data.tk.key[2] = (uint8_t)(passkey >> 16);
+                p_cmd->data.tk.key[3] = (uint8_t)(passkey >> 24);
+
+                status = r_ble_gtl_msg_transmit((uint8_t *)p_cmd);
+            }
+        }
+        break;
+
+        case R_BLE_GTL_GAPC_CSRK_EXCH:
+        {
+            /* Place holder for future functionality */
+            status = BLE_ERR_UNSUPPORTED;
+        }
+        break;
+
+        case R_BLE_GTL_GAPC_LTK_EXCH:
+        {
+            p_cmd = (r_ble_gtl_gapc_bond_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_BOND_CFM,
+                                                                    R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                                    R_BLE_GTL_TASK_ID_GTL,
+                                                                    sizeof(r_ble_gtl_gapc_bond_cfm_t));
+            if (NULL != p_cmd)
+            {
+                /* GTL for DA1453x has inverted logic for the accept parameter */
+                p_cmd->request = (uint8_t)bond; /*(Exchange LTK)*/
+                p_cmd->accept = 0x01;           /*Accepted*/
+                p_cmd->data.ltk.ediv = r_ble_gtl_sec_ret_ediv_value();
+                p_cmd->data.ltk.key_size = BLE_GAP_LTK_SIZE;
+                memcpy(p_cmd->data.ltk.ltkey, (const void *)r_ble_gtl_sec_ret_ltk_value(), BLE_GAP_LTK_SIZE);
+                memcpy(p_cmd->data.ltk.nb, (const void *)r_ble_gtl_sec_ret_rand_value(), BLE_GAP_RAND_64_BIT_SIZE);
+
+                status = r_ble_gtl_msg_transmit((uint8_t *)p_cmd);
+            }
+        }
+        break;
+
+        default:
+        {
+            status = BLE_ERR_UNSPECIFIED;
+            break;
+        }
+    }
+
+    return status;
+}
+
+/*******************************************************************************************************************//**
+ *  Handle GAPC_BOND_REQ_IND indication message. Messages might generated a callback event.
+ *
+ * @param[in]  conn_hdl         Handle of connection on which message was received
+ * @param[in]  p_param          Pointer to buffer containing received GAP client connection request message
+ *
+ * @retval NULL                 No callback event generated by message processing
+ * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
+ **********************************************************************************************************************/ 
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_bond_ind_t * p_param)
+{
+    r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
+
+    switch (p_param->info)
+    {
+        case R_BLE_GTL_GAPC_IRK_EXCH:
+        {
+            /* Save IRK key received from remote to DB */
+            memcpy(pair_key_dist_local.id_info, p_param->data.irk.key, BLE_GAP_IRK_SIZE);
+            pair_key_dist_local.id_addr_info[0] = p_param->data.irk.addr.type;
+            memcpy(&pair_key_dist_local.id_addr_info[1], &p_param->data.irk.addr, BLE_BD_ADDR_LEN);
+
+            /* Notify application */
+            st_ble_gap_peer_key_info_evt_t *p_gapc_bond_ind_param;
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PEER_KEY_INFO, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_peer_key_info_evt_t));
+            if (NULL != p_cb_evt)
+            {
+                p_gapc_bond_ind_param = p_cb_evt->data.gap.p_param;
+                p_gapc_bond_ind_param->conn_hdl = conn_hdl;
+                p_gapc_bond_ind_param->key_ex_param.keys = 0x01; // Type of key, IRK and Identity Address Information
+
+                p_gapc_bond_ind_param->key_ex_param.p_keys_info = &pair_key_dist_local;
+                p_gapc_bond_ind_param->bd_addr.type = pair_key_dist_local.id_addr_info[0]; // Addr type
+                memcpy(p_gapc_bond_ind_param->bd_addr.addr, &pair_key_dist_local.id_addr_info[1], BLE_BD_ADDR_LEN);
+            }
+            break;
+        }
+
+        case R_BLE_GTL_GAPC_PAIRING_SUCCEED:
+        {
+            st_ble_gap_pairing_info_evt_t *p_gapc_bond_ind_param;
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PAIRING_COMP, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_pairing_info_evt_t));
+
+            if (NULL != p_cb_evt)
+            {
+                p_gapc_bond_ind_param = p_cb_evt->data.gap.p_param;
+                p_gapc_bond_ind_param->conn_hdl = conn_hdl;
+                /*Security level, The remote device requests Unauthenticated pairing.*/
+                p_gapc_bond_ind_param->auth_info.security = 0x01;
+                /*Pairing mode, The remote device requests Legacy pairing.*/
+                p_gapc_bond_ind_param->auth_info.pair_mode = 0x01;
+                /*Bonding policy, The remote device stores the Bonding information.*/
+                p_gapc_bond_ind_param->auth_info.bonding = 0x01;
+
+                p_gapc_bond_ind_param->auth_info.ekey_size = R_BLE_GTL_ATT_SEC_ENC_KEY_SIZE;
+                memcpy(&pair_key_dist_local.id_addr_info[1], p_gapc_bond_ind_param->bd_addr.addr, BLE_BD_ADDR_LEN);
+                p_gapc_bond_ind_param->bd_addr.type = pair_key_dist_local.id_addr_info[0];
+            }
+
+            break;
+        }
+
+        case R_BLE_GTL_GAPC_PAIRING_FAILED:
+        {
+            st_ble_gap_pairing_info_evt_t *p_gapc_bond_ind_param;
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PAIRING_COMP, p_param->data.reason,
+                                                 sizeof(st_ble_gap_pairing_info_evt_t));
+
+            if (NULL != p_cb_evt)
+            {
+                p_gapc_bond_ind_param = p_cb_evt->data.gap.p_param;
+                p_gapc_bond_ind_param->conn_hdl = conn_hdl;
+            }
+            break;
+        }
+
+        default:
+        {
+            // Should not reach this point
+            break;
+        }
+    } // switch
+    return p_cb_evt;
+}
+
+/*******************************************************************************************************************//**
+ *  Handle R_BLE_GTL_GAPC_ENCRYPT_REQ_IND indication message.
+ *
+ * @param[in]  conn_hdl         Handle of connection on which message was received
+ * @param[in]  p_param          Pointer to buffer containing received GAP client connection request message
+ *
+ * @retval NULL                 No callback event generated by message processing
+ * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
+ **********************************************************************************************************************/
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_req_ind_handler(uint16_t conn_hdl, 
+                                                                   r_ble_gtl_gapc_encrypt_req_ind_t *p_param)
+{
+    r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
+
+    st_ble_gap_ltk_req_evt_t *p_gapc_bond_req_ind_param;
+    p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_LTK_REQ, BLE_SUCCESS, sizeof(st_ble_gap_ltk_req_evt_t));
+
+    if (NULL != p_cb_evt)
+    {
+        p_gapc_bond_req_ind_param = p_cb_evt->data.gap.p_param;
+        p_gapc_bond_req_ind_param->conn_hdl = conn_hdl;
+        /* Add security params*/
+        p_gapc_bond_req_ind_param->ediv = p_param->ediv;
+
+        p_gapc_bond_req_ind_param->p_peer_rand = (uint8_t*)&p_param->rand_nb;
+    }
+    return p_cb_evt;
+}
+
+/*******************************************************************************************************************//**
+ *  Handle GAPC_ENCRYPT_CFM indication message.
+ *
+ * @param[in]   conn_hdl         Connection Handle on which message will be send
+ * @param[in]   found            Indicate if ltk is found or not
+ *
+ * @retval      ble_status_t
+ **********************************************************************************************************************/
+ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found)
+{
+    ble_status_t status;
+    r_ble_gtl_gapc_encrypt_cfm_t *p_enc_cfm;
+    r_ble_gtl_gapc_connection_cfm_t *p_conn_cfm;
+
+    /* Allocate msg to respond to the LTK request */
+    p_enc_cfm = (r_ble_gtl_gapc_encrypt_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_ENCRYPT_CFM,
+                                                                    R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                                    R_BLE_GTL_TASK_ID_GTL,
+                                                                    sizeof(r_ble_gtl_gapc_encrypt_cfm_t));
+    if (found == BLE_GAP_LTK_REQ_ACCEPT)
+    {
+        /* Sending the GAPC_ENCRYPT_CFM message ACCEPT*/
+        p_enc_cfm->found = 0x01; // Found
+        memcpy(p_enc_cfm->ltk.key, pair_key_dist_local.enc_info, BLE_GAP_LTK_SIZE);
+        p_enc_cfm->key_size = BLE_GAP_LTK_SIZE;
+        status = r_ble_gtl_msg_transmit((uint8_t *)p_enc_cfm);
+
+        /* Security Establishment, only if LTK was found */
+        p_conn_cfm = (r_ble_gtl_gapc_connection_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_CONNECTION_CFM,
+                                                                    R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                                    R_BLE_GTL_TASK_ID_GTL,
+                                                                    sizeof(r_ble_gtl_gapc_connection_cfm_t));
+        if (NULL != p_conn_cfm)
+        {
+            /* Use initial pairing params to set this response */
+            p_conn_cfm->auth = (uint8_t)((ble_pairing_param_local.bonding << 0)
+                    | (ble_pairing_param_local.mitm << 2)
+                    | (ble_pairing_param_local.sec_conn_only << 3));
+            status = r_ble_gtl_msg_transmit((uint8_t *)p_conn_cfm);
+        }
+    }
+    else
+    {
+        /* Sending the GAPC_ENCRYPT_CFM message REJECT*/
+        /* This action (REJECT) will force Central to delete Bond data of this device*/
+        p_enc_cfm->found = 0x00; // NOT found
+        memset(p_enc_cfm->ltk.key, 0x00, BLE_GAP_LTK_SIZE);
+        p_enc_cfm->key_size = BLE_GAP_LTK_SIZE;
+        status = r_ble_gtl_msg_transmit((uint8_t *)p_enc_cfm);
+    }
+
+    return status;
+}
+
+/*******************************************************************************************************************//**
+ *  Notify that local device has replied to the LTK request from the remote device, BLE_GAP_EVENT_LTK_RSP_COMP
+ *
+ * @param[in]  conn_hdl         Handle of connection on which message was received
+ * @param[in]  p_param          Pointer to buffer containing received GAP client connection request message
+ *
+ * @retval NULL                 No callback event generated by message processing
+ * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
+ **********************************************************************************************************************/
+ble_status_t r_ble_gtl_gapc_ltk_rsp_comp(uint16_t conn_hdl, bool found)
+{
+    ble_status_t status = BLE_SUCCESS;
+    r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
+    
+    st_ble_gap_ltk_rsp_evt_t *p_evt_param;
+    p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_LTK_RSP_COMP, BLE_SUCCESS, sizeof(st_ble_gap_ltk_rsp_evt_t));
+
+     if (NULL != p_cb_evt)
+    {
+        p_evt_param = p_cb_evt->data.gap.p_param;
+        p_evt_param->conn_hdl = conn_hdl;
+        if(found){
+            /* 0x00     | Local device replied with the stored LTK. */
+            p_evt_param->response = 0x00; 
+        }
+        else{
+            /* 0x01     | Local device rejected the LTK request, because the LTK was not found.*/
+            p_evt_param->response = 0x01; 
+        }
+        status = r_ble_gtl_cb_evt_queue_add(p_cb_evt);
+    }
+    return status;   
+}
+
+/*******************************************************************************************************************//**
+ *  Handle R_BLE_GTL_GAPC_ENCRYPT_IND indication message. Messages might generated a callback event.
+ *
+ * @param[in]  conn_hdl         Handle of connection on which message was received
+ * @param[in]  p_param          Pointer to buffer containing received GAP client connection request message
+ *
+ * @retval NULL                 No callback event generated by message processing
+ * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
+ **********************************************************************************************************************/
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_ind_handler(uint16_t conn_hdl, gapc_encrypt_ind_t *p_param)
+{
+    r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
+
+    st_ble_gap_enc_chg_evt_t *p_gapc_enc_ind_param;
+    p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_ENC_CHG, BLE_SUCCESS, sizeof(st_ble_gap_enc_chg_evt_t));
+
+    if (NULL != p_cb_evt)
+    {
+        p_gapc_enc_ind_param = p_cb_evt->data.gap.p_param;
+        p_gapc_enc_ind_param->conn_hdl = conn_hdl;
+        p_gapc_enc_ind_param->enc_status = 0x01; /* Reaching this point, assume encryption is enabled*/
+    }
+    FSP_PARAMETER_NOT_USED(p_param);
+    return p_cb_evt;
+}
+
+/*******************************************************************************************************************//**
+ *  Request a random number using custom APP_GEN_RAND_REQ, 0xA001
+ *
+ * @param[in]  size             Size of the random number
+ **********************************************************************************************************************/
+ble_status_t r_ble_gtl_app_get_rand_cust(uint8_t rand_size)
+{
+    ble_status_t status = BLE_ERR_INVALID_ARG;
+    r_ble_gtl_app_gen_rand_req_t *p_rand_cmd;
+    r_ble_gtl_app_gen_rand_rsp_t p_rand_nb;
+
+    if (R_BLE_GTL_DATA_LEN_TX_OCTETS_MAX >= rand_size)
+    {
+        if (true == r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX))
+        {
+            p_rand_cmd = (r_ble_gtl_app_gen_rand_req_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_APP_RAND_REQ,
+                                                                                R_BLE_GTL_TASK_ID_AUX,
+                                                                                R_BLE_GTL_TASK_ID_GTL,
+                                                                                sizeof(r_ble_gtl_app_gen_rand_req_t));
+            if (NULL != p_rand_cmd)
+            {
+                p_rand_cmd->rand_size = rand_size;
+                status = r_ble_gtl_msg_transmit((uint8_t *)p_rand_cmd);
+            }
+
+            if (BLE_SUCCESS == status)
+            {
+                status = r_ble_gtl_msg_wait_for_response(R_BLE_GTL_APP_GEN_RAND_RSP,
+                                                         (uint8_t *)&p_rand_nb,
+                                                         sizeof(r_ble_gtl_app_gen_rand_rsp_t),
+                                                         R_BLE_GTL_MSG_RSP_TIMEOUT_MS);
+
+                if (BLE_SUCCESS == status)
+                {
+                    status = r_ble_gtl_sec_generate_and_store_ltk_keys_resp(p_rand_nb.status, p_rand_nb.rand_size, 
+                                                                            p_rand_nb.rand);
+                }
+            }
+            r_ble_gtl_mutex_give(R_BLE_GTL_MUTEX_RX);
+        }
+    }
+
+    return status;
+}
+
+/*******************************************************************************************************************//**
+ *  Initiate a security request procedure
+ * 
+ * @param[in]  conn_hdl         Handle of connection on which message was received
+ **********************************************************************************************************************/
+ble_status_t r_ble_gtl_security_cmd(uint16_t conn_hdl)
+{
+    ble_status_t status = BLE_ERR_INVALID_ARG;
+    gapc_security_cmd_t *p_sec_cmd;
+
+    p_sec_cmd = (gapc_security_cmd_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_SECURITY_CMD,
+                                                              R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                              R_BLE_GTL_TASK_ID_GTL,
+                                                              sizeof(gapc_security_cmd_t));
+    if (NULL != p_sec_cmd)
+    {
+        p_sec_cmd->operation = GAPC_SECURITY_REQ;
+        p_sec_cmd->auth = (uint8_t)((ble_pairing_param_local.bonding << 0)
+                | (ble_pairing_param_local.mitm << 2)
+                | (ble_pairing_param_local.sec_conn_only << 3));
+        status = r_ble_gtl_msg_transmit((uint8_t *)p_sec_cmd);
+    }
+
+    return status;
+}

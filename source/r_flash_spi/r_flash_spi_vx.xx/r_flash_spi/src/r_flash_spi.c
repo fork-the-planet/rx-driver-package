@@ -1,30 +1,12 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
-/************************************************************************************************
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * System Name  : FLASH SPI driver software
 * File Name    : r_flash_spi.c
-* Version      : 3.40
+* Version      : 3.51
 * Device       : -
 * Abstract     : User I/F file
 * Tool-Chain   : -
@@ -32,21 +14,20 @@
 * H/W Platform : -
 * Description  : SPI FLASH User I/F file
 * Limitation   : None
-*************************************************************************************************/
-/************************************************************************************************
+***********************************************************************************************************************/
+/***********************************************************************************************************************
 * History      : DD.MM.YYYY Version  Description
 *              : 23.07.2014 2.21     Created
 *              : 29.05.2015 2.32     Revised functions of same as Ver.2.32 of EEPROM SPI FIT module.
 *              : 10.12.2020 3.02     Modified comment of API function to Doxygen style.
-*              : 16.03.2023 3.20     Added support for AT25QF641B-SHB with Indirect Access Mode
-*                                    of QSPIX
-*              : 15.11.2023 3.40     Removed note for QSPIX Memory Mapped Mode in R_FLASH_SPI_Read_Data()
-*                                    function.
+*              : 16.03.2023 3.20     Added support for AT25QF641B-SHB with Indirect Access Mode of QSPIX
+*              : 15.11.2023 3.40     Removed note for QSPIX Memory Mapped Mode in R_FLASH_SPI_Read_Data() function.
 *                                    Updated according to GSCE Code Checker 6.50.
 *                                    Added support for MX25U6432F.
-*                                    Added features Advanced sector protection supporting
-*                                    for MX66L1G45 and MX25U6432F.
-*************************************************************************************************/
+*                                    Added features Advanced sector protection supporting for MX66L1G45 and MX25U6432F.
+*              : 20.12.2024 3.50     Modified comment of API function to Doxygen style.
+*              : 15.03.2025 3.51     Updated disclaimer.
+***********************************************************************************************************************/
 
 
 /************************************************************************************************
@@ -170,7 +151,7 @@ flash_spi_status_t R_FLASH_SPI_Read_Status(uint8_t devno, uint8_t * p_status)
  * Function Name: R_FLASH_SPI_Read_Status2
  *****************************************************************************************************************/ /**
  * @brief This function is used to read the status register 2. It is a dedicated API function for AT25QF family
- *        serial NOR flash memory of Dialog Semiconductor Plc.
+ *        serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in,out] p_status
@@ -201,7 +182,7 @@ flash_spi_status_t R_FLASH_SPI_Read_Status2(uint8_t devno, uint8_t * p_status)
  * Function Name: R_FLASH_SPI_Read_Status3
  *****************************************************************************************************************/ /**
  * @brief This function is used to read the status register 3. It is a dedicated API function for AT25QF family
- *        serial NOR flash memory of Dialog Semiconductor Plc.
+ *        serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in,out] p_status
@@ -582,7 +563,7 @@ flash_spi_status_t R_FLASH_SPI_Write_Configuration(uint8_t devno, flash_spi_reg_
  * Function Name: R_FLASH_SPI_Write_Status
  *****************************************************************************************************************/ /**
  * @brief This function is used to write the status register 1. It is a dedicated API function for AT25QF family
- *        serial NOR flash memory of Dialog Semiconductor Plc.
+ *        serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in] p_reg
@@ -613,7 +594,7 @@ flash_spi_status_t R_FLASH_SPI_Write_Status(uint8_t devno, uint8_t * p_reg)
  * Function Name: R_FLASH_SPI_Write_Status2
  *****************************************************************************************************************/ /**
  * @brief This function is used to write the status register 2. It is a dedicated API function for AT25QF family
- *        serial NOR flash memory of Dialog Semiconductor Plc.
+ *        serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in] p_reg
@@ -644,7 +625,7 @@ flash_spi_status_t R_FLASH_SPI_Write_Status2(uint8_t devno, uint8_t * p_reg)
  * Function Name: R_FLASH_SPI_Write_Status3
  *****************************************************************************************************************/ /**
  * @brief This function is used to write the status register 3. It is a dedicated API function for AT25QF family
- *        serial NOR flash memory of Dialog Semiconductor Plc.
+ *        serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in] p_reg
@@ -734,7 +715,7 @@ flash_spi_status_t R_FLASH_SPI_Read_Security(uint8_t devno, uint8_t * p_scur)
  * Function Name: R_FLASH_SPI_Read_Data_Security_Page
  *****************************************************************************************************************/ /**
  * @brief This function is used to read data from the security register. It is a dedicated API function for AT25QF
- *        family serial NOR flash memory of Dialog Semiconductor Plc.
+ *        family serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in,out] p_flash_spi_info
@@ -776,7 +757,7 @@ flash_spi_status_t R_FLASH_SPI_Read_Data_Security_Page(uint8_t devno,  flash_spi
  * Function Name: R_FLASH_SPI_Write_Data_Security_Page
  *****************************************************************************************************************/ /**
  * @brief This function is used to write data to the security register page in single-page units. It is a dedicated
- *        API function for AT25QF family serial NOR flash memory of Dialog Semiconductor Plc.
+ *        API function for AT25QF family serial NOR flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @param[in] p_flash_spi_info
@@ -820,7 +801,7 @@ flash_spi_status_t R_FLASH_SPI_Write_Data_Security_Page(uint8_t devno, flash_spi
  *****************************************************************************************************************/ /**
  * @brief This function is used to enable quad mode. It is a dedicated API function for MX25L, MX66L, MX25R,
  *        or MX25U family serial NOR flash memory of Macronix International Co., Ltd and AT25QF family serial NOR
- *        flash memory of Dialog Semiconductor Plc.
+ *        flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @retval    FLASH_SPI_SUCCESS    Successful operation
@@ -860,7 +841,7 @@ flash_spi_status_t R_FLASH_SPI_Quad_Enable(uint8_t devno)
  *****************************************************************************************************************/ /**
  * @brief This function is used to disable quad mode. It is a dedicated API function for MX25L, MX66L, MX25R,
  *        or MX25U family serial NOR flash memory of Macronix International Co., Ltd.and AT25QF family serial NOR
- *        flash memory of Dialog Semiconductor Plc.
+ *        flash memory of Renesas Electronics.
  * @param[in] devno
  *             Device number (0, 1)
  * @retval    FLASH_SPI_SUCCESS    Successful operation

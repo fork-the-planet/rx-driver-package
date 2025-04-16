@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_tsip_rx
-VERSION = 		1.21
+VERSION = 		1.22
 MDF = V2
 
 CONFIG_FOLDER = r_config

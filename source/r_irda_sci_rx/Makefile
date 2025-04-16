@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_irda_sci_rx
-VERSION = 		1.02
+VERSION = 		1.03
 MDF = NOT_SUPPORTED
 
 CONFIG_FOLDER = r_config

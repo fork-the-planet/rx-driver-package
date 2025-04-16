@@ -1,33 +1,15 @@
-/*******************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only 
-* intended for use with Renesas products. No other uses are authorized. This 
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE 
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS 
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE 
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/*
+* Copyright (c) 2014 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2020 Renesas Electronics Corporation. All rights reserved.    
-*******************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /******************************************************************************
 * File Name    : r_src_api_rx.c
-* Version      : 1.14
+* Version      : 1.15
 * Device       : RX64M, RX71M
-* Tool-Chain   : RX Family C Compiler v3.02.00
-*                GCC for Renesas RX 8.3.0.201904
-*                IAR C/C++ Compiler for Renesas RX version 4.13.1
+* Tool-Chain   : RX Family C Compiler v3.07.00
+*                GCC for Renesas RX 8.3.0.202411
+*                IAR C/C++ Compiler for Renesas RX version 5.10.1
 * Description  : SRC API for RX
 *******************************************************************************
 * History : DD.MM.YYYY Version Description
@@ -42,6 +24,7 @@
 *                              Added comments "WAIT_LOOP"
 *         : 10.06.2020 1.14    Added support for atomic control.
 *                              Modified comment of API function to Doxygen style.
+*         : 20.03.2025 1.15    Changed the disclaimer.
 *
 ******************************************************************************/
 

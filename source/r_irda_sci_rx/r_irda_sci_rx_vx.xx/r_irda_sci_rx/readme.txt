@@ -5,11 +5,11 @@ r_irda_sci_rx
 
 Document Number 
 ---------------
-R01AN2175JJ0102
+R01AN2175JJ0103
 
 Version
 -------
-v1.02
+v1.03
 
 Overview
 --------------------------------------------------------------------------------
@@ -51,8 +51,8 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.51
-* r_byteq   v2.10
+* r_bsp     v7.52
+* r_byteq   v2.11
 
 
 How to add to your project
@@ -71,7 +71,7 @@ module, refer to the application note ÅgBoard Support Package Module Using Firmw
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.06
+* Renesas RX v3.07
 
 
 File Structure
@@ -82,9 +82,9 @@ r_irda_sci_rx
 |
 +---doc
 |   +---en
-|   |      r01an2175ej0102_rx.pdf
+|   |      r01an2175ej0103_rx.pdf
 |   \---ja 
-|          r01an2175jj0102_rx.pdf
+|          r01an2175jj0103_rx.pdf
 |
 +---src
     |

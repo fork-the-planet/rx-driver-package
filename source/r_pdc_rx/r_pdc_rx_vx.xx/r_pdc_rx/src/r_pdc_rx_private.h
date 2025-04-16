@@ -1,37 +1,25 @@
 /***********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
- * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the 
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2016 Renesas Electronics Corporation. All rights reserved.
- ***********************************************************************************************************************/
+* Copyright (c) 2016 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /***********************************************************************************************************************
  * File Name    : r_pdc_rx_private.h
- * Version      : 2.06
+ * Version      : 2.07
  * Device       : RX64M/RX71M/RX651/RX65N/RX72M/RX66N/RX72N
  * Tool-Chain   : RX Family C Compiler
  * H/W Platform : 
  * Description  : File that defines macro and structure seen only in "r_pdc_rx.c" file.
  ***********************************************************************************************************************/
 /***********************************************************************************************************************
- * History : DD.MM.YYYY Version  Description
- *         : 01.10.2016 2.00     First Release.
- *         : 02.10.2017 2.01     Removed BSP version error.
- *         :                     Change loop values of PDC reset wating process "219" to "10000000".
- *         : 30.07.2019 2.04     Added changes for RX72M.
- *         : 22.11.2019 2.05     Added changes for RX66N and RX72N.
- *         : 07.01.2022 2.06     Added define "PDC_PCSR_RECEIVE_END_FLAG_MASK"
+ * History : DD.MM.YYYY Version Description
+ *         : 01.10.2016 2.00    First Release.
+ *         : 02.10.2017 2.01    Removed BSP version error.
+ *         :                    Change loop values of PDC reset wating process "219" to "10000000".
+ *         : 30.07.2019 2.04    Added changes for RX72M.
+ *         : 22.11.2019 2.05    Added changes for RX66N and RX72N.
+ *         : 07.01.2022 2.06    Added define "PDC_PCSR_RECEIVE_END_FLAG_MASK"
+ *         : 15.03.2025 2.07    Updated disclaimer.
  ***********************************************************************************************************************/
 /* Guards against multiple inclusion */
 #ifndef PDC_RX_PRIVATE_H

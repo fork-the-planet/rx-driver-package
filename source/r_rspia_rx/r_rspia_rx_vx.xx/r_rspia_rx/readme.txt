@@ -5,12 +5,12 @@ r_rspia_rx
 
 Document Number 
 ---------------
-R01AN5684ES0150
-R01AN5684JS0150
+R01AN5684ES0161
+R01AN5684JS0161
 
 Version
 -------
-v1.50
+v1.61
 
 Overview
 --------
@@ -83,12 +83,12 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.41
+* r_bsp     v7.52
 
 How to add to your project
 --------------------------
 This module must be added to each project in which it is used.
-Renesas recommends using "Smart Configurator" described in (1) or (2).
+Renesas recommends using "Smart Configurator" described in (1), (2) or (4).
 However, "Smart Configurator" only supports some RX devices.
 Please use the methods of (3) for unsupported RX devices.
 

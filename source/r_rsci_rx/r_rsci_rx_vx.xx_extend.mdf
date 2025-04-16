@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products.
-* No other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIESREGARDING THIS SOFTWARE, WHETHER EXPRESS, IMPLIED
-* OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NON-INFRINGEMENT.  ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY
-* LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE FOR ANY DIRECT,
-* INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR
-* ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability
-* of this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
@@ -229,51 +216,61 @@ RX MCU supported channels (refer to Hardware Manual for information)</descriptio
         <property id="RSCI_CFG_CH0_TX_BUFSIZ" display="ASYNC mode TX queue buffer size for channel 0" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH0_TX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH0_TX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH0_TX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 0 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE TX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH8_TX_BUFSIZ" display="ASYNC mode TX queue buffer size for channel 8" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH8_TX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH8_TX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH8_TX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE TX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH9_TX_BUFSIZ" display="ASYNC mode TX queue buffer size for channel 9" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH9_TX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH9_TX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH9_TX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 9 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE TX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH10_TX_BUFSIZ" display="ASYNC mode TX queue buffer size for channel 10" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH10_TX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH10_TX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH10_TX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE TX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH11_TX_BUFSIZ" display="ASYNC mode TX queue buffer size for channel 11" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH11_TX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH11_TX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH11_TX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE TX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH0_RX_BUFSIZ" display="ASYNC mode RX queue buffer size for channel 0" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH0_RX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH0_RX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH0_RX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 0 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE RX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH8_RX_BUFSIZ" display="ASYNC mode RX queue buffer size for channel 8" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH8_RX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH8_RX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH8_RX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE RX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH9_RX_BUFSIZ" display="ASYNC mode RX queue buffer size for channel 9" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH9_RX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH9_RX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH9_RX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 9 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE RX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH10_RX_BUFSIZ" display="ASYNC mode RX queue buffer size for channel 10" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH10_RX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH10_RX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH10_RX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE RX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_CH11_RX_BUFSIZ" display="ASYNC mode RX queue buffer size for channel 11" default="80" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH11_RX_BUFSIZ}")</constraint>
             <constraint display="Value must be in the range 2 ~ 65536">("${RSCI_CFG_CH11_RX_BUFSIZ}" &gt;= 2) &amp;&amp; ("${RSCI_CFG_CH11_RX_BUFSIZ}" &lt;= 65536)</constraint>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
             <description>SPECIFY ASYNC MODE RX QUEUE BUFFER SIZES (will not allocate if chan not enabled)</description>
         </property>
         <property id="RSCI_CFG_TEI_INCLUDED" display="Transmit end interrupt" default="0" type="combobox">
@@ -289,19 +286,147 @@ This interrupt only occurs when the last bit of the last byte of data has been s
 SET GROUPBL1 (ERI, TEI) INTERRUPT PRIORITY; RX26T ONLY
 This sets the priority level for receiver overrun, framing, parity, preface, manchester code, sync, and start bit errors as well as TEI interrupts for all RSCI channels. In Manchester mode, there are also Manchester code, preface, start bit, and receive Sync errors</description>
         </property>
+        <property id="RSCI_CFG_CH0_EN_TXI_NESTED_INT" display="Use TXI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSCI_CFG_CH0_EN_TXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH0_EN_TXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 0 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH8_EN_TXI_NESTED_INT" display="Use TXI Nested Interrupt for channel 8" default="0" type="combobox">
+            <option id="RSCI_CFG_CH8_EN_TXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH8_EN_TXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH9_EN_TXI_NESTED_INT" display="Use TXI Nested Interrupt for channel 9" default="0" type="combobox">
+            <option id="RSCI_CFG_CH9_EN_TXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH9_EN_TXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 9 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH10_EN_TXI_NESTED_INT" display="Use TXI Nested Interrupt for channel 10" default="0" type="combobox">
+            <option id="RSCI_CFG_CH10_EN_TXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH10_EN_TXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH11_EN_TXI_NESTED_INT" display="Use TXI Nested Interrupt for channel 11" default="0" type="combobox">
+            <option id="RSCI_CFG_CH11_EN_TXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH11_EN_TXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH0_EN_RXI_NESTED_INT" display="Use RXI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSCI_CFG_CH0_EN_RXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH0_EN_RXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 0 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT RXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH8_EN_RXI_NESTED_INT" display="Use RXI Nested Interrupt for channel 8" default="0" type="combobox">
+            <option id="RSCI_CFG_CH8_EN_RXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH8_EN_RXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT RXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH9_EN_RXI_NESTED_INT" display="Use RXI Nested Interrupt for channel 9" default="0" type="combobox">
+            <option id="RSCI_CFG_CH9_EN_RXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH9_EN_RXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 9 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT RXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH10_EN_RXI_NESTED_INT" display="Use RXI Nested Interrupt for channel 10" default="0" type="combobox">
+            <option id="RSCI_CFG_CH10_EN_RXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH10_EN_RXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT RXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH11_EN_RXI_NESTED_INT" display="Use RXI Nested Interrupt for channel 11" default="0" type="combobox">
+            <option id="RSCI_CFG_CH11_EN_RXI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH11_EN_RXI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT RXI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH0_EN_TEI_NESTED_INT" display="Use TEI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSCI_CFG_CH0_EN_TEI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH0_EN_TEI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please enable transmit end interrupt to set value for this feature" actionOnFail="disable">${RSCI_CFG_TEI_INCLUDED} == ${RSCI_CFG_TEI_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TEI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH8_EN_TEI_NESTED_INT" display="Use TEI Nested Interrupt for channel 8" default="0" type="combobox">
+            <option id="RSCI_CFG_CH8_EN_TEI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH8_EN_TEI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please enable transmit end interrupt to set value for this feature" actionOnFail="disable">${RSCI_CFG_TEI_INCLUDED} == ${RSCI_CFG_TEI_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TEI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH9_EN_TEI_NESTED_INT" display="Use TEI Nested Interrupt for channel 9" default="0" type="combobox">
+            <option id="RSCI_CFG_CH9_EN_TEI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH9_EN_TEI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please enable transmit end interrupt to set value for this feature" actionOnFail="disable">${RSCI_CFG_TEI_INCLUDED} == ${RSCI_CFG_TEI_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TEI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH10_EN_TEI_NESTED_INT" display="Use TEI Nested Interrupt for channel 10" default="0" type="combobox">
+            <option id="RSCI_CFG_CH10_EN_TEI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH10_EN_TEI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please enable transmit end interrupt to set value for this feature" actionOnFail="disable">${RSCI_CFG_TEI_INCLUDED} == ${RSCI_CFG_TEI_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TEI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH11_EN_TEI_NESTED_INT" display="Use TEI Nested Interrupt for channel 11" default="0" type="combobox">
+            <option id="RSCI_CFG_CH11_EN_TEI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH11_EN_TEI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please enable transmit end interrupt to set value for this feature" actionOnFail="disable">${RSCI_CFG_TEI_INCLUDED} == ${RSCI_CFG_TEI_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT TEI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH0_EN_ERI_NESTED_INT" display="Use ERI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSCI_CFG_CH0_EN_ERI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH0_EN_ERI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 0 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT ERI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH8_EN_ERI_NESTED_INT" display="Use ERI Nested Interrupt for channel 8" default="0" type="combobox">
+            <option id="RSCI_CFG_CH8_EN_ERI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH8_EN_ERI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT ERI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH9_EN_ERI_NESTED_INT" display="Use ERI Nested Interrupt for channel 9" default="0" type="combobox">
+            <option id="RSCI_CFG_CH9_EN_ERI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH9_EN_ERI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 9 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT ERI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH10_EN_ERI_NESTED_INT" display="Use ERI Nested Interrupt for channel 10" default="0" type="combobox">
+            <option id="RSCI_CFG_CH10_EN_ERI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH10_EN_ERI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT ERI 1=enable, 0=disable</description>
+        </property>
+        <property id="RSCI_CFG_CH11_EN_ERI_NESTED_INT" display="Use ERI Nested Interrupt for channel 11" default="0" type="combobox">
+            <option id="RSCI_CFG_CH11_EN_ERI_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSCI_CFG_CH11_EN_ERI_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
+            <description>SPECIFY WHETHER TO INCLUDE CODE FOR NESTED INTERRUPT ERI 1=enable, 0=disable</description>
+        </property>
         <property id="RSCI_CFG_CH10_FIFO_INCLUDED" display="TX/RX FIFO for channel 10" default="0" type="combobox">
             <option id="RSCI_CFG_CH10_FIFO_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH10_FIFO_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
             <description>ENABLE TX/RX FIFO; 1=included, 0=not </description>
         </property>
         <property id="RSCI_CFG_CH11_FIFO_INCLUDED" display="TX/RX FIFO for channel 11" default="0" type="combobox">
             <option id="RSCI_CFG_CH11_FIFO_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH11_FIFO_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
             <description>ENABLE TX/RX FIFO; 1=included, 0=not </description>
         </property>
         <property id="RSCI_CFG_CH10_TX_FIFO_THRESH" display="TX FIFO threshold for channel 10" default="8" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH10_TX_FIFO_THRESH}")</constraint>
             <constraint display="Value must be in the range 0 ~ 31">("${RSCI_CFG_CH10_TX_FIFO_THRESH}" &gt;= 0) &amp;&amp; ("${RSCI_CFG_CH10_TX_FIFO_THRESH}" &lt;= 31)</constraint>
+            <constraint display="Please include TX/RX FIFO for channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_FIFO_INCLUDED} == ${RSCI_CFG_CH10_FIFO_INCLUDED.1}</constraint>
             <description>SET TX FIFO THRESHOLD; 0 lowest, 31 highest 
 TX FIFO THRESHOLD is invalid in Clock Synchronous Mode and Simple SPI Mode. 
 Set the same value for TX FIFO THRESHOLD and RX FIFO THRESHOLD in Clock Synchronous Mode and Simple SPI Mode. </description>
@@ -309,6 +434,7 @@ Set the same value for TX FIFO THRESHOLD and RX FIFO THRESHOLD in Clock Synchron
         <property id="RSCI_CFG_CH11_TX_FIFO_THRESH" display="TX FIFO threshold for channel 11" default="8" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH11_TX_FIFO_THRESH}")</constraint>
             <constraint display="Value must be in the range 0 ~ 31">("${RSCI_CFG_CH11_TX_FIFO_THRESH}" &gt;= 0) &amp;&amp; ("${RSCI_CFG_CH11_TX_FIFO_THRESH}" &lt;= 31)</constraint>
+            <constraint display="Please include TX/RX FIFO for channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_FIFO_INCLUDED} == ${RSCI_CFG_CH11_FIFO_INCLUDED.1}</constraint>
             <description>SET TX FIFO THRESHOLD; 0 lowest, 31 highest 
 TX FIFO THRESHOLD is invalid in Clock Synchronous Mode and Simple SPI Mode. 
 Set the same value for TX FIFO THRESHOLD and RX FIFO THRESHOLD in Clock Synchronous Mode and Simple SPI Mode.</description>
@@ -316,36 +442,48 @@ Set the same value for TX FIFO THRESHOLD and RX FIFO THRESHOLD in Clock Synchron
         <property id="RSCI_CFG_CH10_RX_FIFO_THRESH" display="RX FIFO threshold for channel 10" default="8" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH10_RX_FIFO_THRESH}")</constraint>
             <constraint display="Value must be in the range 0 ~ 31">("${RSCI_CFG_CH10_RX_FIFO_THRESH}" &gt;= 0) &amp;&amp; ("${RSCI_CFG_CH10_RX_FIFO_THRESH}" &lt;= 31)</constraint>
+            <constraint display="Please include TX/RX FIFO for channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_FIFO_INCLUDED} == ${RSCI_CFG_CH10_FIFO_INCLUDED.1}</constraint>
             <description>SET RX FIFO THRESHOLD; 0 lowest, 31 highest</description>
         </property>
         <property id="RSCI_CFG_CH11_RX_FIFO_THRESH" display="RX FIFO threshold for channel 11" default="8" type="textbox">
             <constraint display="Value must be an integer">testInteger("${RSCI_CFG_CH11_RX_FIFO_THRESH}")</constraint>
             <constraint display="Value must be in the range 0 ~ 31">("${RSCI_CFG_CH11_RX_FIFO_THRESH}" &gt;= 0) &amp;&amp; ("${RSCI_CFG_CH11_RX_FIFO_THRESH}" &lt;= 31)</constraint>
+            <constraint display="Please include TX/RX FIFO for channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_FIFO_INCLUDED} == ${RSCI_CFG_CH11_FIFO_INCLUDED.1}</constraint>
             <description>SET RX FIFO THRESHOLD; 0 lowest, 31 highest</description>
         </property>
         <property id="RSCI_CFG_CH0_DATA_MATCH_INCLUDED" display="Received data match function for channel 0" default="0" type="combobox">
             <option id="RSCI_CFG_CH0_DATA_MATCH_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH0_DATA_MATCH_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="This feature is available in ASYNC Mode" actionOnFail="disable">${RSCI_CFG_ASYNC_INCLUDED} == ${RSCI_CFG_ASYNC_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 0 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH0_INCLUDED} == ${RSCI_CFG_CH0_INCLUDED.1}</constraint>
             <description>ENABLE Received Data match function; 1=included, 0=not</description>
         </property>
         <property id="RSCI_CFG_CH8_DATA_MATCH_INCLUDED" display="Received data match function for channel 8" default="0" type="combobox">
             <option id="RSCI_CFG_CH8_DATA_MATCH_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH8_DATA_MATCH_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="This feature is available in ASYNC Mode" actionOnFail="disable">${RSCI_CFG_ASYNC_INCLUDED} == ${RSCI_CFG_ASYNC_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 8 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH8_INCLUDED} == ${RSCI_CFG_CH8_INCLUDED.1}</constraint>
             <description>ENABLE Received Data match function; 1=included, 0=not</description>
         </property>
         <property id="RSCI_CFG_CH9_DATA_MATCH_INCLUDED" display="Received data match function for channel 9" default="0" type="combobox">
             <option id="RSCI_CFG_CH9_DATA_MATCH_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH9_DATA_MATCH_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="This feature is available in ASYNC Mode" actionOnFail="disable">${RSCI_CFG_ASYNC_INCLUDED} == ${RSCI_CFG_ASYNC_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 9 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH9_INCLUDED} == ${RSCI_CFG_CH9_INCLUDED.1}</constraint>
             <description>ENABLE Received Data match function; 1=included, 0=not</description>
         </property>
         <property id="RSCI_CFG_CH10_DATA_MATCH_INCLUDED" display="Received data match function for channel 10" default="0" type="combobox">
             <option id="RSCI_CFG_CH10_DATA_MATCH_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH10_DATA_MATCH_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="This feature is available in ASYNC Mode" actionOnFail="disable">${RSCI_CFG_ASYNC_INCLUDED} == ${RSCI_CFG_ASYNC_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 10 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH10_INCLUDED} == ${RSCI_CFG_CH10_INCLUDED.1}</constraint>
             <description>ENABLE Received Data match function; 1=included, 0=not</description>
         </property>
         <property id="RSCI_CFG_CH11_DATA_MATCH_INCLUDED" display="Received data match function for channel 11" default="0" type="combobox">
             <option id="RSCI_CFG_CH11_DATA_MATCH_INCLUDED.0" display="Not" value="0"/>
             <option id="RSCI_CFG_CH11_DATA_MATCH_INCLUDED.1" display="Include" value="1"/>
+            <constraint display="This feature is available in ASYNC Mode" actionOnFail="disable">${RSCI_CFG_ASYNC_INCLUDED} == ${RSCI_CFG_ASYNC_INCLUDED.1}</constraint>
+            <constraint display="Please include channel 11 to set value for this feature" actionOnFail="disable">${RSCI_CFG_CH11_INCLUDED} == ${RSCI_CFG_CH11_INCLUDED.1}</constraint>
             <description>ENABLE Received Data match function; 1=included, 0=not</description>
         </property>
         <property id="RSCI_CFG_CH0_RX_DATA_SAMPLING_TIMING_INCLUDED" display="Receive data sampling timing adjustment for channel 0" default="0" type="combobox">

@@ -79,7 +79,7 @@
         <zipsource>r_usb_basic_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.50</version>
+            <version>7.53</version>
         </dependency>
         <application>Connectivity</application>
         <desc>USB basic(low-level) driver</desc>

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+-->
 <refinfo>
 
     <!-- multiple versions permitted -->
@@ -12,6 +18,7 @@
         <version>3.02.00</version>
         <version>3.05.00</version>
         <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
@@ -24,6 +31,7 @@
         <version>8.03.00.202305</version>
         <version>8.03.00.202311</version>
         <version>8.03.00.202405</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -51,11 +59,11 @@
         <zipsource>r_tfat_driver_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.51</version>
+            <version>7.52</version>
         </dependency>
         <dependency>
             <module>r_cmt_rx</module>
-            <version>5.70</version>
+            <version>5.71</version>
         </dependency>
         <dependency>
             <module>r_sys_time_rx</module>
@@ -63,7 +71,7 @@
         </dependency>
         <dependency>
             <module>r_tfat_rx</module>
-            <version>4.13</version>
+            <version>4.14</version>
         </dependency>
         <application>Storage &#38; Memory</application>
         <desc>Memory Driver Interface for Open Source FAT File System.</desc>

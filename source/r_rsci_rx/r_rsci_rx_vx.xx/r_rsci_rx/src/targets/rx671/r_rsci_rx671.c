@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /**********************************************************************************************************************
 * File Name    : r_rsci_rx671.c
@@ -27,6 +14,8 @@
 *           03.12.2021 2.00    Updated new features in Asynchronous mode
 *                              and added support for Manchester mode.
 *           22.12.2021 2.10    Removed RSCI_CMD_EN_TEI command.
+*           31.12.2024 2.70    Added support Nested Interrupt.
+*           15.03.2025 2.71    Updated disclaimer
 ***********************************************************************************************************************/
 
 /*****************************************************************************
@@ -1077,6 +1066,11 @@ ISRs
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci10_txi_isr, VECT(RSCI10,TXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci10_txi_isr(void)
 {
+#if RSCI_CFG_CH10_EN_TXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_txi_handler(&g_rsci_ch10_ctrl);
 } /* End of function rsci10_txi_isr() */
 #endif /* End of RSCI_CFG_CH10_INCLUDED  */
@@ -1089,6 +1083,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci10_txi_isr(void)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci11_txi_isr, VECT(RSCI11,TXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_txi_isr(void)
 {
+#if RSCI_CFG_CH11_EN_TXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_txi_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_txi_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED  */
@@ -1112,6 +1111,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_txi_isr(void)
 ******************************************************************************/
 void rsci10_tei_isr(void *cb_args)
 {
+#if RSCI_CFG_CH10_EN_TEI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_tei_handler(&g_rsci_ch10_ctrl);
 } /* End of function rsci10_tei_isr() */
 #endif /* End of RSCI_CFG_CH10_INCLUDED */
@@ -1123,6 +1127,11 @@ void rsci10_tei_isr(void *cb_args)
 ******************************************************************************/
 void rsci11_tei_isr(void *cb_args)
 {
+#if RSCI_CFG_CH11_EN_TEI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_tei_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_tei_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */
@@ -1143,6 +1152,11 @@ void rsci11_tei_isr(void *cb_args)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci10_rxi_isr, VECT(RSCI10,RXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci10_rxi_isr(void)
 {
+#if RSCI_CFG_CH10_EN_RXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_rxi_handler(&g_rsci_ch10_ctrl);
 } /* End of function rsci10_rxi_isr() */
 #endif /* End of RSCI_CFG_CH10_INCLUDED */
@@ -1155,6 +1169,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci10_rxi_isr(void)
 R_BSP_PRAGMA_STATIC_INTERRUPT(rsci11_rxi_isr, VECT(RSCI11,RXI))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_rxi_isr(void)
 {
+#if RSCI_CFG_CH11_EN_RXI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_rxi_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_rxi_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */
@@ -1176,6 +1195,11 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rsci11_rxi_isr(void)
 ******************************************************************************/
 void rsci10_eri_isr(void *cb_args)
 {
+#if RSCI_CFG_CH10_EN_ERI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_eri_handler(&g_rsci_ch10_ctrl);
 } /* End of function rsci10_eri_isr() */
 #endif /* End of RSCI_CFG_CH10_INCLUDED */
@@ -1187,6 +1211,11 @@ void rsci10_eri_isr(void *cb_args)
 ******************************************************************************/
 void rsci11_eri_isr(void *cb_args)
 {
+#if RSCI_CFG_CH11_EN_ERI_NESTED_INT == 1
+    /* set bit PSW.I = 1 to allow nested interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     rsci_eri_handler(&g_rsci_ch11_ctrl);
 } /* End of function rsci11_eri_isr() */
 #endif /* End of RSCI_CFG_CH11_INCLUDED */

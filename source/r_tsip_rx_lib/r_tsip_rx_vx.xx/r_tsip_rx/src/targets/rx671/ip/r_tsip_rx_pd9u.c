@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED  AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 27.06.2015 1.00     First Release
@@ -41,6 +28,8 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -135,37 +124,40 @@ void R_TSIP_TdesEncryptDecryptUpdateSub(uint32_t *InData_Text, uint32_t *OutData
         TSIP.REG_A4H.WORD = 0x000087b6u;
         TSIP.REG_04H.WORD = 0x0000c100u;
     }
-    /* WAIT_LOOP */
-    while (1u != TSIP.REG_104H.BIT.B31)
-    {
-        /* waiting */
-    }
-    TSIP.REG_100H.WORD = InData_Text[0];
-    TSIP.REG_100H.WORD = InData_Text[1];
-    for (iLoop = 2; iLoop < MAX_CNT ; iLoop = iLoop + 2)
+    if(MAX_CNT != 0)
     {
         /* WAIT_LOOP */
         while (1u != TSIP.REG_104H.BIT.B31)
         {
             /* waiting */
         }
-        TSIP.REG_100H.WORD = InData_Text[iLoop + 0];
-        TSIP.REG_100H.WORD = InData_Text[iLoop + 1];
+        TSIP.REG_100H.WORD = InData_Text[0];
+        TSIP.REG_100H.WORD = InData_Text[1];
+        for (iLoop = 2; iLoop < MAX_CNT ; iLoop = iLoop + 2)
+        {
+            /* WAIT_LOOP */
+            while (1u != TSIP.REG_104H.BIT.B31)
+            {
+                /* waiting */
+            }
+            TSIP.REG_100H.WORD = InData_Text[iLoop + 0];
+            TSIP.REG_100H.WORD = InData_Text[iLoop + 1];
+            /* WAIT_LOOP */
+            while (1u != TSIP.REG_04H.BIT.B30)
+            {
+                /* waiting */
+            }
+            OutData_Text[iLoop-2 + 0] = TSIP.REG_100H.WORD;
+            OutData_Text[iLoop-2 + 1] = TSIP.REG_100H.WORD;
+        }
         /* WAIT_LOOP */
         while (1u != TSIP.REG_04H.BIT.B30)
         {
             /* waiting */
         }
-        OutData_Text[iLoop-2 + 0] = TSIP.REG_100H.WORD;
-        OutData_Text[iLoop-2 + 1] = TSIP.REG_100H.WORD;
+        OutData_Text[MAX_CNT-2 + 0] = TSIP.REG_100H.WORD;
+        OutData_Text[MAX_CNT-2 + 1] = TSIP.REG_100H.WORD;
     }
-    /* WAIT_LOOP */
-    while (1u != TSIP.REG_04H.BIT.B30)
-    {
-        /* waiting */
-    }
-    OutData_Text[MAX_CNT-2 + 0] = TSIP.REG_100H.WORD;
-    OutData_Text[MAX_CNT-2 + 1] = TSIP.REG_100H.WORD;
     if (0x00000000u == (TSIP.REG_1CH.WORD & 0xff000000u))
     {
         RX671_func206();//DisableINTEGRATE_WRRDYBandINTEGRATE_RDRDYBinthisfunction.
@@ -193,6 +185,6 @@ void R_TSIP_TdesEncryptDecryptUpdateSub(uint32_t *InData_Text, uint32_t *OutData
     }
 }
 /**********************************************************************************************************************
- End of function ./input_dir/RX671/RX671_pd9u.prc
+ End of function ./input_dir/RX671/RX671_pd9u_r1.prc
  *********************************************************************************************************************/
 #endif /* #if TSIP_PRV_USE_TDES == 1 */

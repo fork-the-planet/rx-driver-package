@@ -1,33 +1,11 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014(2015-2019) Renesas Electronics Corporation. All rights reserved.    
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /**********************************************************************************************************************
-* System Name  : MMC Driver
 * File Name    : r_mmcif_mount.c
-* Version      : 1.07
-* Device       : RX64M (LQFP-176)
-* Abstract     : API & Sub module
-* Tool-Chain   : For RX64M Group
-*              :  e2 studio (Version 7.4.0)
-* OS           : not use
-* H/W Platform : RSK board for RX64M
 * Description  : Interface file for MMC API for RX
-* Limitation   : None
 **********************************************************************************************************************/
 /**********************************************************************************************************************
 * History      : DD.MM.YYYY Version Description
@@ -38,6 +16,9 @@
 *                                   Fixed coding style.
 *              : 30.07.2019 1.06    Add WAIT LOOP.
 *              : 22.11.2019 1.07    Modified comment of API function to Doxygen style.
+*              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
+*                                   Updated file description.
+*              : 15.03.2025 1.21    Updated disclaimer.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -70,23 +51,25 @@ static mmc_status_t r_mmcif_restore_ext_csd(uint32_t channel);
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Mount
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function initializes the MMC and transitions the state from the mountable state to the driver 
  *        idle state.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[in] *p_mmc_Config
- *             Structure that holds the operating settings (See section 3.4 in application note for structure details.)
- * @return    MMC_SUCCESS:             Successful operation.\n
- *            MMC_SUCCESS_LOCKED_CARD: Successful operation, and, furthermore, MMC is in the locked state.\n
- *            Other than the above:    Error termination(See section 2.10 in application note for details).
+ *             Structure that holds the operating settings. See section R_MMCIF_Mount() in application note for
+ *             details.
+ * @retval    MMC_SUCCESS             Successful operation.
+ * @retval    MMC_SUCCESS_LOCKED_CARD Successful operation, and, furthermore, MMC is in the locked state.
+ * @return    Other than the above: Error termination. See section R_MMCIF_Mount() in application note for details.
  * @details   This function performs MMC mount processing. Execute this function after detecting an MMC card.\n 
  *            When the return value is MMC_SUCCESS, the MMC will have transitioned to the transfer state (tran) and 
  *            MMC read and write access will be possible. When the return value is MMC_SUCCESS_LOCKED_CARD, the MMC 
  *            will have transitioned to the transfer state (tran) but MMC read and write access will not be possible. 
  *            The locked state must be cleared by other means.
  * @note      This MMCIF driver discriminates between High-speed mode and Backward-compatible mode when mounting.\n 
- *            The pins must be set up before executing this function. See section 4.4 in application note for details. 
+ *            The pins must be set up before executing this function. See R_MMCIF_Mount() in application note for
+ *            details.
  *            Also, initialization using the R_MMCIF_Open() function is required before executing this function.\n 
  *            If this function returns an error, after setting the hardware to the unmounted state by calling the 
  *            R_MMCIF_Unmount() function, perform the mount processing again.\n 
@@ -432,11 +415,11 @@ static mmc_status_t r_mmcif_card_init_rca(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Unmount
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function clears the MMC mounted state and transitions from the transfer state to the state from which 
  *        the driver can enter the idle state.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error
  * @details   This function performs MMC unmount processing. If this function is called in the transfer state, it 
@@ -445,8 +428,8 @@ static mmc_status_t r_mmcif_card_init_rca(uint32_t channel)
  *            called and the MMC card mounted state has been cleared, the MMC card insertion interrupt and the MMC 
  *            card insertion verification interrupt callback function remain enabled.
  * @note      If the MMC card is removed after this function has been called, the pins must be set up. See section 
- *            4.5 in application note for details. Also, initialization using the R_MMCIF_Open() function is
- *            required before executing this function.\n 
+ *            R_MMCIF_Unmount() in application note for details. Also, initialization using the R_MMCIF_Open()
+ *            function is required before executing this function.\n
  *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.
  */
 mmc_status_t R_MMCIF_Unmount(uint32_t channel)
@@ -1077,10 +1060,10 @@ static mmc_status_t r_mmcif_restore_ext_csd(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_ExtCsd
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function acquires the MMC extended CSD information.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[out] *p_ext_csd_buffer
  *             Extended CSD receive buffer pointer (512 bytes)
  * @retval    MMC_SUCCESS Successful operation

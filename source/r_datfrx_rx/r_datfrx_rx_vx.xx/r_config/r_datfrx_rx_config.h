@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/*
+* Copyright (c) 2018(2025) Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
 * File Name     : r_datfrx_rx_config.h
 * Description   : Configuration options for the r_datfrx_rx module.
@@ -23,6 +10,8 @@
 * History : DD.MM.YYYY Version Description
 *         : 28.09.2018 2.00     First Release
 *         : 21.04.2023 2.10     Removed "FLASH_DM_CFG_CRC_HARDWARE" macro definition.
+*         : 31.08.2023 2.20     Change description of "FLASH_DM_CFG_DF_BLOCK_NUM" and "FLASH_DM_CFG_DF_DATA_NUM".
+*         : 20.03.2025 2.31     Changed the disclaimer.
 **********************************************************************************************************************/
 #ifndef R_DATFRX_CONFIG_H
 #define R_DATFRX_CONFIG_H
@@ -38,7 +27,8 @@ CODE FLASH AND DATA FLASH : SET FRDYI INTERRUPT PRIORITY
 DATA FLASH : SET THE BLOCK ADDRESS NUMBER
 *************************************************************************************************/
 /* Please set the block address number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 3 to 8.
+   FLASH_TYPE1a = The settable value is from 3 to 8.
+   FLASH_TYPE1b = The settable value is from 3 to 32.
    FLASH_TYPE3,4,5 = The settable value is from 3 to 1024.
    The block address to use is from 0x00100000 to 0x00101FFF. (up to 8 blocks) */
 #define FLASH_DM_CFG_DF_BLOCK_NUM   (8)
@@ -55,7 +45,8 @@ DATA FLASH : SET THE DATA NUMBER OF THE DATA NUMBER
 DATA FLASH : SET THE DATA LENGTH FOR THE DATA NUMBER
 *************************************************************************************************/
 /* Please set the data size of the data number to use by the data flash.
-   FLASH_TYPE1 = The settable value is from 1 to 256.
+   FLASH_TYPE1a = The settable value is from 1 to 256.
+   FLASH_TYPE1b = The settable value is from 1 to 96.
    FLASH_TYPE3,4,5 = The settable value is from 1 to 1024.
    The data size of the data number not to use is ignored.
    This number must be a multiple of the minimum programming size for memory area you are writing to.

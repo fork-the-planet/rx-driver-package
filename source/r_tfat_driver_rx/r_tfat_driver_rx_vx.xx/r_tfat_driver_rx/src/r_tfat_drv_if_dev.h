@@ -1,46 +1,28 @@
-/*******************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.
-*******************************************************************************/
-/*******************************************************************************
-* History      : DD.MM.YYYY Version  Description
-*              : 01.12.2014 1.00     First Release
-*              : 21.01.2015 1.01     Added support USB Mini Firmware
-*              : 22.06.2015 1.02     Added support MCU RX231.
-*              : 01.04.2016 1.03     Updated the xml file.
-*              : 29.06.2018 1.04     Modified SDHI to SDMEM.
-*              : 08.08.2019 2.00     Added support for FreeRTOS and 
-*                                    Renesas uITRON (RI600V4).
-*                                    Added support for GNUC and ICCRX.
-*              : 10.06.2020 2.10     Added API function "flash_1ms_interval".
-*                                    Added support FLASH SPI Firmware
-*                                    Added support MMCIF Firmware
-*              : 15.12.2023 2.40     Fixed to comply with GSCE Coding Standards Rev.6.5.0.
-*              : 08.05.2024 2.50     Added support SPI mode SD card.
-*******************************************************************************/
-/*******************************************************************************
-* File Name    : r_tfat_driver_rx_if_dev.h
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+* History      : DD.MM.YYYY Version Description
+*              : 01.12.2014 1.00    First Release
+*              : 21.01.2015 1.01    Added support USB Mini Firmware
+*              : 22.06.2015 1.02    Added support MCU RX231.
+*              : 01.04.2016 1.03    Updated the xml file.
+*              : 29.06.2018 1.04    Modified SDHI to SDMEM.
+*              : 08.08.2019 2.00    Added support for FreeRTOS and Renesas uITRON (RI600V4).
+*                                   Added support for GNUC and ICCRX.
+*              : 10.06.2020 2.10    Added API function "flash_1ms_interval".
+*                                   Added support FLASH SPI Firmware
+*                                   Added support MMCIF Firmware
+*              : 15.12.2023 2.40    Fixed to comply with GSCE Coding Standards Rev.6.5.0.
+*              : 08.05.2024 2.50    Added support SPI mode SD card.
+*              : 15.03.2025 2.61    Updated disclaimer.
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+* File Name    : r_tfat_drv_rx_if_dev.h
 * Description  : TFAT driver Interface on RX devices.
-*******************************************************************************/
+***********************************************************************************************************************/
 #ifndef _R_TFAT_DRIVER_RX_IF_DEV_H_
 #define _R_TFAT_DRIVER_RX_IF_DEV_H_
 

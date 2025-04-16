@@ -50,7 +50,7 @@ FSP_HEADER
  * @def BLE_VERSION_MINOR
  * BLE Module Minor Version.
  */
-#define BLE_VERSION_MINOR      (30)
+#define BLE_VERSION_MINOR      (40)
 
 /**
  * @def BLE_LIB_EXTENDED

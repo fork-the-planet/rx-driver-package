@@ -1,20 +1,8 @@
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
-* THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
-* Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
-************************************************************************************************************************/
+/*
+* Copyright (c) 2018 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
 * File Name    : rm_touch_qe.c
 * Description  : This module implements the QE TOUCH API
@@ -1016,8 +1004,11 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
 
         touch_slider_decode(&p_instance_ctrl->sinfo, slider_data, p_slider->num_elements, slider_id);
 
-        *p_slider_position = *(p_instance_ctrl->sinfo.p_position + slider_id);
-        p_slider_position++;
+        if (p_slider_position != NULL)
+        {
+            *p_slider_position = *(p_instance_ctrl->sinfo.p_position + slider_id);
+            p_slider_position++;
+        }
     }
 
 #else
@@ -1036,8 +1027,11 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
 
         touch_wheel_decode(&p_instance_ctrl->winfo, wheel_data, p_wheel->num_elements, wheel_id);
 
-        *p_wheel_position = *(p_instance_ctrl->winfo.p_position + wheel_id);
-        p_wheel_position++;
+        if (p_wheel_position != NULL)
+        {
+            *p_wheel_position = *(p_instance_ctrl->winfo.p_position + wheel_id);
+            p_wheel_position++;
+        }
     }
 
 #else
@@ -2014,8 +2008,11 @@ static fsp_err_t touch_button_process (touch_instance_ctrl_t * p_instance_ctrl, 
         }
     }
 
-    /** status is 64-bitmap */
-    *p_status = p_instance_ctrl->binfo.status;
+    if ((p_instance_ctrl->p_touch_cfg->num_buttons != 0) && (p_status != NULL))
+    {
+        /** status is 64-bitmap */
+        *p_status = p_instance_ctrl->binfo.status;
+    }
 
     return err;
 }
@@ -2054,8 +2051,8 @@ void touch_button_self_decode (touch_button_info_t * p_binfo, uint16_t value, to
         majority_mode_num = 1;
     }
 
-    threshold = (uint32_t) (*(p_binfo->p_reference + (majority_mode_num * button_id + jmm_id)) +
-                            *(p_binfo->p_threshold + (majority_mode_num * button_id + jmm_id)));
+    threshold = (uint32_t) (*(p_binfo->p_reference + (majority_mode_num * button_id + jmm_id))) +
+                (uint32_t) (*(p_binfo->p_threshold + (majority_mode_num * button_id + jmm_id)));
 
     if (TOUCH_COUNT_MAX < threshold)
     {
@@ -4762,6 +4759,9 @@ void touch_tuning_open (touch_instance_ctrl_t * const p_instance_ctrl)
             (p_ctsu_instance_ctrl->p_self_corr -
              ((p_ctsu_instance_ctrl->self_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
 #if (BSP_FEATURE_CTSU_VERSION == 2)
+        p_ctsu_instance_ctrl->p_self_mfc =
+            (p_ctsu_instance_ctrl->p_self_mfc -
+             ((p_ctsu_instance_ctrl->self_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
         p_ctsu_instance_ctrl->p_selected_freq_self =
             (p_ctsu_instance_ctrl->p_selected_freq_self -
              ((p_ctsu_instance_ctrl->ctsu_elem_index - p_ctsu_instance_ctrl->num_elements)));
@@ -4789,6 +4789,12 @@ void touch_tuning_open (touch_instance_ctrl_t * const p_instance_ctrl)
             (p_ctsu_instance_ctrl->p_mutual_snd_data -
              ((p_ctsu_instance_ctrl->mutual_elem_index - p_ctsu_instance_ctrl->num_elements)));
 #if (BSP_FEATURE_CTSU_VERSION == 2)
+        p_ctsu_instance_ctrl->p_mutual_pri_mfc =
+            (p_ctsu_instance_ctrl->p_mutual_pri_mfc -
+             ((p_ctsu_instance_ctrl->mutual_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
+        p_ctsu_instance_ctrl->p_mutual_snd_mfc =
+            (p_ctsu_instance_ctrl->p_mutual_snd_mfc -
+             ((p_ctsu_instance_ctrl->mutual_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
         p_ctsu_instance_ctrl->p_selected_freq_mutual =
             (p_ctsu_instance_ctrl->p_selected_freq_mutual -
              ((p_ctsu_instance_ctrl->ctsu_elem_index - p_ctsu_instance_ctrl->num_elements)));

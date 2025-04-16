@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
+* Copyright (c) 2021 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
 ***********************************************************************************************************************/
@@ -104,6 +109,33 @@ Set the same value for TX FIFO THRESHOLD and RX FIFO THRESHOLD.</description>
             <constraint display="Value must be an integer" actionOnFail="error">testInteger("${RSPIA_CFG_CH0_RX_FIFO_THRESH}")</constraint>
             <constraint display="Value must be in the range 0 ~ 3" actionOnFail="error">("${RSPIA_CFG_CH0_RX_FIFO_THRESH}" &gt;= 0) &amp;&amp; ("${RSPIA_CFG_CH0_RX_FIFO_THRESH}" &lt;= 3)</constraint>
             <description>SET RX FIFO THRESHOLD; (RSPIA supported MCU ONLY) 0 lowest, 3 highest</description>
+        </property>
+        <property id="RSPIA_CFG_CH0_SPTI_EN_NESTED_INT" display="Use SPTI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSPIA_CFG_CH0_SPTI_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSPIA_CFG_CH0_SPTI_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Channel only valid for Supported" actionOnFail="disable">${RSPIA_CFG_USE_CH0} == ${RSPIA_CFG_USE_CH0.1}</constraint>
+            <description>Specifies whether to include code for nested interrupt SPTI.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
+        </property>
+        <property id="RSPIA_CFG_CH0_SPRI_EN_NESTED_INT" display="Use SPRI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSPIA_CFG_CH0_SPRI_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSPIA_CFG_CH0_SPRI_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Channel only valid for Supported" actionOnFail="disable">${RSPIA_CFG_USE_CH0} == ${RSPIA_CFG_USE_CH0.1}</constraint>
+            <description>Specifies whether to include code for nested interrupt SPRI.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
+        </property>
+        <property id="RSPIA_CFG_CH0_SPEI_EN_NESTED_INT" display="Use SPEI Nested Interrupt for channel 0" default="0" type="combobox">
+            <option id="RSPIA_CFG_CH0_SPEI_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RSPIA_CFG_CH0_SPEI_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <constraint display="Channel only valid for Supported" actionOnFail="disable">${RSPIA_CFG_USE_CH0} == ${RSPIA_CFG_USE_CH0.1}</constraint>
+            <description>Specifies whether to include code for nested interrupt SPEI.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
         </property>
     </configuration>
 </module>

@@ -1,20 +1,7 @@
 /***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+* Copyright (c) 2015 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2015 Renesas Electronics Corporation. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_rscan_rx_private.h
@@ -24,6 +11,7 @@
 *           22.03.2015 1.00    Initial Release
 *           06.12.2018 1.10    Fixed big endian bug. Added __evenaccess to structure and union definitions.
 *           20.05.2019 2.00    Add support for GNUC and ICCRX.
+*           15.03.2025 2.91    Updated disclaimer.
 ***********************************************************************************************************************/
 
 #ifndef CAN_PRIVATE_HEADER_FILE
@@ -34,12 +22,11 @@ Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
 #include "platform.h"
 #include "r_rscan_rx_config.h"
-#include "r_rscan_rx_if.h"              
+#include "r_rscan_rx_if.h"
 
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-
 
 /*****************************************************************************
 Typedef definitions
@@ -48,7 +35,6 @@ Typedef definitions
 /******************************************************************************
  * DRIVER CONTROL STRUCTURES
  ******************************************************************************/
-
 typedef R_BSP_EVENACCESS struct st_can_dcb      // driver control block
 {
     bool        opened;
@@ -64,7 +50,6 @@ typedef R_BSP_EVENACCESS struct st_can_ccb      // channel control block
                                 can_cb_evt_t  event,
                                 void          *p_args);
 } can_ccb_t;
-
 
 /******************************************************************************
  * GLOBAL OPERATION DEFINITIONS
@@ -84,12 +69,11 @@ typedef enum e_can_global_mode
 /******************************************************************************
  * CHANNEL OPERATION DEFINITIONS
  ******************************************************************************/
-
 typedef enum e_can_chmode
 {
-    CAN_CHMODE_COMM = 0,
+    CAN_CHMODE_COMM  = 0,
     CAN_CHMODE_RESET = 1,
-    CAN_CHMODE_HALT = 2,
+    CAN_CHMODE_HALT  = 2,
     CAN_CHMODE_END_ENUM
 } can_chmode_t;
 
@@ -97,20 +81,19 @@ typedef enum e_bo_rmode
 {
     CAN_BO_RECOVERY_ISO = 0,
     CAN_BO_RECOVERY_CH_HALT_AT_BO_ENTRY = 1,
-    CAN_BO_RECOVERY_CH_HALT_AT_BO_END = 2,
-    CAN_BO_RECOVERY_CH_HALT_DURING_BO = 3,
+    CAN_BO_RECOVERY_CH_HALT_AT_BO_END   = 2,
+    CAN_BO_RECOVERY_CH_HALT_DURING_BO   = 3,
     CAN_BO_RECOVERY_END_ENUM
 } can_bo_rmode_t;
 
 typedef enum e_test_mode
 {
-    CAN_TEST_MODE_STD = 0,
-    CAN_TEST_MODE_LISTEN = 1,
+    CAN_TEST_MODE_STD          = 0,
+    CAN_TEST_MODE_LISTEN       = 1,
     CAN_TEST_MODE_EXT_LOOPBACK = 2,
     CAN_TEST_MODE_INT_LOOPBACK = 3,
     CAN_TEST_MODE_END_ENUM
 } can_test_mode_t;
-
 
 /******************************************************************************
  * MESSAGE STRUCTURE
@@ -122,7 +105,6 @@ typedef enum e_test_mode
  * arr[16] at (can_msg_t *)&RSCAN.RMIDL0;       // receive mailboxes
  * arr[2]  at (can_msg_t *)&RSCAN.RFIDL0;       // rxfifos
  */
-
 typedef R_BSP_EVENACCESS struct st_can_msg
 {
     union {
@@ -190,7 +172,6 @@ typedef R_BSP_EVENACCESS struct st_can_msg
     } DF3;
 } can_msg_t;
 
-
 /******************************************************************************
  * TRANSMIT BUFFER DEFINITIONS
  ******************************************************************************/
@@ -225,11 +206,9 @@ typedef R_BSP_EVENACCESS union {
     ) BIT;
 } can_tmstsp_t;
 
-
 /******************************************************************************
  * COMMON FIFO DEFINTIONS
  ******************************************************************************/
-
 typedef enum e_fifo_depth
 {
     CAN_FIFO_DEPTH_0   = 0,
@@ -253,7 +232,7 @@ typedef R_BSP_EVENACCESS union
         uint32_t    ch3_hist:1,
         uint32_t    ch2_hist:1,
         uint32_t    ch1_hist:1,
-        uint32_t    ch0_hist:1,         /* used*/
+        uint32_t    ch0_hist:1,         /* used */
         /* bits 8-22 = TX/RX FIFOs 0-14 */
         uint32_t    ch4_gwfifo:1,
         uint32_t    ch4_txfifo_1:1,
@@ -269,7 +248,7 @@ typedef R_BSP_EVENACCESS union
         uint32_t    ch1_txfifo_0:1,
         uint32_t    ch0_gwfifo:1,
         uint32_t    ch0_txfifo_1:1,
-        uint32_t    ch0_txfifo_0:1,     /* used*/
+        uint32_t    ch0_txfifo_0:1,    /* used */
         /* bits 0-7 = RX FIFOs 0-7 */
         uint32_t    rxfifo_7:1,
         uint32_t    rxfifo_6:1,
@@ -277,30 +256,27 @@ typedef R_BSP_EVENACCESS union
         uint32_t    rxfifo_4:1,
         uint32_t    rxfifo_3:1,
         uint32_t    rxfifo_2:1,
-        uint32_t    rxfifo_1:1,         /* used*/
-        uint32_t    rxfifo_0:1         /* used*/
+        uint32_t    rxfifo_1:1,        /* used */
+        uint32_t    rxfifo_0:1         /* used */
     ) bit;
 } can_fifo_mask_t;
-
 
 /*
  * Individual FIFO status; adapted from iodefine.h
  */
-
 typedef R_BSP_EVENACCESS union {
     unsigned short WORD;
     R_BSP_ATTRIB_STRUCT_BIT_ORDER_LEFT_8 (
         unsigned short :2,
-        unsigned short MC:6,        /* message count (4 bits in HIST FIFO)*/
+        unsigned short MC:6,        /* message count (4 bits in HIST FIFO) */
         unsigned short :3,
-        unsigned short TXIF:1,      /* transmit interrupt flag (TXFIFO only)*/
-        unsigned short IF:1,        /* interrupt flag*/
-        unsigned short MLT:1,       /* message lost (overflow)*/
-        unsigned short FLL:1,       /* FIFO full*/
-        unsigned short EMP:1        /* FIFO empty*/
+        unsigned short TXIF:1,      /* transmit interrupt flag (TXFIFO only) */
+        unsigned short IF:1,        /* interrupt flag */
+        unsigned short MLT:1,       /* message lost (overflow) */
+        unsigned short FLL:1,       /* FIFO full */
+        unsigned short EMP:1        /* FIFO empty */
     ) BIT;
 } can_fifo_stat_t;
-
 
 /******************************************************************************
  * TX/RX FIFO DEFINITIONS (TX and GW FIFOs)
@@ -323,7 +299,7 @@ typedef enum e_fifo_mode
 
 typedef enum e_can_hist_src
 {
-    HIST_SRC_TX_BUF = 1,
+    HIST_SRC_TX_BUF    = 1,
     HIST_SRC_TXRX_FIFO = 2,
     HIST_SRC_END_ENUM
 } can_hist_src_t;
@@ -394,6 +370,5 @@ typedef R_BSP_EVENACCESS struct st_can_rxrule
         ) BIT;
     } GAFLPH;
 } can_rxrule_t;
-
 
 #endif /* CAN_PRIVATE_HEADER_FILE*/

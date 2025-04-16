@@ -5,12 +5,12 @@ r_lcdc_rx
 
 Document Number
 ---------------
-R01AN1980JJ0200
-R01AN1980EJ0200
+R01AN1980JJ0201
+R01AN1980EJ0201
 
 Version
 -------
-v2.00
+v2.01
 
 Overview
 --------
@@ -94,9 +94,9 @@ For example, to run the demo on a RSKRX111 board, the user would uncomment the #
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.04.00
-* GCC for Renesas RX 8.03.00.202202
-* IAR C/C++ Compiler for Renesas RX version 4.20.3
+* Renesas RX v3.07.00
+* GCC for Renesas RX 8.03.00.202411
+* IAR C/C++ Compiler for Renesas RX version 5.10.1
 
 
 File Structure
@@ -107,10 +107,10 @@ r_lcdc_rx
 |
 +---doc
 |   +---en
-|   |   r01an1980ejVERSION_NUMBER}-rx-lcdc.pdf
+|   |   r01an1980ej{VERSION_NUMBER}-rx-lcdc.pdf
 |   |
 |   +---ja
-|       r01an1980jjVERSION_NUMBER}-rx-lcdc.pdf
+|       r01an1980jj{VERSION_NUMBER}-rx-lcdc.pdf
 |
 +---src
       r_lcdc_rx.c

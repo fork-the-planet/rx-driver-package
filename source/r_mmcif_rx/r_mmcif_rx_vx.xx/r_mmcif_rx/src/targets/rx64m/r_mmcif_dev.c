@@ -1,33 +1,11 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014(2015-2019) Renesas Electronics Corporation. All rights reserved.    
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /**********************************************************************************************************************
-* System Name  : MMC Driver
 * File Name    : r_mmcif_dev_port.c
-* Version      : 1.07
-* Device       : RX64M (LQFP-176)
-* Abstract     : API & Sub module
-* Tool-Chain   : For RX64M Group
-*              :  e2 studio (Version 7.4.0)
-* OS           : not use
-* H/W Platform : RSK board for RX64M
 * Description  : Interface file for MMC API for RX
-* Limitation   : None
 **********************************************************************************************************************/
 /**********************************************************************************************************************
 * History      : DD.MM.YYYY Version Description
@@ -38,6 +16,9 @@
 *              : 30.07.2019 1.06    Added WAIT LOOP .
 *              : 22.11.2019 1.07    Added support for atomic control.
 *                                   Modified comment of API function to Doxygen style.
+*              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
+*                                   Updated file description.
+*              : 15.03.2025 1.21    Updated disclaimer.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -744,16 +725,16 @@ mmc_status_t r_mmcif_dev_dmacdtc_trans(uint32_t channel, int32_t cnt)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Set_DmacDtc_Trans_Flg
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function sets the DMAC/DTC transfer complete flag.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[in] flg
- *             DMAC/DTC transfer complete flag : MMC_SET_TRANS_STOP
+ *             DMAC/DTC transfer complete flag - MMC_SET_TRANS_STOP
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error (channel error)
  * @details   This function sets the DMAC/DTC transfer complete flag.\n 
- *            See Section 3.21 in application note for details.
+ *            See section R_MMCIF_Set_DmacDtc_Trans_Flg() in application note for details.
  * @note      Both initialization processing by the R_MMCIF_Open() function and mount processing by the R_MMCIF_Mount()
  *            function are required prior to executing this function.\n 
  *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.
@@ -771,6 +752,7 @@ mmc_status_t R_MMCIF_Set_DmacDtc_Trans_Flg(uint32_t channel, mmc_enum_trans_t fl
 
     return MMC_SUCCESS;
 }
+
 
 
 /**********************************************************************************************************************
@@ -828,18 +810,20 @@ mmc_status_t r_mmcif_dev_cd_layout(uint32_t channel)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Int_Handler0
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function is the MMCIF interrupt handler.
  * @param[in] *vect
  *             Vector table
  * @details   This function is the interrupt handler for the MMCIF driver.\n 
  *            This function is already embedded in the system as the interrupt factor processing routine 
  *            for the MMCIF.\n 
- *            When an MMC card insertion interrupt setup callback function and a status verification interrupt callback
- *            function are registered, these callback functions will be called from this function.
+ *            When an MMC card insertion interrupt setup callback function and a status verification interrupt 
+ *            callback function are registered, these callback functions will be called from this function.
  * @note      Both initialization processing by the R_MMCIF_Open() function and mount processing by the R_MMCIF_Mount()
  *            function are required prior to executing this function.\n 
- *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.
+ *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.\n
+ *            When other channels are used, interrupt handlers must be created for each channel in a similar manner. 
+ *            (Example: R_MMCIF_Int_Handler1() for channel 1).
  */
 void R_MMCIF_Int_Handler0(void * vect)
 {
@@ -898,18 +882,20 @@ void R_MMCIF_Int_Handler0(void * vect)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Int_Handler1
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function is the MMCIF interrupt handler.
  * @param[in] *vect
  *             Vector table
  * @details   This function is the interrupt handler for the MMCIF driver.\n 
  *            This function is already embedded in the system as the interrupt factor processing routine 
  *            for the MMCIF.\n 
- *            When an MMC card insertion interrupt setup callback function and a status verification interrupt callback
- *            function are registered, these callback functions will be called from this function.
+ *            When an MMC card insertion interrupt setup callback function and a status verification interrupt 
+ *            callback function are registered, these callback functions will be called from this function.
  * @note      Both initialization processing by the R_MMCIF_Open() function and mount processing by the R_MMCIF_Mount()
  *            function are required prior to executing this function.\n 
- *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.
+ *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.\n
+ *            When other channels are used, interrupt handlers must be created for each channel in a similar manner. 
+ *            (Example: R_MMCIF_Int_Handler0() for channel 0).
  */
 void R_MMCIF_Int_Handler1(void * vect)
 {
@@ -968,7 +954,7 @@ void R_MMCIF_Int_Handler1(void * vect)
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_1ms_Interval
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function increments the MMCIF driver's internal timer counter.
  * @details   The internal timer counter is incremented each time this function is called.
  * @note      The application must call this function once each millisecond. However, this is not required if the timer

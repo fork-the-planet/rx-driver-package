@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/*
+* Copyright (c) 2019 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 2.0)
+           This is a description of a sample FIT module configuration file
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" xs:noNamespaceSchemaLocation="schema_mdf_2.00.xsd">
+    <fileVersion>1.00</fileVersion>
+    <formatVersion>2.00</formatVersion>
+
+    <fileTemplate>r_pinset_type2</fileTemplate>
+    <resourceInfo>
+      <peripheral name="DSMIF">
+        <channel number="DSMIF0">
+          <channelConfiguration>
+            <config>API</config>
+          </channelConfiguration>
+          <pin name="DSMCLK0">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMDAT0">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMCLK1">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMDAT1">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMCLK2">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMDAT2">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+        </channel>
+        <channel number="DSMIF1">
+          <channelConfiguration>
+            <config>API</config>
+          </channelConfiguration>
+          <pin name="DSMCLK3">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMDAT3">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMCLK4">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMDAT4">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMCLK5">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+          <pin name="DSMDAT5">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+        </channel>
+      </peripheral>
+    </resourceInfo>
+    <configuration>
+    </configuration>
+</module>

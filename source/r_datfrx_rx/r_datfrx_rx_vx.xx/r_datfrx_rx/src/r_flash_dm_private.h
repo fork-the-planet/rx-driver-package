@@ -1,29 +1,11 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/*
+* Copyright (c) 2018(2025) Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2018(2023) Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /************************************************************************************************
 * File Name    : r_flash_dm_private.h
-* Version      : 2.10
+* Version      : 2.31
 * Description  : DATFRX interface header file
 *************************************************************************************************/
 /************************************************************************************************
@@ -31,6 +13,12 @@
 *              : 28.09.2018 2.00     First Release
 *              : 25.01.2019 2.01     English PDF added, Fixed blank check processing and Busy check procedure
 *              : 21.04.2023 2.10     Added macro constant judgment of "FLASH_TYPE_5"
+*              : 31.08.2023 2.20     Compatible with RX140
+*              : 14.03.2024 2.30     Removed unnecessary function prototype declarations.
+*                                    Delete the following macro judgments.
+*                                    "FLASH_CFG_CODE_FLASH_ENABLE"
+*                                    "FLASH_CF_BLOCK_SIZE"
+*              : 20.03.2025 2.31     Changed the disclaimer.
 *************************************************************************************************/
 
 /************************************************************************************************
@@ -40,13 +28,11 @@ Includes <System Includes> , "Project Includes"
 #include "r_datfrx_rx_config.h"
 
 #if(FLASH_TYPE == FLASH_TYPE_1)
-#if   (FLASH_CFG_CODE_FLASH_ENABLE == 1) && (FLASH_CF_BLOCK_SIZE == 1024)
-#include "r_dispatch_1_cf_1k.h"
-#elif (FLASH_CFG_CODE_FLASH_ENABLE == 1) && (FLASH_CF_BLOCK_SIZE == 2048)
-#include "r_dispatch_1_cf_2k.h"
-#elif (FLASH_CFG_CODE_FLASH_ENABLE == 0)
+#if (FLASH_DF_BLOCK_SIZE == 1024)
 #include "r_dispatch_1_df_1k.h"
-#endif/* FLASH_CFG_CODE_FLASH_ENABLE and FLASH_DM_CFG_CF_BLOCK_SIZE_2K settings */
+#elif (FLASH_DF_BLOCK_SIZE == 256)
+#include "r_dispatch_1_df_256b.h"
+#endif/* FLASH_DF_BLOCK_SIZE settings */
 #elif(FLASH_TYPE == FLASH_TYPE_2 || FLASH_TYPE == FLASH_TYPE_3 || FLASH_TYPE == FLASH_TYPE_4 || FLASH_TYPE == FLASH_TYPE_5)
 #include "r_dispatch_2_df.h"
 #endif/* FLASH_TYPE */
@@ -134,9 +120,7 @@ uint8_t          r_flash_dm_drvif_overwrite_block_flag(flash_dm_ptr_t p_addr);
 uint8_t          r_flash_dm_drvif_api_flag(st_flash_dispatch_1_hndl_t * p_hndl);
 e_flash_dm_status_t          r_flash_dm_drvif_erase(flash_dm_ptr_t p_addr);
 e_flash_dm_status_t          r_flash_dm_drvif_write(flash_dm_ptr_t p_addr, flash_dm_ptr_t p_value);
-uint8_t          r_flash_dm_drvif_protect(uint8_t protect);
-uint8_t          r_flash_dm_drvif_set_romcache(uint8_t romcache);
-uint8_t          r_flash_dm_drvif_get_romcache(uint8_t * p_status);
+
 uint8_t          r_flash_dm_drvif_get_block_num(void);
 flash_dm_block_ptr_t  r_flash_dm_drvif_get_block_info(uint8_t index);
 flash_dm_ptr_t   r_flash_dm_drvif_get_block_addr(uint8_t index);

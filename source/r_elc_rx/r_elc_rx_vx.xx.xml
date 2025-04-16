@@ -23,6 +23,7 @@
         <version>3.03.00</version>
         <version>3.04.00</version>
         <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
@@ -33,7 +34,8 @@
         <version>8.03.00.202102</version>
         <version>8.03.00.202202</version>
         <version>8.03.00.202311</version>
-    </toolchain>
+        <version>8.03.00.202411</version>
+   </toolchain>
     <toolchain>
         <brand>IAR</brand>
         <product>ICCRX</product>
@@ -70,7 +72,7 @@
         <zipsource>r_elc_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.50</version>
+            <version>7.53</version>
         </dependency>
         <application>Other Peripheral</application>
         <desc>ELC Driver.</desc>

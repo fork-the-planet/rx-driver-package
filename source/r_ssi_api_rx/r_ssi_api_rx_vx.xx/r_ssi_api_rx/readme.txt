@@ -79,9 +79,6 @@ r_ssi_api_rx
 |   +---ja
 |          r01an2150jj{VERSION_NUMBER}-rx-ssi.pdf
 |
-+---ref
-|       r_ssi_api_rx_config_reference.h
-|
 \---src
         r_ssi_api_rx.c
         r_ssi_api_rx_private.h

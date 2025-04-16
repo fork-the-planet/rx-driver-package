@@ -9,7 +9,7 @@ R01AN7174EU (English version)
 
 Version
 -------
-v1.30
+v1.40
 
 Overview
 --------------------------------------------------------------------------------
@@ -41,6 +41,10 @@ Features
   - Notification of characteristics modification
   - Read/Write of GATT Profile from host
   - Loading of Profile definition
+*Security functionality (DA14531/DA14535 module acting as Peripheral)
+  - Legacy Pairing supporting Just works functionality
+  - Legacy Pairing supporting Passkey functionality
+  - Initiate security request procedure from Peripheral as well
 
 Supported MCUs
 --------------
@@ -54,7 +58,10 @@ Limitations
 -----------
 * r_ble_da14531_rx only supports QE BLE projects. To generate sample code using QE for BLE,
   please refer to the Application Note (5. Sample Code Generation Using QE for BLE).
-* The boot from host feature currently only supports 1-wire UART operation.
+* The boot from host feature currently supports:
+  - 1-wire UART operation
+  - 2-wire UART operation. (*Note1)
+Note1: Only be used with DA14535 device
 
 Peripherals Used Directly
 -------------------------
@@ -104,5 +111,8 @@ r_ble_da14531_rx
             r_ble_gtl.h
             r_ble_gtl_image.c
             r_ble_gtl_image.h
+            r_ble_gtl_security.c
+            r_ble_gtl_security.h
+            r_ble_gtl_typedef.h
 r_config
     r_ble_da14531_config.h

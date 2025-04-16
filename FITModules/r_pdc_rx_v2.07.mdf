@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/***********************************************************************************************************************
+* Copyright (c) 2016 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 0.2)
+           This is a description of a sample FIT module for demonstration purposes only.
+***********************************************************************************************************************/
+-->
+
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.0" xs:noNamespaceSchemaLocation="mdf_schema.xsd">
+  <fileVersion>1.00</fileVersion>
+  <formatVersion>1.00</formatVersion>
+  <fileTemplate>r_pinset_type2</fileTemplate>
+  <resourceInfo>
+    <peripheral name="PDC">
+        <channelConfiguration>
+          <config>API</config>
+        </channelConfiguration>
+        <pin name="PIXCLK">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="VSYNC">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="HSYNC">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD7">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD6">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD5">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD4">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD3">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD2">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD1">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PIXD0">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+        <pin name="PCKO">
+          <pinConfiguration config="AUTO"/>
+        </pin>
+    </peripheral>
+  </resourceInfo>
+</module>

@@ -9,18 +9,21 @@
         <version>2.02.00</version>
         <version>3.01.00</version>
         <version>3.03.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
         <version>4.08.04.201902</version>
         <version>8.03.00.202004</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
         <product>ICCRX</product>
         <version>4.12.01</version>
         <version>4.20.01</version>
+        <version>5.10.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->
@@ -49,8 +52,8 @@
     <package>
         <type>fitmodule</type>
         <name>r_ssi_api_rx</name>
-        <version>2.03</version>
-        <zipsource>r_ssi_api_rx_v2.03.zip</zipsource>
+        <version>x.xx</version>
+        <zipsource>r_ssi_api_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
             <version>6.10</version>

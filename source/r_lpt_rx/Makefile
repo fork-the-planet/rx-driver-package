@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_lpt_rx
-VERSION = 		5.00
+VERSION = 		5.01
 MDF = V2
 
 CONFIG_FOLDER = r_config

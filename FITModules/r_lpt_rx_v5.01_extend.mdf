@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/***********************************************************************************************************************
+* Copyright (c) 2016 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 2.0)
+           This is a description of a sample FIT module configuration file
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" xs:noNamespaceSchemaLocation="schema_mdf_2.00.xsd">
+    <fileVersion>1.00</fileVersion>
+    <formatVersion>2.00</formatVersion>
+
+    <fileTemplate></fileTemplate>
+        <resourceInfo>
+      <peripheral name="LPT">
+        <channel number="LPT" group="RX140">
+          <channelConfiguration>
+            <config>API</config>
+          </channelConfiguration>
+          <pin name="LPTO">
+            <pinConfiguration config="AUTO"/>
+          </pin>
+        </channel>
+      </peripheral>
+    </resourceInfo>
+    <configuration>
+        <property id="LPT_CFG_PARAM_CHECKING_ENABLE" display="Parameter checking" default="BSP_CFG_PARAM_CHECKING_ENABLE" type="combobox">
+            <option id="LPT_CFG_PARAM_CHECKING.BSP_CFG_PARAM_CHECKING_ENABLE" display="System default" value="BSP_CFG_PARAM_CHECKING_ENABLE"/>
+            <option id="LPT_CFG_PARAM_CHECKING.0" display="Disabled" value="0"/>
+            <option id="LPT_CFG_PARAM_CHECKING.1" display="Enabled" value="1"/>
+            <description>Selects whether to include parameter checking in the code.
+System default = BSP_CFG_PARAM_CHECKING_ENABLE
+Disabled = compiles out parameter checking
+Enabled = includes parameter checking</description>
+        </property>
+        <property id="LPT_CFG_LPT_CLOCK_SOURCE" display="LPT clock source" default="0" type="combobox">
+            <option id="LPT_CFG_LPT_CLOCK_SOURCE.0" display="Sub-clock oscillator" value="0"/>
+            <option id="LPT_CFG_LPT_CLOCK_SOURCE.1" display="IWDT-dedicated on-chip oscillator" value="1"/>
+            <option id="LPT_CFG_LPT_CLOCK_SOURCE.3" display="LOCO on-chip oscillator" value="3"/>
+            <description>LPT (Low Power Timer) Clock source select (LPTCR1.LPCNTCKSEL)
+This setting is only valid for BSP_CFG_LPT_CLOCK_SOURCE is not defined.</description>
+        </property>
+    </configuration>
+</module>

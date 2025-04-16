@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <module>r_usb_basic</module>
-            <version>1.42</version>
+            <version>1.44</version>
         </dependency>
         <application>Connectivity</application>
         <desc>USB Host Communication Device Class</desc>

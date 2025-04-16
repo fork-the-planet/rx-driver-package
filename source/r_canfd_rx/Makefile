@@ -1,5 +1,5 @@
 MODULE_NAME =	r_canfd_rx
-VERSION =		1.40
+VERSION =		1.41
 MDF = V1
 
 CONFIG_FOLDER = r_config

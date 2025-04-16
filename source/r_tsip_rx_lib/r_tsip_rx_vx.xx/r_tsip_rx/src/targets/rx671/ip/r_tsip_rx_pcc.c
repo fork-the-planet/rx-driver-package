@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED  AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2015-2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 27.06.2015 1.00     First Release
@@ -41,6 +28,8 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
+ *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
+ *         :                     Updated Firmware Update API
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -126,6 +115,7 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
         /* waiting */
     }
     TSIP.REG_100H.WORD = InData_Cmd[0];
+    RX671_func401();
     TSIP.REG_104H.WORD = 0x00000368u;
     TSIP.REG_E0H.WORD = 0x80040280u;
     /* WAIT_LOOP */
@@ -188,12 +178,12 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
         /* waiting */
     }
     TSIP.REG_1CH.WORD = 0x00001800u;
-    RX671_func100(change_endian_long(0x9506cc30u), change_endian_long(0x961cf0bdu), change_endian_long(0x8a0418b0u), change_endian_long(0x3b4bad47u));
+    RX671_func100(change_endian_long(0xdd9ae938u), change_endian_long(0xddbc89b7u), change_endian_long(0x11fe92e0u), change_endian_long(0xf38e7c65u));
     TSIP.REG_1CH.WORD = 0x00400000u;
     TSIP.REG_1D0H.WORD = 0x00000000u;
     if (1u == (TSIP.REG_1CH.BIT.B22))
     {
-        RX671_func102(change_endian_long(0x31cdfda3u), change_endian_long(0x999a6c77u), change_endian_long(0xc5cfe0f9u), change_endian_long(0xfdf4c30au));
+        RX671_func102(change_endian_long(0xcd53d614u), change_endian_long(0x286490fcu), change_endian_long(0x8020b2ffu), change_endian_long(0x78fe5b72u));
         TSIP.REG_1BCH.WORD = 0x00000040u;
         /* WAIT_LOOP */
         while (0u != TSIP.REG_18H.BIT.B12)
@@ -261,12 +251,12 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
             /* waiting */
         }
         TSIP.REG_1CH.WORD = 0x00001800u;
-        RX671_func100(change_endian_long(0xc747ae94u), change_endian_long(0xece0f0a4u), change_endian_long(0x6b9f43eau), change_endian_long(0xedc966bfu));
+        RX671_func100(change_endian_long(0xfbabbacbu), change_endian_long(0xbf7a4833u), change_endian_long(0x08785918u), change_endian_long(0x1eb1ce42u));
         TSIP.REG_1CH.WORD = 0x00400000u;
         TSIP.REG_1D0H.WORD = 0x00000000u;
         if (1u == (TSIP.REG_1CH.BIT.B22))
         {
-            RX671_func102(change_endian_long(0xd4c04efcu), change_endian_long(0xaff573acu), change_endian_long(0x7c8ca9bdu), change_endian_long(0xb35b1063u));
+            RX671_func102(change_endian_long(0xf95126adu), change_endian_long(0x54a4a1f0u), change_endian_long(0x7756b73eu), change_endian_long(0x261476f0u));
             TSIP.REG_1BCH.WORD = 0x00000040u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_18H.BIT.B12)
@@ -280,7 +270,7 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
         }
         else
         {
-            RX671_func100(change_endian_long(0x2423b507u), change_endian_long(0x52fde953u), change_endian_long(0xc0756562u), change_endian_long(0x16a2d0bdu));
+            RX671_func100(change_endian_long(0xdfb1a7a2u), change_endian_long(0x78c2aaecu), change_endian_long(0xe57cd38eu), change_endian_long(0x46cb119du));
             TSIP.REG_28H.WORD = 0x008f0001u;
             TSIP.REG_2CH.WORD = 0x00000010u;
             TSIP.REG_104H.WORD = 0x00000f57u;
@@ -403,7 +393,7 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
             OutData_Master_SecretKeyIndex[9] = TSIP.REG_100H.WORD;
             OutData_Master_SecretKeyIndex[10] = TSIP.REG_100H.WORD;
             OutData_Master_SecretKeyIndex[11] = TSIP.REG_100H.WORD;
-            RX671_func100(change_endian_long(0x785fb2e6u), change_endian_long(0xf56863d7u), change_endian_long(0x63591287u), change_endian_long(0x3ee6164du));
+            RX671_func100(change_endian_long(0x016f6c14u), change_endian_long(0xf1a3aa4fu), change_endian_long(0xb9890c97u), change_endian_long(0x8342ec4bu));
             TSIP.REG_E0H.WORD = 0x81040280u;
             TSIP.REG_04H.WORD = 0x00000612u;
             /* WAIT_LOOP */
@@ -430,7 +420,7 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
                 /* waiting */
             }
             OutData_Handle[3] = TSIP.REG_100H.WORD;
-            RX671_func102(change_endian_long(0xfb0917b8u), change_endian_long(0x13dd077bu), change_endian_long(0x55a67e81u), change_endian_long(0x304e9048u));
+            RX671_func102(change_endian_long(0x1c7808beu), change_endian_long(0x0899be10u), change_endian_long(0x930b80fcu), change_endian_long(0x1a4fef19u));
             TSIP.REG_1BCH.WORD = 0x00000040u;
             /* WAIT_LOOP */
             while (0u != TSIP.REG_18H.BIT.B12)
@@ -445,5 +435,5 @@ e_tsip_err_t R_TSIP_Tls13GenerateMasterSecretSub(uint32_t *InData_Cmd, uint32_t 
     }
 }
 /**********************************************************************************************************************
- End of function ./input_dir/RX671/RX671_pcc.prc
+ End of function ./input_dir/RX671/RX671_pcc_r1.prc
  *********************************************************************************************************************/

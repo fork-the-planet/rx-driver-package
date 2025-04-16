@@ -5,12 +5,12 @@ r_glcdc_rx
 
 Document Number
 ---------------
-R01AN3609EJ0160 (English version)
-R01AN3609JJ0160 (Japanese version)
+R01AN3609EJ0161 (English version)
+R01AN3609JJ0161 (Japanese version)
 
 Version
 -------
-v1.60
+v1.61
 
 Overview
 --------
@@ -55,8 +55,8 @@ Required Packages
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.05.00
-* GCC for Renesas RX 8.3.0 202311
+* Renesas RX v3.07.00
+* GCC for Renesas RX 8.3.0 202411
 * IAR C/C++ Compiler for Renesas RX version 5.10.1
 
 File Structure
@@ -71,10 +71,10 @@ r_glcdc_rx
 +---doc
 |   |
 |   +---en
-|   |   r01an3609ej0160-rx-lcd.pdf
+|   |   r01an3609ej0161-rx-lcd.pdf
 |   |
 |   \---ja
-|       r01an3609jj0160-rx-lcd.pdf
+|       r01an3609jj0161-rx-lcd.pdf
 |
 |
 \---src

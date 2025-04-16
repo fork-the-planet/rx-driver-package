@@ -1,30 +1,12 @@
-/************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only
-* intended for use with Renesas products. No other uses are authorized. This
-* software is owned by Renesas Electronics Corporation and is protected under
-* all applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
-* LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-* AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
-* TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
-* ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
-* FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
-* ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
-* BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software
-* and to discontinue the availability of this software. By using this software,
-* you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/***********************************************************************************************************************
+* Copyright (c) 2004 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2004(2005-2020) Renesas Electronics Corporation. All rights reserved.
-*************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /************************************************************************************************
 * System Name  : EEPROM driver software
 * File Name    : r_eeprom_spi_sub.c
-* Version      : 3.02
+* Version      : 3.21
 * Device       : -
 * Abstract     : Sub module
 * Tool-Chain   : -
@@ -72,10 +54,12 @@
 *              : 2012.03.19    Ver2.02 --------------------------------------------------------
 *              : 2013.09.30    Ver2.03 Supported IAR Embedded Workbench for Renesas RL78.
 *
-*              : DD.MM.YYYY Version  Description
-*              : 28.11.2014 2.30     Revised functions of same as Ver.2.30 of other middleware.
-*              : 30.01.2015 2.31     Added RX71M.
-*              : 10.12.2020 3.02     Modified comment of API function to Doxygen style.
+*              : DD.MM.YYYY Version Description
+*              : 28.11.2014 2.30    Revised functions of same as Ver.2.30 of other middleware.
+*              : 30.01.2015 2.31    Added RX71M.
+*              : 10.12.2020 3.02    Modified comment of API function to Doxygen style.
+*              : 29.11.2024 3.20    Modified comment of API function to Doxygen style.
+*              : 15.03.2025 3.21    Updated disclaimer.
 *************************************************************************************************/
 
 
@@ -1016,7 +1000,7 @@ uint32_t r_eeprom_spi_page_calc(uint8_t devno, eeprom_info_t  * p_eeprom_info)
  * @details   Increments the internal timer counter of the clock synchronous single master control software while
  *            waiting for the DMAC transfer or DTC transfer to finish.
  * @note      User a timer or the like to call this function at 1 ms intervals. \n
- *            In the example above, this function is called by a callback function that runs at 1 ms intervals.
+ *            See section R_EEPROM_SPI_1ms_Interval() in the application note for details.
  */
 void R_EEPROM_SPI_1ms_Interval(void)
 {
@@ -1038,8 +1022,8 @@ void R_EEPROM_SPI_1ms_Interval(void)
  *            This is preparatory processing to enable fetching of error logs using the LONGQ FIT module. Run this
  *            function before calling R_EEPROM_SPI_Open().
  * @note      Add the LONGQ FIT module, which is available separately, to your project.\n
- *            Enable the option #define EEPROM_SPI_CFG_LONGQ_ENABLE in r_eeprom_spi_config.h. Also, enable
- *            #define xxx_LONGQ_ENABLE in the clock synchronous single master control software used by the
+ *            Enable the option \#define EEPROM_SPI_CFG_LONGQ_ENABLE in r_eeprom_spi_config.h. Also, enable
+ *            \#define xxx_LONGQ_ENABLE in the clock synchronous single master control software used by the
  *            specified device.\n
  *            In the LONGQ FIT module, set the ignore_overflow argument of R_LONGQ_Open() to 1.
  *            This allows the error log buffer to be used as a ring buffer.
@@ -1102,8 +1086,8 @@ uint32_t r_eeprom_spi_log(uint32_t flg, uint32_t fid, uint32_t line)
  *            This is preparatory processing to enable fetching of error logs using the LONGQ FIT module. Run this
  *            function before calling R_EEPROM_SPI_Open().
  * @note      Add the LONGQ FIT module, which is available separately, to your project.\n
- *            Enable the option #define EEPROM_SPI_CFG_LONGQ_ENABLE in r_eeprom_spi_config.h. Also, enable
- *            #define xxx_LONGQ_ENABLE in the clock synchronous single master control software used by the
+ *            Enable the option \#define EEPROM_SPI_CFG_LONGQ_ENABLE in r_eeprom_spi_config.h. Also, enable
+ *            \#define xxx_LONGQ_ENABLE in the clock synchronous single master control software used by the
  *            specified device.\n
  *            In the LONGQ FIT module, set the ignore_overflow argument of R_LONGQ_Open() to 1.
  *            This allows the error log buffer to be used as a ring buffer.
@@ -1131,8 +1115,8 @@ eeprom_status_t R_EEPROM_SPI_Set_LogHdlAddress(uint32_t user_long_que)
  * @details   This function fetches the error log. When an error occurs, call this function immediately before user
  *            processing ends.
  * @note      Incorporate the LONGQ FIT module separately.\n
- *            Enable the option #define EEPROM_SPI_CFG_LONGQ_ENABLE in r_eeprom_spi_config.h. Also, enable
- *            #define xxx_LONGQ_ENABLE in the clock synchronous single master control software used by the
+ *            Enable the option \#define EEPROM_SPI_CFG_LONGQ_ENABLE in r_eeprom_spi_config.h. Also, enable
+ *            \#define xxx_LONGQ_ENABLE in the clock synchronous single master control software used by the
  *            specified device.
  */
 uint32_t R_EEPROM_SPI_Log(uint32_t flg, uint32_t fid, uint32_t line)

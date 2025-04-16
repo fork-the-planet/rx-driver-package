@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 /***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
+/***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
            This is a description of a sample FIT module configuration file
 ***********************************************************************************************************************/
@@ -18,13 +23,13 @@ command is issued. (1: Enabled, 0: Disabled)</description>
         </property>
         <property id="FLASH_SPI_CFG_LONGQ_ENABLE" display="ENABLE DEBUGGING INFORMATION" default="0" type="combobox">
             <option id="FLASH_SPI_CFG_LONGQ_ENABLE.0" display="Disabled" value="0"/>
-            <option id="FLASH_SPI_CFG_LONGQ_ENABLE.1" display="Enabled" value="1"/>
+            <option id="FLASH_SPI_CFG_LONGQ_ENABLE.1" display="Enabled" value="1" dependency="r_longq"/>
             <description>Selects whether or not error log acquisition processing is
 performed for debugging. (1: Enabled, 0: Disabled)</description>
         </property>
         <property id="FLASH_SPI_CFG_USE_GPIO_MPC_FIT" display="ENABLE GPIO MODULE AND MPC MODULE" default="0" type="combobox">
             <option id="FLASH_SPI_CFG_USE_GPIO_MPC_FIT.0" display="Disabled" value="0"/>
-            <option id="FLASH_SPI_CFG_USE_GPIO_MPC_FIT.1" display="Enabled" value="1"/>
+            <option id="FLASH_SPI_CFG_USE_GPIO_MPC_FIT.1" display="Enabled" value="1" dependency="r_gpio_rx;r_mpc_rx"/>
             <description>Selects whether the GPIO FIT module or MPC FIT module is
 used to control the SS# pin. (1: Enabled, 0: Disabled)</description>
         </property>

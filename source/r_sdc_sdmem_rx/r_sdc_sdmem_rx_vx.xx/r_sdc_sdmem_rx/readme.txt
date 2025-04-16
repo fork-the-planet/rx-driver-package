@@ -28,13 +28,11 @@ r_sdc_sdmem_rx
 +---doc
 |   |
 |   +---en
-|   |   r01an4233ej0300-rx-sdmemory.pdf
+|   |   r01an4233ej0301-rx-sdmemory.pdf
 |   |
 |   +---ja
-|       r01an4233jj0300-rx-sdmemory.pdf
+|       r01an4233jj0301-rx-sdmemory.pdf
 |
-+---ref
-|       r_sdc_sd_rx_config_reference.h
 |
 +---src
     |   r_sdc_sd_cd.c

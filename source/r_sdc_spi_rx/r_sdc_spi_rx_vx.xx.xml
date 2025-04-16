@@ -8,13 +8,15 @@
         <product>RXC</product>
         <version>3.05.00</version>
         <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
         <version>8.03.00.202204</version>
         <version>8.03.00.202405</version>
-    </toolchain>
+        <version>8.03.00.202411</version>
+   </toolchain>
     <toolchain>
         <brand>IAR</brand>
         <product>ICCRX</product>
@@ -36,7 +38,7 @@
         <zipsource>r_sdc_spi_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.51</version>
+            <version>7.53</version>
         </dependency>
         <dependency>
             <module>r_memdrv_rx</module>

@@ -1,22 +1,9 @@
-/***********************************************************************************************************************
- * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
- *
- * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
- * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
- * sold pursuant to Renesas terms and conditions of sale.  Purchasers are solely responsible for the selection and use
- * of Renesas products and Renesas assumes no liability.  No license, express or implied, to any intellectual property
- * right is granted by Renesas. This software is protected under all applicable laws, including copyright laws. Renesas
- * reserves the right to change or discontinue this software and/or this documentation. THE SOFTWARE AND DOCUMENTATION
- * IS DELIVERED TO YOU "AS IS," AND RENESAS MAKES NO REPRESENTATIONS OR WARRANTIES, AND TO THE FULLEST EXTENT
- * PERMISSIBLE UNDER APPLICABLE LAW, DISCLAIMS ALL WARRANTIES, WHETHER EXPLICITLY OR IMPLICITLY, INCLUDING WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT, WITH RESPECT TO THE SOFTWARE OR
- * DOCUMENTATION.  RENESAS SHALL HAVE NO LIABILITY ARISING OUT OF ANY SECURITY VULNERABILITY OR BREACH.  TO THE MAXIMUM
- * EXTENT PERMITTED BY LAW, IN NO EVENT WILL RENESAS BE LIABLE TO YOU IN CONNECTION WITH THE SOFTWARE OR DOCUMENTATION
- * (OR ANY PERSON OR ENTITY CLAIMING RIGHTS DERIVED FROM YOU) FOR ANY LOSS, DAMAGES, OR CLAIMS WHATSOEVER, INCLUDING,
- * WITHOUT LIMITATION, ANY DIRECT, CONSEQUENTIAL, SPECIAL, INDIRECT, PUNITIVE, OR INCIDENTAL DAMAGES; ANY LOST PROFITS,
- * OTHER ECONOMIC DAMAGE, PROPERTY DAMAGE, OR PERSONAL INJURY; AND EVEN IF RENESAS HAS BEEN ADVISED OF THE POSSIBILITY
- * OF SUCH LOSS, DAMAGES, CLAIMS OR COSTS.
- **********************************************************************************************************************/
+/*
+* Copyright (c) 2020 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+ 
 
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
@@ -53,6 +40,9 @@
 #endif
 #if RM_ZMOD4510_OAQ_2ND_GEN_CFG_LIB_ENABLE
 #include "oaq_2nd_gen/oaq_2nd_gen.h"
+#endif
+#if RM_ZMOD4510_NO2_O3_CFG_LIB_ENABLE
+#include "no2_o3/no2_o3.h"
 #endif
 #if RM_ZMOD4450_RAQ_CFG_LIB_ENABLE
 #include "raq/raq.h"
@@ -122,8 +112,8 @@ uint8_t                         g_zmod4xxx_sensor0_product_data[7];
 extern rm_zmod4xxx_api_t const  g_zmod4xxx_on_zmod4410_iaq_2nd_gen;
 extern zmod4xxx_conf            g_zmod4410_iaq_2nd_gen_sensor_type[];
 #elif RM_ZMOD4410_IAQ_2ND_GEN_ULP_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE0_OPERATION_MODE == 8)
-iaq_2nd_gen_ulp_handle_t            g_zmod4xxx_sensor0_lib_handle;
-iaq_2nd_gen_ulp_results_t           g_zmod4xxx_sensor0_lib_results;
+iaq_2nd_gen_ulp_handle_t        g_zmod4xxx_sensor0_lib_handle;
+iaq_2nd_gen_ulp_results_t       g_zmod4xxx_sensor0_lib_results;
 uint8_t                         g_zmod4xxx_sensor0_product_data[7];
 extern rm_zmod4xxx_api_t const  g_zmod4xxx_on_zmod4410_iaq_2nd_gen_ulp;
 extern zmod4xxx_conf            g_zmod4410_iaq_2nd_gen_ulp_sensor_type[];
@@ -169,6 +159,12 @@ oaq_2nd_gen_results_t           g_zmod4xxx_sensor0_lib_results;
 uint8_t                         g_zmod4xxx_sensor0_product_data[10];
 extern rm_zmod4xxx_api_t const  g_zmod4xxx_on_zmod4510_oaq_2nd_gen;
 extern zmod4xxx_conf            g_zmod4510_oaq_2nd_gen_sensor_type[];
+#elif RM_ZMOD4510_NO2_O3_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE0_OPERATION_MODE == 13)
+no2_o3_handle_t                 g_zmod4xxx_sensor0_lib_handle;
+no2_o3_results_t                g_zmod4xxx_sensor0_lib_results;
+uint8_t                         g_zmod4xxx_sensor0_product_data[10];
+extern rm_zmod4xxx_api_t const  g_zmod4xxx_on_zmod4510_no2_o3;
+extern zmod4xxx_conf            g_zmod4510_no2_o3_sensor_type[];
 #elif RM_ZMOD4450_RAQ_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE0_OPERATION_MODE == 9)
 raq_params_t                    g_zmod4xxx_sensor0_lib_handle;
 raq_results_t                   g_zmod4xxx_sensor0_lib_results;
@@ -239,6 +235,11 @@ rm_zmod4xxx_lib_extended_cfg_t g_zmod4xxx_sensor0_extended_cfg =
     .product_id = 0x6320,
     .p_api = (void *)&g_zmod4xxx_on_zmod4510_oaq_2nd_gen,
     .p_data_set = (void *)g_zmod4510_oaq_2nd_gen_sensor_type,
+#elif RM_ZMOD4510_NO2_O3_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE0_OPERATION_MODE == 13)
+    .lib_type = RM_ZMOD4510_LIB_TYPE_NO2_O3,
+    .product_id = 0x6320,
+    .p_api = (void *)&g_zmod4xxx_on_zmod4510_no2_o3,
+    .p_data_set = (void *)g_zmod4510_no2_o3_sensor_type,
 #elif RM_ZMOD4450_RAQ_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE0_OPERATION_MODE == 9)
     .lib_type = RM_ZMOD4450_LIB_TYPE_RAQ,
     .product_id = 0x7310,
@@ -365,6 +366,12 @@ oaq_2nd_gen_results_t           g_zmod4xxx_sensor1_lib_results;
 uint8_t                         g_zmod4xxx_sensor1_product_data[10];
 extern rm_zmod4xxx_api_t const  g_zmod4xxx_on_zmod4510_oaq_2nd_gen;
 extern zmod4xxx_conf            g_zmod4510_oaq_2nd_gen_sensor_type[];
+#elif RM_ZMOD4510_NO2_O3_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE1_OPERATION_MODE == 13)
+no2_o3_handle_t                 g_zmod4xxx_sensor1_lib_handle;
+no2_o3_results_t                g_zmod4xxx_sensor1_lib_results;
+uint8_t                         g_zmod4xxx_sensor1_product_data[10];
+extern rm_zmod4xxx_api_t const  g_zmod4xxx_on_zmod4510_no2_o3;
+extern zmod4xxx_conf            g_zmod4510_no2_o3_sensor_type[];
 #elif RM_ZMOD4450_RAQ_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE1_OPERATION_MODE == 9)
 raq_params_t                    g_zmod4xxx_sensor1_lib_handle;
 raq_results_t                   g_zmod4xxx_sensor1_lib_results;
@@ -435,6 +442,11 @@ rm_zmod4xxx_lib_extended_cfg_t g_zmod4xxx_sensor1_extended_cfg =
     .product_id = 0x6320,
     .p_api = (void *)&g_zmod4xxx_on_zmod4510_oaq_2nd_gen,
     .p_data_set = (void *)g_zmod4510_oaq_2nd_gen_sensor_type,
+#elif RM_ZMOD4510_NO2_O3_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE1_OPERATION_MODE == 13)
+    .lib_type = RM_ZMOD4510_LIB_TYPE_NO2_O3,
+    .product_id = 0x6320,
+    .p_api = (void *)&g_zmod4xxx_on_zmod4510_no2_o3,
+    .p_data_set = (void *)g_zmod4510_no2_o3_sensor_type,
 #elif RM_ZMOD4450_RAQ_CFG_LIB_ENABLE && (RM_ZMOD4XXX_CFG_DEVICE1_OPERATION_MODE == 9)
     .lib_type = RM_ZMOD4450_LIB_TYPE_RAQ,
     .product_id = 0x7310,

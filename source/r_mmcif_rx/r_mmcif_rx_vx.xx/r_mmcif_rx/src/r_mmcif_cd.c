@@ -1,33 +1,11 @@
-/**********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
-* applicable laws, including copyright laws. 
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
-* following link:
-* http://www.renesas.com/disclaimer 
+/***********************************************************************************************************************
+* Copyright (c) 2014 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2014 Renesas Electronics Corporation. All rights reserved.    
-**********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+***********************************************************************************************************************/
 /**********************************************************************************************************************
-* System Name  : MMC Driver
 * File Name    : r_mmcif_cd.c
-* Version      : 1.07.00
-* Device       : RX64M (LQFP-176)
-* Abstract     : API & Sub module
-* Tool-Chain   : For RX64M Group
-*              :  e2 studio (Version 7.4.0)
-* OS           : not use
-* H/W Platform : RSK board for RX64M
 * Description  : Interface file for MMC API for RX
-* Limitation   : None
 **********************************************************************************************************************/
 /**********************************************************************************************************************
 * History      : DD.MM.YYYY Version Description
@@ -35,6 +13,9 @@
 *              : 20.05.2019 1.05    Added support for GNUC and ICCRX.
 *                                   Fixed coding style.
 *              : 22.11.2019 1.07    Modified comment of API function to Doxygen style.
+*              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
+*                                   Updated file description.
+*              : 15.03.2025 1.21    Updated disclaimer.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -61,18 +42,20 @@ Private global variables and functions
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Cd_Int
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**    
  * @brief This function sets up the insertion interrupt (including registering the insertion interrupt callback 
  *        function).
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @param[in] enable
- *             Specifies enable/disable of the MMC card insertion interrupt.
- * @param[in] (*callback)(int32_t)
- *            Callback function to be registered.\n 
- *            If a null pointer is specified, no callback function is registered. If a callback function is to be used,
- *            execute this function to register the callback function before an MMC card is inserted.\n 
- *            The MMC_CD pin detection state is stored in the (int32_t).
+ *             Specifies enable/disable of the MMC card insertion interrupt.\n
+ *             See section R_MMCIF_Cd_Int() in application note for details.
+ * @param[in] callback
+ *             Callback function to be registered.\n 
+ *             If a null pointer is specified, no callback function is registered. If a callback function is 
+ *             to be used, execute this function to register the callback function before an MMC card is inserted.\n
+ *             The MMC_CD pin detection state is stored in the (int32_t).\n
+ *             See section R_MMCIF_Cd_Int() in application note for details.
  * @retval    MMC_SUCCESS Successful operation
  * @retval    MMC_ERR     General error
  * @details   This function sets up the MMC card insertion interrupt and registers a callback function.\n 
@@ -80,7 +63,7 @@ Private global variables and functions
  *            when an MMC card insertion interrupt occurs.\n 
  *            Note that the MMC card insertion state can be verified with the R_MMCIF_Get_CardDetection() function 
  *            regardless of the enabled/disabled state of the MMC card insertion interrupt.
- * @note      To enable card detection, set #define MMC_CFG_CHx_CD_ACTIVE to 1.\n 
+ * @note      To enable card detection, set \#define MMC_CFG_CHx_CD_ACTIVE to 1.\n
  *            Initialization by the R_MMCIF_Open() function is required before this function is executed.\n 
  *            After this function has been executed, the MMC card insertion interrupt will be caused by an MMC card
  *            insertion.\n 
@@ -150,10 +133,10 @@ mmc_status_t R_MMCIF_Cd_Int(uint32_t channel, int32_t enable, mmc_status_t (*cal
 
 /**********************************************************************************************************************
  * Function Name: R_MMCIF_Get_CardDetection
- *****************************************************************************************************************/ /**
+ ******************************************************************************************************************//**
  * @brief This function verifies the MMC Card insertion state.
  * @param[in] channel
- *             Channel number : The number of the MMCIF channel used (numbering starts at 0)
+ *             Channel number - The number of the MMCIF channel used (numbering starts at 0)
  * @retval    MMC_SUCCESS The MMC_CD pin was at the low level or card detection was invalid.
  * @retval    MMC_ERR     The MMC_CD pin was at the high level.
  * @details   This function verifies the MMC card insertion state.\n 
@@ -163,16 +146,16 @@ mmc_status_t R_MMCIF_Cd_Int(uint32_t channel, int32_t enable, mmc_status_t (*cal
  *            - When MMC_CFG_CHx_CD_ACTIVE == 0 (card detection disabled)\n
  *            This function will always return MMC_SUCCESS.
  * @note      When using the card insertion detection function, pin setting is necessary after this function is 
- *            executed. See section 4.4 in application note for details. Before running this function, driver open
- *            processing must be performed by the R_MMCIF_Open() function.\n 
+ *            executed. See section R_MMCIF_Get_CardDetection() in application note for details.
+ *            Before running this function, driver open processing must be performed by the R_MMCIF_Open() function.\n
  *            When using with card removal detection, pin setting is required before this function is executed. 
- *            See section 4.5 in application note for details.\n 
+ *            See section R_MMCIF_Get_CardDetection() in application note for details.\n
  *            The MMC_CD pin, which is connected to the MMC card socket CD pin, is used as the MMC card insertion 
  *            detection pin.\n 
  *            In this MMCIF, there is no hardware function to remove the chattering generated when an MMC card is 
  *            inserted. Users should implement card detection processing that takes chattering into consideration.\n 
  *            Note that the error code cannot be acquired with the R_MMCIF_Get_ErrCode() function.\n 
- *            See section 4.6 in application note for MMC_CD pin handling methods.\n 
+ *            See section R_MMCIF_Get_CardDetection() in application note for MMC_CD pin handling methods.\n
  *            After an MMC card has been detected, the processing that provides the power supply voltage to the MMC 
  *            card must be performed.
  */

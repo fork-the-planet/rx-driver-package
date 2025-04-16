@@ -6,7 +6,7 @@
     <toolchain>
         <brand>Renesas</brand>
         <product>RXC</product>
-        <version>2.04.01</version>
+        <version>3.07.00</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<refinfo>
+
+    <!-- multiple versions permitted -->
+    <toolchain>
+        <brand>Renesas</brand>
+        <product>RXC</product>
+        <version>3.07.00</version>
+    </toolchain>
+    <toolchain>
+        <brand>GNU</brand>
+        <product>GNURX</product>
+        <version>8.03.00.2024.11</version>
+    </toolchain>
+    <toolchain>
+        <brand>IAR</brand>
+        <product>ICCRX</product>
+        <version>5.10.1</version>
+    </toolchain>
+
+    <!-- only one target entry allowed; multiple sub tags permitted -->
+    <target>
+        <family omit_series="true">RX</family>
+    </target>
+
+    <!-- only one package entry allowed -->
+    <!-- multiple dependencies, applications, functions, and incdirs permitted -->
+    <package>
+        <type>fitmodule</type>
+        <name>r_aes_rx</name>
+        <version>x.xx</version>
+        <zipsource>r_aes_rx_vx.xx.zip</zipsource>
+        <dependency>
+            <module>r_bsp</module>
+            <version>7.10</version>
+        </dependency>
+        <application>Generic</application>
+        <desc>AES/GCM Library</desc>
+        <details>The AES module is a software library for AES cryptographic processing.</details>
+        <function>AES128-ECB</function>
+        <function>AES128-CBC</function>
+        <function>AES256-ECB</function>
+        <function>AES256-CBC</function>
+        <function>AES-GCM</function>
+        <incdir>r_config</incdir>
+        <incdir>r_aes_rx</incdir>
+        <incdir>r_aes_rx/src</incdir>
+        <incdir>r_aes_rx/src/aes</incdir>
+        <incdir>r_aes_rx/src/gcm</incdir>
+    </package>
+
+</refinfo>

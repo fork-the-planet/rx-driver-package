@@ -10,7 +10,7 @@ R01AN1827JJ{VERSION_NUMBER}
 
 Version
 -------
-v3.50
+v3.51
 
 Overview
 --------
@@ -131,7 +131,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.51
+* r_bsp     v7.52
 
 How to add to your project
 --------------------------

@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "r_ble_api.h"
+#include "r_ble_gtl_typedef.h"
 
 /**********************************************************************************************************************
  * Macro definitions
@@ -102,8 +103,7 @@ ble_status_t R_BLE_GTL_GATTC_ReadMultiChar(uint16_t conn_hdl, st_ble_gattc_rd_mu
 ble_status_t R_BLE_GTL_GATTC_WriteCharWithoutRsp(uint16_t conn_hdl, st_ble_gatt_hdl_value_pair_t * p_write_data);
 ble_status_t R_BLE_GTL_GATTC_SignedWriteChar(uint16_t conn_hdl, st_ble_gatt_hdl_value_pair_t * p_write_data);
 ble_status_t R_BLE_GTL_GATTC_WriteChar(uint16_t conn_hdl, st_ble_gatt_hdl_value_pair_t * p_write_data);
-ble_status_t R_BLE_GTL_GATTC_WriteLongChar(uint16_t conn_hdl, 
-                                           st_ble_gatt_hdl_value_pair_t * p_write_data, 
+ble_status_t R_BLE_GTL_GATTC_WriteLongChar(uint16_t conn_hdl, st_ble_gatt_hdl_value_pair_t * p_write_data, 
                                            uint16_t offset);
 ble_status_t R_BLE_GTL_GATTC_ReliableWrites (uint16_t                                   conn_hdl,
                                              st_ble_gattc_reliable_writes_char_pair_t * p_char_pair,
@@ -122,5 +122,12 @@ ble_status_t R_BLE_GTL_VS_SetBdAddr(st_ble_dev_addr_t * p_addr);
 ble_status_t R_BLE_GTL_VS_GetRand(uint8_t rand_size);
 ble_status_t R_BLE_GTL_VS_GetTxPower(uint16_t conn_hdl);
 ble_status_t R_BLE_GTL_VS_SetTxPower (uint16_t conn_hdl, uint8_t tx_power);
+
+ble_status_t R_BLE_GTL_GAP_SetPairingParams (st_ble_gap_pairing_param_t * p_pair_param);
+ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond_t bond, bool accept, uint32_t passkey);
+ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found);
+ble_status_t r_ble_gtl_gapc_ltk_rsp_comp(uint16_t conn_hdl, bool found);
+ble_status_t r_ble_gtl_app_get_rand_cust(uint8_t rand_size);
+ble_status_t r_ble_gtl_security_cmd(uint16_t conn_hdl);
 
 #endif                                 /* R_BLE_GTL_H */

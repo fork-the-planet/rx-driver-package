@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_cmt_rx
-VERSION = 		5.70
+VERSION = 		5.71
 MDF = V2
 
 CONFIG_FOLDER = r_config
