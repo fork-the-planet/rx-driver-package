@@ -72,26 +72,29 @@ BEGIN {
 		
 		if($1 == "MDF")
 		{
-			if($3 == "NOT_SUPPORTED")
+			test = $3;
+
+			if(test ~ /NOT_SUPPORTED/)
 			{
 				mdf_support_flag = 0;
 			}
-			else if($3 == "V1")
+			else if(test ~ /V1,V2/)
+			{
+				mdf_support_flag = 3;
+			}
+			else if(test ~ /V1/)
 			{
 				mdf_support_flag = 1;
 			}
-			else if($3 == "V2")
+			else if(test ~ /V2/)
 			{
 				mdf_support_flag = 2;
-			}
-			else if($3 == "V1,V2")
-			{
-				mdf_support_flag = 3;
 			}
 			else
 			{
 				mdf_support_flag = 0;
 			}
+
 		}
 		parse_ok_flag = 1;
 	}

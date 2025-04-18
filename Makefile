@@ -1,8 +1,8 @@
-RELEASE_TAG_COMMIT_NUMBER_LATEST = aa05cf00f4caade21cc6697c9f24c70d41f2a3b4
+RELEASE_TAG_COMMIT_NUMBER_LATEST = 04524939f17a323dc658b5322407dd8fe2b00152
 RELEASE_TAG_COMMIT_VERSION_LATEST = 1.47
 VERSIONS_FILE_NAME = versions.xml
 
-MODULE_NAME_LIST_LATEST = 	r_aeropoint_rx \
+MODULE_NAME_LIST_LATEST = 	r_aeropoint_rx r_aes_rx \
 					r_ble_rx23w r_ble_da14531_rx r_bsp r_byteq \
 					r_can_rx r_canfd_rx r_cellular r_cmt_rx r_cmtw_rx r_comms_i2c_rx r_ctsu_qe \
 					r_dac_rx r_datfrx_rx r_dmaca_rx r_drw2d_rx r_dsmif_rx r_dtc_rx \
@@ -16,8 +16,8 @@ MODULE_NAME_LIST_LATEST = 	r_aeropoint_rx \
 					r_memdrv_rx r_mesh_rx23w r_mmcif_rx r_mpc_rx \
 					r_ob1203_rx r_pdc_rx \
 					r_qe_display_rx r_qspi_smstr_rx r_qspix_rx \
-					r_ri3c_rx r_riic_rx r_riichs_rx r_rrh46410_rx r_rscan_rx r_rsip_protected_rx r_rsci_rx r_rspi_rx r_rspia_rx r_rtc_rx \
-					r_s12ad_rx r_s2_rx r_sci_iic_rx r_sci_rx r_scif_rx r_sdc_sdmem_rx r_sdc_spi_rx r_sdhi_rx r_sdsi_rx \
+					r_ri3c_rx r_riic_rx r_riichs_rx r_rrh46410_rx r_rrh62000_rx r_rsa_rx r_rscan_rx r_rsip_protected_rx r_rsci_rx r_rspi_rx r_rspia_rx r_rtc_rx \
+					r_s12ad_rx r_s2_rx r_sci_iic_rx r_sci_rx r_scif_rx r_sdc_sdmem_rx r_sdc_spi_rx r_sdhi_rx r_sdsi_rx r_sha_rx \
 					r_src_api_rx r_ssi_api_rx r_sys_time_rx \
 					r_t4_driver_rx r_t4_rx r_tfat_driver_rx r_tfat_rx r_tsip_rx_lib \
 					r_uid_rx r_usb_basic r_usb_basic_mini \
@@ -26,11 +26,8 @@ MODULE_NAME_LIST_LATEST = 	r_aeropoint_rx \
 					r_vbatt_rx \
 					r_wdt_rx r_wifi_da16xxx \
 					r_zmod4xxx_rx \
-					rm_comms_uart_rx rm_comms_usb_pcdc_rx rm_rai_data_collector_rx rm_rai_data_shipper_rx \
+					rm_comms_uart_rx rm_comms_usb_pcdc_rx rm_mcuboot rm_rai_data_collector_rx rm_rai_data_shipper_rx \
 					rm_touch_qe \
-					r_aes_rx r_rsa_rx r_sha_rx \
-					r_rrh62000_rx \
-					rm_mcuboot \
 
 all:
 	for i in $(MODULE_NAME_LIST_LATEST); do \
