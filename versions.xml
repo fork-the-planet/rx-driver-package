@@ -372,6 +372,24 @@
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/1f6d750d7a2035e76be85f4c3482fe088aa80053/FITModules/r_wifi_da16xxx_v1.20_extend.mdf</url>
     </urls>
   </module>
+  <module rdp_version="exceptional_modules">
+    <name>r_lwip_driver_rx</name>
+    <version>1.00</version>
+    <urls>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/158e16725ebed61196bbc2e084d4ec89ec965d6a/FITModules/r_lwip_driver_rx_v1.00.zip</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/158e16725ebed61196bbc2e084d4ec89ec965d6a/FITModules/r_lwip_driver_rx_v1.00.xml</url>
+	  <url>https://raw.githubusercontent.com/renesas/rx-driver-package/158e16725ebed61196bbc2e084d4ec89ec965d6a/FITModules/r_lwip_driver_rx_v1.00_extend.mdf</url>
+    </urls>
+  </module>
+  <module rdp_version="exceptional_modules">
+    <name>r_lwip_rx</name>
+    <version>1.00</version>
+    <urls>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/158e16725ebed61196bbc2e084d4ec89ec965d6a/FITModules/r_lwip_rx_v1.00.zip</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/158e16725ebed61196bbc2e084d4ec89ec965d6a/FITModules/r_lwip_rx_v1.00.xml</url>
+	  <url>https://raw.githubusercontent.com/renesas/rx-driver-package/158e16725ebed61196bbc2e084d4ec89ec965d6a/FITModules/r_lwip_rx_v1.00_extend.mdf</url>
+    </urls>
+  </module>
   <module rdp_version="1.25">
     <name>r_ble_qe_utility</name>
     <version>1.00</version>
