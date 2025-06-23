@@ -378,7 +378,7 @@
     <urls>
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_driver_rx_v1.00.zip</url>
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_driver_rx_v1.00.xml</url>
-	  <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_driver_rx_v1.00_extend.mdf</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_driver_rx_v1.00_extend.mdf</url>
     </urls>
   </module>
   <module rdp_version="exceptional_modules">
@@ -387,7 +387,7 @@
     <urls>
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_rx_v1.00.zip</url>
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_rx_v1.00.xml</url>
-	  <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_rx_v1.00_extend.mdf</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/3487b15a8aeff1b0872e34d928d92c7a3add0a26/FITModules/r_lwip_rx_v1.00_extend.mdf</url>
     </urls>
   </module>
   <module rdp_version="1.25">
