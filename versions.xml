@@ -373,6 +373,15 @@
     </urls>
   </module>
   <module rdp_version="exceptional_modules">
+    <name>r_wifi_da16xxx</name>
+    <version>1.33</version>
+    <urls>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/e54ed437a005eadbf528304612898f389778c126/FITModules/r_wifi_da16xxx_v1.20.zip</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/e54ed437a005eadbf528304612898f389778c126/FITModules/r_wifi_da16xxx_v1.20.xml</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/e54ed437a005eadbf528304612898f389778c126/FITModules/r_wifi_da16xxx_v1.20_extend.mdf</url>
+    </urls>
+  </module>
+  <module rdp_version="exceptional_modules">
     <name>r_lwip_driver_rx</name>
     <version>1.00</version>
     <urls>
