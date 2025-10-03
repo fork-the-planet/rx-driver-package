@@ -183,6 +183,13 @@
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/5c8e1771bca83aba0a66fcb6027da0db5bbd813d/FITModules/r_bsp_v7.50.zip</url>
       <url>https://raw.githubusercontent.com/renesas/rx-driver-package/5c8e1771bca83aba0a66fcb6027da0db5bbd813d/FITModules/r_bsp_v7.50.xml</url>
     </urls>
+  <module rdp_version="exceptional_modules">
+    <name>r_bsp</name>
+    <version>7.54</version>
+    <urls>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/341bde5583aa4a1681b71bb0ae3abd8b9b026445/FITModules/r_bsp_v7.54.zip</url>
+      <url>https://raw.githubusercontent.com/renesas/rx-driver-package/341bde5583aa4a1681b71bb0ae3abd8b9b026445/FITModules/r_bsp_v7.54.xml</url>
+    </urls>
   </module>
   <module rdp_version="exceptional_modules">
     <name>r_cellular</name>
