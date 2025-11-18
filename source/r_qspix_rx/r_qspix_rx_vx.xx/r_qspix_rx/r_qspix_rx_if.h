@@ -14,6 +14,7 @@
 *              : 16.03.2023 1.40     Added R_QSPIX_Read_Memory_Map() function
 *              : 13.12.2023 1.41     Added WAIT_LOOP comments.
 *              : 15.03.2025 1.42     Updated disclaimer
+*              : 23.06.2025 1.43     Removed doc folder and updated .rcpc file in FITDemos.
 *******************************************************************************/
 /*******************************************************************************
 * File Name    : r_qspix_rx_if.h
@@ -34,7 +35,7 @@ Macro definitions
 *******************************************************************************/
 /* Version Number of API. */
 #define QSPIX_VERSION_MAJOR           (1)
-#define QSPIX_VERSION_MINOR           (42)
+#define QSPIX_VERSION_MINOR           (43)
 
 /* Definition of QSPIX channel */
 #define QSPIX_CH0                         (0)

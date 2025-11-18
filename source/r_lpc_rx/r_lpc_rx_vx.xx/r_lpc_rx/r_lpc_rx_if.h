@@ -33,6 +33,7 @@
  *                              mode and middle-speed operation mode 2 to lpc_freq_range_check() and 
  *                              lpc_lowpower_activate_check() functions for RX260, RX261.
  *         : 15.03.2025 2.51    Updated disclaimer.
+ *         : 23.06.2025 2.52    Removed doc folder and updated .rcpc file in FITDemos.
  ***********************************************************************************************************************/
 
 #ifndef R_LPC_RX_IF_H
@@ -57,7 +58,7 @@
 
 /* Version Number of API. */
     #define LPC_RX_VERSION_MAJOR           (2)
-    #define LPC_RX_VERSION_MINOR           (51)
+    #define LPC_RX_VERSION_MINOR           (52)
 
 /***********************************************************************************************************************
  Typedef definitions

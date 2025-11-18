@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 2.0)
+           This is a description of a sample FIT module configuration file
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" xs:noNamespaceSchemaLocation="schema_mdf_2.00.xsd">
+    <fileVersion>1.00</fileVersion>
+    <formatVersion>2.00</formatVersion>
+    <fileTemplate></fileTemplate>
+    <configuration>
+        <property id="NFC_CFG_PARAM_CHECKING_ENABLED" display="Parameter checking" default="BSP_CFG_PARAM_CHECKING_ENABLE" type="combobox">
+            <option id="NFC_CFG_PARAM_CHECKING_ENABLE.BSP_CFG_PARAM_CHECKING_ENABLE" display="System Default" value="BSP_CFG_PARAM_CHECKING_ENABLE"/>
+            <option id="NFC_CFG_PARAM_CHECKING_ENABLE.0" display="Not" value="0"/>
+            <option id="NFC_CFG_PARAM_CHECKING_ENABLE.1" display="Include" value="1"/>
+            <description>Selects whether to include parameter checking in the code.
+Use system default= Use the system default setting.
+Disable parameter checks = Omit parameter checking from the build.
+Enable parameter checks = Include parameter checking in the build.</description>
+        </property>
+        <property id="NFC_CFG_IRQ_NUM" display="External IRQ number" default="5" type="textbox">
+            <constraint display="Value must be an decimal value">testInteger("${NFC_CFG_IRQ_NUM}")</constraint>
+            <constraint display="Value must be in the range 0~7">("${NFC_CFG_IRQ_NUM}" &gt;= 0) &amp;&amp; ("${NFC_CFG_IRQ_NUM}" &lt;= 5)</constraint>
+            <description>Configure external IRQ number.
+Board dependent settings; please use the value for each setting listed below depending on the board you use.
+1: EK-RX261 v1 (PMOD1)        - IRQ5 (IRQ number 5)</description>
+        </property>
+        <property id="NFC_CFG_EXT_IRQ_PORT" display="NFC Interrupt Port" default="D" type="combobox">
+            <option id="NFC_CFG_EXT_IRQ_PORT.D" display="PORTD" value="D"/>
+            <description>Configure external IRQ port.
+Board dependent settings; please use the value for each setting listed below depending on the board you use.
+1: EK-RX261 v1 (PMOD1)        - PD5 (Port D)</description>
+        </property>
+        <property id="NFC_CFG_EXT_IRQ_PIN" display="NFC Interrupt Pin" default="5" type="textbox">
+            <constraint display="Value must be an decimal value">testInteger("${NFC_CFG_EXT_IRQ_PIN}")</constraint>
+            <constraint display="Value must be in the range 0~5">("${NFC_CFG_EXT_IRQ_PIN}" &gt;= 0) &amp;&amp; ("${NFC_CFG_EXT_IRQ_PIN}" &lt;= 5)</constraint>
+            <description>Configure external IRQ pin.
+Board dependent settings; please use the value for each setting listed below depending on the board you use.
+1: EK-RX261 v1 (PMOD1)        - PD5 (Pin 5)</description>
+        </property>
+        <property id="NFC_CFG_SCI_MODE" display="Communication mode" default="0" type="combobox">
+            <option id="NFC_CFG_SCI_MODE.0" display="Simple SPI mode" value="0"/>
+            <description>Selects SCI mode for NFC communication.
+0 = SSPI mode.</description>
+        </property>
+        <property id="NFC_CFG_SCI_CHANNEL" display="SCI Channel Number" default="5" type="combobox">
+            <option id="NFC_CFG_SCI_CHANNEL.0" display="0" value="0"/>
+            <option id="NFC_CFG_SCI_CHANNEL.1" display="1" value="1"/>
+            <option id="NFC_CFG_SCI_CHANNEL.2" display="2" value="2"/>
+            <option id="NFC_CFG_SCI_CHANNEL.3" display="3" value="3"/>
+            <option id="NFC_CFG_SCI_CHANNEL.4" display="4" value="4"/>
+            <option id="NFC_CFG_SCI_CHANNEL.5" display="5" value="5"/>
+            <option id="NFC_CFG_SCI_CHANNEL.6" display="6" value="6"/>
+            <option id="NFC_CFG_SCI_CHANNEL.7" display="7" value="7"/>
+            <option id="NFC_CFG_SCI_CHANNEL.8" display="8" value="8"/>
+            <option id="NFC_CFG_SCI_CHANNEL.9" display="9" value="9"/>
+            <option id="NFC_CFG_SCI_CHANNEL.10" display="10" value="10"/>
+            <option id="NFC_CFG_SCI_CHANNEL.11" display="11" value="11"/>
+            <option id="NFC_CFG_SCI_CHANNEL.12" display="12" value="12"/>
+            <constraint display="Value must be an decimal value">testInteger("${NFC_CFG_SCI_CHANNEL}")</constraint>
+            <constraint display="Value must be in the range 0~12">("${NFC_CFG_SCI_CHANNEL}" &gt;= 0) &amp;&amp; ("${NFC_CFG_SCI_CHANNEL}" &lt;= 12)</constraint>
+            <description>SCI channel for NFC communication.
+Board dependent settings; please use the value for each setting listed below depending on the board you use.
+1: EK-RX261 v1 (PMOD1)        - SCI Channel 5</description>
+        </property>
+        <property id="NFC_CFG_SCI_SSPI_SS_PORT" display="SPI CS port" default="C" type="combobox">
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.0" display="PORT0" value="0"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.1" display="PORT1" value="1"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.2" display="PORT2" value="2"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.3" display="PORT3" value="3"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.4" display="PORT4" value="4"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.5" display="PORT5" value="5"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.6" display="PORT6" value="6"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.7" display="PORT7" value="7"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.8" display="PORT8" value="8"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.9" display="PORT9" value="9"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.A" display="PORTA" value="A"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.B" display="PORTB" value="B"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.C" display="PORTC" value="C"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.D" display="PORTD" value="D"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.E" display="PORTE" value="E"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.F" display="PORTF" value="F"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.G" display="PORTG" value="G"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.H" display="PORTH" value="H"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.J" display="PORTJ" value="J"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.K" display="PORTK" value="K"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.L" display="PORTL" value="L"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.M" display="PORTM" value="M"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.N" display="PORTN" value="N"/>
+            <option id="NFC_CFG_SCI_SSPI_SS_PORT.Q" display="PORTQ" value="Q"/>
+            <constraint display="CS port." actionOnFail="disable">"${NFC_CFG_SCI_MODE}" == "${NFC_CFG_SCI_MODE.0}"</constraint>
+            <description>Configure reset port.
+Board dependent settings; please use the value for each setting listed below depending on the board you use.
+1: EK-RX261 v1 (PMOD1)        - PC0 (Port C)</description>
+        </property>
+        <property id="NFC_CFG_SCI_SSPI_SS_PIN" display="SPI CS pin" default="0" type="textbox">
+            <constraint display="Value must be an decimal value">testInteger("${NFC_CFG_SCI_SSPI_SS_PIN}")</constraint>
+            <constraint display="Value must be in the range 0~4">("${NFC_CFG_SCI_SSPI_SS_PIN}" &gt;= 0) &amp;&amp; ("${NFC_CFG_SCI_SSPI_SS_PIN}" &lt;= 4)</constraint>
+            <constraint display="CS pin." actionOnFail="disable">"${NFC_CFG_SCI_MODE}" == "${NFC_CFG_SCI_MODE.0}"</constraint>
+            <description>Configure reset pin.
+Board dependent settings; please use the value for each setting listed below depending on the board you use.
+1: EK-RX261 v1 (PMOD1)        - PC0 (Pin 0)</description>
+        </property>
+        <property id="NFC_CFG_SCI_SSPI_SPEED" display="SPI bitrate (bps)" default="1000000" type="textbox">
+            <constraint display="Must be an integer in range 1,000,000 ~ 10,000,000">testInteger("${NFC_CFG_SCI_SSPI_SPEED}")  &amp;&amp; ("${NFC_CFG_SCI_SSPI_SPEED}" &gt;= 1000000) &amp;&amp; ("${NFC_CFG_SCI_SSPI_SPEED}" &lt;= 10000000)</constraint>
+            <constraint display="SPI bitrate (bps)." actionOnFail="disable">"${NFC_CFG_SCI_MODE}" == "${NFC_CFG_SCI_MODE.0}"</constraint>
+            <description>SPI bitrate for NFC communication.
+</description>
+        </property>
+        <property id="NFC_SCI_SPI_MSB_FIRST" display="Bit Order" default="1" type="combobox">
+            <option id="NFC_SCI_SPI_MSB_FIRST.0" display="LSB first transfer" value="0"/>
+            <option id="NFC_SCI_SPI_MSB_FIRST.1" display="MSB first transfer" value="1"/>
+            <constraint display="Bit order." actionOnFail="disable">"${NFC_CFG_SCI_MODE}" == "${NFC_CFG_SCI_MODE.0}"</constraint>
+            <description>Configure SPI bit order.</description>
+        </property>
+        <property id="NFC_CFG_SLEEP_TIMER_CHANNEL" display="PTX Sleep Timer channel" default="0" type="textbox">
+            <constraint display="Must be an integer in range 0~3">testInteger("${NFC_CFG_SLEEP_TIMER_CHANNEL}") &amp;&amp; ("${NFC_CFG_SLEEP_TIMER_CHANNEL}" &gt;= 0) &amp;&amp; ("${NFC_CFG_SLEEP_TIMER_CHANNEL}" &lt;= 3)</constraint>
+            <description>Configure sleep timer channel for PTX.</description>
+        </property>
+        <property id="NFC_CFG_TDC_TIMER_CHANNEL" display="PTX Transparent Data Channel" default="1" type="textbox">
+            <constraint display="Must be an integer in range 0~3">testInteger("${NFC_CFG_SLEEP_TIMER_CHANNEL}") &amp;&amp; ("${NFC_CFG_SLEEP_TIMER_CHANNEL}" &gt;= 0) &amp;&amp; ("${NFC_CFG_SLEEP_TIMER_CHANNEL}" &lt;= 3)</constraint>
+            <constraint display="Must be different than sleep timer channel">"${NFC_CFG_TDC_TIMER_CHANNEL}" != "${NFC_CFG_SLEEP_TIMER_CHANNEL}"</constraint>
+            <description>Configure transparent mode data timer channel for PTX.</description>
+        </property>
+        <property id="NFC_CFG_POLL_TYPE_A" display="NFC Poll Type-A" default="1" type="combobox">
+            <option id="NFC_CFG_POLL_TYPE_A.0" display="Disable" value="0"/>
+            <option id="NFC_CFG_POLL_TYPE_A.1" display="Enable" value="1"/>
+            <description>Select to discover NFC Type-A tags.</description>
+        </property>
+        <property id="NFC_CFG_POLL_TYPE_B" display="NFC Poll Type-B" default="1" type="combobox">
+            <option id="NFC_CFG_POLL_TYPE_B.0" display="Disable" value="0"/>
+            <option id="NFC_CFG_POLL_TYPE_B.1" display="Enable" value="1"/>
+            <description>Select to discover NFC Type-A tags.</description>
+        </property>
+        <property id="NFC_CFG_POLL_TYPE_F" display="NFC Poll Type-F" default="1" type="combobox">
+            <option id="NFC_CFG_POLL_TYPE_F.0" display="Disable" value="0"/>
+            <option id="NFC_CFG_POLL_TYPE_F.1" display="Enable" value="1"/>
+            <description>Select to discover NFC Type-A tags.</description>
+        </property>
+        <property id="NFC_CFG_POLL_TYPE_V" display="NFC Poll Type-V" default="1" type="combobox">
+            <option id="NFC_CFG_POLL_TYPE_V.0" display="Disable" value="0"/>
+            <option id="NFC_CFG_POLL_TYPE_V.1" display="Enable" value="1"/>
+            <description>Select to discover NFC Type-A tags.</description>
+        </property>
+        <property id="NFC_CFG_TEMP_SENSOR_SHUTDOWN" display="Shutdown Temperature (°C)" default="100" type="textbox">
+            <constraint display="Must be an integer greater than 0 and less than 223">
+            testInteger("${NFC_CFG_TEMP_SENSOR_SHUTDOWN}")  &amp;&amp; ("${NFC_CFG_TEMP_SENSOR_SHUTDOWN}" &gt; 0) &amp;&amp; ("${NFC_CFG_TEMP_SENSOR_SHUTDOWN}" &lt; 223)
+            </constraint>
+            <description>Set the expected thermal shutdown threshold value (Celsius).</description>
+        </property>
+        <property id="NFC_CFG_TEMP_SENSOR_AMBIENT" display="Ambient Temperature (°C)" default="25" type="textbox">
+            <constraint display="Must be an integer greater than 0 and less than 85">
+            testInteger("${NFC_CFG_TEMP_SENSOR_AMBIENT}")  &amp;&amp; ("${NFC_CFG_TEMP_SENSOR_AMBIENT}" &gt; 0) &amp;&amp; ("${NFC_CFG_TEMP_SENSOR_AMBIENT}" &lt; 85)
+            </constraint>
+            <constraint display="Ambient temperature sensor value must be less than or equal to shutdown temperature">
+            (${NFC_CFG_TEMP_SENSOR_AMBIENT} &lt;= ${NFC_CFG_TEMP_SENSOR_SHUTDOWN})
+            </constraint>
+            <description>Set the ambient temperature value at which calibration takes place (Celsius).</description>
+        </property>
+        <property id="NFC_CFG_DEVICE_LIMIT" display="Device Limit" default="5" type="textbox">
+            <constraint display="Must be an integer greater than 0 and less than 50">testInteger("${NFC_CFG_DEVICE_LIMIT}")  &amp;&amp; ("${NFC_CFG_DEVICE_LIMIT}" &gt; 0) &amp;&amp; ("${NFC_CFG_DEVICE_LIMIT}" &lt; 50)</constraint>
+            <description>Select the max number of tags to discover.</description>
+        </property>
+        <property id="NFC_CFG_IDLE_TIME_MS" display="Idle Time" default="100" type="textbox">
+            <constraint display="Must be an integer greater than 0 and less than 65535">testInteger("${NFC_CFG_IDLE_TIME_MS}")  &amp;&amp; ("${NFC_CFG_IDLE_TIME_MS}" &gt; 0) &amp;&amp; ("${NFC_CFG_IDLE_TIME_MS}" &lt; 65535)</constraint>
+            <description>Select idle time between polling cycles (ms).</description>
+        </property>
+    </configuration>
+</module>

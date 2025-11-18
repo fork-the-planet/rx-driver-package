@@ -52,6 +52,8 @@
 *                              Fixed to comply with GSCE Coding Standards Rev.6.5.0
 *         : 28.06.2024 5.00    Added support for RX260, RX261.
 *         : 15.03.2025 5.01    Updated disclaimer.
+*         : 23.06.2025 5.10    Updated dependency module version.
+*                              Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #ifndef MPC_RX_INTERFACE_HEADER_FILE
@@ -75,7 +77,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define MPC_RX_VERSION_MAJOR           (5)
-#define MPC_RX_VERSION_MINOR           (01)
+#define MPC_RX_VERSION_MINOR           (10)
 
 /***********************************************************************************************************************
 Typedef definitions

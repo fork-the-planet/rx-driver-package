@@ -26,6 +26,8 @@
 *                              Updated slash format of included header file paths for Linux compatibility.
 *         : 20.07.2023 2.11    Updated demo projects.
 *         : 15.03.2025 2.12    Updated disclaimer.
+*         : 30.10.2025 2.13    Removed doc folder and updated .rcpc file in FITDemos.
+*                              Modified comment of API function to Doxygen style.
 **********************************************************************************************************************/
 
 #ifndef SDHI_RX_H
@@ -48,7 +50,7 @@ Macro definitions
 /* #### SD Memory and common definitions #### */
 /* Version Number of API. */
 #define RX_SDHI_VERSION_MAJOR       (2)
-#define RX_SDHI_VERSION_MINOR       (12)
+#define RX_SDHI_VERSION_MINOR       (13)
 
 /* ==== Select use CBSY bit ==== */
 /*  #define     USE_INFO2_CBSY      */ /* Use SDHI_SDIMSK2_SCLKDIVEN   */

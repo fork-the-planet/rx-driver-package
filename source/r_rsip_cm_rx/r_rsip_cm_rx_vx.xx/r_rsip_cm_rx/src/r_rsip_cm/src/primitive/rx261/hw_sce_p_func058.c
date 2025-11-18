@@ -1,0 +1,63 @@
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+
+#include "hw_sce_rx_private.h"
+
+void HW_SCE_p_func058 (const uint32_t ARG1[], const uint32_t ARG2)
+{
+    HW_SCE_p_func100(0x86674067U, 0x7b137e84U, 0x29d0e51cU, 0x21f461b5U);
+    WR1_PROG(REG_00D0H, 0x4a070044U);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR1_PROG(REG_002CH, change_endian_long(0x00000000U));
+
+    WR1_PROG(REG_00D0H, 0x0e0704c4U);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR1_PROG(REG_002CH, change_endian_long(0x017a1b82U));
+
+    HW_SCE_p_func100(0x7a71ea35U, 0xae3e08a5U, 0x383eb1ddU, 0x83695af1U);
+    WR1_PROG(REG_0094H, 0x00009020U);
+    WR1_PROG(REG_0094H, 0x01000000U);
+
+    WR1_PROG(REG_00D0H, 0x4a040044U);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR1_PROG(REG_002CH, change_endian_long(0x00000000U));
+
+    WR1_PROG(REG_00D0H, 0x0e0404c4U);
+    WR1_PROG(REG_009CH, 0x81010020U);
+    WR1_PROG(REG_0000H, 0x00490005U);
+    WAIT_STS(REG_0004H, 30, 0);
+    WR1_PROG(REG_0040H, 0x00001800U);
+
+    HW_SCE_p_func100(0xe1fa6edcU, 0xa430bcc8U, 0xbac78ab6U, 0xcfa6ccf2U);
+    WR1_PROG(REG_00D0H, 0xf7041c85U);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR4_ADDR(REG_002CH, &S_FLASH[ARG2]);
+
+    HW_SCE_p_func100(0x5a18c3c8U, 0xec2cfc05U, 0x9648fae6U, 0x831068ceU);
+    WR1_PROG(REG_00D0H, 0x07040d05U);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR4_ADDR(REG_002CH, &S_FLASH[ARG2 + 4]);
+
+    WR1_PROG(REG_00D0H, 0x8c100005U);
+    WR1_PROG(REG_0000H, 0x00410011U);
+    WAIT_STS(REG_0004H, 30, 0);
+    WR1_PROG(REG_0040H, 0x00001800U);
+
+    WR1_PROG(REG_0014H, 0x000003c1U);
+    WR1_PROG(REG_00D0H, 0x0a0000adU);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR4_ADDR(REG_002CH, &ARG1[0]);
+
+    HW_SCE_p_func100(0xbb09d390U, 0xf85fc1f5U, 0x91dfbd62U, 0xcee9ceb4U);
+    WR1_PROG(REG_0014H, 0x000003c1U);
+    WR1_PROG(REG_00D0H, 0x0a0000bdU);
+    WAIT_STS(REG_0014H, 31, 1);
+    WR4_ADDR(REG_002CH, &ARG1[4]);
+
+    WR1_PROG(REG_0094H, 0x00007c07U);
+    WR1_PROG(REG_0040H, 0x00602000U);
+    WR1_PROG(REG_0024H, 0x00000000U);
+}

@@ -23,6 +23,8 @@
 *         : 29.10.2021 2.00    Updated for critical section protection in R_BYTEQ_Put, R_BYTEQ_Get functions.
 *         : 30.11.2022 2.10    Updated and added new demo project.
 *         : 15.03.2025 2.11    Updated disclaimer.
+*         : 30.10.2025 2.12    Removed doc folder and updated .rcpc file in FITDemos.
+*                              Removed \e in Doxygen comment of API function.
 ***********************************************************************************************************************/
 
 #ifndef BYTEQ_IF_H
@@ -38,7 +40,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define BYTEQ_VERSION_MAJOR (2)
-#define BYTEQ_VERSION_MINOR (11)
+#define BYTEQ_VERSION_MINOR (12)
 
 #if ((BYTEQ_CFG_CRITICAL_SECTION == 1)||(BYTEQ_CFG_PROTECT_QUEUE == 1))
 #if (BSP_CFG_RUN_IN_USER_MODE == 1)

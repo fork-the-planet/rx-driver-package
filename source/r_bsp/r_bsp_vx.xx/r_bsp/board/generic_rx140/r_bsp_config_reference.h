@@ -40,6 +40,14 @@
 *                               Modified comment.
 *         : 27.11.2024 1.06     Changed comment of BSP_CFG_RTC_ENABLE.
 *         : 26.02.2025 1.07     Changed the disclaimer.
+*         : 28.05.2025 1.08     Added the following macro definitions.
+*                                - BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE
+*                                - BSP_CFG_LOW_LEVEL_INTERFACE_SBRK_ENABLE
+*                                - BSP_CFG_LOW_LEVEL_INTERFACE_REENTRANT_LIB_ENABLE
+*                                - BSP_CFG_USER_EXCLUSIVE_CONTROL_ENABLE
+*                                - BSP_CFG_USER_ENTER_CRITICAL_FUNCTION
+*                                - BSP_CFG_USER_EXIT_CRITICAL_FUNCTION
+*                               Modified comment.
 ***********************************************************************************************************************/
 
 #ifndef R_BSP_CONFIG_REF_HEADER_FILE
@@ -198,8 +206,8 @@ Configuration Options
 #define BSP_CFG_ID_CODE_LONG_4          (0xFFFFFFFF)
 
 /* Select whether to oscillate the Main Clock Oscillator.
-   0 = Stop Oscillating the Main Clock. (default)
-   1 = Enable oscillating the Main Clock.
+   0 = Stop Oscillating the Main Clock.
+   1 = Enable oscillating the Main Clock. (default)
 */
 #define BSP_CFG_MAIN_CLOCK_OSCILLATE_ENABLE    (1)
 
@@ -210,8 +218,8 @@ Configuration Options
 #define BSP_CFG_SUB_CLOCK_OSCILLATE_ENABLE     (0)
 
 /* Select whether to oscillate the High Speed On-Chip Oscillator (HOCO).
-   0 = Stop Oscillating the HOCO.
-   1 = Enable Oscillating the HOCO. (default)
+   0 = Stop Oscillating the HOCO. (default)
+   1 = Enable Oscillating the HOCO.
 */
 #define BSP_CFG_HOCO_OSCILLATE_ENABLE          (0)
 
@@ -639,6 +647,59 @@ Configuration Options
    NOTE: Not normally used. Set this to "1" only in the bootloader project.
 */
 #define BSP_CFG_BOOTLOADER_PROJECT    (0)
+
+/* Defines whether to enable the following low-level interface functions for standard Input/Output in the BSP.
+   CCRX: open, close, write, read, lseek
+   GCC: write, read, close, lseek, fstat, isatty
+   0: Disables low-level interface functions for standard Input/Output in the BSP.
+   1: Enables low-level interface functions for standard Input/Output in the BSP.
+   NOTE: If you disable this setting and use the low-level interface functions, 
+         please implement these low-level interface functions yourself.
+   NOTE: This setting is available only when using CCRX and GCC.
+*/
+#define BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE   (1)
+
+/* Defines whether to enable the low-level interface functions (sbrk) for memory management in the BSP.
+   0: Disables the low-level interface function (sbrk) for memory management in the BSP.
+   1: Enables the low-level interface function (sbrk) for memory management in the BSP.
+   NOTE: If you disable this setting and use the low-level interface functions(sbrk),
+         please implement these low-level interface functions yourself.
+   NOTE: This setting is available only when using CCRX and GCC.
+*/
+#define BSP_CFG_LOW_LEVEL_INTERFACE_SBRK_ENABLE   (1)
+
+/* Defines whether to enable the low-level interface functions (errno_addr, wait_sem, signal_sem) 
+   for the reentrant library in the BSP.
+   0: Disables the low-level interface functions (errno_addr, wait_sem, signal_sem) for the reentrant library 
+      in the BSP.
+   1: Enables the low-level interface functions (errno_addr, wait_sem, signal_sem) for the reentrant library 
+      in the BSP.
+   NOTE: If you disable this setting and use the low-level interface functions
+         (errno_addr, wait_sem, signal_sem), please implement these low-level interface functions yourself.
+   NOTE: This setting is available only when using CCRX.
+*/
+#define BSP_CFG_LOW_LEVEL_INTERFACE_REENTRANT_LIB_ENABLE   (1)
+
+/* Defines whether to use user functions for exclusive control of wait_sem and signal_sem.
+   0 = Use default exclusive control with wait_sem and signal_sem.
+   1 = Use user function for exclusive control with wait_sem and signal_sem.
+   NOTE: This setting is available when BSP_CFG_LOW_LEVEL_INTERFACE_REENTRANT_LIB_ENABLE is 1 and CCRX is used.
+   NOTE: If you enable this setting, you must implement the functions used by 
+         BSP_CFG_USER_ENTER_CRITICAL_FUNCTION and BSP_CFG_USER_EXIT_CRITICAL_FUNCTION.
+   NOTE: This setting is available only when using CCRX.
+*/
+#define BSP_CFG_USER_EXCLUSIVE_CONTROL_ENABLE       (0)
+
+/* BSP_CFG_USER_ENTER_CRITICAL_FUNCTION defines the name of the function you want to call to 
+   disable interrupts when using the exclusion controls with wait_sem and signal_sem.
+   BSP_CFG_USER_EXIT_CRITICAL_FUNCTION defines the name of the function you want to call to 
+   enable interrupts after processing when using the exclusion controls with wait_sem and signal_sem.
+   If desired, users can redirect the mutual exclusion functions to their own functions, replacing 
+   the my_... function names with the names of their own functions.
+   NOTE: This setting is available when BSP_CFG_USER_EXCLUSIVE_CONTROL_ENABLE is 1.
+*/
+#define BSP_CFG_USER_ENTER_CRITICAL_FUNCTION     my_enter_critical_function
+#define BSP_CFG_USER_EXIT_CRITICAL_FUNCTION      my_exit_critical_function
 
 #endif /* R_BSP_CONFIG_REF_HEADER_FILE */
 

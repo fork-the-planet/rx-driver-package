@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_bsp
-VERSION = 		7.53
+VERSION = 		7.60
 MDF = NOT_SUPPORTED
 
 CONFIG_FOLDER = r_config

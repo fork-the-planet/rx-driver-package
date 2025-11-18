@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx_if.h
- * Version      : 1.22
+ * Version      : 1.23
  * Description  : Interface definition for the r_tsip_rx module.
  *                TSIP means the "Trusted Secure IP" that is Renesas original security IP.
  *                Strong point 1:
@@ -47,6 +47,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -80,7 +81,7 @@
 
 /* Version Number of API. */
 #define TSIP_VERSION_MAJOR    (1u)
-#define TSIP_VERSION_MINOR    (22u)
+#define TSIP_VERSION_MINOR    (23u)
 
 /* Various information. */
 #define R_TSIP_SRAM_WORD_SIZE       (20u)
@@ -234,9 +235,6 @@
 /* Key update. */
 #define R_TSIP_UPDATE_KEY_RING_INDEX_WORD_SIZE  (16u)
 
-/* Firmware update. */
-#define R_TSIP_FIRMWARE_MAC_BYTE_SIZE           (16u)
-
 /* Secure boot section. */
 #if TSIP_SECURE_BOOT != 0
 /* Required for each variable definition with no initial value to be placed in the SECURE_BOOT section. */
@@ -283,18 +281,8 @@ typedef enum e_tsip_err
     TSIP_ERR_PROHIBIT_FUNCTION,         // An invalid function call occurred.
     TSIP_RESUME_FIRMWARE_GENERATE_MAC,  // There is a continuation of R_TSIP_GenerateFirmwareMAC.
     TSIP_ERR_VERIFICATION_FAIL,         // Verification of TLS1.3 handshake failed.
+    TSIP_ERR_ALREADY_OPENED,            // Driver is already opened.
 } e_tsip_err_t;
-
-/* request type for Callback of firmware update */
-typedef enum
-{
-    TSIP_FW_CB_REQ_PRG_WT = 0u,
-    TSIP_FW_CB_REQ_PRG_RD,
-    TSIP_FW_CB_REQ_BUFF_CNT,
-    TSIP_FW_CB_REQ_PRG_WT_LAST_BLK,
-    TSIP_FW_CB_REQ_GET_UPDATE_PRG_CHKSUM,
-    TSIP_FW_CB_REQ_STORE_MAC,
-} TSIP_FW_CB_REQ_TYPE;
 
 /* TLS signature scheme */
 typedef enum

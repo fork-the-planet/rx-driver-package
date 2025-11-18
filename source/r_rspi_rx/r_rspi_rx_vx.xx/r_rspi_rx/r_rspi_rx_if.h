@@ -49,6 +49,11 @@
 *                               Fixed the default value of RSPI_CFG_DUMMY_TXDATA in MDF file
 *                               to match the value in file r_rspi_rx_config.h.
 *         : 15.03.2025 3.51     Updated disclaimer.
+*         : 14.04.2025 3.60     Fixed a bug that could not receive 1 byte in slave mode by removing 
+*                               the "Master mode or tx_count > 1" condition in rspi_sptiX_isr (X = 0, 1, 2).
+*         : 30.10.2025 3.70     Removed support for RX26T-32 Pins.
+*                               Removed doc folder and updated .rcpc file in FITDemos.
+*                               Added byte swap feature.
 ***********************************************************************************************************************/
 #ifndef RSPI_API_HEADER_FILE
 #define RSPI_API_HEADER_FILE
@@ -74,7 +79,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RSPI_RX_VERSION_MAJOR           (3)
-#define RSPI_RX_VERSION_MINOR           (51)
+#define RSPI_RX_VERSION_MINOR           (70)
 
 /***********************************************************************************************************************
 Typedef definitions
@@ -127,6 +132,13 @@ typedef enum
     RSPI_MS_MODE_SLAVE  = ~RSPI_SPCR_MSTR, // Channel operates as SPI slave
 } rspi_master_slave_mode_t;
 
+/* Byte swap configuration settings. */
+typedef enum
+{
+    RSPI_BYTE_SWAP_DISABLE  = 0,           // Don't use Byte swap
+    RSPI_BYTE_SWAP_ENABLE                  // Use Byte swap
+} rspi_byte_swap_t;
+
 /* Abstraction of channel handle data structure.
  * User application will use this as a reference to an opened channel. */
 typedef struct rspi_config_block_s * rspi_handle_t;
@@ -144,6 +156,7 @@ typedef struct rspi_chnl_settings_s
     rspi_master_slave_mode_t  master_slave_mode; // RSPI_MS_MODE_MASTER or RSPI_MS_MODE_SLAVE.
     uint32_t                  bps_target;        // The target bits per second setting value for the channel.
     rspi_str_tranmode_t       tran_mode;         // Data transfer mode.
+    rspi_byte_swap_t          byte_swap;         // Data byte swap.
 } rspi_chnl_settings_t;
 
 /************ Type defines used with the R_RSPI_Control function. ***************/
@@ -154,6 +167,7 @@ typedef enum rspi_cmd_e
     RSPI_CMD_ABORT,         /* Stop the current read or write operation immediately. */
     RSPI_CMD_SETREGS,       /* Set all supported RSPI registers in one operation. Expert use only! */
     RSPI_CMD_SET_TRANS_MODE,/* Set the data transfer mode. */
+    RSPI_CMD_SET_BYTE_SWAP, /* Set the data byte swap. */
     RSPI_CMD_UNKNOWN        /* Not a valid command. */
 } rspi_cmd_t;
 
@@ -187,6 +201,12 @@ typedef struct rspi_cmd_trans_mode_s
 {
     rspi_str_tranmode_t    transfer_mode;    // The transfer mode setting value for the channel.
 } rspi_cmd_trans_mode_t;
+
+/* Data structure for the Set Byte swap command. */
+typedef struct rspi_cmd_byte_swap_s
+{
+    rspi_byte_swap_t       byte_swap;       // The byte swap setting for the channel.
+} rspi_cmd_byte_swap_t;
 
 /***********************************************************************************************************************
 * Type defines used with the R_RSPI_Write, R_RSPI_Read, and R_RSPI_WriteRead functions.

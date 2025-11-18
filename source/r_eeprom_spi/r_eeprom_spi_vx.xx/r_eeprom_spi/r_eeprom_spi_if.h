@@ -5,7 +5,7 @@
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_eeprom_spi_if.h
-* Version      : 3.21
+* Version      : 3.22
 * Description  : EEPROM driver interface header file
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -42,6 +42,7 @@
 *              : 30.06.2022 3.10    Added macros to specify the ports used for SS#.
 *              : 29.11.2024 3.20    Modified comment of API function to Doxygen style.
 *              : 15.03.2025 3.21    Updated disclaimer.
+*              : 23.06.2025 3.22    Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 #ifndef __EEPROM_SPI_IF_H__
 #define __EEPROM_SPI_IF_H__
@@ -65,7 +66,7 @@ Macro definitions
 
 /* Driver version */
 #define EEPROM_SPI_VERSION_MAJOR       (3)
-#define EEPROM_SPI_VERSION_MINOR       (21)
+#define EEPROM_SPI_VERSION_MINOR       (22)
 
 
 /*--------------- Define no. of slots ----------------*/

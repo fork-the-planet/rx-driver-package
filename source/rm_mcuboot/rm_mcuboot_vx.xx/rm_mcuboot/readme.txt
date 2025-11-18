@@ -4,12 +4,12 @@ rm_mcuboot
 
 Document Number
 ---------------
-r01an7374ej0100
-r01an7374jj0100
+r01an7374ej0101
+r01an7374jj0101
 
 Version
 -------
-v1.0.0
+v1.01
 
 Overview
 --------
@@ -28,12 +28,17 @@ Features
 Supported MCUs
 --------------
 * RX65N Group
+* RX66N Group
+* RX671 Group
+* RX72M Group
 * RX72N Group
 * RX261 Group
 
 Boards Tested On
 ----------------
 * RSKRX65N-2MB
+* RSKRX671
+* RSKRX72M
 * RSKRX72N
 * EKRX261
 
@@ -92,9 +97,9 @@ rm_mcuboot
 |
 +---doc
 |   +-- en
-|   |       r01an7374ej0100-rx-mcuboot.pdf
+|   |       r01an7374ej0101-rx-mcuboot.pdf
 |   +-- ja
-|           r01an7374jj0100-rx-mcuboot.pdf
+|           r01an7374jj0101-rx-mcuboot.pdf
 |
 \---src
     +---mcu-tools

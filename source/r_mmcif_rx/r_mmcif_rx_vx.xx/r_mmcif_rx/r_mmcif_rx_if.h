@@ -26,6 +26,7 @@
 *              : 29.11.2024 1.20    Modified comment of API function to Doxygen style.
 *                                   Updated file description.
 *              : 15.03.2025 1.21    Updated disclaimer.
+*              : 23.06.2025 1.22    Removed doc folder and updated .rcpc file in FITDemos.
 **********************************************************************************************************************/
 
 #ifndef _MMC_IF_H
@@ -46,7 +47,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RX_MMC_API_VERSION_MAJOR            (1)
-#define RX_MMC_API_VERSION_MINOR            (21)
+#define RX_MMC_API_VERSION_MINOR            (22)
 
 /* ==== IP selection ==== */
 #define MMC_MMCMEM_MAX_TRANS                (65535)

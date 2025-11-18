@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_tcp_tls.c
  * Description  : TLS client API functions definition for DA16XXX.
@@ -39,7 +26,7 @@
 /* Socket table information */
 typedef struct st_sock_tbl
 {
-    uint8_t                 ipaddr[4];
+    uint32_t                ipaddr[4];
     uint16_t                port;
     wifi_socket_status_t    status;
     uint8_t                 ipver;
@@ -73,7 +60,7 @@ static volatile uint8_t g_rx_idx = 0;
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint8_t * socket_id)
+wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint32_t * socket_id)
 {
     uint8_t i = 0;
 
@@ -116,7 +103,7 @@ wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint8_t * socket_id)
  *                WIFI_ERR_NOT_OPEN
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint8_t socket_number, wifi_socket_status_t *socket_status)
+wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint32_t socket_number, wifi_socket_status_t *socket_status)
 {
     /* Disconnected WiFi module? */
     if (0 != R_WIFI_DA16XXX_IsOpened())
@@ -155,7 +142,7 @@ wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint8_t socket_number, wifi_socket
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint8_t socket_number, wifi_socket_type_t type, uint8_t ip_version)
+wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint32_t socket_number, wifi_socket_type_t type, uint8_t ip_version)
 {
     static bool socket_init = false;
     wifi_err_t ret = WIFI_ERR_SOCKET_CREATE;
@@ -224,7 +211,7 @@ wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint8_t socket_number, wifi_socket_ty
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint8_t socket_number, uint8_t WIFI_FAR * ip_address, uint16_t port)
+wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint32_t socket_number, uint32_t WIFI_FAR * ip_address, uint16_t port)
 {
     wifi_err_t  api_ret = WIFI_ERR_MODULE_COM;
 
@@ -287,7 +274,7 @@ RETURN_ERROR:
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-int16_t R_WIFI_DA16XXX_SendTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+int16_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
                                       uint16_t length, uint32_t timeout_ms)
 {
     uint16_t    send_idx = 0;
@@ -432,7 +419,7 @@ int16_t R_WIFI_DA16XXX_SendTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * 
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-int16_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+int16_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
                                          uint16_t length, uint32_t timeout_ms)
 {
     int16_t     api_ret = WIFI_SUCCESS;
@@ -513,7 +500,7 @@ int16_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR
  *                WIFI_ERR_MODULE_TIMEOUT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint8_t socket_number)
+wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint32_t socket_number)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
     e_rslt_code_t at_rep = AT_OK;
@@ -579,9 +566,9 @@ RETURN_ERROR:
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint8_t socket_number)
+wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint32_t socket_number)
 {
-    uint8_t cid;
+    uint32_t cid;
 
     if (UINT8_MAX == socket_number)
     {
@@ -618,7 +605,7 @@ wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint8_t socket_number)
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_MODULE_COM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
+wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint32_t * socket_num,
                                           wifi_tls_cert_info_t * cert_info,
                                           uint8_t WIFI_FAR * sni_name,
                                           uint8_t ser_valid,
@@ -724,7 +711,7 @@ wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
  *                WIFI_ERR_NOT_OPEN
  *                WIFI_ERR_MODULE_COM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
+wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint32_t socket_num,
                                                   wifi_tls_cert_info_t * cert_info,
                                                   uint8_t WIFI_FAR * sni_name,
                                                   uint8_t ser_valid,
@@ -804,7 +791,7 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint8_t socket_number)
+wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint32_t socket_number)
 {
     /* Connected access point? */
     if (0 != R_WIFI_DA16XXX_IsConnected())
@@ -864,7 +851,6 @@ wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint8_t socket_number)
 wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
-    uint8_t certificate_key_tmp[WIFI_CFG_TLS_CERT_MAX_NAME] = {0};
 
     /* Disconnected WiFi module? */
     if (0 != R_WIFI_DA16XXX_IsOpened())
@@ -885,7 +871,7 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 #if WIFI_CFG_TLS_USE_CA_CERT
     if (AT_OK == at_exec("AT+TRSSLCERTLIST=0\r"))
     {
-        if (DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:0,%s\r", cert_info->cert_ca))
+        if (DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:0,%[^,\r]s", cert_info->cert_ca))
         {
             memset(cert_info->cert_ca, 0, sizeof(cert_info->cert_ca));
         }
@@ -911,8 +897,8 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
     /* Get Client/Server Certificate */
     if (AT_OK == at_exec("AT+TRSSLCERTLIST=1\r"))
     {
-        if ((DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:%*d,%[^,],%*d,%s",
-                                   cert_info->cert_name, certificate_key_tmp)))
+        if ((DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:1,%[^,\r]s",
+                                   cert_info->cert_name)))
         {
             memset(cert_info->cert_name, 0, sizeof(cert_info->cert_name));
         }
@@ -1066,14 +1052,14 @@ wifi_err_t R_WIFI_DA16XXX_DeleteCertificate(wifi_tls_key_type_t type_key,
     switch (type_key) {
         case WIFI_TLS_TYPE_CLIENT_CERT:
         case WIFI_TLS_TYPE_CLIENT_PRIVATE_KEY:
-            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=1,%s\r", cert_info->cert_name))
+            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=1,'%s'\r", cert_info->cert_name))
             {
                 api_ret = WIFI_ERR_MODULE_COM;
             }
             break;
 
         case WIFI_TLS_TYPE_CA_CERT:
-            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=0,%s\r", cert_info->cert_ca))
+            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=0,'%s'\r", cert_info->cert_ca))
             {
                 api_ret = WIFI_ERR_MODULE_COM;
             }

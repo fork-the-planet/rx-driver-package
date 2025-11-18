@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rsa_rx.c
- * Version      : 1.22
+ * Version      : 1.23
  * Description  : Interface definition for the r_tsip_rsa_rx TSIP module.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -32,6 +32,7 @@
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -76,16 +77,22 @@ static uint8_t s_rsa_sig_md5_prefix[] =
     #endif
 #endif /* TSIP_PRV_USE_RSASSA */
 
+#if TSIP_PRV_USE_RSASSA || TSIP_PRV_USE_RSAES
 static e_tsip_err_t calc_hash_data(uint8_t *p_mes, uint8_t *p_hash, uint32_t mes_len, uint8_t hash_type);
+#endif /* TSIP_PRV_USE_RSASSA || TSIP_PRV_USE_RSAES */
+#if TSIP_PRV_USE_RSASSA
 static e_tsip_err_t set_rsassapkcs_hash_data(tsip_rsa_byte_data_t *p_message_hash, uint8_t hash_type,
         uint32_t rsa_key_byte_size, uint8_t *data_buff);
 static e_tsip_err_t rsassa_emsa_pss_verify (tsip_rsa_byte_data_t * message, uint8_t hash_type, uint32_t em_bits,
         uint8_t * em);
+#endif /* TSIP_PRV_USE_RSASSA */
+#if TSIP_PRV_USE_RSAES
 static e_tsip_err_t mgf1_mask(uint8_t *masked, uint8_t hash_type, uint8_t *seed, uint32_t seed_len, uint32_t mask_len);
 static uint32_t get_keyn_size(uint32_t *prsa_key_index, uint32_t key_max_size);
 static e_tsip_err_t get_rand_rsaes_pkcs(uint32_t rand_size, uint8_t *prand_data);
+#endif /* TSIP_PRV_USE_RSAES */
 
-#if TSIP_PRV_USE_RSASSA
+#if TSIP_PRV_USE_RSASSA || TSIP_PRV_USE_RSAES
 /***********************************************************************************************************************
 * Function Name: calc_hash_data
 *******************************************************************************************************************/ /**
@@ -152,7 +159,9 @@ static e_tsip_err_t calc_hash_data(uint8_t *p_mes, uint8_t *p_hash, uint32_t mes
 /*******************************
  End of function calc_hash_data
  *******************************/
+#endif /* TSIP_PRV_USE_RSASSA || TSIP_PRV_USE_RSAES */
 
+#if TSIP_PRV_USE_RSASSA
 /***********************************************************************************************************************
 * Function Name: set_rsassapkcs_hash_data
 *******************************************************************************************************************/ /**

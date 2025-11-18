@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_riic_rx
-VERSION = 		3.01
+VERSION = 		3.02
 MDF = V1,V2
 
 CONFIG_FOLDER = r_config

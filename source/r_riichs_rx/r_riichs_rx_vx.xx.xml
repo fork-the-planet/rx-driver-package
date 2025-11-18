@@ -54,7 +54,7 @@
         <zipsource>r_riichs_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.52</version>
+            <version>7.60</version>
         </dependency>
         <application>Communications</application>
         <application>External Memory</application>

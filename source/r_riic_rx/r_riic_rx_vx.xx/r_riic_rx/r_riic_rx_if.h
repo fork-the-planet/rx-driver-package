@@ -68,6 +68,7 @@
  *         : 01.08.2024 2.91     Fixed issues related to EEI and TEI interrupt priority levels for RX651 in MDF file.
  *         : 08.08.2024 3.00     Added RX260, RX261 support.
  *         : 15.03.2025 3.01     Updated disclaimer.
+ *         : 23.06.2025 3.02     Removed doc folder and updated .rcpc file in FITDemos.
  **********************************************************************************************************************/
 /* Guards against multiple inclusion */
 #ifndef RIIC_IF_H
@@ -90,7 +91,7 @@ R_BSP_PRAGMA_UNPACK
 
 /* Version Number of API. */
     #define RIIC_VERSION_MAJOR      (3)
-    #define RIIC_VERSION_MINOR      (01)
+    #define RIIC_VERSION_MINOR      (02)
 
 /*----------------------------------------------------------------------------*/
 /*   Defines the argument of the R_RIIC_Control function.                     */

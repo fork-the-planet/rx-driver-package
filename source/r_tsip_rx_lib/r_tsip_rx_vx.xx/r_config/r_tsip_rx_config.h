@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx_config.h
- * Version      : 1.22
+ * Version      : 1.23
  * Description  : Configuration options for the r_tsip_rx module.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -35,6 +35,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -45,75 +46,75 @@
 #define R_TSIP_RX_CONFIG_HEADER_FILE
 
 /* For AES operation. */
-#define TSIP_AES_128_ECB_ENCRYPT    (1)
-#define TSIP_AES_256_ECB_ENCRYPT    (1)
-#define TSIP_AES_128_ECB_DECRYPT    (1)
-#define TSIP_AES_256_ECB_DECRYPT    (1)
-#define TSIP_AES_128_CBC_ENCRYPT    (1)
-#define TSIP_AES_256_CBC_ENCRYPT    (1)
-#define TSIP_AES_128_CBC_DECRYPT    (1)
-#define TSIP_AES_256_CBC_DECRYPT    (1)
-#define TSIP_AES_128_CTR            (1)
-#define TSIP_AES_256_CTR            (1)
-#define TSIP_AES_128_GCM_ENCRYPT    (1)
-#define TSIP_AES_256_GCM_ENCRYPT    (1)
-#define TSIP_AES_128_GCM_DECRYPT    (1)
-#define TSIP_AES_256_GCM_DECRYPT    (1)
-#define TSIP_AES_128_CMAC           (1)
-#define TSIP_AES_256_CMAC           (1)
-#define TSIP_AES_128_CCM_ENCRYPT    (1)
-#define TSIP_AES_256_CCM_ENCRYPT    (1)
-#define TSIP_AES_128_CCM_DECRYPT    (1)
-#define TSIP_AES_256_CCM_DECRYPT    (1)
-#define TSIP_AES_128_KEY_WRAP       (1)
-#define TSIP_AES_256_KEY_WRAP       (1)
+#define TSIP_AES_128_ECB_ENCRYPT    (0)
+#define TSIP_AES_256_ECB_ENCRYPT    (0)
+#define TSIP_AES_128_ECB_DECRYPT    (0)
+#define TSIP_AES_256_ECB_DECRYPT    (0)
+#define TSIP_AES_128_CBC_ENCRYPT    (0)
+#define TSIP_AES_256_CBC_ENCRYPT    (0)
+#define TSIP_AES_128_CBC_DECRYPT    (0)
+#define TSIP_AES_256_CBC_DECRYPT    (0)
+#define TSIP_AES_128_CTR            (0)
+#define TSIP_AES_256_CTR            (0)
+#define TSIP_AES_128_GCM_ENCRYPT    (0)
+#define TSIP_AES_256_GCM_ENCRYPT    (0)
+#define TSIP_AES_128_GCM_DECRYPT    (0)
+#define TSIP_AES_256_GCM_DECRYPT    (0)
+#define TSIP_AES_128_CMAC           (0)
+#define TSIP_AES_256_CMAC           (0)
+#define TSIP_AES_128_CCM_ENCRYPT    (0)
+#define TSIP_AES_256_CCM_ENCRYPT    (0)
+#define TSIP_AES_128_CCM_DECRYPT    (0)
+#define TSIP_AES_256_CCM_DECRYPT    (0)
+#define TSIP_AES_128_KEY_WRAP       (0)
+#define TSIP_AES_256_KEY_WRAP       (0)
 
 /* For TDES operation. */
-#define TSIP_TDES_ECB_ENCRYPT   (1)
-#define TSIP_TDES_ECB_DECRYPT   (1)
-#define TSIP_TDES_CBC_ENCRYPT   (1)
-#define TSIP_TDES_CBC_DECRYPT   (1)
+#define TSIP_TDES_ECB_ENCRYPT   (0)
+#define TSIP_TDES_ECB_DECRYPT   (0)
+#define TSIP_TDES_CBC_ENCRYPT   (0)
+#define TSIP_TDES_CBC_DECRYPT   (0)
 
 /* For ARC4 operation. */
-#define TSIP_ARC4_ENCRYPT   (1)
-#define TSIP_ARC4_DECRYPT   (1)
+#define TSIP_ARC4_ENCRYPT   (0)
+#define TSIP_ARC4_DECRYPT   (0)
 
 /* For HASH operation. */
-#define TSIP_SHA_1      (1)
-#define TSIP_SHA_256    (1)
-#define TSIP_MD5        (1)
+#define TSIP_SHA_1      (0)
+#define TSIP_SHA_256    (0)
+#define TSIP_MD5        (0)
 
 /* For HMAC operation. */
-#define TSIP_SHA_1_HMAC     (1)
-#define TSIP_SHA_256_HMAC   (1)
+#define TSIP_SHA_1_HMAC     (0)
+#define TSIP_SHA_256_HMAC   (0)
 
 /* For RSA operation. */
-#define TSIP_RSAES_1024         (1)
-#define TSIP_RSAES_2048         (1)
-#define TSIP_RSAES_3072         (1)
-#define TSIP_RSAES_4096         (1)
-#define TSIP_RSASSA_1024        (1)
-#define TSIP_RSASSA_2048        (1)
-#define TSIP_RSASSA_3072        (1)
-#define TSIP_RSASSA_4096        (1)
+#define TSIP_RSAES_1024         (0)
+#define TSIP_RSAES_2048         (0)
+#define TSIP_RSAES_3072         (0)
+#define TSIP_RSAES_4096         (0)
+#define TSIP_RSASSA_1024        (0)
+#define TSIP_RSASSA_2048        (0)
+#define TSIP_RSASSA_3072        (0)
+#define TSIP_RSASSA_4096        (0)
     /* 5*(key_length/2) is recommended by NIST FIPS186-4, 5120 is for key_length = 2048. *2 means the margin. */
 #define TSIP_RSA_RETRY_COUNT_FOR_RSA_KEY_GENERATION (5120*2)
 
 /* For ECC operation. */
-#define TSIP_ECDSA_P192            (1)
-#define TSIP_ECDSA_P224            (1)
-#define TSIP_ECDSA_P256            (1)
-#define TSIP_ECDSA_P384            (1)
-#define TSIP_ECDH_P256             (1)
+#define TSIP_ECDSA_P192            (0)
+#define TSIP_ECDSA_P224            (0)
+#define TSIP_ECDSA_P256            (0)
+#define TSIP_ECDSA_P384            (0)
+#define TSIP_ECDH_P256             (0)
 #define TSIP_USER_SHA_384_ENABLED  (0)
 #define TSIP_USER_SHA_384_FUNCTION (user_sha384_function)
 
 /* For TLS. */
-#define TSIP_TLS    (1)
+#define TSIP_TLS    (0)
 
 /* Firmware update. */
 #define TSIP_SECURE_BOOT        (0)
-#define TSIP_FIRMWARE_UPDATE    (1)
+#define TSIP_FIRMWARE_UPDATE    (0)
 
 /* For multi threading */
 #define TSIP_MULTI_THREADING                    (0)

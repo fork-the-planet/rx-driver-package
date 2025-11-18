@@ -5,12 +5,12 @@ r_qspi_smstr_rx (QSPI clock synchronous single master driver)
 
 Document Number 
 ---------------
-R01AN1940EJ0122
-R01AN1940JJ0122
+R01AN1940EJ0130
+R01AN1940JJ0130
      
 Version
 -------
-v1.22
+v1.30
 
 Overview
 --------
@@ -59,7 +59,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp    v7.52
+* r_bsp    v7.60
 
 How to add to your project
 --------------------------
@@ -97,9 +97,9 @@ r_qspi_smstr_rx
 +---doc
 |   |
 |   +---en
-|   |       r01an1940ej0122-rx-serial.pdf
+|   |       r01an1940ej0130-rx-serial.pdf
 |   +---ja
-|           r01an1940jj0122-rx-serial.pdf
+|           r01an1940jj0130-rx-serial.pdf
 |
 +---src
     |   r_qspi_smstr.c

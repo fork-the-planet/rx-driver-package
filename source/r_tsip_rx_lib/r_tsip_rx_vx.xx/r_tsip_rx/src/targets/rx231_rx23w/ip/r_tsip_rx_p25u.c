@@ -30,6 +30,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -61,7 +62,7 @@ TSIP_SEC_P_SECURE_BOOT
 /***********************************************************************************************************************
 * Function Name: R_TSIP_VerifyFirmwareMacUpdateSub
 *******************************************************************************************************************/ /**
-* @details       RX231HU Program integrity check Update
+* @details       RX26T Program integrity check Update
 * @param[in]     InData_Program
 * @param[in]     MAX_CNT
 * @retval        TSIP_SUCCESS

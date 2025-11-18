@@ -43,6 +43,7 @@
 *                              when RTC_CFG_PARAM_CHECKING_ENABLE or RTC_CFG_CALCULATE_YDAY are not enabled.
 *                              Updated according to GSCE Code Checker 6.50.
 *           15.03.2025 3.01    Updated disclaimer.
+*           30.10.2025 3.10    Added support Nested Interrupt.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -742,6 +743,11 @@ End of function rtc_dec_to_bcd
 R_BSP_PRAGMA_STATIC_INTERRUPT (rtc_alm_isr, VECT(RTC, ALM))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rtc_alm_isr(void)
 {
+#if RTC_CFG_ALM_EN_NESTED_INT == 1
+    /* Set bit PSW.I = 1 to allow Nested Interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     if ((NULL != s_rcb.p_callback) && (FIT_NO_FUNC != s_rcb.p_callback))
     {
         rtc_cb_evt_t event = RTC_EVT_ALARM;
@@ -765,6 +771,11 @@ End of function rtc_alm_isr
 R_BSP_PRAGMA_STATIC_INTERRUPT (rtc_prd_isr, VECT(RTC, PRD))
 R_BSP_ATTRIB_STATIC_INTERRUPT void rtc_prd_isr(void)
 {
+#if RTC_CFG_PRD_EN_NESTED_INT == 1
+    /* Set bit PSW.I = 1 to allow Nested Interrupt */
+    R_BSP_SETPSW_I();
+#endif
+
     if ((NULL != s_rcb.p_callback) && (FIT_NO_FUNC != s_rcb.p_callback))
     {
         rtc_cb_evt_t event = RTC_EVT_PERIODIC;
@@ -776,4 +787,3 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rtc_prd_isr(void)
 /**********************************************************************************************************************
 End of function rtc_prd_isr
 ***********************************************************************************************************************/
-

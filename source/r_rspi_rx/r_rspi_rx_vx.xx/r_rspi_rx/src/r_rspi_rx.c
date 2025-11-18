@@ -56,6 +56,9 @@
 *         : 28.06.2024 3.50     Supported RX260, RX261.
 *                               Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *         : 15.03.2025 3.51     Updated disclaimer.
+*         : 14.04.2025 3.60     Fixed a bug that could not receive 1 byte in slave mode by removing 
+*                               the "Master mode or tx_count > 1" condition in rspi_sptiX_isr (X = 0, 1, 2).
+*         : 30.10.2025 3.70     Added byte swap feature.
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
@@ -113,6 +116,7 @@ typedef struct rspi_tcb_s
     uint32_t            unused_bits_mask;    // For masking the unused upper bits of non power-of-2 data.
 #endif
     rspi_str_tranmode_t data_tran_mode;      // Data transfer mode
+    rspi_byte_swap_t    data_byte_swap;      // Data byte swap
 } rspi_tcb_t;
 
 /* Driver internal shadow copy of register settings. */
@@ -338,7 +342,7 @@ static void rspi_spii_grp_isr (void * pdata);
  *            separately.
  *
  */
-rspi_err_t  R_RSPI_Open(uint8_t                 channel, // @suppress("6.6a Source line ordering")
+rspi_err_t  R_RSPI_Open(uint8_t                 channel,
                         rspi_chnl_settings_t *  pconfig,
                         rspi_command_word_t     spcmd_command_word,
                         void (*pcallback)(void * pcbdat),
@@ -505,6 +509,7 @@ rspi_err_t  R_RSPI_Open(uint8_t                 channel, // @suppress("6.6a Sour
 #endif
 
     g_rspi_tcb[channel].data_tran_mode = pconfig->tran_mode;
+    g_rspi_tcb[channel].data_byte_swap = pconfig->byte_swap;
 
     return RSPI_SUCCESS;
 } /* End of function R_RSPI_Open(). */
@@ -522,7 +527,8 @@ rspi_err_t  R_RSPI_Open(uint8_t                 channel, // @suppress("6.6a Sour
  *             RSPI_CMD_SET_BAUD : Change the base bit rate setting without reinitializing the RSPI channel.\n
  *             RSPI_CMD_ABORT : Stop the current read or write operation immediately.\n
  *             RSPI_CMD_SETREGS : Set all supported RSPI regs in one operation. (Expert use only)\n
- *             RSPI_CMD_SET_TRANS_MODE : Set the data transfer mode.
+ *             RSPI_CMD_SET_TRANS_MODE : Set the data transfer mode.\n
+ *             RSPI_CMD_SET_BYTE_SWAP : Set the data byte swap.
  * @param[in] *pcmd_data
  *            Pointer to the command-data structure parameter of type void that is used to reference the location of
  *            any data specific to the command needed for its completion. Commands that do not require supporting
@@ -556,6 +562,7 @@ rspi_err_t   R_RSPI_Control(rspi_handle_t  handle,
     uint8_t                 reg_temp = 0;
     uint8_t                 channel  = handle->channel;
     rspi_cmd_trans_mode_t * p_tran_smode_struct;
+    rspi_cmd_byte_swap_t  * p_byte_swap_struct;
 
 #if RSPI_CFG_REQUIRE_LOCK == 1
     bool        lock_result = false;
@@ -688,6 +695,14 @@ rspi_err_t   R_RSPI_Control(rspi_handle_t  handle,
             /* Cast to rspi_cmd_trans_mode_t* is valid */
             p_tran_smode_struct                = (rspi_cmd_trans_mode_t*)pcmd_data;
             g_rspi_tcb[channel].data_tran_mode = p_tran_smode_struct->transfer_mode;
+            break;
+        }
+
+        case RSPI_CMD_SET_BYTE_SWAP:
+        {
+            /* Cast to rspi_cmd_byte_swap_t* is valid */
+            p_byte_swap_struct                 = (rspi_cmd_byte_swap_t*)pcmd_data;
+            g_rspi_tcb[channel].data_byte_swap = p_byte_swap_struct->byte_swap;
             break;
         }
 
@@ -984,22 +999,14 @@ static rspi_err_t rspi_write_read_common(rspi_handle_t handle,
 ||  defined BSP_MCU_RX72N || defined BSP_MCU_RX66N || defined BSP_MCU_RX671 || defined BSP_MCU_RX140 \
 ||  defined BSP_MCU_RX660 || defined BSP_MCU_RX26T || defined BSP_MCU_RX23E_B || defined BSP_MCU_RX260 \
 ||  defined BSP_MCU_RX261
-    if ((RSPI_TRANS_MODE_DMAC == g_rspi_tcb[channel].data_tran_mode)
-    ||  (RSPI_TRANS_MODE_DTC  == g_rspi_tcb[channel].data_tran_mode))
+    if (RSPI_BYTE_DATA == g_rspi_tcb[channel].bytes_per_transfer)
     {
-        if (RSPI_BYTE_DATA == g_rspi_tcb[channel].bytes_per_transfer)
-        {
-            (*g_rspi_channels[channel]).SPDCR.BIT.SPBYT = 1;
-        }
-        else if (RSPI_WORD_DATA == g_rspi_tcb[channel].bytes_per_transfer)
-        {
-            (*g_rspi_channels[channel]).SPDCR.BIT.SPLW = 0;
-        }
-        else
-        {
-            /*Do nothing*/
-            R_BSP_NOP();
-        }
+        (*g_rspi_channels[channel]).SPDCR.BIT.SPBYT = 1;
+    }
+    else if (RSPI_WORD_DATA == g_rspi_tcb[channel].bytes_per_transfer)
+    {
+        (*g_rspi_channels[channel]).SPDCR.BIT.SPBYT = 0;
+        (*g_rspi_channels[channel]).SPDCR.BIT.SPLW  = 0;
     }
     else
     {
@@ -1012,21 +1019,24 @@ static rspi_err_t rspi_write_read_common(rspi_handle_t handle,
 ||  defined BSP_MCU_RX64M || defined BSP_MCU_RX71M || defined BSP_MCU_RX110 || defined BSP_MCU_RX111 \
 ||  defined BSP_MCU_RX113 || defined BSP_MCU_RX130 || defined BSP_MCU_RX230 || defined BSP_MCU_RX231 \
 ||  defined BSP_MCU_RX23E_A
-    if ((RSPI_TRANS_MODE_DMAC == g_rspi_tcb [channel] .data_tran_mode) ||
-    (RSPI_TRANS_MODE_DTC == g_rspi_tcb [channel] .data_tran_mode))
+    if (RSPI_LONG_DATA == g_rspi_tcb[channel].bytes_per_transfer)
     {
-        if (RSPI_LONG_DATA == g_rspi_tcb[channel].bytes_per_transfer)
-        {
-            (*g_rspi_channels[channel]).SPDCR.BIT.SPLW = 1;
-        }
-        else
-        {
-            (*g_rspi_channels[channel]).SPDCR.BIT.SPLW = 0;
-        }
+        (*g_rspi_channels[channel]).SPDCR.BIT.SPLW = 1;
     }
     else
     {
-        (*g_rspi_channels[channel]).SPDCR.BIT.SPLW = 1;
+        (*g_rspi_channels[channel]).SPDCR.BIT.SPLW = 0;
+    }
+#endif
+
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+    if (RSPI_BYTE_SWAP_ENABLE == g_rspi_tcb[channel].data_byte_swap)
+    {
+        (*g_rspi_channels[channel]).SPDCR2.BIT.BYSW = 1;
+    }
+    else
+    {
+        (*g_rspi_channels[channel]).SPDCR2.BIT.BYSW = 0;
     }
 #endif
 
@@ -2476,24 +2486,77 @@ static void rspi_tx_common(uint8_t channel)
             /* Transmit the data. TX data register accessed in long words. */
             if (RSPI_BYTE_DATA == data_size)
             {
-                /*Casting to uint8_t is valid*/
-                (*g_rspi_channels[channel]).SPDR.LONG = ((uint8_t *)psrc)[tx_count];
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+                /* Casting to uint8_t is valid */
+                (*g_rspi_channels[channel]).SPDR.BYTE.HH = ((uint8_t *)psrc)[tx_count];
+#else
+                /* Casting to uint8_t is valid */
+                (*g_rspi_channels[channel]).SPDR.WORD.H = ((uint8_t *)psrc)[tx_count];
+#endif
             }
             else if (RSPI_WORD_DATA == data_size)
             {
-                /*Casting to uint16_t is valid*/
-                (*g_rspi_channels[channel]).SPDR.LONG = ((uint16_t *)psrc)[tx_count];
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+                /* Casting to uint16_t is valid */
+                (*g_rspi_channels[channel]).SPDR.WORD.H = ((uint16_t *)psrc)[tx_count];
+#else
+                if ((RSPI_BYTE_SWAP_ENABLE == g_rspi_tcb[channel].data_byte_swap) \
+                && (RSPI_SPCMD_BIT_LENGTH_16 == (*g_rspi_channels[channel]).SPCMD0.BIT.SPB))
+                {
+                    /* Casting to uint16_t is valid */
+                    (*g_rspi_channels[channel]).SPDR.WORD.H = R_BSP_REVW(((uint16_t *)psrc)[tx_count]);
+                }
+                else
+                {
+                    /* Casting to uint16_t is valid */
+                    (*g_rspi_channels[channel]).SPDR.WORD.H = ((uint16_t *)psrc)[tx_count];
+                }
+#endif
             }
             else /* Must be long data. if (RSPI_LONG_DATA == data_size) */
             {
-                /*Casting to uint32_t is valid*/
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+                /* Casting to uint32_t is valid */
                 (*g_rspi_channels[channel]).SPDR.LONG = ((uint32_t *)psrc)[tx_count];
+#else
+                if ((RSPI_BYTE_SWAP_ENABLE == g_rspi_tcb[channel].data_byte_swap) \
+                && ((RSPI_SPCMD_BIT_LENGTH_32 == (*g_rspi_channels[channel]).SPCMD0.BIT.SPB) \
+                || (0x0002 == (*g_rspi_channels[channel]).SPCMD0.BIT.SPB)))
+                {
+                    /* Casting to uint32_t is valid */
+                    (*g_rspi_channels[channel]).SPDR.LONG = R_BSP_REVL(((uint32_t *)psrc)[tx_count]);
+                }
+                else
+                {
+                    /* Casting to uint32_t is valid */
+                    (*g_rspi_channels[channel]).SPDR.LONG = ((uint32_t *)psrc)[tx_count];
+                }
+#endif
             }
         }
         else /* Must be RX only mode, so transmit dummy data for clocking.*/
         {
-            /* TX data register accessed in long words. */
-            (*g_rspi_channels[channel]).SPDR.LONG = RSPI_CFG_DUMMY_TXDATA;
+            /* Transmit dummy data for clocking. */
+            if (RSPI_BYTE_DATA == data_size)
+            {
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+                /* TX data register accessed in bytes. */
+                (*g_rspi_channels[channel]).SPDR.BYTE.HH = (uint8_t)RSPI_CFG_DUMMY_TXDATA;
+#else
+                /* TX data register accessed in words. */
+                (*g_rspi_channels[channel]).SPDR.WORD.H = (uint16_t)RSPI_CFG_DUMMY_TXDATA;
+#endif
+            }
+            else if (RSPI_WORD_DATA == data_size)
+            {
+                /* TX data register accessed in words. */
+                (*g_rspi_channels[channel]).SPDR.WORD.H = (uint16_t)RSPI_CFG_DUMMY_TXDATA;
+            }
+            else /* Must be long data. if (RSPI_LONG_DATA == data_size) */
+            {
+                /* TX data register accessed in long words. */
+                (*g_rspi_channels[channel]).SPDR.LONG = (uint32_t)RSPI_CFG_DUMMY_TXDATA;
+            }
         }
         g_rspi_tcb[channel].tx_count++;
     }
@@ -2531,7 +2594,7 @@ static void rspi_rx_common(uint8_t channel)
     {
         if (RSPI_BYTE_DATA == data_size)
         {
-            /*Casting to uint8_t is valid*/
+            /* Casting to uint8_t is valid */
             ((uint8_t *)pdest)[rx_count-1] = (uint8_t)rx_data;
         }
         else if (RSPI_WORD_DATA == data_size)
@@ -2540,8 +2603,22 @@ static void rspi_rx_common(uint8_t channel)
             /* Clear unused upper bits of non-standard bit length data transfers. */
             rx_data = (rx_data & g_rspi_tcb[channel].unused_bits_mask);
 #endif
-            /*Cast to uint16_t valid*/
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+            /* Casting to uint16_t is valid */
             ((uint16_t *)pdest)[rx_count-1] = (uint16_t)rx_data;
+#else
+            if ((RSPI_BYTE_SWAP_ENABLE == g_rspi_tcb[channel].data_byte_swap) \
+            && (RSPI_SPCMD_BIT_LENGTH_16 == (*g_rspi_channels[channel]).SPCMD0.BIT.SPB))
+            {
+                /* Casting to uint16_t is valid */
+                ((uint16_t *)pdest)[rx_count-1] = R_BSP_REVW((uint16_t)rx_data);
+            }
+            else
+            {
+                /* Casting to uint16_t is valid */
+                ((uint16_t *)pdest)[rx_count-1] = (uint16_t)rx_data;
+            }
+#endif
         }
         else  /* Must be long data. if (RSPI_LONG_DATA == data_size) */
         {
@@ -2549,9 +2626,23 @@ static void rspi_rx_common(uint8_t channel)
             /* Clear unused upper bits of non-standard bit length data transfers. */
             rx_data &= g_rspi_tcb[channel].unused_bits_mask;
 #endif
-
-            /*Casting to uint32_t is valid*/
+#if defined RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+            /* Casting to uint32_t is valid */
             ((uint32_t *)pdest)[rx_count-1] = rx_data;
+#else
+            if ((RSPI_BYTE_SWAP_ENABLE == g_rspi_tcb[channel].data_byte_swap) \
+            && ((RSPI_SPCMD_BIT_LENGTH_32 == (*g_rspi_channels[channel]).SPCMD0.BIT.SPB) \
+            || (0x0002 == (*g_rspi_channels[channel]).SPCMD0.BIT.SPB)))
+            {
+                /* Casting to uint32_t is valid */
+                ((uint32_t *)pdest)[rx_count-1] = R_BSP_REVL(rx_data);
+            }
+            else
+            {
+                /* Casting to uint32_t is valid */
+                ((uint32_t *)pdest)[rx_count-1] = rx_data;
+            }
+#endif
         }
     }
 
@@ -2735,11 +2826,7 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rspi_spti0_isr(void)
 
         if (g_rspi_tcb[0].transfer_mode & RSPI_DO_RX)
         {
-            /* Count was incremented in the call to rspi_tx_rx_common. */
-            if ((RSPI0.SPCR.BIT.MSTR) || (g_rspi_tcb[0].tx_count > 1))
-            {
-                g_rspi_tcb[0].do_rx_now = true; // Enables saving of receive data on next receive interrupt.
-            }
+            g_rspi_tcb[0].do_rx_now = true; // Enables saving of receive data on next receive interrupt.
         }
     }
     else
@@ -2786,11 +2873,7 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rspi_spti1_isr(void)
 
         if (g_rspi_tcb[1].transfer_mode & RSPI_DO_RX)
         {
-            /* Count was incremented in the call to rspi_tx_rx_common. */
-            if ((RSPI1.SPCR.BIT.MSTR) || (g_rspi_tcb[1].tx_count > 1))
-            {
-                g_rspi_tcb[1].do_rx_now = true; // Enables saving of receive data on next receive interrupt.
-            }
+            g_rspi_tcb[1].do_rx_now = true; // Enables saving of receive data on next receive interrupt.
         }
     }
     else
@@ -2837,11 +2920,7 @@ R_BSP_ATTRIB_STATIC_INTERRUPT void rspi_spti2_isr(void)
 
         if (g_rspi_tcb[2].transfer_mode & RSPI_DO_RX)
         {
-            /* Count was incremented in the call to rspi_tx_rx_common. */
-            if ((RSPI2.SPCR.BIT.MSTR) || (g_rspi_tcb[2].tx_count > 1))
-            {
-                g_rspi_tcb[2].do_rx_now = true; // Enables saving of receive data on next receive interrupt.
-            }
+            g_rspi_tcb[2].do_rx_now = true; // Enables saving of receive data on next receive interrupt.
         }
     }
     else

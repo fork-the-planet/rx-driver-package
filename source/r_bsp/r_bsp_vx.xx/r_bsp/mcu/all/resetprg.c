@@ -33,6 +33,7 @@
 *                                Added bsp_bus_priority_initialize function.
 *                                Added compile switch of BSP_CFG_BOOTLOADER_PROJECT.
 *         : 26.02.2025 3.18      Changed the disclaimer.
+*         : 28.05.2025 3.19      Added extern declarations for init_iolib and close_all.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -153,6 +154,14 @@ extern void Processing_Before_Start_Kernel(void);
 /* kernel initialization routine */
 extern void vsta_knl(void);
 #endif/* BSP_CFG_RTOS_USED */
+
+#if BSP_CFG_IO_LIB_ENABLE == 1
+    /* Comment this out if not using I/O lib */
+#if defined(__CCRX__)
+extern void init_iolib(void);
+extern void close_all(void);
+#endif /* defined(__CCRX__) */
+#endif
 
 /***********************************************************************************************************************
 Private global variables and functions

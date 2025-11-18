@@ -5,12 +5,12 @@ r_qspix_rx (QSPIX driver)
 
 Document Number 
 ---------------
-R01AN5685ES0142
-R01AN5685JS0142
+R01AN5685ES0143
+R01AN5685JS0143
      
 Version
 -------
-v1.42
+v1.43
 
 Overview
 --------
@@ -44,7 +44,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp    v7.52
+* r_bsp    v7.60
 
 How to add to your project
 --------------------------

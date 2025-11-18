@@ -45,6 +45,8 @@
 *           28.06.2024 3.00    Added support for RX260, RX261.
 *                              Updated according to GSCE Code Checker 6.50.
 *           15.03.2025 3.01    Updated disclaimer.
+*           30.10.2025 3.10    Removed doc folder and updated .rcpc file in FITDemos.
+*                              Added support Nested interrupt.
 ***********************************************************************************************************************/
 
 #ifndef RTC_RX_INTERFACE_HEADER_FILE
@@ -61,7 +63,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define RTC_RX_VERSION_MAJOR        (3)
-#define RTC_RX_VERSION_MINOR        (01)
+#define RTC_RX_VERSION_MINOR        (10)
 
 /***********************************************************************************************************************
 BSP version detection

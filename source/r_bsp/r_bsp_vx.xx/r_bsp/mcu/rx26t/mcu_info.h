@@ -15,6 +15,7 @@
 *                                Added the macro definition of BSP_CFDCLK_HZ.
 *                                Modified comment.
 *         : 26.02.2025 1.02      Changed the disclaimer.
+*         : 30.07.2025 1.03      Added the macro definition for RX26T with 32 pin package.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -78,6 +79,9 @@ Macro definitions
 #elif BSP_CFG_MCU_PART_PACKAGE == 0x7
     #define BSP_PACKAGE_HWQFN48    (1)
     #define BSP_PACKAGE_PINS        (48)
+#elif BSP_CFG_MCU_PART_PACKAGE == 0x9
+    #define BSP_PACKAGE_HWQFN32    (1)
+    #define BSP_PACKAGE_PINS        (32)
 #else
     #error "ERROR - BSP_CFG_MCU_PART_PACKAGE - Unknown package chosen in r_bsp_config.h"
 #endif

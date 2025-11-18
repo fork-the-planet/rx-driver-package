@@ -5,11 +5,11 @@ rm_touch_qe
 
 Document Number 
 ---------------
-r01an4470jj0311
+r01an4470jj0320
 
 Version
 -------
-v3.11
+v3.20
 
 Overview
 --------
@@ -65,7 +65,7 @@ Peripherals Used Directly
 Required Packages
 -----------------
 * r_bsp      v7.50
-* r_ctsu_qe  v3.11
+* r_ctsu_qe  v3.20
 
 
 Toolchain(s) Used

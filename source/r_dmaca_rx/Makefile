@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_dmaca_rx
-VERSION = 		3.41
+VERSION = 		3.42
 MDF = V2
 
 CONFIG_FOLDER = r_config

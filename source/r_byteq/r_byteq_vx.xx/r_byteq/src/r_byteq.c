@@ -20,6 +20,7 @@
 *                              R_BYTEQ_Used, R_BYTEQ_Unused functions.
 *         : 29.10.2021 2.00    Updated for critical section protection in R_BYTEQ_Put, R_BYTEQ_Get functions.
 *         : 15.03.2025 2.11    Updated disclaimer.
+*         : 30.10.2025 2.12    Removed \e in Doxygen comment of API function.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -70,8 +71,8 @@ static byteq_ctrl_t     g_qcb[BYTEQ_CFG_MAX_CTRL_BLKS];
 * @retval    BYTEQ_ERR_MALLOC_FAIL: Cannot allocate control block. Increase heap size.
 * @retval    BYTEQ_ERR_NO_MORE_CTRL_BLKS: Cannot assign control block. Increase BYTEQ_MAX_CTRL_BLKS in config.h.
 * @details   This function allocates or assigns a queue control block for the 
-*            buffer pointed to by \e p_buf. Initializes the queue to an empty state and provides a Handle to its control 
-*            structure in \e p_hdl which is then used as a queue ID for the other API functions.
+*            buffer pointed to by p_buf. Initializes the queue to an empty state and provides a Handle to its control 
+*            structure in p_hdl which is then used as a queue ID for the other API functions.
 * @note      None
 */
 byteq_err_t R_BYTEQ_Open(uint8_t * const        p_buf,
@@ -167,7 +168,7 @@ byteq_err_t R_BYTEQ_Open(uint8_t * const        p_buf,
 * @retval    BYTEQ_SUCCESS: Successful; byte added to queue
 * @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
 * @retval    BYTEQ_ERR_QUEUE_FULL: Queue full; cannot add byte to queue.
-* @details   This function adds the contents of \e byte to the queue associated with \e hdl.
+* @details   This function adds the contents of byte to the queue associated with hdl.
 * @note      None
 */
 byteq_err_t R_BYTEQ_Put(byteq_hdl_t const   hdl,
@@ -253,8 +254,8 @@ byteq_err_t R_BYTEQ_Put(byteq_hdl_t const   hdl,
 * @retval  BYTEQ_ERR_NULL_PTR: hdl is NULL.
 * @retval  BYTEQ_ERR_INVALID_ARG: p_byte is NULL.
 * @retval  BYTEQ_ERR_QUEUE_EMPTY: Queue empty; no data available to fetch
-* @details This function removes the oldest byte of data in the queue associated with \e hdl and loads it into the 
-*          location pointed to by \e p_byte.
+* @details This function removes the oldest byte of data in the queue associated with hdl and loads it into the 
+*          location pointed to by p_byte.
 * @note    None
 */
 byteq_err_t R_BYTEQ_Get(byteq_hdl_t const   hdl,
@@ -338,7 +339,7 @@ byteq_err_t R_BYTEQ_Get(byteq_hdl_t const   hdl,
 * @param[in,out] hdl Handle for queue.
 * @retval    BYTEQ_SUCCESS: Successful; queue reset
 * @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
-* @details   This function resets the queue identified by \e hdl to an empty state.
+* @details   This function resets the queue identified by hdl to an empty state.
 * @note      None
 */
 byteq_err_t R_BYTEQ_Flush(byteq_hdl_t const hdl)
@@ -396,8 +397,8 @@ byteq_err_t R_BYTEQ_Flush(byteq_hdl_t const hdl)
 * @retval    BYTEQ_SUCCESS: Successful; *p_cnt loaded with the number of bytes in the queue
 * @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
 * @retval    BYTEQ_ERR_INVALID_ARG: p_cnt is NULL.
-* @details   This function loads the number of bytes in the queue associated with \e hdl and into the location pointed 
-*            to by \e p_cnt.
+* @details   This function loads the number of bytes in the queue associated with hdl and into the location pointed 
+*            to by p_cnt.
 * @note      None
 */
 byteq_err_t R_BYTEQ_Used(byteq_hdl_t const  hdl,
@@ -446,8 +447,8 @@ byteq_err_t R_BYTEQ_Used(byteq_hdl_t const  hdl,
 * @retval    BYTEQ_SUCCESS: Successful; *p_cnt loaded with the number of bytes not used in the queue
 * @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
 * @retval    BYTEQ_ERR_INVALID_ARG: p_cnt is NULL.
-* @details   This function loads the number of unused bytes in the queue associated with \e hdl and into the location 
-*            pointed to by \e p_cnt.
+* @details   This function loads the number of unused bytes in the queue associated with hdl and into the location 
+*            pointed to by p_cnt.
 * @note      None
 */
 byteq_err_t R_BYTEQ_Unused(byteq_hdl_t const  hdl,

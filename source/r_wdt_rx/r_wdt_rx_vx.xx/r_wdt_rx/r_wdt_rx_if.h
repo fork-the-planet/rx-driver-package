@@ -30,6 +30,7 @@
 *                              Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *           28.06.2024 3.10    Added support for RX260, RX261.
 *           15.03.2025 3.11    Updated disclaimer.
+*           23.06.2025 3.12    Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #ifndef WDT_RX_IF_H
@@ -53,7 +54,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define WDT_RX_VERSION_MAJOR   (3)
-#define WDT_RX_VERSION_MINOR   (11)
+#define WDT_RX_VERSION_MINOR   (12)
 
 #define OFS0_WDT_DISABLED              (0x00020000)
 

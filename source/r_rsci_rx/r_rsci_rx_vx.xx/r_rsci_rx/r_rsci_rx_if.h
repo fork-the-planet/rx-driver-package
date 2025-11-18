@@ -26,6 +26,7 @@
 *                              in R_RSCI_Control() for RX260, RX261.
 *           31.12.2024 2.70    Added support Nested Interrupt.
 *           15.03.2025 2.71    Updated disclaimer
+*           23.06.2025 2.72    Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #ifndef RSCI_IF_H
@@ -47,7 +48,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RSCI_VERSION_MAJOR  (2)
-#define RSCI_VERSION_MINOR  (71)
+#define RSCI_VERSION_MINOR  (72)
 
 #define RSCI_CLK_INT         (0x00U) /* use internal clock for baud generation */
 #define RSCI_CLK_EXT8X       (0x03U) /* use external clock 8x baud rate (ASYNC) */

@@ -60,5 +60,21 @@ Used = includes code</description>
 Standard, Low, Middle(*), or High(*)
 (*) : Supported by RX11x only</description>
         </property>
+        <property id="RTC_CFG_ALM_EN_NESTED_INT" display="Use ALM Nested Interrupt" default="0" type="combobox">
+            <option id="RTC_CFG_ALM_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RTC_CFG_ALM_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <description>Specifies whether to include code for Nested Interrupt ALM.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
+        </property>
+        <property id="RTC_CFG_PRD_EN_NESTED_INT" display="Use PRD Nested Interrupt" default="0" type="combobox">
+            <option id="RTC_CFG_PRD_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="RTC_CFG_PRD_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <description>Specifies whether to include code for Nested Interrupt PRD.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
+        </property>
     </configuration>
 </module>

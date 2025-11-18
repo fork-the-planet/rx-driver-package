@@ -107,5 +107,21 @@ If the #define which channel is not supported on the MCU is uncommented, then co
             <constraint display="This setting is only valid for CH0" actionOnFail="disable">"${QSPI_SMSTR_CFG_CH0_INCLUDED}" == "#define"</constraint>
             <description>In the case of DMAC/DTC, set the interrupt source priority level of spti and spri.</description>
         </property>
+        <property id="QSPI_SMSTR_CFG_SPTI_EN_NESTED_INT" display="Use SPTI Nested Interrupt" default="0" type="combobox">
+            <option id="QSPI_SMSTR_CFG_SPTI_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="QSPI_SMSTR_CFG_SPTI_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <description>Specifies whether to include code for Nested Interrupt SPTI.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
+        </property>
+        <property id="QSPI_SMSTR_CFG_SPRI_EN_NESTED_INT" display="Use SPRI Nested Interrupt" default="0" type="combobox">
+            <option id="QSPI_SMSTR_CFG_SPRI_EN_NESTED_INT.0" display="Disable" value="0"/>
+            <option id="QSPI_SMSTR_CFG_SPRI_EN_NESTED_INT.1" display="Enable" value="1"/>
+            <description>Specifies whether to include code for Nested Interrupt SPRI.
+- 0: Disable nested interrupt.
+- 1: Enable nested interrupt.
+(default value = 0)</description>
+        </property>
     </configuration>
 </module>

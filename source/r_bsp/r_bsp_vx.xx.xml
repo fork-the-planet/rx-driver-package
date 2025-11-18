@@ -50,6 +50,7 @@
         <version>8.03.00.202311</version>
         <version>8.03.00.202405</version>
         <version>8.03.00.202411</version>
+        <version>14.02.00.202505</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>

@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_ecc_rx.c
- * Version      : 1.22
+ * Version      : 1.23
  * Description  : Interface definition for the r_tsip_ecc_rx TSIP module.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -26,6 +26,7 @@
  *         : 28.02.2024 1.20     Applied software workaround of AES-CCM decryption
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -87,8 +88,10 @@ static const TSIP_KEY_INDEX_TYPE s_key_index_type[3] =
 };
 #endif
 
+#if TSIP_PRV_USE_ECDSA
 static e_tsip_err_t set_ecdsa_hash_data(tsip_ecdsa_byte_data_t *p_message_hash, uint32_t *data_buff,
         uint32_t hash_word_pos);
+#endif /* TSIP_PRV_USE_ECDSA */
 
 #if TSIP_PRV_USE_ECDSA
 /***********************************************************************************************************************
@@ -1432,7 +1435,7 @@ e_tsip_err_t R_TSIP_EcdhP256SshKeyDerivation(tsip_ecdh_handle_t *handle, tsip_ec
     );
     if (TSIP_SUCCESS == error_code)
     {
-        client_write_key_index->type = s_key_index_type[key_type];;
+        client_write_key_index->type = s_key_index_type[key_type];
         server_write_key_index->type = s_key_index_type[key_type];
         client_mac_key_index->type   = s_key_index_type[key_type];
         server_mac_key_index->type   = s_key_index_type[key_type];

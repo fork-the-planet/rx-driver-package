@@ -32,6 +32,7 @@
 *           31.12.2021 2.83    Added support for RX660.
 *           28.06.2024 3.00    Added support for RX260, RX261.
 *           15.03.2025 3.01    Updated disclaimer.
+*           30.10.2025 3.10    Added support Nested Interrupt.
 ***********************************************************************************************************************/
 
 #ifndef R_RTC_RX_CONFIG_H
@@ -67,5 +68,10 @@ Configuration Options
 //#define RTC_CFG_DRIVE_CAPACITY_MD
 //#define RTC_CFG_DRIVE_CAPACITY_HI
 
+/* Specifies whether to include code for Nested Interrupt ALM. */
+#define RTC_CFG_ALM_EN_NESTED_INT (0)
+
+/* Specifies whether to include code for Nested Interrupt PRD. */
+#define RTC_CFG_PRD_EN_NESTED_INT (0)
 
 #endif /* R_RTC_RX_CONFIG_H */

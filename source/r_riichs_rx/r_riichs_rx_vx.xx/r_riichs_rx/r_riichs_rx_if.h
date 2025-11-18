@@ -13,6 +13,7 @@
  *         : 21.12.2022 1.10     Fixed processing error of riichs_bps_calc
  *         : 30.09.2024 1.20     Changed the comment of API functions to the Doxygen style.
  *         : 15.03.2025 1.21     Updated disclaimer
+ *         : 23.06.2025 1.22     Removed doc folder and updated .rcpc file in FITDemos.
  **********************************************************************************************************************/
 /* Guards against multiple inclusion */
 #ifndef RIICHS_IF_H
@@ -35,7 +36,7 @@ R_BSP_PRAGMA_UNPACK
 
 /* Version Number of API. */
     #define RIICHS_VERSION_MAJOR      (1)
-    #define RIICHS_VERSION_MINOR      (21)
+    #define RIICHS_VERSION_MINOR      (22)
 
 /*----------------------------------------------------------------------------*/
 /*   Defines the argument of the R_RIICHS_Control function.                     */

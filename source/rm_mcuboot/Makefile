@@ -1,5 +1,5 @@
 MODULE_NAME = 	rm_mcuboot
-VERSION = 		1.00
+VERSION = 		1.01
 MDF = V2
 
 CONFIG_FOLDER = r_config

@@ -21,6 +21,7 @@
 *         : 27.12.2022 2.03    Updated slash format of included header file paths for Linux compatibility.
 *         : 13.12.2023 2.04    Added WAIT_LOOP comments.
 *         : 15.03.2025 2.05    Updated disclaimer.
+*         : 30.10.2025 2.06    Changed the comment of API functions to the doxygen style.
 **********************************************************************************************************************/
 
 #ifndef SDSI_RX_IF_H_
@@ -37,7 +38,7 @@ Macro definitions
 **********************************************************************************************************************/
 /* Version Number of API. */
 #define RX_SDSI_VERSION_MAJOR       (2)
-#define RX_SDSI_VERSION_MINOR       (5)
+#define RX_SDSI_VERSION_MINOR       (6)
 
 #define SDSI_CH0                    (0)
 #define SDSI_CH1                    (1)

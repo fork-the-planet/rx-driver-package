@@ -1,39 +1,28 @@
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/*
+* Copyright (c) 2024 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
-***********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
-* File Name    : r_rsip_public.h
-* Description  : RSIP function public header file.
+* File Name    : r_rsip_wrapper.h
+* Description  : RSIP function wrapper header file.
 ***********************************************************************************************************************/
 /**********************************************************************************************************************
 * History : DD.MM.YYYY Version  Description
 *         : 15.10.2024 1.00     First Release.
+*         : 31.07.2025 2.00     Added support for ECDH KDF and HMAC Suspend, Resume
+*         :                     Revised key management specification
 ***********************************************************************************************************************/
-
 #ifndef R_RSIP_COMMON_H
 #define R_RSIP_COMMON_H
 
 /***********************************************************************************************************************
  * Includes
  **********************************************************************************************************************/
-#include <stdint.h>
 #include <string.h>
-#include "r_rsip_protected_rx_if.h"
+#include "r_rsip.h"
+#include "r_rsip_private.h"
+#include "r_rsip_util.h"
 
 /***********************************************************************************************************************
  * Macro definitions
@@ -43,18 +32,50 @@
 #define RSIP_OPEN    (0x52534950U)
 
 /* Various lengths */
-/* RSIP_PRV_BYTE_SIZE_AES_BLOCK is defined in r_rsip_protected_rx_if.h */
+
+/* RSIP_PRV_BYTE_SIZE_AES_BLOCK is defined in r_rsip.h */
 
 /* ECC */
-#define RSIP_PRV_BYTE_SIZE_ECC_256_PARAM                    (32U)
+#define RSIP_PRV_BYTE_SIZE_ECC_256_PARAM                           (32U)
+#define RSIP_PRV_BYTE_SIZE_ECC_384_PARAM                           (48U)
+#define RSIP_PRV_BYTE_SIZE_ECC_512_PARAM                           (64U)
+#define RSIP_PRV_BYTE_SIZE_ECC_521_PARAM                           (66U)
+
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_256_QX            (0U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_256_QY            (32U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_384_QX            (0U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_384_QY            (48U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_512_QX            (0U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_512_QY            (64U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_521_QX            (14U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_521_QY            (94U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_ECC_EDWARDS25519_Q    (0U)
+
+/* RSA */
+#define RSIP_PRV_BYTE_SIZE_RSA_1024_N                              (128U)
+#define RSIP_PRV_BYTE_SIZE_RSA_2048_N                              (256U)
+#define RSIP_PRV_BYTE_SIZE_RSA_3072_N                              (384U)
+#define RSIP_PRV_BYTE_SIZE_RSA_4096_N                              (512U)
+#define RSIP_PRV_BYTE_SIZE_RSA_E                                   (4U)
+
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_RSA_N                 (0U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_RSA_1024_E            (128U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_RSA_2048_E            (256U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_RSA_3072_E            (384U)
+#define RSIP_PRV_BYTE_POS_WRAPPED_PUBLIC_KEY_RSA_4096_E            (512U)
 
 /* SHA */
-#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA224                    (28U)
-#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA256                    (32U)
-#define RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA1_SHA224_SHA256    (64U)
+#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA1                             (20U)
+#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA224                           (28U)
+#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA256                           (32U)
+#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA384                           (48U)
+#define RSIP_PRV_BYTE_SIZE_DIGEST_SHA512                           (64U)
+
+#define RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA1_SHA224_SHA256           (64U)
+#define RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA384_SHA512                (128U)
 
 /* RNG */
-#define RSIP_PRV_BYTE_SIZE_RNG                              (16U)
+#define RSIP_PRV_BYTE_SIZE_RNG                                     (16U)
 
 /***********************************************************************************************************************
  * Typedef definitions
@@ -69,93 +90,22 @@
  **********************************************************************************************************************/
 
 /* r_rsip.c */
-fsp_err_t r_rsip_random_number_generate (rsip_ctrl_t * const p_ctrl, uint8_t * const p_random);
+fsp_err_t r_rsip_random_number_generate(rsip_ctrl_t * const p_ctrl, uint8_t * const p_random);
 
 /* r_rsip_sha.c */
-fsp_err_t r_rsip_sha_init (rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const hash_type);
-fsp_err_t r_rsip_sha_update (rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message,
-                            uint32_t const message_length);
-fsp_err_t r_rsip_sha_finish (rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest);
+fsp_err_t r_rsip_sha_init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const hash_type);
+fsp_err_t r_rsip_sha_update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message, uint32_t const message_length);
+fsp_err_t r_rsip_sha_finish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest);
 
 /*******************************************************************************************************************//**
  * Resets handle.
  *
  * @param[in] handle Pointer to handle.
- **********************************************************************************************************************/
-R_BSP_PRAGMA_STATIC_INLINE(r_rsip_handle_reset)
-void r_rsip_handle_reset(rsip_handle_t * handle)
+ ***********************************************************************************************************************/
+RSIP_PRV_STATIC_INLINE(r_rsip_handle_reset)
+void r_rsip_handle_reset (rsip_handle_t * handle)
 {
     memset(handle, 0, sizeof(rsip_handle_t));
-}
-
-/*******************************************************************************************************************//**
- * Convert to key type to internal algorithm ID.
- *
- * @param[in] key_type Key type.
- *
- * @return Internal algorithm ID.
- **********************************************************************************************************************/
-R_BSP_PRAGMA_STATIC_INLINE(r_rsip_key_type_to_alg)
-rsip_alg_t r_rsip_key_type_to_alg(rsip_key_type_t key_type)
-{
-    /* cast to rsip_alg_t */
-    return (rsip_alg_t) ((key_type >> 8) & 0xff);
-}
-
-/*******************************************************************************************************************//**
- * Convert to key type to internal key type (subtype).
- *
- * @param[in] key_type Key type.
- *
- * @return Internal key type.
- **********************************************************************************************************************/
-R_BSP_PRAGMA_STATIC_INLINE(r_rsip_key_type_to_subtype)
-uint8_t r_rsip_key_type_to_subtype(rsip_key_type_t key_type)
-{
-    /* cast to uint8_t */
-    return (uint8_t) (key_type & 0xff);
-}
-
-/*******************************************************************************************************************//**
- * Convert to key pair type to internal algorithm ID (public key).
- *
- * @param[in] key_pair_type Key pair type.
- *
- * @return Internal algorithm ID (public key).
- **********************************************************************************************************************/
-R_BSP_PRAGMA_STATIC_INLINE(r_rsip_key_pair_type_to_public_alg)
-rsip_alg_t r_rsip_key_pair_type_to_public_alg(rsip_key_pair_type_t key_pair_type)
-{
-    /* cast to rsip_alg_t */
-    return (rsip_alg_t) ((key_pair_type >> 16) & 0xff);
-}
-
-/*******************************************************************************************************************//**
- * Convert to key pair type to internal algorithm ID (private key).
- *
- * @param[in] key_pair_type Key pair type.
- *
- * @return Internal algorithm ID (private key).
- **********************************************************************************************************************/
-R_BSP_PRAGMA_STATIC_INLINE(r_rsip_key_pair_type_to_private_alg)
-rsip_alg_t r_rsip_key_pair_type_to_private_alg(rsip_key_pair_type_t key_pair_type)
-{
-    /* cast to rsip_alg_t */
-    return (rsip_alg_t) ((key_pair_type >> 8) & 0xff);
-}
-
-/******************************************************************************************************************//**
- * Convert to key pair type to internal key type (subtype).
- *
- * @param[in] key_pair_type Key pair type.
- *
- * @return Internal key type.
- **********************************************************************************************************************/
-R_BSP_PRAGMA_STATIC_INLINE(r_rsip_key_pair_type_to_subtype)
-uint8_t r_rsip_key_pair_type_to_subtype(rsip_key_pair_type_t key_pair_type)
-{
-    /* cast to uint8_t */
-    return (uint8_t) (key_pair_type & 0xff);
 }
 
 #endif                                 /* R_RSIP_COMMON_H */

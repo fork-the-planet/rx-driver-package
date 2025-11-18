@@ -5,12 +5,12 @@ r_mmcif_rx (MMC Mode MMCIF Driver)
 
 Document Number 
 ---------------
-R01AN4234JJ0121
-R01AN4234EJ0121
+R01AN4234JJ0122
+R01AN4234EJ0122
 
 Version
 -------
-v1.21
+v1.22
 
 Overview
 --------
@@ -54,7 +54,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp    v7.52
+* r_bsp    v7.60
 
 How to add to your project
 --------------------------
@@ -92,10 +92,10 @@ r_mmcif_rx
 +---doc
 |   |
 |   +---en
-|   |       r01an4234ej0121-rx-communication.pdf
+|   |       r01an4234ej0122-rx-communication.pdf
 |   |
 |   +---ja
-|           r01an4234jj0121-rx-communication.pdf
+|           r01an4234jj0122-rx-communication.pdf
 |
 +---src
     |   r_mmcif_cd.c

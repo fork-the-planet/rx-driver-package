@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_irq_rx
-VERSION = 		4.71
+VERSION = 		4.80
 MDF = V1,V2
 
 CONFIG_FOLDER = r_config

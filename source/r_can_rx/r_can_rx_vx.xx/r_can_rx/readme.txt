@@ -50,7 +50,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp_rx     v7.52 or greater (See platform.h)
+* r_bsp_rx     v7.60 or greater (See platform.h)
 
 How to add the driver to your project
 ----------------------------------------

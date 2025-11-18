@@ -52,6 +52,7 @@
 *         : 28.06.2024 4.50    Added support for RX260, RX261.
 *                              Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *         : 15.03.2025 4.51    Updated disclaimer.
+*         : 23.06.2025 4.52    Removed doc folder and updated .rcpc file in FITDemos.
 *******************************************************************************/
 #ifndef DTC_RX_IF_H
 #define DTC_RX_IF_H
@@ -74,7 +75,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define DTC_VERSION_MAJOR  (4)
-#define DTC_VERSION_MINOR  (51)
+#define DTC_VERSION_MINOR  (52)
 
 /*******************************************************************************
 Typedef definitions

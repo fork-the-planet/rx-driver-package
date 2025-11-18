@@ -67,7 +67,7 @@
         <zipsource>r_qspi_smstr_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.52</version>
+            <version>7.60</version>
         </dependency>
         <application>Communications</application>
         <application>Storage and Memory</application>

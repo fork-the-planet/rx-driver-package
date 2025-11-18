@@ -26,6 +26,7 @@ import base64
 from imgtool import image, imgtool_version
 from imgtool.version import decode_version
 from imgtool.dumpinfo import dump_imginfo
+from imgtool.rfc3394_keywrap import wrap_enckey
 from .keys import (
     RSAUsageError, ECDSAUsageError, Ed25519UsageError, X25519UsageError)
 
@@ -408,11 +409,12 @@ class BasedIntParamType(click.ParamType):
               help='send to OUTFILE the payload or payload''s digest instead '
               'of complied image. These data can be used for external image '
               'signing')
-@click.option('--encrypted-rx', metavar='filename',
+@click.option('-kw--enckey', metavar='filename',
               help='Encrypt image using the provided AES key. '
                    '(Not supported in direct-xip or ram-load mode.)')
-@click.option('--wrapped-enckey', metavar='filename',
-              help='Add th proviced wrapped key to the MCUboot trailer.')
+@click.option('-kw--kek', metavar='filename',
+              help='Wraps the key data entered with -kw--enckey using '
+                   'the provided AES key.')
 @click.command(help='''Create a signed or unsigned image\n
                INFILE and OUTFILE are parsed as Intel HEX if the params have
                .hex extension, otherwise binary format is used''')
@@ -421,7 +423,7 @@ def sign(key, public_key_format, align, version, pad_sig, header_size,
          endian, encrypt_keylen, encrypt, infile, outfile, dependencies,
          load_addr, hex_addr, erased_val, save_enctlv, security_counter,
          boot_record, custom_tlv, rom_fixed, max_align, clear, fix_sig,
-         fix_sig_pubkey, sig_out, vector_to_sign, encrypted_rx, wrapped_enckey):
+         fix_sig_pubkey, sig_out, vector_to_sign, kw__enckey, kw__kek):
 
     if confirm:
         # Confirmed but non-padded images don't make much sense, because
@@ -437,8 +439,9 @@ def sign(key, public_key_format, align, version, pad_sig, header_size,
     img.load(infile)
     key = load_key(key) if key else None
     enckey = load_key(encrypt) if encrypt else None
-    kw_enckey = load_bin(encrypted_rx) if encrypted_rx else None
-    kw_wrappedkey = load_bin(wrapped_enckey) if wrapped_enckey else None
+    kw_enckey = load_bin(kw__enckey) if kw__enckey else None
+    kw_key_enckey = load_bin(kw__kek) if kw__kek else None
+    kw_wrappedkey = wrap_enckey(kw_key_enckey, kw_enckey) if kw_key_enckey else None
     if enckey and key:
         if ((isinstance(key, keys.ECDSA256P1) and
              not isinstance(enckey, keys.ECDSA256P1Public))
@@ -452,11 +455,11 @@ def sign(key, public_key_format, align, version, pad_sig, header_size,
 
     if kw_enckey or kw_wrappedkey:
         if kw_enckey is None or kw_wrappedkey is None:
-            raise click.UsageError("--encrypted_rx and --wrapped_enckey must be set when "
+            raise click.UsageError("-kw__enckey and -kw__kek must be set when "
             "using the key wrap encryption function")
 
     if enckey and kw_enckey:
-        raise click.UsageError("--encrypt and --encrypted_rx can't be set at the same time.")
+        raise click.UsageError("--encrypt and -kw__enckey can't be set at the same time.")
     
     if pad_sig and hasattr(key, 'pad_sig'):
         key.pad_sig = True

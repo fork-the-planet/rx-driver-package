@@ -58,7 +58,7 @@
         <zipsource>r_rspia_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.52</version>
+            <version>7.60</version>
         </dependency>
         <application>Serial Communications</application>
         <desc>RSPIA Driver</desc>

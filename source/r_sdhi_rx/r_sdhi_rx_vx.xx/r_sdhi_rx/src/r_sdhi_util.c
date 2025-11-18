@@ -6,7 +6,7 @@
 /**********************************************************************************************************************
 * System Name  : SDHI Driver
 * File Name    : r_sdhi_util.c
-* Version      : 2.12
+* Version      : 2.13
 * Device       : RX
 * Abstract     : API & Sub module
 * Tool-Chain   : For RX e2_studio
@@ -24,6 +24,7 @@
 *              : 22.11.2019 2.06    Modified comment of API function to Doxygen style.
 *              : 27.12.2022 2.10    Updated slash format of included header file paths for Linux compatibility.
 *              : 15.03.2025 2.12    Updated disclaimer.
+*              : 30.10.2025 2.13    Modified comment of API function to Doxygen style.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -355,8 +356,8 @@ sdhi_status_t R_SDHI_GetWP(uint32_t channel, uint32_t * p_wp)
  * @details   Stores the values contained in the response registers (SDRSP10, SDRSP32, SDRSP54, and SDRSP76) 
  *            in the response register information structure. Divides and stores the contents of the response 
  *            among register sdrsp10, sdrsp32, sdrsp54, and sdrsp76, according to the response type. 
- *            Section 3.17 in application note shows the correspondence between the response register information
- *            structure and response storage destinations.
+ *            Section R_SDHI_GetResp() in application note shows the correspondence between the response register
+ *            information structure and response storage destinations.
  * @note      Before running this function, initialization processing by the R_SDHI_Open() function is required.
  */
 sdhi_status_t R_SDHI_GetResp(uint32_t channel, sdhi_get_resp_t * p_resp_reg)
@@ -450,7 +451,7 @@ sdhi_status_t R_SDHI_GetBuffRegAddress(uint32_t channel, uint32_t * p_reg_buff)
  * @param[in] channel
  *             Channel number : SDHI channel number to be used (starting from 0)
  * @param[in] reg
- *             SDHI base register offset value. Refer to the table in section 3.18 in application note, 
+ *             SDHI base register offset value. Refer to the table in section R_SDHI_OutReg() in application note,
  *             when setting macro definitions.
  * @param[in] data
  *             Register setting value
@@ -497,7 +498,7 @@ sdhi_status_t R_SDHI_OutReg(uint32_t channel, uint32_t reg, uint32_t data)
  * @param[in] channel
  *             Channel number : SDHI channel number to be used (starting from 0)
  * @param[in] reg
- *             SDHI base register offset value. Refer to the table in section 3.18 in application note, 
+ *             SDHI base register offset value. Refer to the table in section R_SDHI_OutReg() in application note,
  *             when setting macro definitions.
  * @param[out] *p_data
  *             Pointer to storage destination of acquired register value

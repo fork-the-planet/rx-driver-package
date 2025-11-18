@@ -32,9 +32,14 @@
         <series>RX700</series>
         <series>RX200</series>
         <group>RX65N</group>
+        <group>RX66N</group>
+        <group>RX671</group>
+        <group>RX72M</group>
         <group>RX72N</group>
         <group>RX261</group>
         <board>RSKRX65N</board>
+        <board>RSKRX671</board>
+        <board>RSKRX72M</board>
         <board>RSKRX72N</board>
         <board>GENERIC_RX261</board>
     </target>
@@ -48,7 +53,7 @@
         <zipsource>rm_mcuboot_vx.xx.zip</zipsource>
         <dependency>
             <module>r_flash_rx</module>
-            <version>5.21</version>
+            <version>5.22</version>
         </dependency>
         <application>Generic</application>
         <desc>MCUboot Library</desc>

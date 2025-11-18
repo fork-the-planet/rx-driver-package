@@ -51,6 +51,7 @@
 *         : 28.06.2024 5.70    Added support for RX260, RX261.
 *                              Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *         : 15.03.2025 5.71    Updated disclaimer.
+*         : 23.06.2025 5.72    Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 #ifndef CMT_HEADER_FILE
 #define CMT_HEADER_FILE
@@ -69,7 +70,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define CMT_RX_VERSION_MAJOR            (5)
-#define CMT_RX_VERSION_MINOR            (71)
+#define CMT_RX_VERSION_MINOR            (72)
 
 /* This define is used with the R_CMT_Control() function if not channel needs to input. */
 #define CMT_RX_NO_CHANNEL               (0xFFFFFFFF)

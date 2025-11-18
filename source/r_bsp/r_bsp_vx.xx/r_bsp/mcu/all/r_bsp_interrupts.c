@@ -30,6 +30,7 @@
 *                               Modified comment.
 *         : 31.05.2024 1.15     Fixed coding style.
 *         : 26.02.2025 1.16     Changed the disclaimer.
+*         : 28.05.2025 1.17     Changed the process to enable group interrupts.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -468,8 +469,12 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
         {
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPIE0));
 
-            /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPIE0)  = 0;
+            /* Check to make sure all interrupt sources are already disabled for this group. */
+            if (0 == ICU.GENIE0.LONG)
+            {
+                /* Casting is valid because it matches the type to the right side or argument. */
+                IR(ICU, GROUPIE0)  = 0;
+            }
 
             /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPIE0) = (uint8_t)((ipl > IPR(ICU, GROUPIE0)) ? ipl : IPR(ICU, GROUPIE0));
@@ -502,8 +507,12 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
         {
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPBE0));
 
-            /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPBE0)  = 0;
+            /* Check to make sure all interrupt sources are already disabled for this group. */
+            if (0 == ICU.GENBE0.LONG)
+            {
+                /* Casting is valid because it matches the type to the right side or argument. */
+                IR(ICU, GROUPBE0)  = 0;
+            }
 
             /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPBE0) = (uint8_t)((ipl > IPR(ICU, GROUPBE0)) ? ipl : IPR(ICU, GROUPBE0));
@@ -537,9 +546,6 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPBL0));
 
             /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPBL0)  = 0;
-
-            /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPBL0) = (uint8_t)((ipl > IPR(ICU, GROUPBL0)) ? ipl : IPR(ICU, GROUPBL0));
             R_BSP_InterruptRequestEnable(VECT(ICU, GROUPBL0));
         }
@@ -569,9 +575,6 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
         if (true == enable)
         {
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPBL1));
-
-            /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPBL1)  = 0;
 
             /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPBL1) = (uint8_t)((ipl > IPR(ICU, GROUPBL1)) ? ipl : IPR(ICU, GROUPBL1));
@@ -605,9 +608,6 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPBL2));
 
             /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPBL2)  = 0;
-
-            /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPBL2) = (uint8_t)((ipl > IPR(ICU, GROUPBL2)) ? ipl : IPR(ICU, GROUPBL2));
             R_BSP_InterruptRequestEnable(VECT(ICU, GROUPBL2));
         }
@@ -639,9 +639,6 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPAL0));
 
             /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPAL0)  = 0;
-
-            /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPAL0) = (uint8_t)((ipl > IPR(ICU, GROUPAL0)) ? ipl : IPR(ICU, GROUPAL0));
             R_BSP_InterruptRequestEnable(VECT(ICU, GROUPAL0));
         }
@@ -671,9 +668,6 @@ static bsp_int_err_t bsp_gr_int_enable_disable(bsp_int_src_t vector, bool enable
         if (true == enable)
         {
             R_BSP_InterruptRequestDisable(VECT(ICU, GROUPAL1));
-
-            /* Casting is valid because it matches the type to the right side or argument. */
-            IR(ICU, GROUPAL1)  = 0;
 
             /* Casting is valid because it matches the type to the right side or argument. */
             IPR(ICU, GROUPAL1) = (uint8_t)((ipl > IPR(ICU, GROUPAL1)) ? ipl : IPR(ICU, GROUPAL1));

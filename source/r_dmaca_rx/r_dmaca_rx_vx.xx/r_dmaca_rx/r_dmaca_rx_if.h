@@ -36,6 +36,7 @@
 *         : 28.06.2024 3.30    Added support for RX260, RX261.
 *         : 06.09.2024 3.40    Added support Nested Interrupt.
 *         : 15.03.2025 3.41    Updated disclaimer.
+*         : 23.06.2025 3.42    Removed doc folder and updated .rcpc file in FITDemos.
 *******************************************************************************/
 #ifndef DMACA_RX_IF_H
 #define DMACA_RX_IF_H
@@ -59,7 +60,7 @@ Macro definitions
 
 /* Version Number of API */
 #define DMACA_VERSION_MAJOR  (3)
-#define DMACA_VERSION_MINOR  (41)
+#define DMACA_VERSION_MINOR  (42)
 
 /* DMAC activation is disabled. */
 #define DMACA_ACTIVE_DISABLE              (0x00u)

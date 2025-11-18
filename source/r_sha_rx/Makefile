@@ -20,4 +20,3 @@ $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION)_extend.mdf:
 
 clean:
 	rm -rf $(TARGET_FOLDER)/$(MODULE_NAME)*.*
-

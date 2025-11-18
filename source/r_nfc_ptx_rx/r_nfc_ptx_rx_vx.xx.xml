@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+-->
+
+<refinfo>
+
+    <!-- multiple versions permitted -->
+    <toolchain>
+        <brand>Renesas</brand>
+        <product>RXC</product>
+        <version>3.07.00</version>
+    </toolchain>
+    <!-- only one target entry allowed; multiple sub tags permitted -->
+    <target>
+        <family>RX</family>
+        <series>RX200</series>
+        <group omit_board="true">RX261</group>
+    </target>
+
+    <!-- only one package entry allowed -->
+    <!-- multiple dependencies, applications, functions, and incdirs permitted -->
+    <package>
+        <type>fitmodule</type>
+        <name>r_nfc_ptx_rx</name>
+        <version>1.00</version>
+        <zipsource>r_nfc_ptx_rx_v1.00.zip</zipsource>
+        <dependency>
+            <module>r_bsp</module>
+            <version>7.53</version>
+        </dependency>
+        <dependency>
+            <module>r_byteq</module>
+            <version>2.11</version>
+        </dependency>
+        <dependency>
+            <module>r_sci_rx</module>
+            <version>5.30</version>
+        </dependency>
+        <dependency>
+            <module>r_cmt_rx</module>
+            <version>5.30</version>
+        </dependency>
+        <dependency>
+            <module>r_gpio_rx</module>
+            <version>5.11</version>
+        </dependency>
+        <dependency>
+            <module>r_irq_rx</module>
+            <version>4.71</version>
+        </dependency>
+        <application>NFC</application>
+        <desc>NFC PTX Module control functions for Renesas MCUs.</desc>
+        <details>Control Renesas PTX NFC Reader module.</details>
+        <function>connectivity</function>
+        <incdir>r_config</incdir>
+        <incdir>r_nfc_ptx_rx</incdir>
+        <incdir>r_nfc_ptx_rx/src</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/TRANSPARENT_MODE</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/TDC</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/RF_TEST</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/NSC/NSC_RD</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/NSC/NSC_IOTRD</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/NSC/NSC_CE</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/NSC</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/NDEF</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/NATIVE_TAG</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/IOT_READER</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/HCE</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/GPIO</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/FELICA_DTE</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS/COMMON</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/SRC/COMPS</incdir>
+        <incdir>r_nfc_ptx_rx/lib/nfc_reader_ptx_sdk/PLAT</incdir>
+    </package>
+    <sampleapplicationnote>
+    <documentno>R01AN7890</documentno>
+    </sampleapplicationnote>
+</refinfo>

@@ -5,7 +5,7 @@
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_memdrv_rx_if.h
-* Version      : 1.31
+* Version      : 1.40
 * Description  : Memory driver header file
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -24,6 +24,8 @@
 *                                   Added dependency modules to the options in MDF file.
 *                                   Updated demo projects.
 *              : 15.03.2025 1.31    Updated disclaimer.
+*              : 30.10.2025 1.40    Removed doc folder and updated .rcpc file in FITDemos.
+*                                   Updated the code with RSPI byte swap feature.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -43,7 +45,7 @@ Macro definitions
 #define MEMDRV_IF_H
 /* Version Number of API. */
 #define MEMDRV_VERSION_MAJOR                 (1)
-#define MEMDRV_VERSION_MINOR                 (31)
+#define MEMDRV_VERSION_MINOR                 (40)
 
 /* Define device no. */
 #define MEMDRV_DEV0                          (0)

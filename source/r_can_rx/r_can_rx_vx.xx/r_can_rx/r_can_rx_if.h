@@ -48,6 +48,7 @@
 *                              - Fixed issue cannot receive remote frames with extended ID in FIFO mailbox mode.
 *         : 29.03.2024 5.70    - Added Nested Interrupt support.
 *         : 15.03.2025 5.71    - Updated disclaimer.
+*         : 23.06.2025 5.72    - Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 #ifndef CAN_INTERFACE_HEADER_FILE
 #define CAN_INTERFACE_HEADER_FILE 
@@ -68,7 +69,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RCAN_RX_VERSION_MAJOR           (5)
-#define RCAN_RX_VERSION_MINOR           (71)
+#define RCAN_RX_VERSION_MINOR           (72)
 /* The process of getting the version number is done through the macro below. The version number is encoded where the
    top 2 bytes are the major version number and the bottom 2 bytes are the minor version number. For example,
    Version 4.25 would be returned as 0x00040019. */

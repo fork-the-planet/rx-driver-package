@@ -1,37 +1,23 @@
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/*
+* Copyright (c) 2024 - 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
-***********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
-* File Name    : r_rsip_sha.c
-* Description  : Interface definition for the r_rsip_sha RSIP module.
+* File Name    : r_rsip_hal.c
+* Description  : Interface definition for the RSIP HAL layer.
 ***********************************************************************************************************************/
 /**********************************************************************************************************************
 * History : DD.MM.YYYY Version  Description
 *         : 15.10.2024 1.00     First Release.
+*         : 31.07.2025 2.00     Added support for ECDH KDF and HMAC Suspend, Resume
+*         :                     Revised key management specification
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* Includes
+ * Includes
  **********************************************************************************************************************/
-#include "r_rsip_protected_rx_if.h"
 #include "r_rsip_public.h"
-#include "r_rsip_private.h"
-#include "../primitive/rx261/r_rsip_primitive.h"
 
 /***********************************************************************************************************************
  * Macro definitions
@@ -45,11 +31,11 @@
  * Private function prototypes
  **********************************************************************************************************************/
 
-static rsip_err_t sha_update (rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length);
-static rsip_err_t sha_finish (rsip_ctrl_t * const p_ctrl, uint8_t * p_digest);
-static rsip_err_t hmac_update (rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length);
-static rsip_err_t hmac_sign_finish (rsip_ctrl_t * const p_ctrl, uint8_t * p_mac);
-static rsip_err_t hmac_verify_finish (rsip_ctrl_t * const p_ctrl, const uint8_t * p_mac, const uint32_t mac_length);
+static rsip_ret_t sha_update(rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length);
+static rsip_ret_t sha_finish(rsip_ctrl_t * const p_ctrl, uint8_t * p_digest);
+static rsip_ret_t hmac_update(rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length);
+static rsip_ret_t hmac_sign_finish(rsip_ctrl_t * const p_ctrl, uint8_t * p_mac);
+static rsip_ret_t hmac_verify_finish(rsip_ctrl_t * const p_ctrl, const uint8_t * p_mac, const uint32_t mac_length);
 
 /***********************************************************************************************************************
  * Private global variables
@@ -57,8 +43,11 @@ static rsip_err_t hmac_verify_finish (rsip_ctrl_t * const p_ctrl, const uint8_t 
 
 static const uint32_t gs_hmac_length[] =
 {
-    [RSIP_KEY_HMAC_SHA224] = RSIP_PRV_BYTE_SIZE_DIGEST_SHA224,
-    [RSIP_KEY_HMAC_SHA256] = RSIP_PRV_BYTE_SIZE_DIGEST_SHA256,
+    [RSIP_PRV_KEY_SUBTYPE_HMAC_SHA1]   = RSIP_PRV_BYTE_SIZE_DIGEST_SHA1,
+    [RSIP_PRV_KEY_SUBTYPE_HMAC_SHA224] = RSIP_PRV_BYTE_SIZE_DIGEST_SHA224,
+    [RSIP_PRV_KEY_SUBTYPE_HMAC_SHA256] = RSIP_PRV_BYTE_SIZE_DIGEST_SHA256,
+    [RSIP_PRV_KEY_SUBTYPE_HMAC_SHA384] = RSIP_PRV_BYTE_SIZE_DIGEST_SHA384,
+    [RSIP_PRV_KEY_SUBTYPE_HMAC_SHA512] = RSIP_PRV_BYTE_SIZE_DIGEST_SHA512,
 };
 
 /***********************************************************************************************************************
@@ -73,37 +62,108 @@ static const uint32_t gs_hmac_length[] =
 /***********************************************************************************************************************
  * Functions
  **********************************************************************************************************************/
+
 /*******************************************************************************************************************//**
- * Prepares a SHA generation.<br>
- * Implements @ref rsip_api_t::shaInit.
+ * Generates SHA message digest. (Total input message must be less than 2^64 bits.)
  *
- * \<Usage Precautions>
- * @arg Hash type must follow the list below.
- * <table>
- * <caption id="shaMessHash2"> </caption>
- * <tr><th>Hash Type<th>Corresponding Parameter</tr>
- * <tr><td>SHA224<td>RSIP_HASH_TYPE_SHA224</td>
- * <tr><td>SHA256<td>RSIP_HASH_TYPE_SHA256</td>
- * </table>
+ * Implements @ref rsip_api_t::shaCompute.
  *
- * \<Operational State><br>
- * This API can only be executed in the STATE_MAIN,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal13"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>FSP_SUCCESS<td>STATE_SHA</td>
- * <tr><td>Others<td>No change</td>
- * </table>
+ * @par Conditions
+ * See R_RSIP_SHA_Init().
+ *
+ * @par Output length
+ * See R_RSIP_SHA_Finish().
+ *
+ * @par State transition
+ * This API can only be executed in **STATE_MAIN**, and does not cause any state transitions.
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
  * @retval FSP_ERR_NOT_OPEN                      Module is not open.
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
- * @retval FSP_ERR_INVALID_ARGUMENT              Input key type or mode is illegal.
+ * @retval FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT A resource conflict occurred because a hardware resource required
+ *                                               by the processing is in use by other processing.
+ * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
-**********************************************************************************************************************/
-fsp_err_t R_RSIP_SHA_Init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const hash_type)
+ *
+ * @sa Section @ref r-rsip-protected-supported-algorithms "Supported Algorithms".
+ **********************************************************************************************************************/
+fsp_err_t R_RSIP_SHA_Compute (rsip_ctrl_t * const    p_ctrl,
+                              rsip_hash_type_t const hash_type,
+                              uint8_t const * const  p_message,
+                              uint32_t const         message_length,
+                              uint8_t * const        p_digest)
+{
+    rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
+
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ASSERT(p_instance_ctrl);
+    FSP_ASSERT(p_message || (0 == message_length));
+    FSP_ASSERT(p_digest);
+    FSP_ERROR_RETURN(RSIP_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
+
+    /* Check configuration */
+    FSP_ERROR_RETURN(g_sha_enabled[hash_type], FSP_ERR_NOT_ENABLED);
+#endif
+
+    /* Check state */
+    FSP_ERROR_RETURN(RSIP_STATE_MAIN == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
+
+    /* Call function (cast to match the argument type with the function) */
+    rsip_ret_t rsip_ret = r_rsip_sha1sha2_init_final(hash_type, p_message, message_length, p_digest);
+
+    /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
+    switch (rsip_ret)
+    {
+        case RSIP_RET_PASS:
+        {
+            err = FSP_SUCCESS;
+            break;
+        }
+
+        case RSIP_RET_RESOURCE_CONFLICT:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
+            break;
+        }
+
+        default:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_FATAL;
+        }
+    }
+
+    return err;
+}
+
+/*******************************************************************************************************************//**
+ * Starts SHA operation.
+ *
+ * Implements @ref rsip_api_t::shaInit.
+ *
+ * @par Conditions
+ * Argument hash_function accepts any member of enumeration @ref rsip_hash_type_t.
+ *
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_MAIN**, and causes state transition.
+ *
+ * |Return value|Next state|
+ * |------------|----------|
+ * |FSP_SUCCESS |STATE_SHA |
+ * |Others      |No change |
+ * @endparblock
+ *
+ * @retval FSP_SUCCESS                           Normal termination.
+ * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
+ * @retval FSP_ERR_NOT_OPEN                      Module is not open.
+ * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
+ * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
+ *
+ * @sa Section @ref r-rsip-protected-supported-algorithms "Supported Algorithms".
+ **********************************************************************************************************************/
+fsp_err_t R_RSIP_SHA_Init (rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const hash_type)
 {
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
@@ -119,20 +179,12 @@ fsp_err_t R_RSIP_SHA_Init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const has
 }
 
 /*******************************************************************************************************************//**
- * Inputs message.<br>
+ * Inputs SHA message. (Total input message must be less than 2^64 bits.)
+ *
  * Implements @ref rsip_api_t::shaUpdate.
  *
- * \<Usage Precautions>
- * @arg Requires prerequisite that R_RSIP_SHA_Init, R_RSIP_SHA_Update results in FSP_SUCCESS.
- *
- * \<Operational State><br>
- * This API can only be executed in the STATE_SHA,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal14"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>Any<td>No change</td>
- * </table>
+ * @par State transition
+ * This API can only be executed in **STATE_SHA**, and does not cause any state transitions.
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
@@ -143,7 +195,7 @@ fsp_err_t R_RSIP_SHA_Init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const has
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_SHA_Update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message, uint32_t const message_length)
+fsp_err_t R_RSIP_SHA_Update (rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message, uint32_t const message_length)
 {
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
@@ -157,28 +209,29 @@ fsp_err_t R_RSIP_SHA_Update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_
 }
 
 /*******************************************************************************************************************//**
- * Finalizes a SHA generation.<br>
+ * Outputs SHA message digest.
+ *
  * Implements @ref rsip_api_t::shaFinish.
  *
- * \<Usage Precautions>
- * @arg Requires prerequisite that R_RSIP_SHA_Init, R_RSIP_SHA_Update results in FSP_SUCCESS.
- * @arg The length of message digest is the list below.
- * <table>
- * <caption id="shaMessLen2"> </caption>
- * <tr><th>Hash Type<th>digest length</tr>
- * <tr><td>SHA224<td>28</td>
- * <tr><td>SHA256<td>32</td>
- * </table>
+ * @par Output length
+ * Output length to p_digest depends on hash_function.
+ *   - 28 ( @ref RSIP_HASH_TYPE_SHA224, @ref RSIP_HASH_TYPE_SHA512_224)
+ *   - 32 ( @ref RSIP_HASH_TYPE_SHA256, @ref RSIP_HASH_TYPE_SHA512_256)
+ *   - 48 ( @ref RSIP_HASH_TYPE_SHA384)
+ *   - 64 ( @ref RSIP_HASH_TYPE_SHA512)
  *
- * \<Operational State><br>
- * This API can only be executed in the STATE_SHA,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal15"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>FSP_ERR_ASSERTION<br>FSP_ERR_NOT_OPEN<td>No change</td>
- * <tr><td>Others<td>STATE_MAIN</td>
- * </table>
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_SHA**, and causes state transition.
+ *
+ * |Return value         |Next state|
+ * |---------------------|----------|
+ * |FSP_SUCCESS          |STATE_MAIN|
+ * |FSP_ERR_ASSERTION    |No change |
+ * |FSP_ERR_NOT_OPEN     |No change |
+ * |FSP_ERR_INVALID_STATE|No change |
+ * |Others               |STATE_MAIN|
+ * @endparblock
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
@@ -189,7 +242,7 @@ fsp_err_t R_RSIP_SHA_Update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_SHA_Finish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest)
+fsp_err_t R_RSIP_SHA_Finish (rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest)
 {
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
@@ -227,10 +280,9 @@ fsp_err_t R_RSIP_SHA_Finish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_SHA_Suspend(rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t * const p_handle)
+fsp_err_t R_RSIP_SHA_Suspend (rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t * const p_handle)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
-    fsp_err_t              err             = FSP_ERR_CRYPTO_RSIP_FATAL;
 
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     FSP_ASSERT(p_instance_ctrl);
@@ -241,29 +293,31 @@ fsp_err_t R_RSIP_SHA_Suspend(rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t * con
     /* Check state */
     FSP_ERROR_RETURN(RSIP_STATE_SHA == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
 
-    rsip_err_t rsip_ret;
+    rsip_ret_t rsip_ret;
     switch (p_instance_ctrl->handle.sha.handle_state)
     {
         /* If the state is update, call suspension function */
         case RSIP_USER_HANDLE_STATE_UPDATE:
         {
+            /* Read internal state */
+            rsip_ret = r_rsip_sha1sha2_suspend(p_instance_ctrl->handle.sha.internal_state);
+
             /* Handle state transition */
             p_instance_ctrl->handle.sha.handle_state = RSIP_USER_HANDLE_STATE_RESUME;
-
-            rsip_ret = RSIP_SUCCESS;
             break;
         }
 
         default:
         {
-            rsip_ret = RSIP_SUCCESS;
+            rsip_ret = RSIP_RET_PASS;
         }
     }
 
     /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
     switch (rsip_ret)
     {
-        case RSIP_SUCCESS:
+        case RSIP_RET_PASS:
         {
             /* Copy handle */
             *p_handle = p_instance_ctrl->handle.sha;
@@ -304,7 +358,7 @@ fsp_err_t R_RSIP_SHA_Suspend(rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t * con
  * @retval FSP_ERR_NOT_OPEN                      Module is not open.
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_SHA_Resume(rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t const * const p_handle)
+fsp_err_t R_RSIP_SHA_Resume (rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t const * const p_handle)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
 
@@ -327,21 +381,18 @@ fsp_err_t R_RSIP_SHA_Resume(rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t const 
 }
 
 /*******************************************************************************************************************//**
- * Prepares a HMAC generation.<br>
- * Implements @ref rsip_api_t::hmacInit.
+ * Generates HMAC. (Total input message must be less than 2^64 bits.)
  *
- * \<Usage Precautions>
- * @arg The key type of p_wrapped_key must be RSIP_KEY_TYPE_HMAC_xxx.
+ * Implements @ref rsip_api_t::hmacCompute.
  *
- * \<Operational State><br>
- * This API can only be executed in the STATE_MAIN,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal18"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>FSP_SUCCESS<td>STATE_HMAC</td>
- * <tr><td>Others<td>No change</td>
- * </table>
+ * @par Conditions
+ * See R_RSIP_HMAC_Init().
+ *
+ * @par Output length
+ * See R_RSIP_HMAC_SignFinish().
+ *
+ * @par State transition
+ * This API can only be executed in **STATE_MAIN**, and does not cause any state transitions.
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
@@ -349,24 +400,220 @@ fsp_err_t R_RSIP_SHA_Resume(rsip_ctrl_t * const p_ctrl, rsip_sha_handle_t const 
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
  * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
  * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key value is illegal.
+ *
  * @retval FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT A resource conflict occurred because a hardware resource required
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
+ *
+ * @sa Section @ref r-rsip-protected-supported-algorithms "Supported Algorithms".
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_HMAC_Init(rsip_ctrl_t * const p_ctrl, rsip_wrapped_key_t const * const p_wrapped_key)
+fsp_err_t R_RSIP_HMAC_Compute (rsip_ctrl_t * const        p_ctrl,
+                               const rsip_wrapped_key_t * p_wrapped_key,
+                               uint8_t const * const      p_message,
+                               uint32_t const             message_length,
+                               uint8_t * const            p_mac)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
 
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     FSP_ASSERT(p_instance_ctrl);
     FSP_ASSERT(p_wrapped_key);
+    FSP_ASSERT(p_wrapped_key->p_value);
+    FSP_ASSERT(p_message || (0 == message_length));
+    FSP_ASSERT(p_mac);
     FSP_ERROR_RETURN(RSIP_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
 
-    /* Check key type */
-    FSP_ERROR_RETURN(RSIP_ALG_HMAC == p_wrapped_key->alg, FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL);
+    rsip_key_type_extend_t key_type_ext = r_rsip_key_type_parse(p_wrapped_key->type);          // Parse key type
 
-    /* Check configuration */
-    FSP_ERROR_RETURN(g_hmac_enabled[p_wrapped_key->subtype], FSP_ERR_NOT_ENABLED);
+    FSP_ERROR_RETURN(RSIP_PRV_ALG_HMAC == key_type_ext.alg, FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL); // Check key type
+    FSP_ERROR_RETURN(g_hmac_enabled[key_type_ext.subtype], FSP_ERR_NOT_ENABLED);               // Check configuration
+#endif
+
+    /* Check state */
+    FSP_ERROR_RETURN(RSIP_STATE_MAIN == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
+
+    /* Call function (cast to match the argument type with the function) */
+    rsip_ret_t rsip_ret = r_rsip_hmac_init_final(p_wrapped_key, p_message, message_length, p_mac);
+
+    /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
+    switch (rsip_ret)
+    {
+        case RSIP_RET_PASS:
+        {
+            err = FSP_SUCCESS;
+            break;
+        }
+
+        case RSIP_RET_RESOURCE_CONFLICT:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
+            break;
+        }
+
+        case RSIP_RET_KEY_FAIL:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL;
+            break;
+        }
+
+        /* RSIP_RET_FAIL is not used in this function */
+        case RSIP_RET_FAIL:
+        default:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_FATAL;
+        }
+    }
+
+    return err;
+}
+
+/*******************************************************************************************************************//**
+ * Verifies HMAC. (Total input message must be less than 2^64 bits.)
+ *
+ * Implements @ref rsip_api_t::hmacVerify.
+ *
+ * @par Conditions
+ * See R_RSIP_HMAC_Init() and R_RSIP_HMAC_VerifyFinish().
+ *
+ * @par State transition
+ * This API can only be executed in **STATE_MAIN**, and does not cause any state transitions.
+ *
+ * @retval FSP_SUCCESS                           Normal termination.
+ * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
+ * @retval FSP_ERR_NOT_OPEN                      Module is not open.
+ * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
+ * @retval FSP_ERR_INVALID_SIZE                  mac_length is illegal.
+ * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
+ * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key value is illegal.
+ * @retval FSP_ERR_CRYPTO_RSIP_FAIL              MAC verification is failed.
+ * @retval FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT A resource conflict occurred because a hardware resource required
+ *                                               by the processing is in use by other processing.
+ * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
+ *
+ * @sa Section @ref r-rsip-protected-supported-algorithms "Supported Algorithms".
+ **********************************************************************************************************************/
+fsp_err_t R_RSIP_HMAC_Verify (rsip_ctrl_t * const        p_ctrl,
+                              const rsip_wrapped_key_t * p_wrapped_key,
+                              uint8_t const * const      p_message,
+                              uint32_t const             message_length,
+                              uint8_t const * const      p_mac,
+                              uint32_t const             mac_length)
+{
+    rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
+
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ASSERT(p_instance_ctrl);
+    FSP_ASSERT(p_wrapped_key);
+    FSP_ASSERT(p_wrapped_key->p_value);
+    FSP_ASSERT(p_message || (0 == message_length));
+    FSP_ASSERT(p_mac);
+    FSP_ERROR_RETURN(RSIP_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
+#endif
+
+    rsip_key_type_extend_t key_type_ext = r_rsip_key_type_parse(p_wrapped_key->type);          // Parse key type
+
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ERROR_RETURN(RSIP_PRV_ALG_HMAC == key_type_ext.alg, FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL); // Check key type
+    FSP_ERROR_RETURN(g_hmac_enabled[key_type_ext.subtype], FSP_ERR_NOT_ENABLED);               // Check configuration
+#endif
+
+    /* mac_length must be 4 or greater (common) */
+    FSP_ERROR_RETURN(4 <= mac_length, FSP_ERR_INVALID_SIZE);
+
+    /* mac_length must be MAC size or less */
+    FSP_ERROR_RETURN(mac_length <= gs_hmac_length[key_type_ext.subtype], FSP_ERR_INVALID_SIZE);
+
+    /* Check state */
+    FSP_ERROR_RETURN(RSIP_STATE_MAIN == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
+
+    /* Call function (cast to match the argument type with the function) */
+    rsip_ret_t rsip_ret = r_rsip_hmac_init_verify(p_wrapped_key, p_message, message_length, p_mac, mac_length);
+
+    /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
+    switch (rsip_ret)
+    {
+        case RSIP_RET_PASS:
+        {
+            err = FSP_SUCCESS;
+            break;
+        }
+
+        case RSIP_RET_RESOURCE_CONFLICT:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
+            break;
+        }
+
+        case RSIP_RET_KEY_FAIL:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL;
+            break;
+        }
+
+        case RSIP_RET_FAIL:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_FAIL;
+            break;
+        }
+
+        default:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_FATAL;
+        }
+    }
+
+    return err;
+}
+
+/*******************************************************************************************************************//**
+ * Starts HMAC operation.
+ *
+ * Implements @ref rsip_api_t::hmacInit.
+ *
+ * @par Conditions
+ * Key type of p_wrapped_key must be one of the following:
+ * - @ref RSIP_KEY_TYPE_HMAC_SHA224
+ * - @ref RSIP_KEY_TYPE_HMAC_SHA256
+ * - @ref RSIP_KEY_TYPE_HMAC_SHA384
+ * - @ref RSIP_KEY_TYPE_HMAC_SHA512
+ *
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_MAIN**, and causes state transition.
+ *
+ * |Return value|Next state|
+ * |------------|----------|
+ * |FSP_SUCCESS |STATE_HMAC|
+ * |Others      |No change |
+ * @endparblock
+ *
+ * @retval FSP_SUCCESS                           Normal termination.
+ * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
+ * @retval FSP_ERR_NOT_OPEN                      Module is not open.
+ * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
+ * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
+ * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key is illegal.
+ *
+ * @sa Section @ref r-rsip-protected-supported-algorithms "Supported Algorithms".
+ **********************************************************************************************************************/
+fsp_err_t R_RSIP_HMAC_Init (rsip_ctrl_t * const p_ctrl, rsip_wrapped_key_t const * const p_wrapped_key)
+{
+    rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
+
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ASSERT(p_instance_ctrl);
+    FSP_ASSERT(p_wrapped_key);
+    FSP_ASSERT(p_wrapped_key->p_value);
+    FSP_ERROR_RETURN(RSIP_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
+#endif
+
+    rsip_key_type_extend_t key_type_ext = r_rsip_key_type_parse(p_wrapped_key->type);          // Parse key type
+
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ERROR_RETURN(RSIP_PRV_ALG_HMAC == key_type_ext.alg, FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL); // Check key type
+    FSP_ERROR_RETURN(g_hmac_enabled[key_type_ext.subtype], FSP_ERR_NOT_ENABLED);               // Check configuration
 #endif
 
     /* Check state */
@@ -379,10 +626,28 @@ fsp_err_t R_RSIP_HMAC_Init(rsip_ctrl_t * const p_ctrl, rsip_wrapped_key_t const 
     p_handle->total_length    = 0;
 
     /* Copy wrapped key */
-    memcpy(p_handle->wrapped_key, p_wrapped_key, RSIP_BYTE_SIZE_WRAPPED_KEY_HMAC_SHA256);
+    p_handle->wrapped_key.type    = p_wrapped_key->type;
+    p_handle->wrapped_key.p_value = p_handle->wrapped_key_value;
+    memcpy(p_handle->wrapped_key_value, p_wrapped_key->p_value, RSIP_BYTE_SIZE_WRAPPED_KEY(p_wrapped_key->type));
 
     /* Set block size */
-    p_handle->block_size = RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA1_SHA224_SHA256;
+    switch (key_type_ext.subtype)
+    {
+        /* SHA-1, SHA-224, SHA-256 */
+        case RSIP_PRV_KEY_SUBTYPE_HMAC_SHA1:
+        case RSIP_PRV_KEY_SUBTYPE_HMAC_SHA224:
+        case RSIP_PRV_KEY_SUBTYPE_HMAC_SHA256:
+        {
+            p_handle->block_size = RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA1_SHA224_SHA256;
+            break;
+        }
+
+        /* SHA-384, SHA-512 */
+        default:
+        {
+            p_handle->block_size = RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA384_SHA512;
+        }
+    }
 
     /* State transition */
     p_instance_ctrl->state = RSIP_STATE_HMAC;
@@ -392,38 +657,26 @@ fsp_err_t R_RSIP_HMAC_Init(rsip_ctrl_t * const p_ctrl, rsip_wrapped_key_t const 
 }
 
 /*******************************************************************************************************************//**
- * Inputs message.<br>
+ * Inputs HMAC message. (Total input message must be less than 2^64 bits.)
+ *
  * Implements @ref rsip_api_t::hmacUpdate.
  *
- * \<Usage Precautions>
- * @arg Requires prerequisite that R_RSIP_HMAC_Init, R_RSIP_HMAC_Update results in FSP_SUCCESS.
- *
- * \<Operational State><br>
- * This API can only be executed in the STATE_HMAC,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal19"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>Any<td>No change</td>
- * </table>
+ * @par State transition
+ * This API can only be executed in **STATE_HMAC**, and does not cause any state transitions.
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
  * @retval FSP_ERR_NOT_OPEN                      Module is not open.
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
- * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
- * @retval FSP_ERR_INVALID_ARGUMENT              Input key type or mode is illegal.
- * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key value is illegal.
+ * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key is illegal.
  * @retval FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT A resource conflict occurred because a hardware resource required
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_HMAC_Update(rsip_ctrl_t * const p_ctrl,
-                            uint8_t const * const p_message,
-                            uint32_t const message_length)
+fsp_err_t R_RSIP_HMAC_Update (rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message,
+                              uint32_t const message_length)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
-    fsp_err_t              err             = FSP_ERR_CRYPTO_RSIP_FATAL;
 
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     FSP_ASSERT(p_instance_ctrl);
@@ -434,17 +687,17 @@ fsp_err_t R_RSIP_HMAC_Update(rsip_ctrl_t * const p_ctrl,
     /* Check state */
     FSP_ERROR_RETURN(RSIP_STATE_HMAC == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
 
-    rsip_hmac_handle_t * p_handle = &p_instance_ctrl->handle.hmac;
-
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
     if (0 == message_length)
     {
         err = FSP_SUCCESS;
     }
     else
     {
-        rsip_err_t      rsip_ret      = RSIP_SUCCESS;
-        const uint8_t * p_msg_pos     = p_message;
-        uint32_t        processed_len = 0;
+        rsip_ret_t           rsip_ret      = RSIP_RET_PASS;
+        rsip_hmac_handle_t * p_handle      = &p_instance_ctrl->handle.hmac;
+        const uint8_t      * p_msg_pos     = p_message;
+        uint32_t             processed_len = 0;
 
         /* (1) Remaining message in buffer and head of new input message */
         if ((0 != p_handle->buffered_length) &&
@@ -464,10 +717,10 @@ fsp_err_t R_RSIP_HMAC_Update(rsip_ctrl_t * const p_ctrl,
         }
 
         /* (2) New input message except last block */
-        if ((p_handle->block_size < message_length) && (RSIP_SUCCESS == rsip_ret))
+        if ((p_handle->block_size < message_length) && (RSIP_RET_PASS == rsip_ret))
         {
             uint32_t len = ((message_length - processed_len - 1) / p_handle->block_size) *
-                            p_handle->block_size;
+                           p_handle->block_size;
 
             /* Call function */
             rsip_ret = hmac_update(p_ctrl, p_message + processed_len, len);
@@ -479,32 +732,32 @@ fsp_err_t R_RSIP_HMAC_Update(rsip_ctrl_t * const p_ctrl,
         /* Check error */
         switch (rsip_ret)
         {
-            case RSIP_SUCCESS:
+            case RSIP_RET_PASS:
             {
                 /* (3) Last block */
                 memcpy(p_handle->buffer + p_handle->buffered_length,
-                        p_message + processed_len,
-                        message_length - processed_len);
+                       p_message + processed_len,
+                       message_length - processed_len);
                 p_handle->buffered_length += message_length - processed_len;
 
                 err = FSP_SUCCESS;
                 break;
             }
 
-            case RSIP_ERR_RESOURCE_CONFLICT:
+            case RSIP_RET_RESOURCE_CONFLICT:
             {
                 err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
                 break;
             }
 
-            case RSIP_ERR_KEY_SET:
+            case RSIP_RET_KEY_FAIL:
             {
                 err = FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL;
                 break;
             }
 
-            /* RSIP_ERR_FAIL is not used in this function */
-            case RSIP_ERR_FAIL:
+            /* RSIP_RET_FAIL is not used in this function */
+            case RSIP_RET_FAIL:
             default:
             {
                 err = FSP_ERR_CRYPTO_RSIP_FATAL;
@@ -516,44 +769,42 @@ fsp_err_t R_RSIP_HMAC_Update(rsip_ctrl_t * const p_ctrl,
 }
 
 /*******************************************************************************************************************//**
- * Finalizes a HMAC generation.<br>
+ * Outputs HMAC.
+ *
  * Implements @ref rsip_api_t::hmacSignFinish.
  *
- * \<Usage Precautions>
- * @arg Requires prerequisite that R_RSIP_HMAC_Init, R_RSIP_HMAC_Update results in FSP_SUCCESS.
- * @arg The length of MAC is the list below.
- * <table>
- * <caption id="MacType3"> </caption>
- * <tr><th>HMAC Type<th>MAC length</tr>
- * <tr><td>HMAC-SHA224<td>28</td>
- * <tr><td>HMAC-SHA256<td>32</td>
- * </table>
+ * @par Output length
+ * Output length to p_mac depends on key type of p_wrapped_key.
+ * - 28 ( @ref RSIP_KEY_TYPE_HMAC_SHA224)
+ * - 32 ( @ref RSIP_KEY_TYPE_HMAC_SHA256)
+ * - 48 ( @ref RSIP_KEY_TYPE_HMAC_SHA384)
+ * - 64 ( @ref RSIP_KEY_TYPE_HMAC_SHA512)
  *
- * \<Operational State><br>
- * This API can only be executed in the STATE_HMAC,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal20"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>FSP_ERR_ASSERTION<br>FSP_ERR_NOT_OPEN<br>FSP_ERR_INVALID_STATE<td>No change</td>
- * <tr><td>Others<td>STATE_MAIN</td>
- * </table>
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_HMAC**, and causes state transition.
+ *
+ * |Return value         |Next state|
+ * |---------------------|----------|
+ * |FSP_SUCCESS          |STATE_MAIN|
+ * |FSP_ERR_ASSERTION    |No change |
+ * |FSP_ERR_NOT_OPEN     |No change |
+ * |FSP_ERR_INVALID_STATE|No change |
+ * |Others               |STATE_MAIN|
+ * @endparblock
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
  * @retval FSP_ERR_NOT_OPEN                      Module is not open.
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
- * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
- * @retval FSP_ERR_INVALID_ARGUMENT              Input key type or mode is illegal.
- * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key value is illegal.
+ * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key is illegal.
  * @retval FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT A resource conflict occurred because a hardware resource required
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_HMAC_SignFinish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_mac)
+fsp_err_t R_RSIP_HMAC_SignFinish (rsip_ctrl_t * const p_ctrl, uint8_t * const p_mac)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
-    fsp_err_t              err             = FSP_ERR_CRYPTO_RSIP_FATAL;
 
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     FSP_ASSERT(p_instance_ctrl);
@@ -565,12 +816,13 @@ fsp_err_t R_RSIP_HMAC_SignFinish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_m
     FSP_ERROR_RETURN(RSIP_STATE_HMAC == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
 
     /* Call function */
-    rsip_err_t rsip_ret = hmac_sign_finish(p_ctrl, p_mac);
+    rsip_ret_t rsip_ret = hmac_sign_finish(p_ctrl, p_mac);
 
     /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
     switch (rsip_ret)
     {
-        case RSIP_SUCCESS:
+        case RSIP_RET_PASS:
         {
             /* State transition */
             p_instance_ctrl->state = RSIP_STATE_MAIN;
@@ -579,20 +831,20 @@ fsp_err_t R_RSIP_HMAC_SignFinish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_m
             break;
         }
 
-        case RSIP_ERR_RESOURCE_CONFLICT:
+        case RSIP_RET_RESOURCE_CONFLICT:
         {
             err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
             break;
         }
 
-        case RSIP_ERR_KEY_SET:
+        case RSIP_RET_KEY_FAIL:
         {
             err = FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL;
             break;
         }
 
-        /* RSIP_ERR_FAIL is not used in this function */
-        case RSIP_ERR_FAIL:
+        /* RSIP_RET_FAIL is not used in this function */
+        case RSIP_RET_FAIL:
         default:
         {
             err = FSP_ERR_CRYPTO_RSIP_FATAL;
@@ -603,46 +855,45 @@ fsp_err_t R_RSIP_HMAC_SignFinish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_m
 }
 
 /*******************************************************************************************************************//**
- * Finalizes a HMAC verification.<br>
+ * Verifies HMAC.
+ *
  * Implements @ref rsip_api_t::hmacVerifyFinish.
  *
- * \<Usage Precautions>
- * @arg Requires prerequisite that R_RSIP_HMAC_Init, R_RSIP_HMAC_Update results in FSP_SUCCESS.
- * @arg The length of MAC must follow the list below.
- * <table>
- * <caption id="MacType4"> </caption>
- * <tr><th>HMAC Type<th>MAC length</tr>
- * <tr><td>HMAC-SHA224<td>3 to 28</td>
- * <tr><td>HMAC-SHA256<td>4 to 32</td>
- * </table>
+ * @par Conditions
+ * Argument mac_length depends on key type of p_wrapped_key. Usually the longest length is recommended.
+ * - 4 to 28 ( @ref RSIP_KEY_TYPE_HMAC_SHA224)
+ * - 4 to 32 ( @ref RSIP_KEY_TYPE_HMAC_SHA256)
+ * - 4 to 48 ( @ref RSIP_KEY_TYPE_HMAC_SHA384)
+ * - 4 to 64 ( @ref RSIP_KEY_TYPE_HMAC_SHA512)
  *
- * \<Operational State><br>
- * This API can only be executed in the STATE_HMAC,
- * and the state after execution changes as follows depending on the return value.
- * <table>
- * <caption id="RetVal21"> </caption>
- * <tr><th>Return Value<th>State after execution</tr>
- * <tr><td>FSP_ERR_ASSERTION<br>FSP_ERR_NOT_OPEN<br>FSP_ERR_INVALID_STATE<br>FSP_ERR_INVALID_SIZE<td>No change</td>
- * <tr><td>Others<td>STATE_MAIN</td>
- * </table>
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_HMAC**, and causes state transition.
+ *
+ * |Return value         |Next state|
+ * |---------------------|----------|
+ * |FSP_SUCCESS          |STATE_MAIN|
+ * |FSP_ERR_ASSERTION    |No change |
+ * |FSP_ERR_NOT_OPEN     |No change |
+ * |FSP_ERR_INVALID_STATE|No change |
+ * |FSP_ERR_INVALID_SIZE |No change |
+ * |Others               |STATE_MAIN|
+ * @endparblock
  *
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
  * @retval FSP_ERR_NOT_OPEN                      Module is not open.
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
  * @retval FSP_ERR_INVALID_SIZE                  mac_length is illegal.
- * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key value is illegal.
- * @retval FSP_ERR_NOT_ENABLED                   Input key type is disabled in this function by configuration.
- * @retval FSP_ERR_INVALID_ARGUMENT              Input key type or mode is illegal.
+ * @retval FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL      Input key is illegal.
  * @retval FSP_ERR_CRYPTO_RSIP_FAIL              MAC verification is failed.
  * @retval FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT A resource conflict occurred because a hardware resource required
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t R_RSIP_HMAC_VerifyFinish(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_mac, uint32_t const mac_length)
+fsp_err_t R_RSIP_HMAC_VerifyFinish (rsip_ctrl_t * const p_ctrl, uint8_t const * const p_mac, uint32_t const mac_length)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
-    fsp_err_t              err             = FSP_ERR_CRYPTO_RSIP_FATAL;
 
 #if RSIP_CFG_PARAM_CHECKING_ENABLE
     FSP_ASSERT(p_instance_ctrl);
@@ -653,22 +904,23 @@ fsp_err_t R_RSIP_HMAC_VerifyFinish(rsip_ctrl_t * const p_ctrl, uint8_t const * c
     /* Check state */
     FSP_ERROR_RETURN(RSIP_STATE_HMAC == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
 
+    rsip_hmac_handle_t   * p_handle     = &p_instance_ctrl->handle.hmac;
+    rsip_key_type_extend_t key_type_ext = r_rsip_key_type_parse(p_handle->wrapped_key.type);
+
     /* mac_length must be 4 or greater (common) */
     FSP_ERROR_RETURN(4 <= mac_length, FSP_ERR_INVALID_SIZE);
 
-    rsip_hmac_handle_t * p_handle = &p_instance_ctrl->handle.hmac;
-
     /* mac_length must be MAC size or less */
-    FSP_ERROR_RETURN(mac_length <= gs_hmac_length[((rsip_wrapped_key_t *) &(p_handle->wrapped_key))->subtype],
-                    FSP_ERR_INVALID_SIZE);
+    FSP_ERROR_RETURN(mac_length <= gs_hmac_length[key_type_ext.subtype], FSP_ERR_INVALID_SIZE);
 
     /* Call function (cast to match the argument type with the function) */
-    rsip_err_t rsip_ret = hmac_verify_finish(p_ctrl, p_mac, mac_length);
+    rsip_ret_t rsip_ret = hmac_verify_finish(p_ctrl, p_mac, mac_length);
 
     /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
     switch (rsip_ret)
     {
-        case RSIP_SUCCESS:
+        case RSIP_RET_PASS:
         {
             /* State transition */
             p_instance_ctrl->state = RSIP_STATE_MAIN;
@@ -677,19 +929,19 @@ fsp_err_t R_RSIP_HMAC_VerifyFinish(rsip_ctrl_t * const p_ctrl, uint8_t const * c
             break;
         }
 
-        case RSIP_ERR_RESOURCE_CONFLICT:
+        case RSIP_RET_RESOURCE_CONFLICT:
         {
             err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
             break;
         }
 
-        case RSIP_ERR_KEY_SET:
+        case RSIP_RET_KEY_FAIL:
         {
             err = FSP_ERR_CRYPTO_RSIP_KEY_SET_FAIL;
             break;
         }
 
-        case RSIP_ERR_FAIL:
+        case RSIP_RET_FAIL:
         {
             err = FSP_ERR_CRYPTO_RSIP_FAIL;
             break;
@@ -705,11 +957,132 @@ fsp_err_t R_RSIP_HMAC_VerifyFinish(rsip_ctrl_t * const p_ctrl, uint8_t const * c
 }
 
 /*******************************************************************************************************************//**
- * @} (end addtogroup RSIP_PROTECTED)
+ * Suspends HMAC operation.
+ *
+ * This API releases RSIP resource and outputs intermediate results. Therefore, it can be used in the following cases:
+ * - Execute another cryptographic operations during inputting successive chunks of the message.
+ * - Reuse intermediate results.
+ *
+ * Implements @ref rsip_api_t::hmacSuspend.
+ *
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_HMAC**, and causes state transition.
+ *
+ * |Return value|Next state|
+ * |------------|----------|
+ * |FSP_SUCCESS |STATE_MAIN|
+ * |Others      |No change |
+ * @endparblock
+ *
+ * @retval FSP_SUCCESS                           Normal termination.
+ * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
+ * @retval FSP_ERR_NOT_OPEN                      Module is not open.
+ * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
+ * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
+fsp_err_t R_RSIP_HMAC_Suspend (rsip_ctrl_t * const p_ctrl, rsip_hmac_handle_t * const p_handle)
+{
+    rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
 
-/**********************************************************************************************************************
- * Private Functions
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ASSERT(p_instance_ctrl);
+    FSP_ASSERT(p_handle);
+    FSP_ERROR_RETURN(RSIP_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
+#endif
+
+    /* Check state */
+    FSP_ERROR_RETURN(RSIP_STATE_HMAC == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
+
+    fsp_err_t  err = FSP_ERR_CRYPTO_RSIP_FATAL;
+    rsip_ret_t rsip_ret;
+    switch (p_instance_ctrl->handle.hmac.handle_state)
+    {
+        /* If the state is update, call suspension function */
+        case RSIP_USER_HANDLE_STATE_UPDATE:
+        {
+            /* Read internal state */
+            rsip_ret = r_rsip_hmac_suspend(&p_instance_ctrl->handle.hmac);
+
+            /* Handle state transition */
+            p_instance_ctrl->handle.hmac.handle_state = RSIP_USER_HANDLE_STATE_RESUME;
+            break;
+        }
+
+        default:
+        {
+            rsip_ret = RSIP_RET_PASS;
+        }
+    }
+
+    /* Check error */
+    switch (rsip_ret)
+    {
+        case RSIP_RET_PASS:
+        {
+            /* Copy handle */
+            *p_handle = p_instance_ctrl->handle.hmac;
+
+            err = FSP_SUCCESS;
+            break;
+        }
+
+        default:
+        {
+            err = FSP_ERR_CRYPTO_RSIP_FATAL;
+        }
+    }
+
+    /* State transition */
+    p_instance_ctrl->state = RSIP_STATE_MAIN;
+
+    return err;
+}
+
+/*******************************************************************************************************************//**
+ * Resumes HMAC operation suspended by R_RSIP_HMAC_Suspend().
+ *
+ * Implements @ref rsip_api_t::hmacResume.
+ *
+ * @par State transition
+ * @parblock
+ * This API can only be executed in **STATE_MAIN**, and causes state transition.
+ *
+ * |Return value|Next state|
+ * |------------|----------|
+ * |FSP_SUCCESS |STATE_HMAC|
+ * |Others      |No change |
+ * @endparblock
+ *
+ * @retval FSP_SUCCESS                           Normal termination.
+ * @retval FSP_ERR_ASSERTION                     A required parameter is NULL.
+ * @retval FSP_ERR_NOT_OPEN                      Module is not open.
+ * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
+ **********************************************************************************************************************/
+fsp_err_t R_RSIP_HMAC_Resume (rsip_ctrl_t * const p_ctrl, rsip_hmac_handle_t const * const p_handle)
+{
+    rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
+
+#if RSIP_CFG_PARAM_CHECKING_ENABLE
+    FSP_ASSERT(p_instance_ctrl);
+    FSP_ASSERT(p_handle);
+    FSP_ERROR_RETURN(RSIP_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
+#endif
+
+    /* Check state */
+    FSP_ERROR_RETURN(RSIP_STATE_MAIN == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
+
+    /* Copy handle */
+    p_instance_ctrl->handle.hmac = *p_handle;
+
+    /* State transition */
+    p_instance_ctrl->state = RSIP_STATE_HMAC;
+
+    return FSP_SUCCESS;
+}
+
+/*******************************************************************************************************************//**
+ * @} (end addtogroup RSIP_PROTECTED)
  **********************************************************************************************************************/
 
 /*******************************************************************************************************************//**
@@ -721,7 +1094,7 @@ fsp_err_t R_RSIP_HMAC_VerifyFinish(rsip_ctrl_t * const p_ctrl, uint8_t const * c
  * @retval FSP_SUCCESS                           Normal termination.
  * @retval FSP_ERR_INVALID_STATE                 Internal state is illegal.
  **********************************************************************************************************************/
-fsp_err_t r_rsip_sha_init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const hash_type)
+fsp_err_t r_rsip_sha_init (rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const hash_type)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
 
@@ -740,25 +1113,19 @@ fsp_err_t r_rsip_sha_init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const has
     /* Set block size */
     switch (hash_type)
     {
-        /* SHA-224 */
+        /* SHA-1, SHA-224, SHA-256 */
+        case RSIP_HASH_TYPE_SHA1:
         case RSIP_HASH_TYPE_SHA224:
-        {
-            r_rsip_sha224initprivate(p_handle);
-            p_handle->block_size = RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA1_SHA224_SHA256;
-            break;
-        }
-
-        /* SHA-256 */
         case RSIP_HASH_TYPE_SHA256:
         {
-            r_rsip_sha256initprivate(p_handle);
             p_handle->block_size = RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA1_SHA224_SHA256;
             break;
         }
 
+        /* SHA-384, SHA-512, SHA-512/224, SHA-512/256 */
         default:
         {
-            break;
+            p_handle->block_size = RSIP_PRV_BYTE_SIZE_HASH_BLOCK_SHA384_SHA512;
         }
     }
 
@@ -783,23 +1150,23 @@ fsp_err_t r_rsip_sha_init(rsip_ctrl_t * const p_ctrl, rsip_hash_type_t const has
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t r_rsip_sha_update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message, uint32_t const message_length)
+fsp_err_t r_rsip_sha_update (rsip_ctrl_t * const p_ctrl, uint8_t const * const p_message, uint32_t const message_length)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
-    fsp_err_t              err             = FSP_ERR_CRYPTO_RSIP_FATAL;
 
     /* Check state */
     FSP_ERROR_RETURN(RSIP_STATE_SHA == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
 
     rsip_sha_handle_t * p_handle = &p_instance_ctrl->handle.sha;
 
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
     if (0 == message_length)
     {
         err = FSP_SUCCESS;
     }
     else
     {
-        rsip_err_t      rsip_ret      = RSIP_SUCCESS;
+        rsip_ret_t      rsip_ret      = RSIP_RET_PASS;
         const uint8_t * p_msg_pos     = p_message;
         uint32_t        processed_len = 0;
 
@@ -821,10 +1188,10 @@ fsp_err_t r_rsip_sha_update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_
         }
 
         /* (2) New input message except last block */
-        if ((p_handle->block_size < message_length) && (RSIP_SUCCESS == rsip_ret))
+        if ((p_handle->block_size < message_length) && (RSIP_RET_PASS == rsip_ret))
         {
             uint32_t len = ((message_length - processed_len - 1) / p_handle->block_size) *
-                            p_handle->block_size;
+                           p_handle->block_size;
 
             /* Call function */
             rsip_ret = sha_update(p_ctrl, p_message + processed_len, len);
@@ -836,19 +1203,19 @@ fsp_err_t r_rsip_sha_update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_
         /* Check error */
         switch (rsip_ret)
         {
-            case RSIP_SUCCESS:
+            case RSIP_RET_PASS:
             {
                 /* (3) Last block */
                 memcpy(p_handle->buffer + p_handle->buffered_length,
-                        p_message + processed_len,
-                        message_length - processed_len);
+                       p_message + processed_len,
+                       message_length - processed_len);
                 p_handle->buffered_length += message_length - processed_len;
 
                 err = FSP_SUCCESS;
                 break;
             }
 
-            case RSIP_ERR_RESOURCE_CONFLICT:
+            case RSIP_RET_RESOURCE_CONFLICT:
             {
                 err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
                 break;
@@ -877,27 +1244,27 @@ fsp_err_t r_rsip_sha_update(rsip_ctrl_t * const p_ctrl, uint8_t const * const p_
  *                                               by the processing is in use by other processing.
  * @retval FSP_ERR_CRYPTO_RSIP_FATAL             Software corruption is detected.
  **********************************************************************************************************************/
-fsp_err_t r_rsip_sha_finish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest)
+fsp_err_t r_rsip_sha_finish (rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
-    fsp_err_t              err             = FSP_ERR_CRYPTO_RSIP_FATAL;
 
     /* Check state */
     FSP_ERROR_RETURN(RSIP_STATE_SHA == p_instance_ctrl->state, FSP_ERR_INVALID_STATE);
 
     /* Call function */
-    rsip_err_t rsip_ret = sha_finish(p_ctrl, p_digest);
+    rsip_ret_t rsip_ret = sha_finish(p_ctrl, p_digest);
 
     /* Check error */
+    fsp_err_t err = FSP_ERR_CRYPTO_RSIP_FATAL;
     switch (rsip_ret)
     {
-        case RSIP_SUCCESS:
+        case RSIP_RET_PASS:
         {
             err = FSP_SUCCESS;
             break;
         }
 
-        case RSIP_ERR_RESOURCE_CONFLICT:
+        case RSIP_RET_RESOURCE_CONFLICT:
         {
             err = FSP_ERR_CRYPTO_RSIP_RESOURCE_CONFLICT;
             break;
@@ -916,36 +1283,46 @@ fsp_err_t r_rsip_sha_finish(rsip_ctrl_t * const p_ctrl, uint8_t * const p_digest
  * Private Functions
  **********************************************************************************************************************/
 
-static rsip_err_t sha_update(rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length)
+/*******************************************************************************************************************//**
+ * Inputs message.
+ *
+ * @param[in,out] p_ctrl         Pointer to control block.
+ * @param[in]     p_message      Pointer to message. The length is message_length.
+ * @param[in]     message_length Byte length of message (0 or more bytes).
+ *
+ * @return The return value of the internally called primitive function.
+ **********************************************************************************************************************/
+static rsip_ret_t sha_update (rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
     rsip_sha_handle_t    * p_handle        = &p_instance_ctrl->handle.sha;
 
-    rsip_err_t ret;
+    rsip_ret_t ret;
     switch (p_handle->handle_state)
     {
         case RSIP_USER_HANDLE_STATE_INIT:
         {
-            ret = r_rsip_sha1sha2_init_update(p_handle->current_hash,
-                                            (uint8_t *) p_message, message_length,
-                                            p_handle->internal_state);
+            ret = r_rsip_sha1sha2_init_update(p_handle->type, p_message, message_length, p_handle->internal_state);
             break;
         }
 
         case RSIP_USER_HANDLE_STATE_RESUME:
+        {
+            ret = r_rsip_sha1sha2_resume_update(p_handle->type, p_message, message_length, p_handle->internal_state);
+            break;
+        }
+
         case RSIP_USER_HANDLE_STATE_UPDATE:
         default:
         {
-            ret = r_rsip_sha1sha2_update(p_handle->current_hash,
-                                        (uint8_t *) p_message, message_length,
-                                        p_handle->internal_state);
+            ret = r_rsip_sha1sha2_update(p_handle->type, p_message, message_length, p_handle->internal_state);
         }
     }
 
     /* Check error */
     switch (ret)
     {
-        case RSIP_SUCCESS:
+        case RSIP_RET_PASS:
         {
             /* State transition */
             p_handle->handle_state = RSIP_USER_HANDLE_STATE_UPDATE;
@@ -962,32 +1339,47 @@ static rsip_err_t sha_update(rsip_ctrl_t * const p_ctrl, const uint8_t * p_messa
     return ret;
 }
 
-static rsip_err_t sha_finish(rsip_ctrl_t * const p_ctrl, uint8_t * p_digest)
+/*******************************************************************************************************************//**
+ * Finalizes a SHA generation.
+ *
+ * @param[in,out] p_ctrl   Pointer to control block.
+ * @param[out]    p_digest Pointer to destination of message digest. The length depends on hash type.
+ *
+ * @return The return value of the internally called primitive function.
+ **********************************************************************************************************************/
+static rsip_ret_t sha_finish (rsip_ctrl_t * const p_ctrl, uint8_t * p_digest)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
     rsip_sha_handle_t    * p_handle        = &p_instance_ctrl->handle.sha;
-    rsip_err_t             ret;
+    rsip_ret_t             ret;
     switch (p_handle->handle_state)
     {
         case RSIP_USER_HANDLE_STATE_INIT:
         {
-            ret = r_rsip_sha1sha2_init_final(p_handle->current_hash, p_handle->buffer,
-                                            p_handle->buffered_length, p_digest);
-            memcpy(p_handle->current_hash, p_digest, RSIP_PRV_SHA224256_HASH_LENGTH_BYTE_SIZE);
+            ret = r_rsip_sha1sha2_init_final(p_handle->type, p_handle->buffer, p_handle->buffered_length, p_digest);
             break;
         }
 
         case RSIP_USER_HANDLE_STATE_RESUME:
+        {
+            ret = r_rsip_sha1sha2_resume_final(p_handle->type,
+                                               p_handle->buffer,
+                                               p_handle->buffered_length,
+                                               p_handle->total_length + p_handle->buffered_length,
+                                               p_digest,
+                                               p_handle->internal_state);
+            break;
+        }
+
         case RSIP_USER_HANDLE_STATE_UPDATE:
         default:
         {
-            ret = r_rsip_sha1sha2_final(p_handle->current_hash,
+            ret = r_rsip_sha1sha2_final(p_handle->type,
                                         p_handle->buffer,
                                         p_handle->buffered_length,
                                         p_handle->total_length + p_handle->buffered_length,
                                         p_digest,
                                         p_handle->internal_state);
-            memcpy(p_handle->current_hash, p_digest, RSIP_PRV_SHA224256_HASH_LENGTH_BYTE_SIZE);
         }
     }
 
@@ -997,37 +1389,47 @@ static rsip_err_t sha_finish(rsip_ctrl_t * const p_ctrl, uint8_t * p_digest)
     return ret;
 }
 
-static rsip_err_t hmac_update(rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length)
+/*******************************************************************************************************************//**
+ * Inputs message.
+ *
+ * @param[in,out] p_ctrl         Pointer to control block.
+ * @param[in]     p_message      Pointer to message. The length is message_length.
+ * @param[in]     message_length Byte length of message (0 or more bytes).
+ *
+ * @return The return value of the internally called primitive function.
+ **********************************************************************************************************************/
+static rsip_ret_t hmac_update (rsip_ctrl_t * const p_ctrl, const uint8_t * p_message, uint32_t message_length)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
     rsip_hmac_handle_t   * p_handle        = &p_instance_ctrl->handle.hmac;
 
-    rsip_err_t ret;
+    rsip_ret_t ret;
     switch (p_handle->handle_state)
     {
         case RSIP_USER_HANDLE_STATE_INIT:
         {
-            ret = r_rsip_hmac_init_update((rsip_wrapped_key_t *) p_handle->wrapped_key,
-                                            (uint8_t *) p_message,
-                                            message_length,
-                                            p_handle->internal_state);
+            ret = r_rsip_hmac_init_update(&p_handle->wrapped_key, p_message, message_length, p_handle->internal_state);
+            break;
+        }
+
+        case RSIP_USER_HANDLE_STATE_RESUME:
+        {
+            ret =
+                r_rsip_hmac_resume_update(&p_handle->wrapped_key, p_message, message_length, p_handle->internal_state);
             break;
         }
 
         case RSIP_USER_HANDLE_STATE_UPDATE:
         default:
         {
-            ret = r_rsip_hmac_update((rsip_wrapped_key_t *) p_handle->wrapped_key,
-                                        (uint8_t *) p_message,
-                                        message_length,
-                                        p_handle->internal_state);
+            ret = r_rsip_hmac_update(&p_handle->wrapped_key, p_message, message_length, p_handle->internal_state);
         }
     }
 
     /* Check error */
     switch (ret)
     {
-        case RSIP_SUCCESS:
+        case RSIP_RET_PASS:
         {
             /* State transition */
             p_handle->handle_state = RSIP_USER_HANDLE_STATE_UPDATE;
@@ -1044,26 +1446,43 @@ static rsip_err_t hmac_update(rsip_ctrl_t * const p_ctrl, const uint8_t * p_mess
     return ret;
 }
 
-static rsip_err_t hmac_sign_finish(rsip_ctrl_t * const p_ctrl, uint8_t * p_mac)
+/*******************************************************************************************************************//**
+ * Finalizes a HMAC generation.
+ *
+ * @param[in,out] p_ctrl   Pointer to control block.
+ * @param[out]    p_mac    Pointer to destination of message digest. The length depends on MAC type.
+ *
+ * @return The return value of the internally called primitive function.
+ **********************************************************************************************************************/
+static rsip_ret_t hmac_sign_finish (rsip_ctrl_t * const p_ctrl, uint8_t * p_mac)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
     rsip_hmac_handle_t   * p_handle        = &p_instance_ctrl->handle.hmac;
-    rsip_err_t             ret;
+    rsip_ret_t             ret;
     switch (p_handle->handle_state)
     {
         case RSIP_USER_HANDLE_STATE_INIT:
         {
-            ret = r_rsip_hmac_init_final((rsip_wrapped_key_t*) p_handle->wrapped_key,
-                                        p_handle->buffer,
-                                        p_handle->buffered_length,
-                                        p_mac);
+            ret =
+                r_rsip_hmac_init_final(&p_handle->wrapped_key, p_handle->buffer, p_handle->buffered_length, p_mac);
+            break;
+        }
+
+        case RSIP_USER_HANDLE_STATE_RESUME:
+        {
+            ret = r_rsip_hmac_resume_final(&p_handle->wrapped_key,
+                                           p_handle->buffer,
+                                           p_handle->buffered_length,
+                                           p_handle->total_length + p_handle->buffered_length,
+                                           p_mac,
+                                           p_handle->internal_state);
             break;
         }
 
         case RSIP_USER_HANDLE_STATE_UPDATE:
         default:
         {
-            ret = r_rsip_hmac_final((rsip_wrapped_key_t *) p_handle->wrapped_key,
+            ret = r_rsip_hmac_final(&p_handle->wrapped_key,
                                     p_handle->buffer,
                                     p_handle->buffered_length,
                                     p_handle->total_length + p_handle->buffered_length,
@@ -1078,16 +1497,26 @@ static rsip_err_t hmac_sign_finish(rsip_ctrl_t * const p_ctrl, uint8_t * p_mac)
     return ret;
 }
 
-static rsip_err_t hmac_verify_finish(rsip_ctrl_t * const p_ctrl, const uint8_t * p_mac, const uint32_t mac_length)
+/*******************************************************************************************************************//**
+ * Finalizes a HMAC verification.
+ *
+ * @param[in,out] p_ctrl     Pointer to control block.
+ * @param[in]     p_mac      Pointer to MAC. The length depends on mac_length.
+ * @param[in]     mac_length Byte length of MAC.
+ *
+ * @return The return value of the internally called primitive function.
+ **********************************************************************************************************************/
+static rsip_ret_t hmac_verify_finish (rsip_ctrl_t * const p_ctrl, const uint8_t * p_mac, const uint32_t mac_length)
 {
     rsip_instance_ctrl_t * p_instance_ctrl = (rsip_instance_ctrl_t *) p_ctrl;
     rsip_hmac_handle_t   * p_handle        = &p_instance_ctrl->handle.hmac;
-    rsip_err_t             ret;
+    rsip_ret_t             ret;
     switch (p_handle->handle_state)
     {
         case RSIP_USER_HANDLE_STATE_INIT:
         {
-            ret = r_rsip_hmac_init_verify((rsip_wrapped_key_t *) p_handle->wrapped_key,
+            ret =
+                r_rsip_hmac_init_verify(&p_handle->wrapped_key,
                                         p_handle->buffer,
                                         p_handle->buffered_length,
                                         p_mac,
@@ -1095,16 +1524,28 @@ static rsip_err_t hmac_verify_finish(rsip_ctrl_t * const p_ctrl, const uint8_t *
             break;
         }
 
+        case RSIP_USER_HANDLE_STATE_RESUME:
+        {
+            ret = r_rsip_hmac_resume_verify(&p_handle->wrapped_key,
+                                            p_handle->buffer,
+                                            p_handle->buffered_length,
+                                            p_handle->total_length + p_handle->buffered_length,
+                                            p_mac,
+                                            mac_length,
+                                            p_handle->internal_state);
+            break;
+        }
+
         case RSIP_USER_HANDLE_STATE_UPDATE:
         default:
         {
-            ret = r_rsip_hmac_verify((rsip_wrapped_key_t *) p_handle->wrapped_key,
-                                    p_handle->buffer,
-                                    p_handle->buffered_length,
-                                    p_handle->total_length + p_handle->buffered_length,
-                                    p_mac,
-                                    mac_length,
-                                    p_handle->internal_state);
+            ret = r_rsip_hmac_verify(&p_handle->wrapped_key,
+                                     p_handle->buffer,
+                                     p_handle->buffered_length,
+                                     p_handle->total_length + p_handle->buffered_length,
+                                     p_mac,
+                                     mac_length,
+                                     p_handle->internal_state);
         }
     }
 

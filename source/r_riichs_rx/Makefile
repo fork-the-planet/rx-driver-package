@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_riichs_rx
-VERSION = 		1.21
+VERSION = 		1.22
 MDF = V1,v2
 
 CONFIG_FOLDER = r_config

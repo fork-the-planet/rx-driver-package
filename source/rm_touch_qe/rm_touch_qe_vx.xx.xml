@@ -80,7 +80,7 @@
         </dependency>
         <dependency>
 		        <module>r_ctsu_qe</module>
-		        <version>3.10</version>
+		        <version>3.20</version>
         </dependency>
 		<zipsource>rm_touch_qe_vx.xx.zip</zipsource>
 		<application>Capacitive Touch</application>

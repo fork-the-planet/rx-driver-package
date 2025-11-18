@@ -5,12 +5,12 @@ r_rspia_rx
 
 Document Number 
 ---------------
-R01AN5684ES0161
-R01AN5684JS0161
+R01AN5684ES0162
+R01AN5684JS0162
 
 Version
 -------
-v1.61
+v1.62
 
 Overview
 --------
@@ -83,7 +83,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.52
+* r_bsp     v7.60
 
 How to add to your project
 --------------------------

@@ -5,13 +5,13 @@ r_vbatt_rx
 
 Document Number
 ---------------
-R01AN2796JJ0231
-R01AN2796EJ0231
+R01AN2796JJ0232
+R01AN2796EJ0232
 
 
 Version
 -------
-v2.31
+v2.32
 
 
 Overview
@@ -69,7 +69,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.52
+* r_bsp     v7.60
 
 
 How to add to your project
@@ -130,10 +130,10 @@ r_vbatt_rx
 |
 +---doc
 |   +---en
-|   |   r01an2796ej0231-rx-vbatt.pdf
+|   |   r01an2796ej0232-rx-vbatt.pdf
 |   |
 |   +---ja
-|       r01an2796jj0231-rx-vbatt.pdf
+|       r01an2796jj0232-rx-vbatt.pdf
 |
 +---src
     |

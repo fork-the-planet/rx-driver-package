@@ -6,7 +6,7 @@
 /***********************************************************************************************************************
 * System Name  : MEMDRV  software
 * File Name    : r_memdrv_rspi.c
-* Version      : 1.31
+* Version      : 1.40
 * Device       : -
 * Abstract     : IO I/F module
 * Tool-Chain   : -
@@ -37,6 +37,7 @@
 *                                   occurs, when MEMDRV FIT, RSPI FIT and DMAC/DTC FIT are used together.
 *              : 20.12.2024 1.30    Updated the data count formulas.
 *              : 15.03.2025 1.31    Updated disclaimer.
+*              : 30.10.2025 1.40    Updated the code with RSPI byte swap feature.
 ***********************************************************************************************************************/
 
 /************************************************************************************************
@@ -49,6 +50,19 @@ Includes <System Includes> , "Project Includes"
 #if ((MEMDRV_CFG_DEV0_INCLUDED == 1) && (MEMDRV_CFG_DEV0_MODE_DRVR == MEMDRV_DRVR_RX_FIT_RSPI)) || \
     ((MEMDRV_CFG_DEV1_INCLUDED == 1) && (MEMDRV_CFG_DEV1_MODE_DRVR == MEMDRV_DRVR_RX_FIT_RSPI))
 #include "r_pinset.h"
+
+#if RSPI_LITTLE_ENDIAN == 1
+#if (!defined (RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED) && !defined (RSPI_HARDWARE_BYTE_SWAP_IS_NOT_SUPPORTED))
+    #warning "This module should use RSPI byte swap. Please use RSPI module Rev.3.70 or higher."
+#endif /* (!defined (RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED) && !defined (RSPI_HARDWARE_BYTE_SWAP_IS_NOT_SUPPORTED)) */
+
+#if defined (RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED) \
+|| (defined (RSPI_HARDWARE_BYTE_SWAP_IS_NOT_SUPPORTED) \
+&& ((MEMDRV_CFG_DEV0_MODE_TRNS == MEMDRV_TRNS_CPU) || (MEMDRV_CFG_DEV1_MODE_TRNS == MEMDRV_TRNS_CPU)))
+#define MEMDRV_RSPI_BYTE_SWAP_IS_USED
+#endif /* defined (RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED) */
+#endif /* RSPI_LITTLE_ENDIAN == 1 */
+
 /************************************************************************************************
 Macro definitions
 *************************************************************************************************/
@@ -85,7 +99,9 @@ static memdrv_err_t         r_memdrv_rspi_wait(uint8_t channel, uint32_t size);
 static void                 r_memdrv_rspi_callback(void *p_data);
 static void                 rspi_init_ports(void);
 
-static memdrv_err_t r_rspi_exchg(uint8_t * p_data, uint16_t size);
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+static memdrv_err_t r_memdrv_rspi_enable_byte_swap (uint8_t devno);
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
 static rspi_str_tranmode_t r_memdrv_rspi_set_tran_mode(uint8_t devno);
 static memdrv_err_t r_memdrv_rspi_disable_tx_data_dmac(uint8_t devno,
                                                        st_memdrv_info_t * p_memdrv_info);
@@ -174,6 +190,10 @@ memdrv_err_t r_memdrv_rspi_open(uint8_t devno, st_memdrv_info_t * p_memdrv_info)
         return MEMDRV_ERR_OTHER;
     }
 #endif
+
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+    config.byte_swap = RSPI_BYTE_SWAP_ENABLE;
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
 
     if (RSPI_SUCCESS != R_RSPI_Open (channel,     
                                &config,     
@@ -1725,14 +1745,22 @@ memdrv_err_t r_memdrv_rspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
         R_MEMDRV_Log(MEMDRV_DEBUG_ERR_ID, (uint32_t)MEMDRV_ERR_SUB, __LINE__);
         return MEMDRV_ERR_OTHER;
     }
-    r_rspi_exchg(p_memdrv_info->p_data, p_memdrv_info->cnt);
+
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+        /* Enable RSPI byte swapping */
+        ret_memdrv = r_memdrv_rspi_enable_byte_swap(devno);
+        if (MEMDRV_SUCCESS != ret_memdrv)
+        {
+            return MEMDRV_ERR_OTHER;
+        }
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
+
     ret_memdrv = r_memdrv_rspi_write_data(channel, p_memdrv_info->cnt, p_memdrv_info->p_data, spcmd_cmd_word);
     if (MEMDRV_SUCCESS != ret_memdrv)
     {
-        r_rspi_exchg(p_memdrv_info->p_data, p_memdrv_info->cnt);
         return MEMDRV_ERR_OTHER;
     }
-    r_rspi_exchg(p_memdrv_info->p_data, p_memdrv_info->cnt);
+
     return MEMDRV_SUCCESS;
 } /* End of function r_memdrv_rspi_tx_data() */
 #elif (MEMDRV_CFG_DEV0_TYPE == 0)  | (MEMDRV_CFG_DEV1_TYPE == 0)
@@ -1871,7 +1899,16 @@ memdrv_err_t r_memdrv_rspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
                 R_BSP_NOP();
             }
         }
-        r_rspi_exchg(pdsrc, txcnt);
+
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+        /* Enable RSPI byte swapping */
+        ret_memdrv = r_memdrv_rspi_enable_byte_swap(devno);
+        if (MEMDRV_SUCCESS != ret_memdrv)
+        {
+            return ret_memdrv;
+        }
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
+
         /* Turn 32 digits into 16 digits */
         if (rem_txcnt >= 1)
         {
@@ -1895,7 +1932,6 @@ memdrv_err_t r_memdrv_rspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
 
         if (MEMDRV_SUCCESS != ret_memdrv)
         {
-            r_rspi_exchg(pdsrc, txcnt);
             if (MEMDRV_DEV0 == devno)
             {
                 if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
@@ -1946,7 +1982,7 @@ memdrv_err_t r_memdrv_rspi_tx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             }
             return ret_memdrv;
         }
-        r_rspi_exchg(pdsrc, txcnt);
+
         if (MEMDRV_DEV0 == devno)
         {
             if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
@@ -2188,14 +2224,20 @@ memdrv_err_t r_memdrv_rspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
         return MEMDRV_ERR_OTHER;
     }
     
-    r_rspi_exchg(p_memdrv_info->p_data, p_memdrv_info->cnt);
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+        /* Enable RSPI byte swapping */
+        ret_memdrv = r_memdrv_rspi_enable_byte_swap(devno);
+        if (MEMDRV_SUCCESS != ret_memdrv)
+        {
+            return MEMDRV_ERR_OTHER;
+        }
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
+
     ret_memdrv = r_memdrv_rspi_read_data(channel, p_memdrv_info->cnt, p_memdrv_info->p_data, spcmd_cmd_word);
     if (MEMDRV_SUCCESS != ret_memdrv)
     {
-        r_rspi_exchg(p_memdrv_info->p_data, p_memdrv_info->cnt);
         return MEMDRV_ERR_OTHER;
     }
-    r_rspi_exchg(p_memdrv_info->p_data, p_memdrv_info->cnt);
 
     return MEMDRV_SUCCESS;
 } /* End of function r_memdrv_rspi_rx_data() */
@@ -2333,7 +2375,16 @@ memdrv_err_t r_memdrv_rspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
                 R_BSP_NOP();
             }
         }
-        r_rspi_exchg(pdest, rxcnt);
+
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+        /* Enable RSPI byte swapping */
+        ret_memdrv = r_memdrv_rspi_enable_byte_swap(devno);
+        if (MEMDRV_SUCCESS != ret_memdrv)
+        {
+            return ret_memdrv;
+        }
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
+
         /* Turn 32 digits into 16 digits */
         if (rem_rxcnt >= 1)
         {
@@ -2357,7 +2408,6 @@ memdrv_err_t r_memdrv_rspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
 
         if (MEMDRV_SUCCESS != ret_memdrv)
         {
-            r_rspi_exchg(pdest, rxcnt);
             if (MEMDRV_DEV0 == devno)
             {
                 if (MEMDRV_CFG_DEV0_MODE_TRNS & MEMDRV_TRNS_DMAC)
@@ -2408,7 +2458,6 @@ memdrv_err_t r_memdrv_rspi_rx_data(uint8_t devno, st_memdrv_info_t * p_memdrv_in
             }
             return ret_memdrv;
         }
-        r_rspi_exchg(pdest, rxcnt);
 
         if (MEMDRV_DEV0 == devno)
         {
@@ -2851,33 +2900,37 @@ static memdrv_err_t r_memdrv_rspi_read_data(uint8_t channel,
     return MEMDRV_SUCCESS;
 } /* End of function r_memdrv_rspi_read_data() */
 
-/*******************************************************************************
-* Function Name: r_rspi_exchg
-* Description  : Exchanges data according to endian for DMAC or DTC.
-* Arguments    : * p_data -
-*                    Pointer of data
-*                size -
-*                    Size of data
-* Return Value : MEMDRV_SUCCESS -
-*                    Successful operation
-*******************************************************************************/
-static memdrv_err_t r_rspi_exchg(uint8_t * p_data, uint16_t size)
+#if defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED)
+/************************************************************************************************
+* Function Name: r_memdrv_rspi_enable_byte_swap
+* Description  : Enable RSPI byte swapping.
+* Arguments    : uint8_t         devno                  ;   Device No. (MEMDRV_DEVn)
+* Return Value : MEMDRV_SUCCESS                         ;   Successful operation
+*              : MEMDRV_ERR_OTHER                       ;   Other error
+*------------------------------------------------------------------------------------------------
+* Notes        : None
+*************************************************************************************************/
+static memdrv_err_t r_memdrv_rspi_enable_byte_swap(uint8_t devno)
 {
-#if (RSPI_LITTLE_ENDIAN)
-    uint32_t                * p_dataadr;
+    rspi_err_t              ret_drv = RSPI_SUCCESS;
+    uint8_t                 channel = r_memdrv_get_drv_ch(devno);
+    rspi_cmd_byte_swap_t    config;
 
-    p_dataadr = (uint32_t *)p_data;
-    size  = size - (size % 4);
-    do
+    g_rspi_handle->channel = channel;
+    config.byte_swap       = RSPI_BYTE_SWAP_ENABLE;
+
+    /* Enable RSPI byte swapping */
+    ret_drv = R_RSPI_Control(g_rspi_handle,
+                            RSPI_CMD_SET_BYTE_SWAP,
+                            (void *)&config);
+    if (RSPI_SUCCESS != ret_drv)
     {
-        *p_dataadr = R_BSP_REVL(*p_dataadr);
-        p_dataadr  += (RSPI_TRAN_SIZE/sizeof(uint32_t));
-        size       -= RSPI_TRAN_SIZE;
+        return MEMDRV_ERR_OTHER;
     }
-    while(0 != size);      /* WAIT_LOOP */
-#endif /* (RSPI_LITTLE_ENDIAN)  */
+
     return MEMDRV_SUCCESS;
-} /* End of function r_rspi_exchg() */
+} /* End of function r_memdrv_rspi_enable_byte_swap() */
+#endif /* defined (MEMDRV_RSPI_BYTE_SWAP_IS_USED) */
 
 #else
 memdrv_err_t r_memdrv_rspi_open(uint8_t devno, st_memdrv_info_t * p_memdrv_info)

@@ -99,7 +99,7 @@
         <zipsource>r_gpio_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.52</version>
+            <version>7.60</version>
         </dependency>
         <application>I/O Port</application>
         <desc>GPIO Driver</desc>

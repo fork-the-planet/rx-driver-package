@@ -11,6 +11,7 @@
         <version>3.04.00</version>
         <version>3.05.00</version>
         <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
     <toolchain>
         <brand>GNU</brand>
@@ -20,6 +21,7 @@
         <version>8.03.00.202202</version>
         <version>8.03.00.202305</version>
         <version>8.03.00.202405</version>
+        <version>14.2.00.202505</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -27,6 +29,7 @@
         <version>4.20.01</version>
         <version>4.20.03</version>
         <version>5.10.01</version>
+        <version>5.20.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->
@@ -53,6 +56,7 @@
         <group>RX671</group>
         <group>RX72M</group>
         <group>RX72N</group>
+        <group>RX72T</group>
         <board>RSKRX130</board>
         <board>RSKRX140</board>
         <board>RSKRX230</board>
@@ -64,6 +68,7 @@
         <board>RSKRX671</board>
         <board>RSKRX72M</board>
         <board>RSKRX72N</board>
+        <board>RSKRX72T</board>
         <board>RSSKRX23EA</board>
         <board>RSSKRX23EB</board>
         <board>RSSKRX23W</board>
@@ -84,6 +89,7 @@
             <version>4.91</version>
             <version>5.10</version>
             <version>5.20</version>
+            <version>5.22</version>
         </dependency>
         <application>Generic</application>
         <desc>FWUP Library</desc>

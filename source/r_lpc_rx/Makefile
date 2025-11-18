@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_lpc_rx
-VERSION = 		2.51
+VERSION = 		2.52
 MDF = V2
 
 CONFIG_FOLDER = r_config

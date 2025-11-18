@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_wifi_da16xxx
-VERSION     =   1.32
+VERSION     =   1.40
 MDF = V2
 
 CONFIG_FOLDER = r_config

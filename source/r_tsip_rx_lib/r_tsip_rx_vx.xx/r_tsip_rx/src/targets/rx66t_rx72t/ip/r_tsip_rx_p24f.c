@@ -30,6 +30,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -62,7 +63,7 @@ TSIP_SEC_P_SECURE_BOOT
 /***********************************************************************************************************************
 * Function Name: R_TSIP_GenerateFirmwareMacFinalSub
 *******************************************************************************************************************/ /**
-* @details       RX66T F/W update Final
+* @details       RX26T F/W update Final
 * @param[in]     InData_UpProgram
 * @param[in]     InData_UpMAC
 * @param[out]    OutData_Program

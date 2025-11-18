@@ -10,6 +10,7 @@
 /**********************************************************************************************************************
 * History : DD.MM.YYYY Version Description
 *           21.04.2025 1.00    First Release
+*           30.06.2025 1.01    Added support for RX66N, RX72M and RX671
 ***********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -54,6 +55,11 @@ static void start_app (uint32_t pc)
      * used. */
 
     R_BSP_InterruptsDisable();
+#if BSP_CFG_BOOTLOADER_PROJECT
+    R_BSP_ClockReset_Bootloader();
+#else
+#warning "MCU clock settings are not reset before application execution."
+#endif
 
     ((void (*)(void)) pc)();
 }

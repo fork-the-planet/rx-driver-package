@@ -5,12 +5,12 @@ r_tsip_rx
 
 Document Number
 ---------------
-R20AN0371JJ0122-RX-TSIP-SECURITY
-R20AN0371EJ0122-RX-TSIP-SECURITY
+R20AN0371JJ0123-RX-TSIP-SECURITY
+R20AN0371EJ0123-RX-TSIP-SECURITY
 
 Version
 -------
-v1.22
+v1.23
 
 Overview
 --------
@@ -107,9 +107,9 @@ r_tsip_rx
 |
 +---doc
 |   +---ja
-|   |    r20an0371jj0122-rx-tsip-security.pdf
+|   |    r20an0371jj0123-rx-tsip-security.pdf
 |   +---en
-|        r20an0371ej0122-rx-tsip-security.pdf
+|        r20an0371ej0123-rx-tsip-security.pdf
 |
 +---src
     |

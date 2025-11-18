@@ -84,6 +84,8 @@
 *                              if a communication error after executing the R_SCI_Send() or R_SCI_Receive() function.
 *                              Updated demo projects.
 *           15.03.2025 5.41    Updated disclaimer
+*           23.06.2025 5.50    Added support for RX26T-32Pin.
+*                              Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #ifndef SCI_IF_H
@@ -113,7 +115,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define SCI_VERSION_MAJOR  (5)
-#define SCI_VERSION_MINOR  (41)
+#define SCI_VERSION_MINOR  (50)
 
 #define SCI_DTC_DMACA_DISABLE  (0x0)
 #define SCI_DTC_ENABLE         (0x1)

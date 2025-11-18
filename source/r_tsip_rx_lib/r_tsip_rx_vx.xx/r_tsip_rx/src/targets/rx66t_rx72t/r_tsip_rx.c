@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx.c
- * Version      : 1.22
+ * Version      : 1.23
  * Description  : Interface definition for the r_tsip_rx TSIP-Lite module.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -31,6 +31,7 @@
  *         : 30.11.2023 1.19     Update example of Secure Bootloader / Firmware Update
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -121,6 +122,8 @@ extern uint32_t g_aes256ccmdec_private_id;
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
+static bool g_driver_opened = false;
+
 static e_tsip_err_t R_TSIP_SelfCheck1Private(void);
 static e_tsip_err_t R_TSIP_SelfCheck2Private(void);
 
@@ -134,6 +137,7 @@ static e_tsip_err_t R_TSIP_SelfCheck2Private(void);
 * @retval        TSIP_ERR_FAIL: Internal error occurred.
 * @retval        TSIP_ERR_RESOURCE_CONFLICT: resource conflict
 * @retval        TSIP_ERR_RETRY: self-test2 fail
+* @retval        TSIP_ERR_ALREADY_OPENED: API call is duplicated
 * @see           R_TSIP_SelfCheck1Private()
 * @see           R_TSIP_SelfCheck2Private()
 * @note          None
@@ -143,6 +147,11 @@ e_tsip_err_t R_TSIP_Open(tsip_tls_ca_certification_public_key_index_t *key_index
         tsip_update_key_ring_t *key_index_2)
 {
     e_tsip_err_t error_code = TSIP_SUCCESS;
+
+    if (true == g_driver_opened)
+    {
+        return TSIP_ERR_ALREADY_OPENED;
+    }
 
     R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_LPC_CGC_SWR);
     /* Casting structure pointer is used for address. */
@@ -233,6 +242,11 @@ e_tsip_err_t R_TSIP_Open(tsip_tls_ca_certification_public_key_index_t *key_index
         memcpy(S_INST2, &key_index_2->value, sizeof(S_INST2));
     }
 
+    if (TSIP_SUCCESS == error_code)
+    {
+        g_driver_opened = true;
+    }
+
     return error_code;
 }
 /**************************
@@ -253,6 +267,7 @@ e_tsip_err_t R_TSIP_Close(void)
     /* Casting structure pointer is used for address. */
     MSTP_SECURITY = 1u;
     R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_LPC_CGC_SWR);
+    g_driver_opened = false;
     return TSIP_SUCCESS;
 }
 /***************************

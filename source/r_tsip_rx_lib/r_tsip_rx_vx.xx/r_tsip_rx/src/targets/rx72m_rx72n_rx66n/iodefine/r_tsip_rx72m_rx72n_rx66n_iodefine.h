@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx72m_rx72n_rx66n_iodefine.h
- * Version      : 1.22
+ * Version      : 1.23
  * Description  : IO definition for RX72M, RX72N and RX66N TSIP
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -35,6 +35,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 #ifndef R_TSIP_RX72M_RX72N_RX66N_IODEFINE_HEADER_FILE
 #define R_TSIP_RX72M_RX72N_RX66N_IODEFINE_HEADER_FILE

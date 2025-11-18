@@ -52,6 +52,9 @@
 *         : 01.11.2024  4.60    Updated constraint in MDF file to disable configuration of unsupported channels for all devices.
 *         : 31.12.2024  4.70    Added support Nested Interrupt.
 *         : 15.03.2025  4.71    Updated disclaimer.
+*         : 23.06.2025  4.80    Added support for RX26T-32Pins.
+*                               Updated constraint in MDF file to disable configuration of unsupported channels for RX26T-32Pin.
+*                               Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #include "platform.h"
@@ -65,7 +68,7 @@ Macro definitions
 ******************************************************************************/
 /* Version Number of API. */
 #define IRQ_RX_VERSION_MAJOR           (4)
-#define IRQ_RX_VERSION_MINOR           (71)
+#define IRQ_RX_VERSION_MINOR           (80)
 
 /* Bit position of interrupt enable bits in interrupt enable register. */
 #define IRQ_IEN_MASK_IRQ0   (0x01)

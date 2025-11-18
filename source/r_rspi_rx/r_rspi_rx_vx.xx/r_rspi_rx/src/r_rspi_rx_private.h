@@ -37,6 +37,8 @@
 *         : 05.10.2023 3.40     Added include header to fix missing #include platform.h issue.
 *         : 28.06.2024 3.50     Supported RX260, RX261.
 *         : 15.03.2025 3.51     Updated disclaimer.
+*         : 30.10.2025 3.70     Removed support for RX26T-32 Pins.
+*                               Added byte swap feature.
 ***********************************************************************************************************************/
 #ifndef R_RSPI_PRIVATE_H
 #define R_RSPI_PRIVATE_H
@@ -64,12 +66,23 @@ Macro definitions
     || defined(BSP_MCU_RX23T) || defined(BSP_MCU_RX24T) || defined(BSP_MCU_RX24U) \
     || defined(BSP_MCU_RX66T) || defined(BSP_MCU_RX72T) || defined(BSP_MCU_RX23W) \
     || defined(BSP_MCU_RX23E_A) || defined(BSP_MCU_RX140) || defined(BSP_MCU_RX660) \
-    || defined(BSP_MCU_RX26T) || defined(BSP_MCU_RX23E_B) || defined(BSP_MCU_RX260) \
-    || defined(BSP_MCU_RX261)
+    || (defined(BSP_MCU_RX26T) && (BSP_PACKAGE_PINS != 32)) || defined(BSP_MCU_RX23E_B) \
+    || defined(BSP_MCU_RX260) || defined(BSP_MCU_RX261)
 
 #define RSPI_MAX_CHANNELS   (1)
 #else
 #error  "ERROR in r_rspi_rx package. Either no MCU chosen or MCU is not supported"
+#endif
+
+/* RSPI Hardware byte swap supporting. */
+#if defined (BSP_MCU_RX65N) || defined (BSP_MCU_RX66T)   || defined (BSP_MCU_RX72T) \
+|| defined (BSP_MCU_RX72M)  || defined (BSP_MCU_RX72N)   || defined (BSP_MCU_RX66N) \
+|| defined (BSP_MCU_RX671)  || defined (BSP_MCU_RX140)   || defined (BSP_MCU_RX660) \
+|| defined (BSP_MCU_RX26T)  || defined (BSP_MCU_RX23E_B) || defined (BSP_MCU_RX260) \
+|| defined (BSP_MCU_RX261)
+#define RSPI_HARDWARE_BYTE_SWAP_IS_SUPPORTED
+#else
+#define RSPI_HARDWARE_BYTE_SWAP_IS_NOT_SUPPORTED
 #endif
 
 /* Definitions of endian */
@@ -184,6 +197,7 @@ Macro definitions
 #define RSPI_SPDCR2_MASK (0x03)/* Protect reserved bits. */
 #else
 /* RSPI Data Control Register 2 (SPDCR2) */
+#define RSPI_SPDCR2_BYSW (0x01) /* 0:Byte swapping of SPDR data disabled. 1: Byte swapping of SPDR data enabled */
 #define RSPI_SPDCR2_MASK (0x01) /* Protect reserved bits. */
 #endif
 

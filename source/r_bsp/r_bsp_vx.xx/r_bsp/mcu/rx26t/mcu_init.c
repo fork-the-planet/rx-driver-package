@@ -12,6 +12,8 @@
 *         : 28.02.2023 1.00     First Release
 *         : 21.11.2023 1.01     Modified comment.
 *         : 26.02.2025 1.02     Changed the disclaimer.
+*         : 30.07.2025 1.03     Added macro definition for 32-pin PDR initial setting value.
+*                               Modified comment.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -32,7 +34,7 @@ Macro definitions
  * outputs or inputs, which can help save power.
  */
 #if BSP_PACKAGE_PINS == 100
-    /* Refer User's Manual: Hardware Table 20.4. */
+    /* Refer User's Manual: Hardware Table 20.5. */
     #define BSP_PRV_PORT0_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORT1_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORT2_NE_PIN_MASK     (0x00)
@@ -49,7 +51,7 @@ Macro definitions
     #define BSP_PRV_PORTE_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORTN_NE_PIN_MASK     (0x00)
 #elif   BSP_PACKAGE_PINS == 80
-    /* Refer User's Manual: Hardware Table 20.5. */
+    /* Refer User's Manual: Hardware Table 20.6. */
     #define BSP_PRV_PORT0_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORT1_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORT2_NE_PIN_MASK     (0x18)
@@ -66,7 +68,7 @@ Macro definitions
     #define BSP_PRV_PORTE_NE_PIN_MASK     (0x23)
     #define BSP_PRV_PORTN_NE_PIN_MASK     (0x00)
 #elif   BSP_PACKAGE_PINS == 64
-    /* Refer User's Manual: Hardware Table 20.6. */
+    /* Refer User's Manual: Hardware Table 20.7. */
     #define BSP_PRV_PORT0_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORT1_NE_PIN_MASK     (0x01)
     #define BSP_PRV_PORT2_NE_PIN_MASK     (0x98)
@@ -83,7 +85,7 @@ Macro definitions
     #define BSP_PRV_PORTE_NE_PIN_MASK     (0x3B)
     #define BSP_PRV_PORTN_NE_PIN_MASK     (0x00)
 #elif   BSP_PACKAGE_PINS == 48
-    /* Refer User's Manual: Hardware Table 20.7. */
+    /* Refer User's Manual: Hardware Table 20.8. */
     #define BSP_PRV_PORT0_NE_PIN_MASK     (0x02)
     #define BSP_PRV_PORT1_NE_PIN_MASK     (0x00)
     #define BSP_PRV_PORT2_NE_PIN_MASK     (0x9C)
@@ -99,7 +101,25 @@ Macro definitions
     #define BSP_PRV_PORTD_NE_PIN_MASK     (0x57)
     #define BSP_PRV_PORTE_NE_PIN_MASK     (0x3B)
     #define BSP_PRV_PORTN_NE_PIN_MASK     (0x00)
-#else /* (BSP_PACKAGE_PINS != 100)&&(BSP_PACKAGE_PINS != 80)&&(BSP_PACKAGE_PINS != 64)&&(BSP_PACKAGE_PINS != 48) */
+#elif   BSP_PACKAGE_PINS == 32
+    /* Refer User's Manual: Hardware Table 20.9. */
+    #define BSP_PRV_PORT0_NE_PIN_MASK     (0x02)
+    #define BSP_PRV_PORT1_NE_PIN_MASK     (0x03)
+    #define BSP_PRV_PORT2_NE_PIN_MASK     (0x9F)
+    #define BSP_PRV_PORT3_NE_PIN_MASK     (0x8F)
+    #define BSP_PRV_PORT4_NE_PIN_MASK     (0xF8)
+    #define BSP_PRV_PORT5_NE_PIN_MASK     (0x37)
+    #define BSP_PRV_PORT6_NE_PIN_MASK     (0x0F)
+    #define BSP_PRV_PORT7_NE_PIN_MASK     (0x01)
+    #define BSP_PRV_PORT8_NE_PIN_MASK     (0x07)
+    #define BSP_PRV_PORT9_NE_PIN_MASK     (0x7F)
+    #define BSP_PRV_PORTA_NE_PIN_MASK     (0x3F)
+    #define BSP_PRV_PORTB_NE_PIN_MASK     (0xF1)
+    #define BSP_PRV_PORTD_NE_PIN_MASK     (0x57)
+    #define BSP_PRV_PORTE_NE_PIN_MASK     (0x3B)
+    #define BSP_PRV_PORTN_NE_PIN_MASK     (0x80)
+#else /* (BSP_PACKAGE_PINS != 100)&&(BSP_PACKAGE_PINS != 80)&&(BSP_PACKAGE_PINS != 64)&&(BSP_PACKAGE_PINS != 48)
+          &&(BSP_PACKAGE_PINS != 32) */
     #error "ERROR - This package is not defined in mcu_init.c"
 #endif /* BSP_PACKAGE_PINS == 100 */
 

@@ -19,6 +19,7 @@
 *         : 29.10.2021 1.90    Updated for queue protection in R_LONGQ_Put, R_LONGQ_Get, R_LONGQ_Flush,
 *                              R_LONGQ_Used, R_LONGQ_Unused functions.
 *         : 15.03.2025 2.01    Updated disclaimer
+*         : 30.10.2025 2.02    Removed \e in Doxygen comment of API function.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -69,8 +70,8 @@ static longq_ctrl_t     g_qcb[LONGQ_CFG_MAX_CTRL_BLKS];
 * @retval    LONGQ_ERR_INVALID_ARG: Size is less than or equal to 1.
 * @retval    LONGQ_ERR_MALLOC_FAIL: Cannot allocate control block. Increase heap size.
 * @retval    LONGQ_ERR_NO_MORE_CTRL_BLKS: Cannot assign control block. Increase LONGQ_MAX_CTRL_BLKS in config.h.
-* @details   This function allocates or assigns a queue control block for the buffer pointed to by \e p_buf. Initializes
-*            the queue to an empty state and provides a Handle to its control structure in \e p_hdl which is then used 
+* @details   This function allocates or assigns a queue control block for the buffer pointed to by p_buf. Initializes
+*            the queue to an empty state and provides a Handle to its control structure in p_hdl which is then used 
 *            as a queue ID for the other API functions.
 * @note None
 */
@@ -170,10 +171,10 @@ longq_err_t R_LONGQ_Open(uint32_t * const       p_buf,
 * @retval    LONGQ_SUCCESS: Successful; entry added to queue
 * @retval    LONGQ_ERR_NULL_PTR: hdl is NULL
 * @retval    LONGQ_ERR_QUEUE_FULL: Queue full; cannot add entry to queue.
-* @details   This function adds the contents of \e datum to the queue associated with \e hdl. If the queue is full and 
-*            \e ignore_overflow was set to \e false during Open(), then \e LONG_ERR_QUEUE_FULL is returned. If the queue
-*            is full and \e ignore_overflow was set to \e true during Open(), then \e datum overwrites the oldest entry
-*            in the queue and \e LONGQ_SUCCESS is returned.
+* @details   This function adds the contents of datum to the queue associated with hdl. If the queue is full and 
+*            ignore_overflow was set to false during Open(), then LONG_ERR_QUEUE_FULL is returned. If the queue
+*            is full and ignore_overflow was set to true during Open(), then datum overwrites the oldest entry
+*            in the queue and LONGQ_SUCCESS is returned.
 * @note      None
 */
 longq_err_t R_LONGQ_Put(longq_hdl_t const   hdl,
@@ -293,8 +294,8 @@ longq_err_t R_LONGQ_Put(longq_hdl_t const   hdl,
 * @retval    LONGQ_SUCCESS: Successful; entry removed from queue
 * @retval    LONGQ_ERR_NULL_PTR: hdl or p_datum is NULL
 * @retval    LONGQ_ERR_QUEUE_EMPTY: Queue empty; no data available to fetch
-* @details   This function removes the oldest entry (if available) in the queue associated with \e hdl and loads it into 
-*            the location pointed to by \e p_datum.
+* @details   This function removes the oldest entry (if available) in the queue associated with hdl and loads it into 
+*            the location pointed to by p_datum.
 * @note      None
 */
 longq_err_t R_LONGQ_Get(longq_hdl_t const   hdl,
@@ -376,7 +377,7 @@ longq_err_t R_LONGQ_Get(longq_hdl_t const   hdl,
 * @param[in,out] hdl Handle for queue.
 * @retval    LONGQ_SUCCESS: Successful; queue reset
 * @retval    LONGQ_ERR_NULL_PTR: hdl is NULL
-* @details   This function resets the queue identified by \e hdl to an empty state.
+* @details   This function resets the queue identified by hdl to an empty state.
 * @note      None
 */
 longq_err_t R_LONGQ_Flush(longq_hdl_t const hdl)
@@ -429,8 +430,8 @@ longq_err_t R_LONGQ_Flush(longq_hdl_t const hdl)
 * @param[in,out] p_cnt Pointer to load queue data count to.
 * @retval    LONGQ_SUCCESS: Successful; *p_cnt loaded with number of entries in queue
 * @retval    LONGQ_ERR_NULL_PTR: hdl or p_cnt is NULL.
-* @details   This function loads the number of entries in the queue associated with \e hdl and into the location pointed
-*            to by \e p_cnt.
+* @details   This function loads the number of entries in the queue associated with hdl and into the location pointed
+*            to by p_cnt.
 * @note      None
 */
 longq_err_t R_LONGQ_Used(longq_hdl_t const  hdl,
@@ -474,8 +475,8 @@ longq_err_t R_LONGQ_Used(longq_hdl_t const  hdl,
 * @param[in,out] p_cnt Pointer to load queue unused element count to.
 * @retval    LONGQ_SUCCESS: Successful; *p_cnt loaded with number of elements available in queue.
 * @retval    LONGQ_ERR_NULL_PTR: hdl or p_cnt is NULL.
-* @details   This function loads the number of unused elements in the queue associated with \e hdl and into the location 
-*            pointed to by \e p_cnt.
+* @details   This function loads the number of unused elements in the queue associated with hdl and into the location 
+*            pointed to by p_cnt.
 * @note      None
 */
 longq_err_t R_LONGQ_Unused(longq_hdl_t const  hdl,

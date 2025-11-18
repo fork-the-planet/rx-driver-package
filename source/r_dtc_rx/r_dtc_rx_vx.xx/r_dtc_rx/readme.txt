@@ -5,7 +5,7 @@ r_dtc_rx
 
 Version
 -------
-v4.51
+v4.52
 
 Overview
 --------

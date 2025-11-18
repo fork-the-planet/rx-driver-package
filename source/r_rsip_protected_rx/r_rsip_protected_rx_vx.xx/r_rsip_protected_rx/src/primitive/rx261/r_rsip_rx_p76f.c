@@ -1,30 +1,19 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 15.10.2024 1.00     First Release.
+ *         : 31.07.2025 2.00     Added support for ECDH KDF and HMAC Suspend, Resume
+ *         :                     Revised key management specification
  *********************************************************************************************************************/
 
 /***********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
-#include "./r_rsip_primitive.h"
+#include "r_rsip_primitive.h"
 
 /***********************************************************************************************************************
 Macro definitions
@@ -46,7 +35,7 @@ Exported global variables (to be accessed by other files)
 Private global variables and functions
 ***********************************************************************************************************************/
 
-rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[], const uint32_t InData_length[], uint32_t OutData_MAC[])
+rsip_ret_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[], const uint32_t InData_length[], uint32_t OutData_MAC[])
 {
     int32_t iLoop = 0U, jLoop = 0U, kLoop = 0U, oLoop = 0U;
     uint32_t OFS_ADR = 0U;
@@ -72,14 +61,14 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x6a09e667U);
-    RSIP.REG_002CH.WORD = change_endian_long(0xbb67ae85U);
-    RSIP.REG_002CH.WORD = change_endian_long(0x3c6ef372U);
-    RSIP.REG_002CH.WORD = change_endian_long(0xa54ff53aU);
-    RSIP.REG_002CH.WORD = change_endian_long(0x510e527fU);
-    RSIP.REG_002CH.WORD = change_endian_long(0x9b05688cU);
-    RSIP.REG_002CH.WORD = change_endian_long(0x1f83d9abU);
-    RSIP.REG_002CH.WORD = change_endian_long(0x5be0cd19U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x6a09e667U);
+    RSIP.REG_002CH.WORD = bswap_32big(0xbb67ae85U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x3c6ef372U);
+    RSIP.REG_002CH.WORD = bswap_32big(0xa54ff53aU);
+    RSIP.REG_002CH.WORD = bswap_32big(0x510e527fU);
+    RSIP.REG_002CH.WORD = bswap_32big(0x9b05688cU);
+    RSIP.REG_002CH.WORD = bswap_32big(0x1f83d9abU);
+    RSIP.REG_002CH.WORD = bswap_32big(0x5be0cd19U);
     RSIP.REG_00F4H.WORD = 0x00000011U;
     r_rsip_func002();
     RSIP.REG_00B0H.WORD = 0x00001804U;
@@ -96,7 +85,7 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x80000000U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x80000000U);
     RSIP.REG_0000H.WORD = 0x01400015U;
     /* WAIT_LOOP */
     while (0U != RSIP.REG_0004H.BIT.B30)
@@ -110,8 +99,8 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x00000000U);
-    RSIP.REG_002CH.WORD = change_endian_long(0x00000300U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x00000000U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x00000300U);
     /* WAIT_LOOP */
     while (0U != RSIP.REG_00F8H.BIT.B2)
     {
@@ -131,12 +120,12 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
     RSIP.REG_0094H.WORD = 0x38000c00U;
     RSIP.REG_009CH.WORD = 0x00000080U;
     RSIP.REG_0040H.WORD = 0x00260000U;
-    r_rsip_func100(0x96d0cfa2U, 0xa103d4e0U, 0x3e1ab66dU, 0x5f33ee61U);
+    r_rsip_func100(0xaefb41cbU, 0x4db68d37U, 0x0463b6c9U, 0x6a007732U);
     RSIP.REG_0040H.WORD = 0x00400000U;
     RSIP.REG_0024H.WORD = 0x00000000U;
     if (1U == (RSIP.REG_0040H.BIT.B22))
     {
-        r_rsip_func100(0x01503775U, 0x0db33891U, 0xc1fcda9fU, 0xf71df4bdU);
+        r_rsip_func100(0x595d4404U, 0xfe107884U, 0xc436247fU, 0x984052dbU);
         RSIP.REG_00F4H.WORD = 0x00000020U;
         RSIP.REG_0008H.WORD = 0x00004022U;
         /* WAIT_LOOP */
@@ -152,14 +141,14 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
         OutData_MAC[5] = RSIP.REG_002CH.WORD;
         OutData_MAC[6] = RSIP.REG_002CH.WORD;
         OutData_MAC[7] = RSIP.REG_002CH.WORD;
-        r_rsip_func102(0xa7ee937bU, 0x53fe03edU, 0xc5656d76U, 0x0d081682U);
+        r_rsip_func102(0xd19bf991U, 0xd3aa34b9U, 0xd680e1e3U, 0xc50be1bfU);
         RSIP.REG_006CH.WORD = 0x00000040U;
         /* WAIT_LOOP */
         while (0U != RSIP.REG_0020H.BIT.B12)
         {
             /* waiting */
         }
-        return RSIP_SUCCESS;
+        return RSIP_RET_PASS;
     }
     else
     {
@@ -180,19 +169,19 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
         RSIP.REG_0094H.WORD = 0x00000021U;
         RSIP.REG_009CH.WORD = 0x00000080U;
         RSIP.REG_0040H.WORD = 0x00A60000U;
-        r_rsip_func100(0xd91e8af3U, 0x34f638c5U, 0x23451567U, 0x38fddb26U);
+        r_rsip_func100(0xbeaee575U, 0x985bdc7eU, 0xa6c9eef3U, 0x81fa254dU);
         RSIP.REG_0040H.WORD = 0x00400000U;
         RSIP.REG_0024H.WORD = 0x00000000U;
         if (1U == (RSIP.REG_0040H.BIT.B22))
         {
-            r_rsip_func102(0x4283c60fU, 0xa40a3c5cU, 0x3371425eU, 0x0613a9bdU);
+            r_rsip_func102(0xa8007676U, 0xa6961e02U, 0xd38954abU, 0x3636ad5fU);
             RSIP.REG_006CH.WORD = 0x00000040U;
             /* WAIT_LOOP */
             while (0U != RSIP.REG_0020H.BIT.B12)
             {
                 /* waiting */
             }
-            return RSIP_ERR_FAIL;
+            return RSIP_RET_FAIL;
         }
         else
         {
@@ -252,30 +241,30 @@ rsip_err_t r_rsip_p76f(const uint32_t InData_Cmd[], const uint32_t InData_MAC[],
             RSIP.REG_002CH.WORD = InData_MAC[5];
             RSIP.REG_002CH.WORD = InData_MAC[6];
             RSIP.REG_002CH.WORD = InData_MAC[7];
-            r_rsip_func100(0x4de820b7U, 0x2ba2666bU, 0x538d5cbaU, 0xb6bf0c07U);
+            r_rsip_func100(0x7977a950U, 0xa4fbe30cU, 0x326d5347U, 0xc4d9f8f7U);
             RSIP.REG_0040H.WORD = 0x00400000U;
             RSIP.REG_0024H.WORD = 0x00000000U;
             if (1U == (RSIP.REG_0040H.BIT.B22))
             {
-                r_rsip_func102(0xe8ee2f93U, 0xe954ea9bU, 0x8b08c4d7U, 0x1cd906caU);
+                r_rsip_func102(0x000a2543U, 0xbbae4a48U, 0xf5e102e8U, 0x3562a418U);
                 RSIP.REG_006CH.WORD = 0x00000040U;
                 /* WAIT_LOOP */
                 while (0U != RSIP.REG_0020H.BIT.B12)
                 {
                     /* waiting */
                 }
-                return RSIP_ERR_FAIL;
+                return RSIP_RET_FAIL;
             }
             else
             {
-                r_rsip_func102(0x3a22fe55U, 0x1ba058c8U, 0x3a4c5bbdU, 0x6f6c4526U);
+                r_rsip_func102(0x06255719U, 0xf23e1cf5U, 0x6804ee7eU, 0xa2eb7037U);
                 RSIP.REG_006CH.WORD = 0x00000040U;
                 /* WAIT_LOOP */
                 while (0U != RSIP.REG_0020H.BIT.B12)
                 {
                     /* waiting */
                 }
-                return RSIP_SUCCESS;
+                return RSIP_RET_PASS;
             }
         }
     }

@@ -21,6 +21,7 @@
 *              : 29.07.2022 2.20     Updated demo projects
 *              : 28.06.2024 2.30     Added support Nested Interrupt.
 *              : 15.03.2025 2.31     Updated disclaimer.
+*              : 23.06.2025 2.32     Removed doc folder and updated .rcpc file in FITDemos.
 *******************************************************************************/
 /*******************************************************************************
 * File Name    : r_vbatt_rx_if.h
@@ -42,7 +43,7 @@ Macro definitions
 *******************************************************************************/
 /* Version Number of API. */
 #define VBATT_VERSION_MAJOR           (2)
-#define VBATT_VERSION_MINOR           (31)
+#define VBATT_VERSION_MINOR           (32)
 
 
 /* VBATT function grouping */

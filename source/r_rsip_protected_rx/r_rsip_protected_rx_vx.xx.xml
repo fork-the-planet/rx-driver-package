@@ -6,9 +6,9 @@
     <toolchain>
         <brand>Renesas</brand>
         <product>RXC</product>
-        <version>3.06.00</version>
+        <version>3.07.00</version>
     </toolchain>
-	<toolchain>
+    <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
         <version>8.03.00.202311</version>
@@ -40,16 +40,16 @@
         </dependency>
         <application>Generic</application>
         <desc>RSIP driver.</desc>
-        <details>Support functions: AES, GCM, CCM, CMAC, SHA, ECC, Random number generate, Key management, secure boot/secure firmware update..</details>
+        <details>Support functions: AES, GCM, CCM, CMAC, SHA, ECC, ECDH KDF, Random number generate, Key management, secure boot/secure firmware update..</details>
         <function>RSIP driver.</function>
         <incdir>r_config</incdir>
         <incdir>r_rsip_protected_rx</incdir>
-		<incdir>r_rsip_protected_rx/src</incdir>
-        <incdir>r_rsip_protected_rx/src/primitive</incdir>
-        <incdir>r_rsip_protected_rx/src/private</incdir>
-        <incdir>r_rsip_protected_rx/src/private/common</incdir>        
-        <incdir>r_rsip_protected_rx/src/public</incdir>
-        <incdir>r_rsip_protected_rx/src/public/common</incdir>    
+        <incdir>r_rsip_protected_rx/src/inc/rx261</incdir>
+        <incdir>r_rsip_protected_rx/src/public/common</incdir>
+        <incdir>r_rsip_protected_rx/src/private/common</incdir>
+        <incdir>r_rsip_protected_rx/src/private/rx261</incdir>
+        <incdir>r_rsip_protected_rx/src/primitive/common</incdir>
+        <incdir>r_rsip_protected_rx/src/primitive/rx261</incdir>
     </package>
 
 </refinfo>

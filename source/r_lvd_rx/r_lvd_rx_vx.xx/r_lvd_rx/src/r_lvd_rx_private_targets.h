@@ -46,6 +46,7 @@
 *              : 28.06.2024 4.80     Added Nested interrupt support.
 *                                    Added support for RX260, RX261.
 *              : 15.03.2025 4.81     Updated disclaimer.
+*              : 23.06.2025 4.82     Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 #ifndef LVD_PRIVATE_TARGETS_HEADER_FILE
 #define LVD_PRIVATE_TARGETS_HEADER_FILE
@@ -119,7 +120,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define LVD_RX_VERSION_MAJOR                    (4)
-#define LVD_RX_VERSION_MINOR                    (81)
+#define LVD_RX_VERSION_MINOR                    (82)
 
 /***********************************************************************************************************************
 Typedef definitions

@@ -24,6 +24,8 @@
 *                              Updated for critical section protection.
 *         : 30.11.2022 2.00    Updated and added new demo project.
 *         : 15.03.2025 2.01    Updated disclaimer
+*         : 30.10.2025 2.02    Removed doc folder and updated .rcpc file in FITDemos.
+*                              Removed \e in Doxygen comment of API function.
 ***********************************************************************************************************************/
 
 #ifndef LONGQ_IF_H
@@ -40,7 +42,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define LONGQ_VERSION_MAJOR (2)
-#define LONGQ_VERSION_MINOR (01)
+#define LONGQ_VERSION_MINOR (02)
 
 #if ((LONGQ_CFG_CRITICAL_SECTION == 1)||(LONGQ_CFG_PROTECT_QUEUE == 1))
 #if (BSP_CFG_RUN_IN_USER_MODE == 1)

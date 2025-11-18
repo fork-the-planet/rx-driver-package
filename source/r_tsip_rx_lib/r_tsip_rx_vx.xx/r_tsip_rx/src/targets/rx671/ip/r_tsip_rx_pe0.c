@@ -30,6 +30,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -136,7 +137,7 @@ e_tsip_err_t R_TSIP_TlsRootCertificateVerificationSub(uint32_t *InData_Sel_PubKe
     }
     TSIP.REG_100H.WORD = change_endian_long(0x000000e0u);
     RX671_func101(change_endian_long(0x22ba0a49u), change_endian_long(0xe0ce1b8bu), change_endian_long(0x07196cfau), change_endian_long(0x876a5d48u));
-    RX671_func405(0x0u, 0x4u, InData_Sel_PubKeyType, InData_Certificates, InData_CertificatesLength, InData_Signature, InData_CertificatesInfo, InData_DomainParam, OutData_PubKey);
+    RX671_func405(0u, 4u, InData_Sel_PubKeyType, InData_Certificates, InData_CertificatesLength, InData_Signature, InData_CertificatesInfo, InData_DomainParam, OutData_PubKey);
     TSIP.REG_ECH.WORD = 0x38000c00u;
     TSIP.REG_E0H.WORD = 0x00000080u;
     TSIP.REG_1CH.WORD = 0x00A60000u;

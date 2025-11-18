@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+/***********************************************************************************************************************
+  Purpose: Module Description File (MDF) Example (Schema Version 2.0)
+           This is a description of a sample FIT module configuration file
+***********************************************************************************************************************/
+-->
+<module xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" xs:noNamespaceSchemaLocation="schema_mdf_2.00.xsd">
+    <fileVersion>1.00</fileVersion>
+    <formatVersion>2.00</formatVersion>
+
+    <fileTemplate></fileTemplate>
+    <configuration>
+        <property id="RSIP_CFG_PARAM_CHECKING_ENABLE" display="Parameter Checking" default="1" type="checkbox">
+            <option id="RSIP_CFG_PARAM_CHECKING_ENABLE.0" display="No checking Parameter" value="0"/>
+            <option id="RSIP_CFG_PARAM_CHECKING_ENABLE.1" display="Checking Parameter" value="1"/>
+            <description>0 = No checking Parameter
+1 = Checking Parameter</description>
+        </property>
+        <property id="RSIP_CFG_AES_128_ENABLE" display="AES128" default="0" type="checkbox">
+            <option id="RSIP_CFG_AES_128_ENABLE.0" display="Unsupport AES128" value="0"/>
+            <option id="RSIP_CFG_AES_128_ENABLE.1" display="Support AES128" value="1"/>
+            <description>0 = Unsupport AES128
+1 = Support AES128</description>
+        </property>
+        <property id="RSIP_CFG_AES_256_ENABLE" display="AES256" default="0" type="checkbox">
+            <option id="RSIP_CFG_AES_256_ENABLE.0" display="Unsupport AES256" value="0"/>
+            <option id="RSIP_CFG_AES_256_ENABLE.1" display="Support AES256" value="1"/>
+            <description>0 = Unsupport AES256
+1 = Support AES256</description>
+        </property>
+        <property id="RSIP_CFG_AES_ECB_CBC_CTR_ENABLE" display="AES ECB/CBC/CTR" default="0" type="checkbox">
+          <constraint display="Only valid with supporting AES" actionOnFail="disable">${RSIP_CFG_AES_128_ENABLE} == ${RSIP_CFG_AES_128_ENABLE.1} || ${RSIP_CFG_AES_256_ENABLE} == ${RSIP_CFG_AES_256_ENABLE.1}</constraint>
+            <option id="RSIP_CFG_AES_ECB_CBC_CTR_ENABLE.0" display="Unsupport AES ECB/CBC/CTR" value="0"/>
+            <option id="RSIP_CFG_AES_ECB_CBC_CTR_ENABLE.1" display="Support AES ECB/CBC/CTR" value="1"/>
+            <description>0 = Unsupport AES ECB/CBC/CTR
+1 = Support AES ECB/CBC/CTR</description>
+        </property>
+        <property id="RSIP_CFG_AES_GCM_ENABLE" display="AES GCM" default="0" type="checkbox">
+          <constraint display="Only valid with supporting AES" actionOnFail="disable">${RSIP_CFG_AES_128_ENABLE} == ${RSIP_CFG_AES_128_ENABLE.1} || ${RSIP_CFG_AES_256_ENABLE} == ${RSIP_CFG_AES_256_ENABLE.1}</constraint>
+            <option id="RSIP_CFG_AES_GCM_ENABLE.0" display="Unsupport AES GCM" value="0"/>
+            <option id="RSIP_CFG_AES_GCM_ENABLE.1" display="Support AES GCM" value="1"/>
+            <description>0 = Unsupport AES GCM
+1 = Support AES GCM</description>
+        </property>
+        <property id="RSIP_CFG_AES_CCM_ENABLE" display="AES CCM" default="0" type="checkbox">
+          <constraint display="Only valid with supporting AES" actionOnFail="disable">${RSIP_CFG_AES_128_ENABLE} == ${RSIP_CFG_AES_128_ENABLE.1} || ${RSIP_CFG_AES_256_ENABLE} == ${RSIP_CFG_AES_256_ENABLE.1}</constraint>
+            <option id="RSIP_CFG_AES_CCM_ENABLE.0" display="Unsupport AES CCM" value="0"/>
+            <option id="RSIP_CFG_AES_CCM_ENABLE.1" display="Support AES CCM" value="1"/>
+            <description>0 = Unsupport AES CCM
+1 = Support AES CCM</description>
+        </property>
+        <property id="RSIP_CFG_AES_CMAC_ENABLE" display="AES CMAC" default="0" type="checkbox">
+          <constraint display="Only valid with supporting AES" actionOnFail="disable">${RSIP_CFG_AES_128_ENABLE} == ${RSIP_CFG_AES_128_ENABLE.1} || ${RSIP_CFG_AES_256_ENABLE} == ${RSIP_CFG_AES_256_ENABLE.1}</constraint>
+            <option id="RSIP_CFG_AES_CMAC_ENABLE.0" display="Unsupport AES CMAC" value="0"/>
+            <option id="RSIP_CFG_AES_CMAC_ENABLE.1" display="Support AES CMAC" value="1"/>
+            <description>0 = Unsupport AES CMAC
+1 = Support AES CMAC</description>
+        </property>
+        <property id="RSIP_CFG_ECC_SECP256R1_ENABLE" display="ECC SECP256R1" default="0" type="checkbox">
+            <option id="RSIP_CFG_ECC_SECP256R1_ENABLE.0" display="Unsupport ECC SECP256R1" value="0"/>
+            <option id="RSIP_CFG_ECC_SECP256R1_ENABLE.1" display="Support ECC SECP256R1" value="1"/>
+            <description>0 = Unsupport ECC SECP256R1
+1 = Support ECC SECP256R1</description>
+        </property>
+        <property id="RSIP_CFG_ECC_BRAINPOOLP256R1_ENABLE" display="ECC BRAINPOOLP256R1" default="0" type="checkbox">
+            <option id="RSIP_CFG_ECC_BRAINPOOLP256R1_ENABLE.0" display="Unsupport ECC BRAINPOOLP256R1" value="0"/>
+            <option id="RSIP_CFG_ECC_BRAINPOOLP256R1_ENABLE.1" display="Support ECC BRAINPOOLP256R1" value="1"/>
+            <description>0 = Unsupport ECC BRAINPOOLP256R1
+1 = Support ECC BRAINPOOLP256R1</description>
+        </property>
+        <property id="RSIP_CFG_ECC_SECP256K1_ENABLE" display="ECC SECP256K1" default="0" type="checkbox">
+            <option id="RSIP_CFG_ECC_SECP256K1_ENABLE.0" display="Unsupport ECC SECP256K1" value="0"/>
+            <option id="RSIP_CFG_ECC_SECP256K1_ENABLE.1" display="Support ECC SECP256K1" value="1"/>
+            <description>0 = Unsupport ECC SECP256K1
+1 = Support ECC SECP256K1</description>
+        </property>
+        <property id="RSIP_CFG_SHA224_ENABLE" display="SHA224" default="0" type="checkbox">
+            <option id="RSIP_CFG_SHA224_ENABLE.0" display="Unsupport SHA224" value="0"/>
+            <option id="RSIP_CFG_SHA224_ENABLE.1" display="Support SHA224" value="1"/>
+            <description>0 = Unsupport SHA224
+1 = Support SHA224</description>
+        </property>
+        <property id="RSIP_CFG_SHA256_ENABLE" display="SHA256" default="0" type="checkbox">
+            <option id="RSIP_CFG_SHA256_ENABLE.0" display="Unsupport SHA256" value="0"/>
+            <option id="RSIP_CFG_SHA256_ENABLE.1" display="Support SHA256" value="1"/>
+            <description>0 = Unsupport SHA256
+1 = Support SHA256</description>
+        </property>
+        <property id="RSIP_CFG_HMAC_SHA224_ENABLE" display="SHA224 HMAC" default="0" type="checkbox">
+            <option id="RSIP_CFG_HMAC_SHA224_ENABLE.0" display="Unsupport SHA224 HMAC" value="0"/>
+            <option id="RSIP_CFG_HMAC_SHA224_ENABLE.1" display="Support SHA224 HMAC" value="1"/>
+            <description>0 = Unsupport SHA224 HMAC
+1 = Support SHA224 HMAC</description>
+        </property>
+        <property id="RSIP_CFG_HMAC_SHA256_ENABLE" display="SHA256 HMAC" default="0" type="checkbox">
+            <option id="RSIP_CFG_HMAC_SHA256_ENABLE.0" display="Unsupport SHA256 HMAC" value="0"/>
+            <option id="RSIP_CFG_HMAC_SHA256_ENABLE.1" display="Support SHA256 HMAC" value="1"/>
+            <description>0 = Unsupport SHA256 HMAC
+1 = Support SHA256 HMAC</description>
+        </property>
+        <property id="RSIP_CFG_KDF_SHA256_ENABLE" display="KDF SHA256" default="0" type="checkbox">
+            <option id="RSIP_CFG_HMAC_SHA256_ENABLE.0" display="Unsupport KDF SHA256" value="0"/>
+            <option id="RSIP_CFG_HMAC_SHA256_ENABLE.1" display="Support KDF SHA256" value="1"/>
+            <description>0 = Unsupport KDF SHA256
+1 = Support KDF SHA256</description>
+        </property>
+        <property id="RSIP_CFG_SECURE_BOOT_ENABLE" display="SECURE BOOT" default="0" type="checkbox">
+            <option id="RSIP_CFG_SECURE_BOOT_ENABLE.0" display="Unsupport Secure Boot" value="0"/>
+            <option id="RSIP_CFG_SECURE_BOOT_ENABLE.1" display="Support Secure Boot" value="1"/>
+            <description>0 = Unsupport Secure Boot
+1 = Support Secure Boot</description>
+        </property>
+        <property id="RSIP_CFG_FIRMWARE_UPDATE_ENABLE" display="FIRMWARE UPDATE" default="0" type="checkbox">
+            <option id="RSIP_CFG_FIRMWARE_UPDATE_ENABLE.0" display="Unsupport Firmware Update" value="0"/>
+            <option id="RSIP_CFG_FIRMWARE_UPDATE_ENABLE.1" display="Support Firmware Update" value="1"/>
+            <description>0 = Unsupport Firmware Update
+1 = Support Firmware Update</description>
+        </property>
+    </configuration>
+</module>

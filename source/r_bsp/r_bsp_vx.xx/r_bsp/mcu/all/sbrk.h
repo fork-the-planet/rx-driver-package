@@ -11,6 +11,8 @@
 * History : DD.MM.YYYY Version  Description
 *         : 28.02.2019 1.00     First Release
 *         : 26.02.2025 1.01     Changed the disclaimer.
+*         : 28.05.2025 1.02     Added compile switch of BSP_CFG_LOW_LEVEL_INTERFACE_SBRK_ENABLE.
+*                               Deleted the heap definition for OPTLIB.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -33,7 +35,7 @@ Macro definitions
 #if BSP_CFG_STARTUP_DISABLE == 0
 
 #if defined(__CCRX__) || defined(__GNUC__)
-
+#if BSP_CFG_LOW_LEVEL_INTERFACE_SBRK_ENABLE == 1
 /***********************************************************************************************************************
 Typedef definitions
 ***********************************************************************************************************************/
@@ -57,11 +59,7 @@ int8_t *_s1ptr;
 /* Memory allocation function prototype declaration (CC-RX and GNURX+NEWLIB) */
 int8_t  *sbrk(size_t size);
 
-#if defined(__GNUC__)
-/* Memory address function prototype declaration (GNURX+OPTLIB only) */
-int8_t  *_top_of_heap(void);
-#endif /* defined(__GNUC__) */
-
+#endif /* BSP_CFG_LOW_LEVEL_INTERFACE_SBRK_ENABLE == 1 */
 #endif /* defined(__CCRX__), defined(__GNUC__) */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */

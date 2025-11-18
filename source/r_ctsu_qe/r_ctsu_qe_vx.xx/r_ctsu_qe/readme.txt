@@ -5,11 +5,11 @@ r_ctsu_qe
 
 Document Number 
 ---------------
-r01an4469jj0311
+r01an4469jj0320
 
 Version
 -------
-v3.11
+v3.20
 
 Overview
 --------
@@ -73,7 +73,6 @@ RX260, RX261
 Required Packages
 -----------------
 * r_bsp       v7.50
-* r_touch_qe  v3.11
 
 
 Toolchain(s) Used

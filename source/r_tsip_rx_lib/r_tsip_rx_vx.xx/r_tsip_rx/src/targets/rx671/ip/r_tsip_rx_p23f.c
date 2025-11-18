@@ -30,6 +30,7 @@
  *         : 28.06.2024 1.21     Added support for TLS1.2 server
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
+ *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -62,12 +63,12 @@ TSIP_SEC_P_SECURE_BOOT
 /***********************************************************************************************************************
 * Function Name: R_TSIP_GenerateFirmwareMacFinalSub
 *******************************************************************************************************************/ /**
-* @details       RX72M F/W update Final
+* @details       RX65NHU F/W update Final
 * @param[in]     InData_UpProgram
-* @param[in]     MAX_CNT
 * @param[in]     InData_UpMAC
 * @param[out]    OutData_Program
 * @param[out]    OutData_MAC
+* @param[in]     MAX_CNT
 * @retval        TSIP_SUCCESS
 * @retval        TSIP_ERR_FAIL
 * @note          None

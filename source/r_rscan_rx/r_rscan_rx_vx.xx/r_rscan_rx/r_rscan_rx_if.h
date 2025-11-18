@@ -38,6 +38,7 @@
 *                              Modified code to support only RX24T chip version B.
 *                              Removed support for RX230.
 *           15.03.2025 2.91    Updated disclaimer.
+*           23.06.2025 2.92    Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #ifndef CAN_INTERFACE_HEADER_FILE
@@ -61,7 +62,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define CAN_VERSION_MAJOR           (2)
-#define CAN_VERSION_MINOR           (91)
+#define CAN_VERSION_MINOR           (92)
 
 /* Channel numbers */
 #define CAN_CH0                     (0)

@@ -12,6 +12,7 @@
 * History : DD.MM.YYYY Version  Description
 *         : 31.05.2024 1.00     First Release
 *         : 26.02.2025 1.01     Changed the disclaimer.
+*         : 28.05.2025 1.02     Deleted the include of lowsrc.h.
 ***********************************************************************************************************************/
 
 /* Make sure that no other platforms have already been defined. Do not touch this! */
@@ -33,7 +34,6 @@ INCLUDE APPROPRIATE MCU AND BOARD FILES
 #include    "mcu/all/r_rx_compiler.h"
 
 #include    "mcu/all/lowlvl.h"
-#include    "mcu/all/lowsrc.h"
 #include    "mcu/all/r_bsp_mcu_startup.h"
 
 #if defined(__CCRX__)

@@ -94,7 +94,7 @@
         <zipsource>r_lpc_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
-            <version>7.52</version>
+            <version>7.60</version>
         </dependency>
         <application>Low Power Consumption</application>
         <desc>Control Low Power States.</desc>

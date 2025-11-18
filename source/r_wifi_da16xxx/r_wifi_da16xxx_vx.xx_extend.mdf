@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products.
-* No other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIESREGARDING THIS SOFTWARE, WHETHER EXPRESS, IMPLIED
-* OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NON-INFRINGEMENT.  ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY
-* LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE FOR ANY DIRECT,
-* INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR
-* ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability
-* of this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
-***********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 
 /***********************************************************************************************************************
   Purpose: Module Description File (MDF) Example (Schema Version 2.0)
@@ -58,16 +45,22 @@ Disable: Not use DA16600 module.</description>
             <constraint display="Value must be in the range 0~12">("${WIFI_CFG_SCI_CHANNEL}" &gt;= 0) &amp;&amp; ("${WIFI_CFG_SCI_CHANNEL}" &lt;= 12)</constraint>
             <description>SCI channel for DA16XXX AT command communication.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - SCI Channel 0
-2: RX65N Envision Kit (PMOD) - SCI Channel 2
-3: RX65N RSK (2MB) (PMOD1)   - SCI Channel 6
-4: RX65N RSK (2MB) (PMOD2)   - SCI Channel 1
-5: CK-RX65N v1 (PMOD1)       - SCI Channel 6
-6: CK-RX65N v1 (PMOD2)       - SCI Channel 0
-7: CK-RX65N v2 (PMOD1)       - SCI Channel 6
-8: CK-RX65N v2 (PMOD2)       - SCI Channel 2
-9: RX671 Target Board (PMOD) - SCI Channel 5
-10: RX66N Target Board (PMOD) - SCI Channel 5</description>
+1: RX65N Cloud Kit (PMOD)               - SCI Channel 0
+2: RX65N Envision Kit (PMOD)            - SCI Channel 2
+3: RX65N RSK (2MB) (PMOD1)              - SCI Channel 6
+4: RX65N RSK (2MB) (PMOD2)              - SCI Channel 1
+5: CK-RX65N v1 (PMOD1)                  - SCI Channel 6
+6: CK-RX65N v1 (PMOD2)                  - SCI Channel 0
+7: CK-RX65N v2 (PMOD1)                  - SCI Channel 6
+8: CK-RX65N v2 (PMOD2)                  - SCI Channel 2
+9: RX671 Target Board (PMOD)            - SCI Channel 5
+10: RX66N Target Board (PMOD)           - SCI Channel 5
+11: FPB-RX261 (PMOD1)                   - SCI Channel 5
+12: EK-RX261 (PMOD1)                    - SCI Channel 5
+13: EK-RX671 (PMOD1)                    - SCI Channel 10
+14: EK-RX671 (PMOD2)                    - SCI Channel 11
+15: FPB-RX140 (PMOD1)                   - SCI Channel 5
+16: FPB-RX140 (PMOD2)                   - SCI Channel 1</description>
         </property>
         <property id="WIFI_CFG_SCI_INTERRUPT_LEVEL" display="Interrupt Level for WIFI_CFG_SCI_CHANNEL" default="4" type="textbox" category="COMMON">
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_SCI_INTERRUPT_LEVEL}")</constraint>
@@ -76,7 +69,7 @@ Board dependent settings; please use the value for each setting listed below dep
         </property>
         <property id="WIFI_CFG_SCI_PCLK_HZ" display="Peripheral clock speed for WIFI_CFG_SCI_CHANNEL" default="60000000" type="textbox" category="COMMON">
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_SCI_PCLK_HZ}")</constraint>
-            <constraint display="Value must be in the range 60000000~120000000">("${WIFI_CFG_SCI_PCLK_HZ}" &gt;= 60000000) &amp;&amp; ("${WIFI_CFG_SCI_PCLK_HZ}" &lt;= 120000000)</constraint>
+            <constraint display="Value must be in the range 24000000~120000000">("${WIFI_CFG_SCI_PCLK_HZ}" &gt;= 24000000) &amp;&amp; ("${WIFI_CFG_SCI_PCLK_HZ}" &lt;= 120000000)</constraint>
             <description>Peripheral clock speed for WIFI_CFG_SCI_CHANNEL.
 Check Peripheral clock speed in Clocks tab.
 For Peripheral module clock, check board group hardware manual, Serial Communications Interface section at below.
@@ -84,7 +77,9 @@ e.g. if PCLKB speed is 60MHz then WIFI_CFG_SCI_PCLK_HZ is 60000000.
 List of board group hardware manual:
 1: RX65N group: https://www.renesas.com/us/en/document/mah/rx65n-group-rx651-group-users-manualhardware-rev230
 2: RX671 group: https://www.renesas.com/tw/en/document/mah/rx671-group-users-manual-hardware-rev100
-3: RX66N group: https://www.renesas.com/us/en/document/mah/rx66n-group-users-manual-hardware-rev111</description>
+3: RX66N group: https://www.renesas.com/us/en/document/mah/rx66n-group-users-manual-hardware-rev111
+4: RX140 group: https://www.renesas.com/en/document/mah/rx140-group-users-manual-hardware-rev120?r=1531576
+5: RX261 group: https://www.renesas.com/en/document/mah/rx260-group-rx261-group-users-manual-hardware?r=25565706</description>
         </property>
         <property id="WIFI_CFG_SCI_BAUDRATE" display="Communication baud rate for WIFI_CFG_SCI_CHANNEL" default="115200" type="textbox" category="COMMON">
             <constraint display="Value must be an decimal value" actionOnFail="disable">testInteger("${WIFI_CFG_SCI_BAUDRATE}")</constraint>
@@ -92,12 +87,14 @@ List of board group hardware manual:
             <description>Communication baud rate for WIFI_CFG_SCI_CHANNEL.</description>
         </property>
         <property id="WIFI_CFG_CTS_SW_CTRL" display="UART hardware flow control" default="1" type="combobox" category="COMMON">
+            <constraint actionOnFail="disable">"${WIFI_CFG_DA16600_SUPPORT}" != "${WIFI_CFG_DA16600_SUPPORT.1}"</constraint>
             <option id="WIFI_CFG_CTS_SW_CTRL.0" display="CTS(Hardware), RTS(Software)" value="0"/>
             <option id="WIFI_CFG_CTS_SW_CTRL.1" display="RTS(Hardware), CTS(Software)" value="1"/>
             <description>CTS(Hardware), RTS(Software): CTS hardware flow control is enabled. RTS flow control is performed by the FIT module using GPIO.
 RTS(Hardware), CTS(Software): RTS hardware flow control is enabled. CTS flow control is performed by the FIT module using GPIO.</description>
         </property>
         <property id="WIFI_CFG_CTS_PORT" display="CTS port number" default="J" type="combobox" category="COMMON">
+            <constraint actionOnFail="disable">"${WIFI_CFG_DA16600_SUPPORT}" != "${WIFI_CFG_DA16600_SUPPORT.1}"</constraint>
             <option id="WIFI_CFG_CTS_PORT.0" display="PORT0" value="0"/>
             <option id="WIFI_CFG_CTS_PORT.1" display="PORT1" value="1"/>
             <option id="WIFI_CFG_CTS_PORT.2" display="PORT2" value="2"/>
@@ -124,34 +121,48 @@ RTS(Hardware), CTS(Software): RTS hardware flow control is enabled. CTS flow con
             <option id="WIFI_CFG_CTS_PORT.Q" display="PORTQ" value="Q"/>
             <description>Configure CTS port.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - P23 (Port 2)
-2: RX65N Envision Kit (PMOD) - PJ5 (Port J)
-3: RX65N RSK (2MB) (PMOD1)   - PJ3 (Port J)
-4: RX65N RSK (2MB) (PMOD2)   - P31 (Port 3)
-5: CK-RX65N v1 (PMOD1)       - PJ3 (Port J)
-6: CK-RX65N v1 (PMOD2)       - P23 (Port 2)
-7: CK-RX65N v2 (PMOD1)       - PJ3 (Port J)
-8: CK-RX65N v2 (PMOD2)       - PJ5 (Port J)
-9: RX671 Target Board (PMOD) - PC0 (Port C)
-10: RX66N Target Board (PMOD) - PC0 (Port C)</description>
+1: RX65N Cloud Kit (PMOD)               - P23 (Port 2)
+2: RX65N Envision Kit (PMOD)            - PJ5 (Port J)
+3: RX65N RSK (2MB) (PMOD1)              - PJ3 (Port J)
+4: RX65N RSK (2MB) (PMOD2)              - P31 (Port 3)
+5: CK-RX65N v1 (PMOD1)                  - PJ3 (Port J)
+6: CK-RX65N v1 (PMOD2)                  - P23 (Port 2)
+7: CK-RX65N v2 (PMOD1)                  - PJ3 (Port J)
+8: CK-RX65N v2 (PMOD2)                  - PJ5 (Port J)
+9: RX671 Target Board (PMOD)            - PC0 (Port C)
+10: RX66N Target Board (PMOD)           - PC0 (Port C)
+11: FPB-RX261 (PMOD1)                   - PC0 (Port C)
+12: EK-RX261 (PMOD1)                    - PC0 (Port C)
+13: EK-RX671 (PMOD1)                    - P83 (Port 8)
+14: EK-RX671 (PMOD2)                    - P74 (Port 7)
+15: FPB-RX140 (PMOD1)                   - PA6 (Port A)
+16: FPB-RX140 (PMOD2)                   - P14 (Port 1)</description>
         </property>
         <property id="WIFI_CFG_CTS_PIN" display="CTS pin number" default="3" type="textbox" category="COMMON">
+            <constraint actionOnFail="disable">"${WIFI_CFG_DA16600_SUPPORT}" != "${WIFI_CFG_DA16600_SUPPORT.1}"</constraint>
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_CTS_PIN}")</constraint>
             <constraint display="Value must be in the range 0~7">("${WIFI_CFG_CTS_PIN}" &gt;= 0) &amp;&amp; ("${WIFI_CFG_CTS_PIN}" &lt;= 7)</constraint>
             <description>Configure CTS pin.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - P23 (Pin 3)
-2: RX65N Envision Kit (PMOD) - PJ5 (Pin 5)
-3: RX65N RSK (2MB) (PMOD1)   - PJ3 (Pin 3)
-4: RX65N RSK (2MB) (PMOD2)   - P31 (Pin 1)
-5: CK-RX65N v1 (PMOD1)       - PJ3 (Pin 3)
-6: CK-RX65N v1 (PMOD2)       - P23 (Pin 3)
-7: CK-RX65N v2 (PMOD1)       - PJ3 (Pin 3)
-8: CK-RX65N v2 (PMOD2)       - PJ5 (Pin 5)
-9: RX671 Target Board (PMOD) - PC0 (Pin 0)
-10: RX66N Target Board (PMOD) - PC0 (Pin 0)</description>
+1: RX65N Cloud Kit (PMOD)               - P23 (Pin 3)
+2: RX65N Envision Kit (PMOD)            - PJ5 (Pin 5)
+3: RX65N RSK (2MB) (PMOD1)              - PJ3 (Pin 3)
+4: RX65N RSK (2MB) (PMOD2)              - P31 (Pin 1)
+5: CK-RX65N v1 (PMOD1)                  - PJ3 (Pin 3)
+6: CK-RX65N v1 (PMOD2)                  - P23 (Pin 3)
+7: CK-RX65N v2 (PMOD1)                  - PJ3 (Pin 3)
+8: CK-RX65N v2 (PMOD2)                  - PJ5 (Pin 5)
+9: RX671 Target Board (PMOD)            - PC0 (Pin 0)
+10: RX66N Target Board (PMOD)           - PC0 (Pin 0)
+11: FPB-RX261 (PMOD1)                   - PC0 (Pin 0)
+12: EK-RX261 (PMOD1)                    - PC0 (Pin 0)
+13: EK-RX671 (PMOD1)                    - P83 (Pin 3)
+14: EK-RX671 (PMOD2)                    - P74 (Pin 4)
+15: FPB-RX140 (PMOD1)                   - PA6 (Pin 6)
+16: FPB-RX140 (PMOD2)                   - P14 (Pin 4)</description>
         </property>
         <property id="WIFI_CFG_RTS_PORT" display="RTS port number" default="J" type="combobox" category="COMMON">
+            <constraint actionOnFail="disable">"${WIFI_CFG_DA16600_SUPPORT}" != "${WIFI_CFG_DA16600_SUPPORT.1}"</constraint>
             <option id="WIFI_CFG_RTS_PORT.0" display="PORT0" value="0"/>
             <option id="WIFI_CFG_RTS_PORT.1" display="PORT1" value="1"/>
             <option id="WIFI_CFG_RTS_PORT.2" display="PORT2" value="2"/>
@@ -178,54 +189,75 @@ Board dependent settings; please use the value for each setting listed below dep
             <option id="WIFI_CFG_RTS_PORT.Q" display="PORTQ" value="Q"/>
             <description>Configure RTS port.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - P23 (Port 2)
-2: RX65N Envision Kit (PMOD) - PJ5 (Port J)
-3: RX65N RSK (2MB) (PMOD1)   - PJ3 (Port J)
-4: RX65N RSK (2MB) (PMOD2)   - P31 (Port 3)
-5: CK-RX65N v1 (PMOD1)       - PJ3 (Port J)
-6: CK-RX65N v1 (PMOD2)       - P23 (Port 2)
-7: CK-RX65N v2 (PMOD1)       - PJ3 (Port J)
-8: CK-RX65N v2 (PMOD2)       - PJ5 (Port J)
-9: RX671 Target Board (PMOD) - PC0 (Port C)
-10: RX66N Target Board (PMOD) - PC0 (Port C)</description>
+1: RX65N Cloud Kit (PMOD)               - P23 (Port 2)
+2: RX65N Envision Kit (PMOD)            - PJ5 (Port J)
+3: RX65N RSK (2MB) (PMOD1)              - PJ3 (Port J)
+4: RX65N RSK (2MB) (PMOD2)              - P31 (Port 3)
+5: CK-RX65N v1 (PMOD1)                  - PJ3 (Port J)
+6: CK-RX65N v1 (PMOD2)                  - P23 (Port 2)
+7: CK-RX65N v2 (PMOD1)                  - PJ3 (Port J)
+8: CK-RX65N v2 (PMOD2)                  - PJ5 (Port J)
+9: RX671 Target Board (PMOD)            - PC0 (Port C)
+10: RX66N Target Board (PMOD)           - PC0 (Port C)
+11: FPB-RX261 (PMOD1)                   - PC0 (Port C)
+12: EK-RX261 (PMOD1)                    - PC0 (Port C)
+13: EK-RX671 (PMOD1)                    - P80 (Port 8)
+14: EK-RX671 (PMOD2)                    - P75 (Port 7)
+15: FPB-RX140 (PMOD1)                   - PA1 (Port A)
+16: FPB-RX140 (PMOD2)                   - P31 (Port 3)</description>
         </property>
         <property id="WIFI_CFG_RTS_PIN" display="RTS pin number" default="3" type="textbox" category="COMMON">
+            <constraint actionOnFail="disable">"${WIFI_CFG_DA16600_SUPPORT}" != "${WIFI_CFG_DA16600_SUPPORT.1}"</constraint>
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_RTS_PIN}")</constraint>
             <constraint display="Value must be in the range 0~7">("${WIFI_CFG_RTS_PIN}" &gt;= 0) &amp;&amp; ("${WIFI_CFG_RTS_PIN}" &lt;= 7)</constraint>
             <description>Configure RTS pin.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - P23 (Pin 3)
-2: RX65N Envision Kit (PMOD) - PJ5 (Pin 5)
-3: RX65N RSK (2MB) (PMOD1)   - PJ3 (Pin 3)
-4: RX65N RSK (2MB) (PMOD2)   - P31 (Pin 1)
-5: CK-RX65N v1 (PMOD1)       - PJ3 (Pin 3)
-6: CK-RX65N v1 (PMOD2)       - P23 (Pin 3)
-7: CK-RX65N v2 (PMOD1)       - PJ3 (Pin 3)
-8: CK-RX65N v2 (PMOD2)       - PJ5 (Pin 5)
-9: RX671 Target Board (PMOD) - PC0 (Pin 0)
-10: RX66N Target Board (PMOD) - PC0 (Pin 0)</description>
+1: RX65N Cloud Kit (PMOD)               - P23 (Pin 3)
+2: RX65N Envision Kit (PMOD)            - PJ5 (Pin 5)
+3: RX65N RSK (2MB) (PMOD1)              - PJ3 (Pin 3)
+4: RX65N RSK (2MB) (PMOD2)              - P31 (Pin 1)
+5: CK-RX65N v1 (PMOD1)                  - PJ3 (Pin 3)
+6: CK-RX65N v1 (PMOD2)                  - P23 (Pin 3)
+7: CK-RX65N v2 (PMOD1)                  - PJ3 (Pin 3)
+8: CK-RX65N v2 (PMOD2)                  - PJ5 (Pin 5)
+9: RX671 Target Board (PMOD)            - PC0 (Pin 0)
+10: RX66N Target Board (PMOD)           - PC0 (Pin 0)
+11: FPB-RX261 (PMOD1)                   - PC0 (Pin 0)
+12: EK-RX261 (PMOD1)                    - PC0 (Pin 0)
+13: EK-RX671 (PMOD1)                    - P80 (Pin 0)
+14: EK-RX671 (PMOD2)                    - P75 (Pin 5)
+15: FPB-RX140 (PMOD1)                   - PA1 (Pin 1)
+16: FPB-RX140 (PMOD2)                   - P31 (Pin 1)</description>
         </property>
         <property id="WIFI_CFG_PFS_SET_VALUE" display="RTS pin function set value" default="0x0AU" type="textbox" category="COMMON">
-            <constraint display="when Enable user-defined WIFI_CFG_CTS_SW_CTRL is Enable only" actionOnFail="disable">${WIFI_CFG_CTS_SW_CTRL} == ${WIFI_CFG_CTS_SW_CTRL.1}</constraint>
+            <constraint actionOnFail="disable">"${WIFI_CFG_DA16600_SUPPORT}" != "${WIFI_CFG_DA16600_SUPPORT.1}"</constraint>
             <constraint display="Character error. Example: 0x0BU." actionOnFail="error">/^(0x[A-F0-9].[U]{1,5})$/.test("${WIFI_CFG_PFS_SET_VALUE}")</constraint>
             <description>RTS pin function set value.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - 0x0BU
-2: RX65N Envision Kit (PMOD) - 0x0BU
-3: RX65N RSK (2MB) (PMOD1)   - 0x0AU
-4: RX65N RSK (2MB) (PMOD2)   - 0x0BU
-5: CK-RX65N v1 (PMOD1)       - 0x0AU
-6: CK-RX65N v1 (PMOD2)       - 0x0BU
-7: CK-RX65N v2 (PMOD1)       - 0x0AU
-8: CK-RX65N v2 (PMOD2)       - 0x0BU
-9: RX671 Target Board (PMOD) - 0x0BU
-10: RX66N Target Board (PMOD) - 0x0BU
+1: RX65N Cloud Kit (PMOD)               - 0x0BU
+2: RX65N Envision Kit (PMOD)            - 0x0BU
+3: RX65N RSK (2MB) (PMOD1)              - 0x0AU
+4: RX65N RSK (2MB) (PMOD2)              - 0x0BU
+5: CK-RX65N v1 (PMOD1)                  - 0x0AU
+6: CK-RX65N v1 (PMOD2)                  - 0x0BU
+7: CK-RX65N v2 (PMOD1)                  - 0x0AU
+8: CK-RX65N v2 (PMOD2)                  - 0x0BU
+9: RX671 Target Board (PMOD)            - 0x0BU
+10: RX66N Target Board (PMOD)           - 0x0BU
+11: FPB-RX261 (PMOD1)                   - 0x0BU
+12: EK-RX261 (PMOD1)                    - 0x0BU
+13: EK-RX671 (PMOD1)                    - 0x2DU
+14: EK-RX671 (PMOD2)                    - 0x2DU
+15: FPB-RX140 (PMOD1)                   - 0x0BU
+16: FPB-RX140 (PMOD2)                   - 0x0BU
 Check Pin Function Select (PSEL) of Pin Function Control Register (PxyPFS)
 in Multi-Function Pin Controller (MPC) section of board group hardware manual.
 Below is list of board group hardware manual:
     1: RX65N group: https://www.renesas.com/us/en/document/mah/rx65n-group-rx651-group-users-manualhardware-rev230
     2: RX671 group: https://www.renesas.com/tw/en/document/mah/rx671-group-users-manual-hardware-rev100
-    3: RX66N group: https://www.renesas.com/us/en/document/mah/rx66n-group-users-manual-hardware-rev111</description>
+    3: RX66N group: https://www.renesas.com/us/en/document/mah/rx66n-group-users-manual-hardware-rev111
+    4: RX140 group: https://www.renesas.com/en/document/mah/rx140-group-users-manual-hardware-rev120?r=1531576
+    5: RX261 group: https://www.renesas.com/en/document/mah/rx260-group-rx261-group-users-manual-hardware?r=25565706</description>
         </property>
         <property id="WIFI_CFG_RESET_PORT" display="Reset port number" default="5" type="combobox" category="COMMON">
             <option id="WIFI_CFG_RESET_PORT.0" display="PORT0" value="0"/>
@@ -254,32 +286,44 @@ Below is list of board group hardware manual:
             <option id="WIFI_CFG_RESET_PORT.Q" display="PORTQ" value="Q"/>
             <description>Configure RESET port.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - PD0 (Port D)
-2: RX65N Envision Kit (PMOD) - P55 (Port 5)
-3: RX65N RSK (2MB) (PMOD1)   - PF5 (Port F)
-4: RX65N RSK (2MB) (PMOD2)   - P20 (Port 2)
-5: CK-RX65N v1 (PMOD1)       - P55 (Port 5)
-6: CK-RX65N v1 (PMOD2)       - PA1 (Port A)
-7: CK-RX65N v2 (PMOD1)       - P55 (Port 5)
-8: CK-RX65N v2 (PMOD2)       - PA1 (Port A)
-9: RX671 Target Board (PMOD) - PB1 (Port B)
-10: RX66N Target Board (PMOD) - PB1 (Port B)</description>
+1: RX65N Cloud Kit (PMOD)               - PD0 (Port D)
+2: RX65N Envision Kit (PMOD)            - P55 (Port 5)
+3: RX65N RSK (2MB) (PMOD1)              - PF5 (Port F)
+4: RX65N RSK (2MB) (PMOD2)              - P20 (Port 2)
+5: CK-RX65N v1 (PMOD1)                  - P55 (Port 5)
+6: CK-RX65N v1 (PMOD2)                  - PA1 (Port A)
+7: CK-RX65N v2 (PMOD1)                  - P55 (Port 5)
+8: CK-RX65N v2 (PMOD2)                  - PA1 (Port A)
+9: RX671 Target Board (PMOD)            - PB1 (Port B)
+10: RX66N Target Board (PMOD)           - PB1 (Port B)
+11: FPB-RX261 (PMOD1)                   - PD7 (Port D)
+12: EK-RX261 (PMOD1)                    - PD7 (Port D)
+13: EK-RX671 (PMOD1)                    - P47 (Port 4)
+14: EK-RX671 (PMOD2)                    - PC0 (Port C)
+15: FPB-RX140 (PMOD1)                   - PB3 (Port B)
+16: FPB-RX140 (PMOD2)                   - PB2 (Port B)</description>
         </property>
         <property id="WIFI_CFG_RESET_PIN" display="Reset pin number" default="5" type="textbox" category="COMMON">
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_RESET_PIN}")</constraint>
             <constraint display="Value must be in the range 0~7">("${WIFI_CFG_RESET_PIN}" &gt;= 0) &amp;&amp; ("${WIFI_CFG_RESET_PIN}" &lt;= 7)</constraint>
             <description>Configure RESET pin.
 Board dependent settings; please use the value for each setting listed below depending on the board you use.
-1: RX65N Cloud Kit (PMOD)    - PD0 (Pin 0)
-2: RX65N Envision Kit (PMOD) - P55 (Pin 5)
-3: RX65N RSK (2MB) (PMOD1)   - PF5 (Pin 5)
-4: RX65N RSK (2MB) (PMOD2)   - P20 (Pin 0)
-5: CK-RX65N v1 (PMOD1)       - P55 (Pin 5)
-6: CK-RX65N v1 (PMOD2)       - PA1 (Pin 1)
-7: CK-RX65N v2 (PMOD1)       - P55 (Pin 5)
-8: CK-RX65N v2 (PMOD2)       - PA1 (Pin 1)
-9: RX671 Target Board (PMOD) - PB1 (Pin 1)
-10: RX66N Target Board (PMOD) - PB1 (Pin 1)</description>
+1: RX65N Cloud Kit (PMOD)               - PD0 (Pin 0)
+2: RX65N Envision Kit (PMOD)            - P55 (Pin 5)
+3: RX65N RSK (2MB) (PMOD1)              - PF5 (Pin 5)
+4: RX65N RSK (2MB) (PMOD2)              - P20 (Pin 0)
+5: CK-RX65N v1 (PMOD1)                  - P55 (Pin 5)
+6: CK-RX65N v1 (PMOD2)                  - PA1 (Pin 1)
+7: CK-RX65N v2 (PMOD1)                  - P55 (Pin 5)
+8: CK-RX65N v2 (PMOD2)                  - PA1 (Pin 1)
+9: RX671 Target Board (PMOD)            - PB1 (Pin 1)
+10: RX66N Target Board (PMOD)           - PB1 (Pin 1)
+11: FPB-RX261 (PMOD1)                   - PD7 (Pin 7)
+12: EK-RX261 (PMOD1)                    - PD7 (Pin 7)
+13: EK-RX671 (PMOD1)                    - P47 (Pin 7)
+14: EK-RX671 (PMOD2)                    - PC0 (Pin 0)
+15: FPB-RX140 (PMOD1)                   - PB3 (Pin 3)
+16: FPB-RX140 (PMOD2)                   - PB2 (Pin 2)</description>
         </property>
         <property id="WIFI_CFG_USE_CALLBACK_FUNCTION" display="Wi-Fi callback function use" default="0" type="combobox" category="COMMON">
             <option id="WIFI_CFG_USE_CALLBACK_FUNCTION.0" display="0" value="0"/>
@@ -454,14 +498,15 @@ Example: "cert_storage.h" </description>
             <constraint display="Illegal input. Must be a valid C symbol">/^[a-zA-Z0-9_.-]*$/.test("${WIFI_CFG_MQTT_PRIVATE_KEY}")</constraint>
             <description>Links to user-defined macro of the same name for private key which user must define in application header. </description>
         </property>
-        <property id="WIFI_CFG_MQTT_CMD_TX_BUF_SIZE" display="Size in bytes of the MQTT buffer used for sending commands and publishing data. Maximum publishing length is 2063 bytes." default="512" type="textbox" category="WIFI_MQTT_PROTOCOL">
+        <property id="WIFI_CFG_MQTT_CMD_TX_BUF_SIZE" display="MQTT buffer for sending data (size in bytes)" default="512" type="textbox" category="WIFI_MQTT_PROTOCOL">
             <constraint display="This configuration is used when enabled MQTT protocol support." actionOnFail="disable">"${WIFI_CFG_MQTT_SUPPORT}" == "${WIFI_CFG_MQTT_SUPPORT.1}"</constraint>
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_MQTT_CMD_TX_BUF_SIZE}")</constraint>
-            <constraint display="Value must be in the range 200~2064">("${WIFI_CFG_MQTT_CMD_TX_BUF_SIZE}" &gt;= 200) &amp;&amp; ("${WIFI_CFG_MQTT_CMD_TX_BUF_SIZE}" &lt;= 2064)</constraint>
-            <description>MQTT buffer used for sending commands and publishing data
-Value must be in the range 200~2064 and must be less than or equal to Wi-Fi TX buffer</description>
+            <constraint display="Value must be in the range 200~2113">("${WIFI_CFG_MQTT_CMD_TX_BUF_SIZE}" &gt;= 200) &amp;&amp; ("${WIFI_CFG_MQTT_CMD_TX_BUF_SIZE}" &lt;= 2113)</constraint>
+            <description>MQTT buffer used for sending commands and publishing data.
+Maximum publishing length is 2112 bytes (2048 bytes for payload length, 64 bytes for topic length).
+Value must be in the range 200~2113 and must be less than or equal to Wi-Fi TX buffer</description>
         </property>
-        <property id="WIFI_CFG_MQTT_CMD_RX_BUF_SIZE" display="Size in bytes of the MQTT buffer used for receiving subscribed data. Must be an integer greater than 0." default="512" type="textbox" category="WIFI_MQTT_PROTOCOL">
+        <property id="WIFI_CFG_MQTT_CMD_RX_BUF_SIZE" display="MQTT buffer for receiving data (size in bytes)" default="512" type="textbox" category="WIFI_MQTT_PROTOCOL">
             <constraint display="This configuration is used when enabled MQTT protocol support." actionOnFail="disable">"${WIFI_CFG_MQTT_SUPPORT}" == "${WIFI_CFG_MQTT_SUPPORT.1}"</constraint>
             <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_MQTT_CMD_RX_BUF_SIZE}")</constraint>
             <constraint display="Value must be in the range 1~3000">("${WIFI_CFG_MQTT_CMD_RX_BUF_SIZE}" &gt;= 1) &amp;&amp; ("${WIFI_CFG_MQTT_CMD_RX_BUF_SIZE}" &lt;= 3000)</constraint>
@@ -788,6 +833,57 @@ Example: "cert_storage.h" </description>
             <constraint display="Used for HTTP Certificates." actionOnFail="disable">"${WIFI_CFG_HTTP_TLS_AUTH}" != "${WIFI_CFG_HTTP_TLS_AUTH.0}"</constraint>
             <constraint display="Illegal input. Must be a valid C symbol">/^[a-zA-Z0-9_.-]*$/.test("${WIFI_CFG_HTTP_PRIVATE_KEY}")</constraint>
             <description>Links to user-defined macro of the same name for private key which user must define in application header. </description>
+        </property>
+
+        <category id="OTA_WIFI" display="Application Configuration">
+            <description>Select Wi-Fi application configuration.</description>
+        </category>
+
+        <property id="WIFI_CFG_OTA_SUPPORT" display="OTA support" default="0" type="checkbox" category="OTA_WIFI">
+            <option id="WIFI_CFG_OTA_SUPPORT.0" display="Disable" value="0"/>
+            <option id="WIFI_CFG_OTA_SUPPORT.1" display="Enable" value="1"/>
+            <description>Enable: Enable OTA support.
+Disable: Not enable OTA support. </description>
+        </property>
+
+        <category parentID="WIFI_CFG_OTA_SUPPORT" id="WIFI_OTA_FEATURE" display="Wi-Fi OTA setting">
+            <description>Setting for Wi-Fi OTA generation.</description>
+        </category>
+
+        <property id="WIFI_CFG_OTA_BLK_SIZE" display="Block size for OTA data write" default="128" type="textbox" category="WIFI_OTA_FEATURE">
+            <constraint display="This configuration is used when enabled OTA support." actionOnFail="disable">"${WIFI_CFG_OTA_SUPPORT}" == "${WIFI_CFG_OTA_SUPPORT.1}"</constraint>
+            <constraint display="Value must be an decimal value">testInteger("${WIFI_CFG_OTA_BLK_SIZE}")</constraint>
+            <constraint display="Value must be in the range 128~1024 and devisible by 8">
+                ("${WIFI_CFG_OTA_BLK_SIZE}" &gt;= 128) &amp;&amp;
+                ("${WIFI_CFG_OTA_BLK_SIZE}" &lt;= 1024)&amp;&amp;
+                (("${WIFI_CFG_OTA_BLK_SIZE}" % 8) == 0)
+            </constraint>
+            <description>This value determines how much data is written per write operation</description>
+        </property>
+
+        <property id="WIFI_CFG_OTA_TLS_AUTH" display="Use OTA TLS Authentication Levels" default="0" type="combobox" category="WIFI_OTA_FEATURE">
+            <constraint display="This configuration is used when enabled OTA support." actionOnFail="disable">"${WIFI_CFG_OTA_SUPPORT}" == "${WIFI_CFG_OTA_SUPPORT.1}"</constraint>
+            <option id="WIFI_CFG_OTA_TLS_AUTH.0" display="None" value="0"/>
+            <option id="WIFI_CFG_OTA_TLS_AUTH.1" display="Optional" value="1"/>
+            <option id="WIFI_CFG_OTA_TLS_AUTH.2" display="Require" value="2"/>
+            <description>None: No authentication required; accept connections without any form of authentication.
+Optional: Allow both authenticated and unauthenticated connections.
+Require. Demand authentication for connections. </description>
+        </property>
+
+        <property id="WIFI_CFG_OTA_CERTS_HEADER" display="Certificates|OTA Certificates Header File" default='""' type="textbox" category="WIFI_OTA_FEATURE">
+            <constraint display="This configuration is used when enabled OTA support." actionOnFail="disable">"${WIFI_CFG_OTA_SUPPORT}" == "${WIFI_CFG_OTA_SUPPORT.1}"</constraint>
+            <constraint display="Used for OTA Certificates." actionOnFail="disable">"${WIFI_CFG_OTA_TLS_AUTH}" != "${WIFI_CFG_OTA_TLS_AUTH.0}"</constraint>
+            <constraint display="Illegal input. Must be a valid C symbol and double quotes (&quot;)">/^"[a-zA-Z0-9_.-]*"$/.test('${WIFI_CFG_OTA_CERTS_HEADER}')</constraint>
+            <description>Name of header file that will contain certificates (macros). User must create header file in 'src' folder.
+Example: "cert_storage.h" </description>
+        </property>
+
+        <property id="WIFI_CFG_OTA_ROOT_CA" display="Certificates|Root CA" default="" type="textbox" category="WIFI_OTA_FEATURE">
+            <constraint display="This configuration is used when enabled OTA support." actionOnFail="disable">"${WIFI_CFG_OTA_SUPPORT}" == "${WIFI_CFG_OTA_SUPPORT.1}"</constraint>
+            <constraint display="Used for OTA Certificates." actionOnFail="disable">"${WIFI_CFG_OTA_TLS_AUTH}" != "${WIFI_CFG_OTA_TLS_AUTH.0}"</constraint>
+            <constraint display="Illegal input. Must be a valid C symbol">/^[a-zA-Z0-9_.-]+$/.test("${WIFI_CFG_OTA_ROOT_CA}")</constraint>
+            <description>Links to user-defined macro of the same name for Root CA which user must define in application header. </description>
         </property>
     </configuration>
 </module>

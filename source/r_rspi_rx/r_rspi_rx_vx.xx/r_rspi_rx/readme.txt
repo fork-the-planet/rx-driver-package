@@ -10,7 +10,7 @@ R01AN1827JJ{VERSION_NUMBER}
 
 Version
 -------
-v3.51
+v3.70
 
 Overview
 --------
@@ -34,6 +34,7 @@ RSPI transfer functions:
 Data format:
   * MSB-first/LSB-first selectable
   * Transfer bit length is selectable as 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, or 32 bits.
+  * Byte swapping of transmit and receive data is selectable.
 Bit rate:
   * In master mode, the on-chip baud rate generator generates RSPCK by frequency-dividing PCLK
     (Division ratio: 2 to 4096).
@@ -131,7 +132,7 @@ Peripherals Used Directly
 
 Required Packages
 -----------------
-* r_bsp     v7.52
+* r_bsp     v7.60
 
 How to add to your project
 --------------------------

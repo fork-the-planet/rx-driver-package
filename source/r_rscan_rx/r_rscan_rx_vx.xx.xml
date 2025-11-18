@@ -70,7 +70,7 @@
         <version>x.xx</version>
         <dependency>
             <module>r_bsp</module>
-            <version>7.52</version>
+            <version>7.60</version>
         </dependency>
         <zipsource>r_rscan_rx_vx.xx.zip</zipsource>
         <application>Communications</application>

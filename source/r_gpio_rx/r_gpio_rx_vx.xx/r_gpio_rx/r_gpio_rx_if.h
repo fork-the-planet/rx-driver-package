@@ -80,6 +80,8 @@
 *         : 29.05.2023 5.00    Added support for RX23E-B.
 *         : 28.06.2024 5.10    Added support for RX260, RX261.
 *         : 15.03.2025 5.11    Updated disclaimer.
+*         : 23.06.2025 5.20    Added support for RX26T 32pins.
+*                              Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 
 #ifndef GPIO_RX_INTERFACE_HEADER_FILE
@@ -162,7 +164,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define GPIO_RX_VERSION_MAJOR           (5)
-#define GPIO_RX_VERSION_MINOR           (11)
+#define GPIO_RX_VERSION_MINOR           (20)
 
 /***********************************************************************************************************************
 Typedef definitions

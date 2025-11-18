@@ -29,6 +29,7 @@
 *         : 23.04.2021 2.02     Added the include of fsp_common_api.h and r_fsp_error.h.
 *         : 30.11.2021 2.03     Modified the include file.
 *         : 26.02.2025 2.04     Changed the disclaimer.
+*         : 28.05.2025 2.05     Deleted the include of lowsrc.h.
 ***********************************************************************************************************************/
 
 /* Make sure that no other platforms have already been defined. Do not touch this! */
@@ -50,7 +51,6 @@ INCLUDE APPROPRIATE MCU AND BOARD FILES
 #include    "mcu/all/r_rx_compiler.h"
 
 #include    "mcu/all/lowlvl.h"
-#include    "mcu/all/lowsrc.h"
 #include    "mcu/all/r_bsp_mcu_startup.h"
 
 #if defined(__CCRX__)

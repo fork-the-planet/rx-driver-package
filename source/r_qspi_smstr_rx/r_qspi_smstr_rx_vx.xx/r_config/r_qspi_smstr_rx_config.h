@@ -6,10 +6,10 @@
 /*******************************************************************************
 * System Name  : QSPI single master driver
 * File Name    : r_qspi_smstr_rx_config.h
-* Version      : 1.22
+* Version      : 1.30
 * Device       : RX
 * Abstract     : Configuration file for QSPI single master driver
-* Tool-Chain   : Renesas RXC Toolchain v2.07.00
+* Tool-Chain   : Renesas RXC Toolchain v3.07.00
 * OS           : not use
 * H/W Platform : not use
 * Description  : Configures the QSPI single master driver.
@@ -26,6 +26,7 @@
 *              : 31.07.2017 2.08     Supported RX65N-2MB.
 *              :                     Fixed to correspond to Renesas coding rule.
 *              : 15.03.2025 1.22     Updated disclaimer
+*              : 30.10.2025 1.30     Added support Nested Interrupt
 *******************************************************************************/
 #ifndef QSPI_SMSTR_CONFIG_H
 #define QSPI_SMSTR_CONFIG_H
@@ -72,6 +73,11 @@ SET INTERRUPT SOURCE PRIORITY LEVEL OF SPTI AND SPRI USING DMAC/DTC
 #define QSPI_SMSTR_CFG_CH1_INT_SPTI_LEVEL     
 #define QSPI_SMSTR_CFG_CH1_INT_SPRI_LEVEL     
 
+/* Specifies whether to include code for Nested Interrupt SPTI. */
+#define QSPI_SMSTR_CFG_SPTI_EN_NESTED_INT (0)
+
+/* Specifies whether to include code for Nested Interrupt SPRI. */
+#define QSPI_SMSTR_CFG_SPRI_EN_NESTED_INT (0)
 
 #endif /* _QSPI_API_CONFIG_H */
 

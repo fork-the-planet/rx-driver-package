@@ -16,6 +16,10 @@
 *                               the CCRX compiler.
 *         : 29.01.2021 3.01     Added tha __write function and __read function for ICCRX.
 *         : 26.02.2025 3.02     Changed the disclaimer.
+*         : 28.05.2025 3.03     Deleted _write and _read functions for OPTLIB.
+*                               Added compile switch for the following macro definitions.
+*                               - BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE
+*                               - BSP_CFG_LOW_LEVEL_INTERFACE_REENTRANT_LIB_ENABLE
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -43,27 +47,31 @@ Exported global functions (to be accessed by other files)
 #if defined(__CCRX__)
 void init_iolib(void);
 void close_all(void);
+#if BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE == 1
 long open(const char *name, long  mode, long  flg);
 long close(long fileno);
 long write(long  fileno, const unsigned char *buf, long  count);
 long read(long fileno, unsigned char *buf, long count);
 long lseek(long fileno, long offset, long base);
+#endif /* BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE == 1 */
+#if BSP_CFG_LOW_LEVEL_INTERFACE_REENTRANT_LIB_ENABLE == 1
 #ifdef _REENTRANT
 long *errno_addr(void);
 long wait_sem(long semnum);
 long signal_sem(long semnum);
 #endif
+#endif /* BSP_CFG_LOW_LEVEL_INTERFACE_REENTRANT_LIB_ENABLE == 1 */
 #endif /* defined(__CCRX__) */
 
 #if defined(__GNUC__)
+#if BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE == 1
 int write(int fileno, char *buf, int count);
 int read(int fileno, char *buf, int count);
-int _write(int fileno, char *buf, int count);
-int _read(int fileno, char *buf, int count);
 void close(void);
+void lseek(void);
 void fstat(void);
 void isatty(void);
-void lseek(void);
+#endif /* BSP_CFG_LOW_LEVEL_INTERFACE_STDIO_ENABLE == 1 */
 #endif /* defined(__GNUC__) */
 
 #if defined(__ICCRX__)

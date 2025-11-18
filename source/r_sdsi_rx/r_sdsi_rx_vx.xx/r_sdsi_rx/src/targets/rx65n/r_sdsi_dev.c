@@ -6,7 +6,7 @@
 /**********************************************************************************************************************
 * System Name  : SDSI Driver
 * File Name    : r_sdsi_dev.c
-* Version      : 2.05
+* Version      : 2.06
 * Device       : RX65N
 * Abstract     : API & Sub module
 * Tool-Chain   : -
@@ -24,6 +24,7 @@
 *                                   Fixed coding style.
 *              : 27.12.2022 2.03    Updated slash format of included header file paths for Linux compatibility.
 *              : 15.03.2025 2.05    Updated disclaimer.
+*              : 30.10.2025 2.06    Changed the comment of API functions to the doxygen style.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -1143,13 +1144,19 @@ sdsi_status_t r_sdsi_dev_update_direct_trans_adr(uint32_t channel)
 } /* End of function r_sdsi_dev_update_direct_trans_adr() */
 
 /**********************************************************************************************************************
-* Function Name: R_SDSI_IntHandler0
-* Description  : Checks the relevant elements (without masked) and call a callback function.
-* Arguments    : uint32_t           channel              ;   SDSI Channel No.
-* Return Value : None
-*----------------------------------------------------------------------------------------------------------------------
-* Notes        : None
-**********************************************************************************************************************/
+ * Function Name: R_SDSI_IntHandler0
+ *****************************************************************************************************************/ /**
+ * @brief      This function is the interrupt handler
+ * @param[in]  *vect
+ *              vector table
+ * @details    This is the interrupt handler of the SDSI FIT module. \n
+ *             It is incorporated into the system as a processing routine for interrupt sources
+ *             supported by the SDSI. \n
+ *             When a callback function for the command processing status flag (INTSR1 register),
+ *             Card detect interrupts (CDFEN, CDREN), or DMA transfer end interrupt (DTEEN) has been registered,
+ *             the appropriate callback function is called by this function.
+ * @note       Before running this function, initialization processing by the R_SDSI_Open() function is required.
+ */
 void R_SDSI_IntHandler0(void * vect)
 {
     sdsi_hndl_t   * p_hndl  = 0;

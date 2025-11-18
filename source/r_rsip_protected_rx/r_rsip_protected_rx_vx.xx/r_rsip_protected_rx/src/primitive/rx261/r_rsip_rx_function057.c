@@ -1,30 +1,19 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
+/*
+ * Copyright (c) 2015 Renesas Electronics Corporation and/or its affiliates
  *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 15.10.2024 1.00     First Release.
+ *         : 31.07.2025 2.00     Added support for ECDH KDF and HMAC Suspend, Resume
+ *         :                     Revised key management specification
  *********************************************************************************************************************/
 
 /***********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
-#include "./r_rsip_primitive.h"
+#include "r_rsip_primitive.h"
 
 /***********************************************************************************************************************
 Macro definitions
@@ -45,7 +34,7 @@ Exported global variables (to be accessed by other files)
 /***********************************************************************************************************************
 Private global variables and functions
 ***********************************************************************************************************************/
-RSIP_SEC_P_SECURE_BOOT
+
 void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t ARG3[], uint32_t INST_DATA_SIZE)
 {
     int32_t iLoop = 0U, jLoop = 0U, kLoop = 0U, oLoop = 0U;
@@ -74,7 +63,7 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x00000000U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x00000000U);
     RSIP.REG_0094H.WORD = 0x000034c0U;
     RSIP.REG_0014H.WORD = 0x000000a7U;
     RSIP.REG_009CH.WORD = 0x800100e0U;
@@ -83,7 +72,7 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x000000ffU);
+    RSIP.REG_002CH.WORD = bswap_32big(0x000000ffU);
     RSIP.REG_0024H.WORD = 0x00000000U;
     r_rsip_func101(0x57a89e91U, 0x0269b41dU, 0xff3a4e6eU, 0xf66570b7U);
     r_rsip_func043();
@@ -95,7 +84,7 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x000000feU);
+    RSIP.REG_002CH.WORD = bswap_32big(0x000000feU);
     RSIP.REG_0024H.WORD = 0x00000000U;
     r_rsip_func101(0xeebe827dU, 0x53269c98U, 0x1e0e1f2aU, 0xefc0a0c4U);
     r_rsip_func044();
@@ -107,7 +96,7 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x00000000U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x00000000U);
     RSIP.REG_0014H.WORD = 0x000000a1U;
     RSIP.REG_00D0H.WORD = 0x08000054U;
     /* WAIT_LOOP */
@@ -115,7 +104,7 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x00000000U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x00000000U);
     r_rsip_func081_r1();
     RSIP.REG_0094H.WORD = 0x00007c01U;
     RSIP.REG_0040H.WORD = 0x00600000U;
@@ -209,7 +198,7 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     {
         /* waiting */
     }
-    RSIP.REG_002CH.WORD = change_endian_long(0x00000000U);
+    RSIP.REG_002CH.WORD = bswap_32big(0x00000000U);
     RSIP.REG_00D4H.WORD = 0x40000000U;
     RSIP.REG_00D0H.WORD = 0x09108105U;
     RSIP.REG_0000H.WORD = 0x00410011U;
@@ -253,4 +242,3 @@ void r_rsip_func057_r1(const uint32_t ARG1[], const uint32_t ARG2[], uint32_t AR
     RSIP.REG_0040H.WORD = 0x00602000U;
     RSIP.REG_0024H.WORD = 0x00000000U;
 }
-RSIP_SEC_DEFAULT

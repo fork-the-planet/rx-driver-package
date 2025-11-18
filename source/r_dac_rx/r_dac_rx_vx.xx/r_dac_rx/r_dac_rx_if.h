@@ -47,6 +47,7 @@
 *                              from DA0 and DA1 for RX66T, RX72T, RX660, RX26T.
 *           28.06.2024 5.30    Added support for RX260, RX261.
 *           15.03.2025 5.31    Updated disclaimer.
+*           23.06.2025 5.32    Removed doc folder and updated .rcpc file in FITDemos.
 ***********************************************************************************************************************/
 #ifndef DAC_RX_IF_H
 #define DAC_RX_IF_H
@@ -71,7 +72,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define DAC_VERSION_MAJOR  (5)
-#define DAC_VERSION_MINOR  (31)
+#define DAC_VERSION_MINOR  (32)
 
 
 #if defined(BSP_MCU_RX23T) || defined(BSP_MCU_RX24T) || defined(BSP_MCU_RX13T) || defined(BSP_MCU_RX23E_B)

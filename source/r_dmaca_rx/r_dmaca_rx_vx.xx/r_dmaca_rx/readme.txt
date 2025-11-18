@@ -5,7 +5,7 @@ r_dmaca_rx
 
 Version
 -------
-v3.41
+v3.42
 
 Overview
 --------

@@ -6,7 +6,7 @@
 /**********************************************************************************************************************
 * System Name  : SDHI Driver
 * File Name    : r_sdhi_dev.c
-* Version      : 2.12
+* Version      : 2.13
 * Device       : RX71M
 * Abstract     : API & Sub module
 * Tool-Chain   : For RX71M Group e2_studio
@@ -24,6 +24,7 @@
 *                                   Modified comment of API function to Doxygen style.
 *              : 27.12.2022 2.10    Updated slash format of included header file paths for Linux compatibility.
 *              : 15.03.2025 2.12    Updated disclaimer.
+*              : 30.10.2025 2.13    Modified comment of API function to Doxygen style.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -166,7 +167,7 @@ sdhi_status_t r_sdhi_dev_finalize(uint32_t channel)
  * @param[in] channel
  *             Channel number : SDHI channel number to be used (starting from 0)
  * @param[in] select
- *             Specify interrupt arguments. See section 3.8 in application note for details.
+ *             Specify interrupt arguments. See section R_SDHI_DisableIcuInt() in application note for details.
  * @retval    SDHI_SUCCESS Successful operation
  * @retval    SDHI_ERR     General error
  * @details   Makes settings to the ICU controller registers.\n 
@@ -257,12 +258,12 @@ sdhi_status_t R_SDHI_DisableIcuInt(uint32_t channel, uint32_t select)
  * @param[in] channel
  *             Channel number : SDHI channel number to be used (starting from 0)
  * @param[in] select
- *             Specify interrupt arguments. See section 3.7 in application note for details.
+ *             Specify interrupt arguments. See section R_SDHI_EnableIcuInt() in application note for details.
  * @retval    SDHI_SUCCESS Successful operation
  * @retval    SDHI_ERR     General error
  * @details   Makes settings to the ICU controller registers. \n 
  *            Makes settings to the SDHI's interrupt source property register (IPR). The setting values are defined by
- *            #define SDHI_CHx_INT_LEVRL and #define SDHI_CFG_CHx_INT_LEVEL_DMADTC.\n 
+ *            \#define SDHI_CHx_INT_LEVRL and \#define SDHI_CFG_CHx_INT_LEVEL_DMADTC.\n 
  *            Sets the SDHI interrupt request enable register (IEN) to enable interrupts.
  * @note      Before running this function, initialization processing by the R_SDHI_Open() function is required.
  */

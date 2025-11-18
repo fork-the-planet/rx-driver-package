@@ -11,6 +11,7 @@
 * History : DD.MM.YYYY Version Description
 *         : 07.04.2023 1.00    First Release
 *         : 15.03.2025 5.11    Updated disclaimer.
+*         : 23.06.2025 5.20    Added support for RX26T-32Pins.
 ***********************************************************************************************************************/
 #ifndef GPIO_RX26T
 #define GPIO_RX26T
@@ -39,6 +40,8 @@ Macro definitions
     #define GPIO_INFO_NUM_PINS              (50)
 #elif (BSP_PACKAGE_PINS == 48)
     #define GPIO_INFO_NUM_PINS              (38)
+#elif (BSP_PACKAGE_PINS == 32)
+    #define GPIO_INFO_NUM_PINS              (22)
 #else
     #error "r_gpio_rx does not have information about this RX26T package. Please update r_gpio_rx26t.h"
 #endif
@@ -467,6 +470,64 @@ typedef enum
     GPIO_PORT_B_PIN_4 = 0x0B04,
     GPIO_PORT_B_PIN_5 = 0x0B05,
     GPIO_PORT_B_PIN_6 = 0x0B06,
+    GPIO_PORT_D_PIN_3 = 0x0D03,
+    GPIO_PORT_D_PIN_5 = 0x0D05,
+    GPIO_PORT_D_PIN_7 = 0x0D07,
+    GPIO_PORT_E_PIN_2 = 0x0E02,
+    GPIO_PORT_N_PIN_6 = 0x1606,
+} gpio_port_pin_t;
+
+#elif (BSP_PACKAGE_PINS == 32)
+/* This enumerator has each available GPIO port on this MCU. This list will change depending on the MCU chosen. */
+typedef enum
+{
+    GPIO_PORT_0 = 0x0000,
+    GPIO_PORT_3 = 0x0300,
+    GPIO_PORT_4 = 0x0400,
+    GPIO_PORT_5 = 0x0500,
+    GPIO_PORT_6 = 0x0600,
+    GPIO_PORT_7 = 0x0700,
+    GPIO_PORT_B = 0x0B00,
+    GPIO_PORT_D = 0x0D00,
+    GPIO_PORT_E = 0x0E00,
+    GPIO_PORT_N = 0x1600,
+} gpio_port_t;
+
+/* This enumerator has a bit mask for each available GPIO pin for the given port on this MCU. */
+typedef enum
+{
+    GPIO_PORT0_PIN_MASK = 0x01,    /* Available pins: P00               */
+    GPIO_PORT3_PIN_MASK = 0x40,    /* Available pins: P36               */
+    GPIO_PORT4_PIN_MASK = 0x07,    /* Available pins: P40 to P42        */
+    GPIO_PORT5_PIN_MASK = 0x08,    /* Available pins: P53               */
+    GPIO_PORT6_PIN_MASK = 0x30,    /* Available pins: P64, P65          */
+    GPIO_PORT7_PIN_MASK = 0x7E,    /* Available pins: P71 to P76        */
+    GPIO_PORTB_PIN_MASK = 0x0E,    /* Available pins: PB1 to PB3        */
+    GPIO_PORTD_PIN_MASK = 0xA8,    /* Available pins: PD3, PD5, PD7     */
+    GPIO_PORTE_PIN_MASK = 0x04,    /* Available pins: PE2               */
+    GPIO_PORTN_PIN_MASK = 0x40,    /* Available pins: PN6               */
+} gpio_pin_bit_mask_t;
+
+/* This enumerator has each available GPIO pin on this MCU. This list will change depending on the MCU chosen. */
+typedef enum
+{
+    GPIO_PORT_0_PIN_0 = 0x0000,
+    GPIO_PORT_3_PIN_6 = 0x0306,
+    GPIO_PORT_4_PIN_0 = 0x0400,
+    GPIO_PORT_4_PIN_1 = 0x0401,
+    GPIO_PORT_4_PIN_2 = 0x0402,
+    GPIO_PORT_5_PIN_3 = 0x0503,
+    GPIO_PORT_6_PIN_4 = 0x0604,
+    GPIO_PORT_6_PIN_5 = 0x0605,
+    GPIO_PORT_7_PIN_1 = 0x0701,
+    GPIO_PORT_7_PIN_2 = 0x0702,
+    GPIO_PORT_7_PIN_3 = 0x0703,
+    GPIO_PORT_7_PIN_4 = 0x0704,
+    GPIO_PORT_7_PIN_5 = 0x0705,
+    GPIO_PORT_7_PIN_6 = 0x0706,
+    GPIO_PORT_B_PIN_1 = 0x0B01,
+    GPIO_PORT_B_PIN_2 = 0x0B02,
+    GPIO_PORT_B_PIN_3 = 0x0B03,
     GPIO_PORT_D_PIN_3 = 0x0D03,
     GPIO_PORT_D_PIN_5 = 0x0D05,
     GPIO_PORT_D_PIN_7 = 0x0D07,
