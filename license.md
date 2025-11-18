@@ -5,17 +5,10 @@
 | RX Board BSP                                          | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | RX MCU Peripheral Functions Drivers                   | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | Renesas Middleware                                    | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
-| r_zmod4xxx_rx<br>(pre-compiled libraries)             | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://www.renesas.com/us/en/document/oth/disclaimer002)|
-| r_rsip_rx                                             | Renesas Electronics Corporation    | [Renesas Software License Agreement](https://github.com/renesas/rx-driver-package/blob/master/doc/license/RX_RSIP_SoftwareLicenseAgreement_ENG.pdf)|
-| r_t4_rx                                               | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)| 
-| r_t4_driver_rx                                        | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
-| r_fwup                                                | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
 | rm_comms_uart_rx                                      | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
 | rm_comms_usb_pcdc_rx                                  | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
 | rm_rai_data_collector_rx                              | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
 | rm_rai_data_shipper_rx                                | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
-| r_wifi_da16xxx                                        | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
-| r_ble_da14531_rx                                      | Renesas Electronics Corporation    | [MIT Licence](#MIT-License)|
 |<tr> <td colspan="3"><strong>Third-Party components included in the packs<strong></td></tr>                                                                                               |
 | FatFs                                                 | ChaN              | Open License                                                                           |
 | [Aeropoint GUI](https://www.cri-mw.co.jp/business/product/embedded/aeropointgui/)      | CRI Middleware              | *Mass production requires a contract with CRI (fees apply).Please contact CRI for details.                           |
@@ -23,6 +16,7 @@
 | [TinyCrypt](https://github.com/intel/tinycrypt/)      | Intel Corporation     | BSD-3-Clause and BSD-2-Clause. See [LICENSE](https://github.com/intel/tinycrypt/blob/master/LICENSE)|
 | crackle | Mindtree | BSD 2-Clause License                                                                                         |
 | TES Dave2D                                            | TES Electronics Solutions GmBH     | [Renesas Open License v1.0](#renesas-open-license-v10)                                      |
+| MCUBoot                                               | TrustedFirmware.org                | Apache-2.0 License                                                                          |
 |<tr> <td colspan="3"><strong>Renesas Development Tools<strong></td></tr>                                                                                                                  |
 | QE: Tools for Particular Applications                 | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
 | RX Smart Configurator                                 | Renesas Electronics Corporation    | [BSD-3-Clause](#bsd-3-clause-license)                                                       |
