@@ -13290,9 +13290,9 @@
     <name>r_emwin_rx</name>
     <version>6.34.g.1.21</version>
     <urls>
-      <url>https://github.com/renesas/rx-driver-package/releases/download/releases/download/V1.47/r_emwin_rx_v6.34g_121.zip</url>
-      <url>https://github.com/renesas/rx-driver-package/releases/download/releases/download/V1.47/r_emwin_rx_v6.34g_121.xml</url>
-      <url>https://github.com/renesas/rx-driver-package/releases/download/releases/download/V1.47/r_emwin_rx_v6.34g_121.mdf</url>
+      <url>https://github.com/renesas/rx-driver-package/releases/download/V1.47/r_emwin_rx_v6.34g_121.zip</url>
+      <url>https://github.com/renesas/rx-driver-package/releases/download/V1.47/r_emwin_rx_v6.34g_121.xml</url>
+      <url>https://github.com/renesas/rx-driver-package/releases/download/V1.47/r_emwin_rx_v6.34g_121.mdf</url>
     </urls>
   </module>
   <module rdp_version="1.47">
