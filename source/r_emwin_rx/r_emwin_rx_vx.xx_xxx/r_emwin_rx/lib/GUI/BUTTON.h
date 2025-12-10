@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : BUTTON.h
@@ -173,7 +173,6 @@ void               BUTTON_SetBMP             (BUTTON_Handle hObj, unsigned int I
 void               BUTTON_SetBMPEx           (BUTTON_Handle hObj, unsigned int Index, const void * pBitmap, int x, int y);
 void               BUTTON_SetFont            (BUTTON_Handle hObj, const GUI_FONT * pfont);
 void               BUTTON_SetFrameColor      (BUTTON_Handle hObj, GUI_COLOR Color);
-void               BUTTON_SetState           (BUTTON_Handle hObj, int State);                                    /* Not to be doc. */
 void               BUTTON_SetPressed         (BUTTON_Handle hObj, int State);
 GUI_COLOR          BUTTON_SetFocusColor      (BUTTON_Handle hObj, GUI_COLOR Color);
 void               BUTTON_SetStreamedBitmap  (BUTTON_Handle hObj, unsigned int Index, const GUI_BITMAP_STREAM * pBitmap);

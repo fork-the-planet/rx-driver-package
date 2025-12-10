@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_emwin_rx_pid_spi_if.c
- * Version      : 1.21
+ * Version      : 1.00
  * Description  : Functions of SPI touch interface.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -16,6 +16,8 @@
  *         : 31.01.2024 6.34.g.1.00    Update emWin library to v6.34g.
  *                                     Moved SCI and RSPI pin setting process after the Open function.
  *         : 20.03.2025 6.34.g.1.21    Changed the disclaimer.
+ *         : 09.12.2025 6.52.  1.00    Update emWin library to v6.52.
+ *                                     Minor changes to r_emwin_rx_pid_open functions
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -451,7 +453,6 @@ static void cb_timer_touch_event(cb_timer_arg_t arg)
 e_emwin_rx_err_t r_emwin_rx_pid_open(void)
 {
     e_emwin_rx_err_t ret = EMWIN_RX_FAIL;
-    e_emwin_rx_err_t timer_ret;
 
 #if (EMWIN_USE_TOUCH_CS_PIN == 1)
     /* Chip select pin is High */
@@ -482,12 +483,7 @@ e_emwin_rx_err_t r_emwin_rx_pid_open(void)
         SCI_PIN_SET();
 
         /* Casting emwin_rx_cb_timer pointer is used for callback function. */
-        timer_ret = r_emwin_rx_guix_timer_create(20, (emwin_rx_cb_timer *)cb_timer_touch_event);
-
-        if (EMWIN_RX_SUCCESS == timer_ret)
-        {
-            ret = EMWIN_RX_SUCCESS;
-        }
+        ret = r_emwin_rx_guix_timer_create(20, (emwin_rx_cb_timer *)cb_timer_touch_event);
     }
     else
     {
@@ -532,12 +528,7 @@ e_emwin_rx_err_t r_emwin_rx_pid_open(void)
         RSPI_PIN_SET();
 
         /* Casting emwin_rx_cb_timer pointer is used for callback function. */
-        timer_ret = r_emwin_rx_guix_timer_create(20, (emwin_rx_cb_timer *)cb_timer_touch_event);
-
-        if (EMWIN_RX_SUCCESS == timer_ret)
-        {
-            ret = EMWIN_RX_SUCCESS;
-        }
+        ret = r_emwin_rx_guix_timer_create(20, (emwin_rx_cb_timer *)cb_timer_touch_event);
     }
     else
     {

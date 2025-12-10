@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : WIDGET.h
@@ -297,7 +297,10 @@ typedef struct {
   U16 State;
   #if GUI_DEBUG_LEVEL > 1
     U32 DebugId;
-  #endif  
+  #endif
+  #if WM_SUPPORT_FLAT_SKIN
+    WM_HMEM hData;
+  #endif
 } WIDGET;
 
 
@@ -399,7 +402,7 @@ void      WIDGET__FillStringInRectEx            (const char * pText, const GUI_R
 // Function pointers for drawing streamed bitmaps
 //
 extern void (* GUI__pfDrawStreamedBitmap)  (const void * p, int x, int y);
-extern int  (* GUI__pfDrawStreamedBitmapEx)(GUI_GET_DATA_FUNC * pfGetData, const void * p, int x, int y);
+extern int  (* GUI__pfDrawStreamedBitmapEx)(GUI_DTA_GET_DATA_FUNC * pfGetData, const void * p, int x, int y);
 
 /*********************************************************************
 *

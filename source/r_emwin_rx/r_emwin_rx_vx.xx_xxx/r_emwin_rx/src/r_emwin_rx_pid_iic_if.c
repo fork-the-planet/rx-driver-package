@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_emwin_rx_pid_iic_if.c
- * Version      : 1.21
+ * Version      : 1.00
  * Description  : Functions of IIC touch interface.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -22,6 +22,8 @@
  *         : 31.03.2023 6.32.a.1.00    Update emWin library to v6.32a.
  *         : 31.01.2024 6.34.g.1.00    Update emWin library to v6.34g.
  *         : 20.03.2025 6.34.g.1.21    Changed the disclaimer.
+ *         : 09.12.2025 6.52.  1.00    Update emWin library to v6.52.
+ *                                     Minor changes to r_emwin_rx_pid_open functions
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -129,8 +131,6 @@ static void cb_timer_sci_iic(cb_timer_arg_t arg)
 e_emwin_rx_err_t r_emwin_rx_pid_open(void)
 {
     e_emwin_rx_err_t ret = EMWIN_RX_FAIL;
-
-    e_emwin_rx_err_t timer_ret;
     sci_iic_return_t sci_ret;
 
     s_iic_info.ch_no = EMWIN_TOUCH_IF_NUMBER;
@@ -139,11 +139,7 @@ e_emwin_rx_err_t r_emwin_rx_pid_open(void)
     if (SCI_IIC_SUCCESS == sci_ret)
     {
         /* Casting emwin_rx_cb_timer pointer is used for callback function. */
-        timer_ret = r_emwin_rx_guix_timer_create(20, (emwin_rx_cb_timer *)cb_timer_sci_iic);
-        if (EMWIN_RX_SUCCESS == timer_ret)
-        {
-            ret = EMWIN_RX_SUCCESS;
-        }
+        ret = r_emwin_rx_guix_timer_create(20, (emwin_rx_cb_timer *)cb_timer_sci_iic);
     }
 
     return ret;

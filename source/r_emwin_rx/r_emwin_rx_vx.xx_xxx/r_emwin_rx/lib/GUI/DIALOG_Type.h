@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : DIALOG_Type.h
@@ -66,7 +66,7 @@ struct GUI_WIDGET_CREATE_INFO_struct {
   I16                      y0;               // y position
   I16                      xSize;            // x size
   I16                      ySize;            // y size
-  U16                      Flags;            // Widget specific create flags (opt.)
+  U32                      Flags;            // Widget specific create flags (opt.)
   I32                      Para;             // Widget specific parameter (opt.)
   U32                      NumExtraBytes;    // Number of extra bytes usable with <WIDGET>_SetUserData & <WIDGET>_GetUserData
 };

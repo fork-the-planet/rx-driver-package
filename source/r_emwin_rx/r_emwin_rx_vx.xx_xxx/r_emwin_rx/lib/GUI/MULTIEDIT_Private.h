@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : MULTIEDIT_Private.h
@@ -63,11 +63,13 @@ Purpose     : MULTIEDIT include
 *
 *  Used for partial invalidation. Stored in pObj->InvalidFlags.
 */
-#define INVALID_NUMCHARS (1 << 0)
-#define INVALID_NUMLINES (1 << 1)
-#define INVALID_TEXTSIZE (1 << 2)
-#define INVALID_CURSORXY (1 << 3)
-#define INVALID_LINEPOSB (1 << 4)
+#define INVALID_NUMCHARS   (1 << 0)
+#define INVALID_NUMLINES   (1 << 1)
+#define INVALID_TEXTSIZE   (1 << 2)
+#define INVALID_CURSORXY   (1 << 3)
+#define INVALID_CURSORLINE (1 << 4)
+#define INVALID_LINEPOSB   (1 << 5)
+#define INVALID_SCROLL     (1 << 6)
 
 //
 // MULTIEDIT properties
@@ -89,25 +91,26 @@ typedef struct {
   MULTIEDIT_PROPS  Props;
   WIDGET_COPY      Copy;
   WM_HMEM          hText;
-  U16              MaxNumChars;         // Maximum number of characters including the prompt
-  U16              NumChars;            // Number of characters (text and prompt) in object
-  U16              NumCharsPrompt;      // Number of prompt characters
-  U16              NumLines;            // Number of text lines needed to show all data
+  U32              MaxNumChars;         // Maximum number of characters including the prompt
+  U32              NumChars;            // Number of characters (text and prompt) in object
+  U32              NumCharsPrompt;      // Number of prompt characters
+  U32              NumLines;            // Number of text lines needed to show all data
   U16              TextSizeX;           // Size in X of text depending of wrapping mode
-  U16              BufferSize;
-  U16              CursorLine;          // Number of current cursor line
-  U16              CursorPosChar;       // Character offset number of cursor
-  U16              CursorPosByte;       // Byte offset number of cursor
-  I16              CursorPosX;          // Cursor position in X
-  U16              CursorPosY;          // Cursor position in Y
-  U16              CacheLinePosByte;
-  U16              CacheLineNumber;
-  U16              CacheFirstVisibleLine;
-  U16              CacheFirstVisibleByte;
+  U32              BufferSize;
+  U32              CursorLine;          // Number of current cursor line
+  U32              CursorPosChar;       // Character offset number of cursor
+  U32              CursorPosByte;       // Byte offset number of cursor
+  I32              CursorPosX;          // Cursor position in X
+  I32              CursorPosY;          // Cursor position in Y
+  U32              CacheLinePosByte;
+  U32              CacheLineNumber;
+  U32              CacheFirstVisibleLine;
+  U32              CacheFirstVisibleByte;
   WM_SCROLL_STATE  ScrollStateV;
   WM_SCROLL_STATE  ScrollStateH;
   U16              Flags;
   WM_HTIMER        hTimer;
+  int              TimerPeriod;
   GUI_WRAPMODE     WrapMode;
   int              MotionPosY;
   int              MotionPosOld;

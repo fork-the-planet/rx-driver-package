@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : MULTIEDIT.h
@@ -88,8 +88,11 @@ Purpose     : MULTIEDIT include
 *  Description
 *    Color indexes used for the cursor of the MULTIEDIT widget.
 */
-#define MULTIEDIT_CI_CURSOR_BK          2                   // Background color for cursor
-#define MULTIEDIT_CI_CURSOR_FG          3                   // Foreground color for cursor
+#define MULTIEDIT_CI_CURSOR_BK          0                   // Background color for cursor
+#define MULTIEDIT_CI_CURSOR_FG          1                   // Foreground color for cursor
+
+#define GUI_MULTIEDIT_SHOWCURSOR        (1 << 10)
+#define GUI_MULTIEDIT_CURSORBLINK       (1 << 11)
 
 /*********************************************************************
 *
@@ -144,6 +147,8 @@ int              MULTIEDIT_GetTextFromLine      (MULTIEDIT_HANDLE hObj, char * s
 int              MULTIEDIT_GetTextFromPos       (MULTIEDIT_HANDLE hObj, char * sDest, int MaxLen, int CharStart, int LineStart, int CharEnd, int LineEnd);
 int              MULTIEDIT_GetTextSize          (MULTIEDIT_HANDLE hObj);
 int              MULTIEDIT_GetUserData          (MULTIEDIT_HANDLE hObj, void * pDest, int NumBytes);
+int              MULTIEDIT_ReadBytesFromPos     (MULTIEDIT_HANDLE hObj, char * sDest, U32 SizeOfBuffer, U32 Off);
+int              MULTIEDIT_ReadCharsFromPos     (MULTIEDIT_HANDLE hObj, char * sDest, U32 SizeOfBuffer, U32 Offset);
 void             MULTIEDIT_SetTextAlign         (MULTIEDIT_HANDLE hObj, int Align);
 void             MULTIEDIT_SetAutoScrollH       (MULTIEDIT_HANDLE hObj, int OnOff);
 void             MULTIEDIT_SetAutoScrollV       (MULTIEDIT_HANDLE hObj, int OnOff);

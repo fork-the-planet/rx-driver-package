@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : DROPDOWN_Private.h
@@ -86,7 +86,6 @@ typedef struct {
   U8                     Flags;
   U16                    ItemSpacing;
   U8                     ScrollbarWidth;
-  char                   IsPressed;
   WM_HMEM                hDisabled;
   int                    LastMotionPosY;
   SCROLLER_Handle        hScrollerV;
@@ -136,7 +135,7 @@ extern WIDGET_SKIN const * DROPDOWN__pSkinDefault;
 void         DROPDOWN__AdjustHeight          (DROPDOWN_Handle hObj);
 int          DROPDOWN__GetNumItems           (DROPDOWN_Obj * pObj);
 void         DROPDOWN__Expand                (DROPDOWN_Handle hObj);
-const char * DROPDOWN__GetpItemLocked        (DROPDOWN_Handle hObj, unsigned int Index);
+char       * DROPDOWN__GetpItemLocked        (DROPDOWN_Handle hObj, unsigned int Index);
 void         DROPDOWN__RegisterPostExpandHook(GUI_REGISTER_HOOK * pRegisterHook);
 void         DROPDOWN__RegisterPreExpandHook (GUI_REGISTER_HOOK * pRegisterHook);
 

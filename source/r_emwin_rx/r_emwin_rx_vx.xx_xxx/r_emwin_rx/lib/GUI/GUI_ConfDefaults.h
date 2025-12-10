@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : GUI_ConfDefaults.h
@@ -41,12 +41,18 @@ Attention : Do not modify this file ! If you do, you will not
 
 #include "GUIConf.h"
 
-#ifndef   GUI_SUPPORT_BIDI
-  #define GUI_SUPPORT_BIDI 1
+#ifndef   GUI_SUPPORT_PROFILE
+  #define GUI_SUPPORT_PROFILE 0
 #endif
 
-#ifndef   GUI_USE_BIDI2
-  #define GUI_USE_BIDI2 1
+#ifdef GUI_SUPPORT_PROFILE
+  #ifndef GUI_SUPPORT_PROFILE_END_CALL
+    #define GUI_SUPPORT_PROFILE_END_CALL  1
+  #endif
+#endif
+
+#ifndef   GUI_SUPPORT_BIDI
+  #define GUI_SUPPORT_BIDI 1
 #endif
 
 #ifndef   LCD_MAX_LOG_COLORS
@@ -67,7 +73,15 @@ Attention : Do not modify this file ! If you do, you will not
 #endif
 
 #ifndef   GUI_SIM_SUPPORT_EMBOS
-  #define GUI_SIM_SUPPORT_EMBOS 1
+  #if (defined(_WIN64) || defined(__LP64__))
+    #define GUI_SIM_SUPPORT_EMBOS 0
+  #else
+    #define GUI_SIM_SUPPORT_EMBOS 1
+  #endif
+#endif
+
+#ifndef   GUI_USE_CODEPOINT_TABLE
+  #define GUI_USE_CODEPOINT_TABLE 0
 #endif
 
 /**********************************************************************
@@ -109,11 +123,11 @@ Attention : Do not modify this file ! If you do, you will not
 #endif
 
 #ifndef GUI_BIDI_MAX_CHARS_PER_LINE
-  #if GUI_USE_BIDI2
-    #define GUI_BIDI_MAX_CHARS_PER_LINE 200
-  #else
-    #define GUI_BIDI_MAX_CHARS_PER_LINE  80
-  #endif
+  #define GUI_BIDI_MAX_CHARS_PER_LINE 200
+#endif
+
+#ifndef GUI_WINSUPPORT
+  #define GUI_WINSUPPORT      0
 #endif
 
 #ifndef GUI_SUPPORT_TOUCH
@@ -154,11 +168,7 @@ Attention : Do not modify this file ! If you do, you will not
 
 /* In order to avoid warnings for undefined parameters */
 #ifndef GUI_USE_PARA
-  #if defined (__BORLANDC__) || defined(NC30) || defined(NC308)
-    #define GUI_USE_PARA(para)
-  #else
-    #define GUI_USE_PARA(para) (void)para
-  #endif
+  #define GUI_USE_PARA(para) (void)para
 #endif
 
 /* Default for types */
@@ -182,6 +192,25 @@ Attention : Do not modify this file ! If you do, you will not
 #ifndef GUI_MEMCPY
   #define GUI_MEMCPY memcpy
 #endif
+
+#ifdef WIN32
+   #if defined(_MSC_VER)
+     //
+     // MS VS <= 2010 standard library does not include ceilf/floorf/sqrtf
+     //
+     #if (_MSC_VER <= 1600)
+       #ifndef GUI_CEIL
+         #define GUI_CEIL ceil
+       #endif
+       #ifndef GUI_FLOOR
+         #define GUI_FLOOR floor
+       #endif
+       #ifndef GUI_SQRT
+         #define GUI_SQRT sqrt
+       #endif
+     #endif
+   #endif
+#endif 
 
 #ifndef GUI_CEIL
   #define GUI_CEIL ceilf

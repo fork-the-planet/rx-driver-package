@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.34 - Graphical user interface for embedded applications **
+** emWin V6.52 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2023-12-31
+SUA period:               2016-12-22 - 2025-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : SCROLLER_Private.h
@@ -70,80 +70,6 @@ Purpose     : SCROLLER internal header file
 // Private messages
 //
 #define SCROLLER_MSG_ATTACHED                   (WM_USER + 0x123)       // Message sent to the parent when a SCROLLER widget has been attached.
-
-/*********************************************************************
-*
-*       Private config defaults
-*
-**********************************************************************
-*/
-#ifndef   SCROLLER_COLOR_ACTIVE_DEFAULT
-  #define SCROLLER_COLOR_ACTIVE_DEFAULT          GUI_MAKE_COLOR(0x50606060)
-#endif
-
-#ifndef   SCROLLER_COLOR_INACTIVE_DEFAULT
-  #define SCROLLER_COLOR_INACTIVE_DEFAULT        GUI_MAKE_COLOR(0x50AAAAAA)
-#endif
-
-#ifndef   SCROLLER_BKCOLOR_ACTIVE_DEFAULT
-  #define SCROLLER_BKCOLOR_ACTIVE_DEFAULT        GUI_TRANSPARENT
-#endif
-
-#ifndef   SCROLLER_BKCOLOR_INACTIVE_DEFAULT
-  #define SCROLLER_BKCOLOR_INACTIVE_DEFAULT      GUI_TRANSPARENT
-#endif
-
-#ifndef   SCROLLER_RADIUS_DEFAULT
-  #define SCROLLER_RADIUS_DEFAULT                3
-#endif
-
-#ifndef   SCROLLER_SIZE_DEFAULT
-  #define SCROLLER_SIZE_DEFAULT                  6
-#endif
-
-#ifndef   SCROLLER_SPACING_DEFAULT
-  #define SCROLLER_SPACING_DEFAULT               24
-#endif
-
-#ifndef   SCROLLER_FADE_IN_PERIOD_DEFAULT
-  #define SCROLLER_FADE_IN_PERIOD_DEFAULT        200
-#endif
-
-#ifndef   SCROLLER_FADE_OUT_PERIOD_DEFAULT
-  #define SCROLLER_FADE_OUT_PERIOD_DEFAULT       200
-#endif
-
-#ifndef   SCROLLER_INACTIVE_PERIOD_DEFAULT
-  #define SCROLLER_INACTIVE_PERIOD_DEFAULT       200
-#endif
-
-#ifndef   SCROLLER_ANIM_PERIOD_DEFAULT
-  #define SCROLLER_ANIM_PERIOD_DEFAULT           150
-#endif
-
-#ifndef   SCROLLER_ANIM_EASE_FADE_DEFAULT
-  #define SCROLLER_ANIM_EASE_FADE_DEFAULT        ANIM_ACCELDECEL
-#endif
-
-#ifndef   SCROLLER_ANIM_EASE_SCROLL_DEFAULT
-  #define SCROLLER_ANIM_EASE_SCROLL_DEFAULT      ANIM_ACCELDECEL
-#endif
-
-#ifndef   SCROLLER_ALIGNMENT_WIDGETPOS_DEFAULT
-  #define SCROLLER_ALIGNMENT_WIDGETPOS_DEFAULT   (GUI_ALIGN_RIGHT   | GUI_ALIGN_BOTTOM)
-#endif
-
-#ifndef   SCROLLER_ALIGNMENT_THUMB_DEFAULT
-  #define SCROLLER_ALIGNMENT_THUMB_DEFAULT       (GUI_ALIGN_RIGHT   | GUI_ALIGN_BOTTOM)
-#endif
-
-#ifndef   SCROLLER_ALIGNMENT_OFFSET_DEFAULT
-  #define SCROLLER_ALIGNMENT_OFFSET_DEFAULT     -3
-#endif
-
-#ifndef   SCROLLER_THUMB_SIZE_MIN_DEFAULT
-  #define SCROLLER_THUMB_SIZE_MIN_DEFAULT        10
-#endif
 
 /*********************************************************************
 *
