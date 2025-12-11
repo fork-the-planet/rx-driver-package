@@ -18,6 +18,8 @@ BEGIN {
 	#     emWin FITモジュールのzipファイルがプッシュ上限サイズの上限100MBを越えたため、
 	#     超えたモジュールはリリースタグのアセットへモジュールを置く方針とした
 	#     越えたモジュールのURLリンクはアセットを指すようコードを追加
+	#   2025/12/11
+	#     check_excess_module関数において、比較方法を==演算子からmatch関数に変更
 	#
 	# 実行例
 	#   sh ../../tools/version_xml_generator.sh Makefile release_tag_commit_number=8dadb91c0486eaa03af224c935eedb9bb2df69a3
@@ -223,7 +225,7 @@ function print_indent(depth)
 function check_excess_module(module)
 {
 	for(i in lfs_excess_modules) {
-		if(lfs_excess_modules[i] == module) {
+		if(match(module, lfs_excess_modules[i])) {
 			return 0;
 		}
 	}
