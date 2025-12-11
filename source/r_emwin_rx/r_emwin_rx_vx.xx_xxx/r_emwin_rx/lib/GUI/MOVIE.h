@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.52 - Graphical user interface for embedded applications **
+** emWin V6.34 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2025-12-31
+SUA period:               2016-12-22 - 2023-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : MOVIE.h
@@ -139,7 +139,7 @@ void             MOVIE_SetCenterBitmap(MOVIE_Handle hObj, const GUI_BITMAP * pBm
 void             MOVIE_SetColor       (MOVIE_Handle hObj, unsigned ColorIndex, GUI_COLOR Color);
 void             MOVIE_SetColors      (MOVIE_Handle hObj, GUI_COLOR ColorCenter, GUI_COLOR ColorPanel, GUI_COLOR ColorLeft, GUI_COLOR ColorRight, GUI_COLOR ColorBk);
 void             MOVIE_SetData        (MOVIE_Handle hObj, const U8 * pData, U32 Size, int DoLoop, GUI_MOVIE_FUNC * pfNotify);
-void             MOVIE_SetDataEx      (MOVIE_Handle hObj, GUI_MOVIE_GET_DATA_FUNC * pfGetData, void * pVoidImage, void * pVoidTable, int DoLoop, GUI_MOVIE_FUNC * pfNotify);
+void             MOVIE_SetDataEx      (MOVIE_Handle hObj, GUI_GET_DATA_FUNC * pfGetData, void * pVoidImage, void * pVoidTable, int DoLoop, GUI_MOVIE_FUNC * pfNotify);
 void             MOVIE_SetPanelBitmaps(MOVIE_Handle hObj, const GUI_BITMAP * pBmPlay, const GUI_BITMAP * pBmPause, const GUI_BITMAP * pBmStart);
 void             MOVIE_SetPeriod      (MOVIE_Handle hObj, unsigned PeriodIndex, int Period);
 void             MOVIE_SetPeriods     (MOVIE_Handle hObj, int PeriodShiftIn, int PeriodShiftOut, int PeriodInactive);

@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.52 - Graphical user interface for embedded applications **
+** emWin V6.34 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2025-12-31
+SUA period:               2016-12-22 - 2023-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : WHEEL.h
@@ -112,7 +112,6 @@ typedef struct {
   GUI_HMEM         ahOverlay[3];    // Separate memory blocks of GUI_DRAW_HANDLEs for overlay bitmaps
   WHEEL_ITEM_ATTR  aAttrOverlay[3]; // Alignment & color of overlay bitmaps
   WM_HMEM          hContext;        // Motion context
-  WIDGET_DRAW_ITEM_FUNC * pfDrawItem;
 } WHEEL_OBJ;
 
 /*********************************************************************
@@ -124,7 +123,7 @@ typedef struct {
 void         WHEEL__SetMotionFlags        (WHEEL_OBJ * pObj);
 void         WHEEL__AddBitmapObjects      (WHEEL_Handle hObj, const GUI_HMEM                    * phMem, unsigned NumItems, U8 Align, I16 xOff, I16 yOff, GUI_COLOR Color);
 void         WHEEL__SetCenterBitmapObjects(WHEEL_Handle hObj, unsigned Index, const GUI_HMEM    * phMem, unsigned NumItems, U8 Align, I16 xOff, I16 yOff, GUI_COLOR Color);
-char       * WHEEL__GetItemTextLocked     (WHEEL_Handle hObj, unsigned Index, unsigned Row);
+const char * WHEEL__GetItemTextLocked     (WHEEL_Handle hObj, unsigned Index, unsigned Row);
 void         WHEEL__ClipPos               (WHEEL_OBJ * pObj);
 
 /*********************************************************************

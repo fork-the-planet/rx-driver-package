@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.52 - Graphical user interface for embedded applications **
+** emWin V6.34 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2025-12-31
+SUA period:               2016-12-22 - 2023-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : LCD_SIM.h
@@ -79,42 +79,39 @@ void  LCDSIM_SetRGBOrder(unsigned RGBOrder);
 *
 *************************************************************
 */
-void   LCDSIM_FillRect(int x0, int y0, int x1, int y1, int Index, int LayerIndex);
-int    LCDSIM_GetModifyCnt(int LayerIndex);
-int    LCDSIM_GetModifyCntInfo(int LayerIndex);
-int    LCDSIM_GetPixelColor(int x, int y, int LayerIndex);
-int    LCDSIM_GetPixelIndex(int x, int y, int LayerIndex);
-int    LCDSIM_GetXSizeEx(int LayerIndex);
-int    LCDSIM_GetYSizeEx(int LayerIndex);
-int    LCDSIM_GetXSizeMax(void);
-int    LCDSIM_GetYSizeMax(void);
-int    LCDSIM_GetVXSizeEx(int LayerIndex);
-int    LCDSIM_GetVYSizeEx(int LayerIndex);
-int    LCDSIM_Index2Color(int Index, int LayerIndex);
-int    LCDSIM_RLUT_GetPixelIndex(int x, int y, int LayerIndex);
-void   LCDSIM_RLUT_SetPixelIndex(int x, int y, int Index, int LayerIndex);
-void   LCDSIM_SetLUTEntry(U8 Pos, LCD_COLOR color, int LayerIndex);
-void   LCDSIM_SetPixelIndex(int x, int y, int Index, int LayerIndex);
-void   LCDSIM_SetPixelColor(int x, int y, LCD_COLOR PixelColor, int LayerIndex);
-void   LCDSIM_SetSubPixel(int x, int y, U8 Value, int LayerIndex);
-void   LCDSIM_SetPixelPhys(int x, int y, int Index, int LayerIndex);
-int    LCDSIM_GetPixelPhys(int xPhys, int yPhys, int LayerIndex);
-void   LCDSIM_FillRectPhys(int x0Phys, int y0Phys, int x1Phys, int y1Phys, int Index, int LayerIndex);
-void   LCDSIM_SetOrg(int x, int y, int LayerIndex);
-void   LCDSIM_SetAlpha(int Alpha, int LayerIndex);
-int    LCDSIM_GetAlpha(int LayerIndex);
-void   LCDSIM_SetLayerPos(int xPos, int yPos, int LayerIndex);
-void   LCDSIM_SetLayerVis(int OnOff, int LayerIndex);
-void   LCDSIM_SetSize(int LayerIndex, int xSize, int ySize);
-void   LCDSIM_SetTransMode(int LayerIndex, int TransMode);
-void   LCDSIM_SetChroma(int LayerIndex, LCD_COLOR ChromaMin, LCD_COLOR ChromaMax);
-void   LCDSIM_SetCompositeColor(U32 Color);
-void   LCDSIM_SetCompositeSize(int xSize, int ySize);
-void   LCDSIM_CopyBuffer(int LayerIndex, int IndexSrc, int IndexDst);
-void   LCDSIM_Invalidate(int LayerIndex);
-void * LCDSIM_GetBufferPtr(int LayerIndex);
-void * LCDSIM_GetBufferPtrEx(int BufferIndex, int LayerIndex);
-void   LCDSIM_SetBackBufferIndex(int LayerIndex, int BufferIndex);
+void LCDSIM_FillRect(int x0, int y0, int x1, int y1, int Index, int LayerIndex);
+int  LCDSIM_GetModifyCnt(int LayerIndex);
+int  LCDSIM_GetModifyCntInfo(int LayerIndex);
+int  LCDSIM_GetPixelColor(int x, int y, int LayerIndex);
+int  LCDSIM_GetPixelIndex(int x, int y, int LayerIndex);
+int  LCDSIM_GetXSizeEx(int LayerIndex);
+int  LCDSIM_GetYSizeEx(int LayerIndex);
+int  LCDSIM_GetXSizeMax(void);
+int  LCDSIM_GetYSizeMax(void);
+int  LCDSIM_GetVXSizeEx(int LayerIndex);
+int  LCDSIM_GetVYSizeEx(int LayerIndex);
+int  LCDSIM_Index2Color(int Index, int LayerIndex);
+int  LCDSIM_RLUT_GetPixelIndex(int x, int y, int LayerIndex);
+void LCDSIM_RLUT_SetPixelIndex(int x, int y, int Index, int LayerIndex);
+void LCDSIM_SetLUTEntry(U8 Pos, LCD_COLOR color, int LayerIndex);
+void LCDSIM_SetPixelIndex(int x, int y, int Index, int LayerIndex);
+void LCDSIM_SetPixelColor(int x, int y, LCD_COLOR PixelColor, int LayerIndex);
+void LCDSIM_SetSubPixel(int x, int y, U8 Value, int LayerIndex);
+void LCDSIM_SetPixelPhys(int x, int y, int Index, int LayerIndex);
+int  LCDSIM_GetPixelPhys(int xPhys, int yPhys, int LayerIndex);
+void LCDSIM_FillRectPhys(int x0Phys, int y0Phys, int x1Phys, int y1Phys, int Index, int LayerIndex);
+void LCDSIM_SetOrg(int x, int y, int LayerIndex);
+void LCDSIM_SetAlpha(int Alpha, int LayerIndex);
+int  LCDSIM_GetAlpha(int LayerIndex);
+void LCDSIM_SetLayerPos(int xPos, int yPos, int LayerIndex);
+void LCDSIM_SetLayerVis(int OnOff, int LayerIndex);
+void LCDSIM_SetSize(int LayerIndex, int xSize, int ySize);
+void LCDSIM_SetTransMode(int LayerIndex, int TransMode);
+void LCDSIM_SetChroma(int LayerIndex, LCD_COLOR ChromaMin, LCD_COLOR ChromaMax);
+void LCDSIM_SetCompositeColor(U32 Color);
+void LCDSIM_SetCompositeSize(int xSize, int ySize);
+void LCDSIM_CopyBuffer(int LayerIndex, int IndexSrc, int IndexDst);
+void LCDSIM_Invalidate(int LayerIndex);
 
 /********************************************************************
 *
@@ -139,7 +136,6 @@ int          SIM_GUI_GetForwardRButton(void);
 void         SIM_GUI_SetForwardRButton(int OnOff);
 void         SIM_GUI_SetTransMode(int LayerIndex, int TransMode);
 void         SIM_GUI_SetChroma(int LayerIndex, unsigned long ChromaMin, unsigned long ChromaMax);
-void         SIM_GUI_TakeScreenshot(void);
 void         SIM_GUI_UseCustomBitmaps(void);
 void         SIM_GUI_SetAccellerator(int Accellerator);
 void         SIM_GUI_SetMainScreenOffset(int x, int y);

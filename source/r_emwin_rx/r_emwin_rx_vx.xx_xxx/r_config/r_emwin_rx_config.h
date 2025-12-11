@@ -24,7 +24,6 @@
  *                                     DMAC/DTC support of SPI interface LCD.
  *         : 31.01.2024 6.34.g.1.00    Update emWin library to v6.34g.
  *         : 20.03.2025 6.34.g.1.21    Changed the disclaimer.
- *         : 09.12.2025 6.52.  1.00    Update emWin library to v6.52.
 **********************************************************************************************************************/
 #ifndef R_EMWIN_RX_CONFIG_H
 #define R_EMWIN_RX_CONFIG_H

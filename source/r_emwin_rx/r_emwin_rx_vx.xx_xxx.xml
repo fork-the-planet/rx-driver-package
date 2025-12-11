@@ -11,12 +11,12 @@
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
-        <version>14.02.00.202505</version>
+        <version>8.03.00.202411</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
         <product>ICCRX</product>
-        <version>5.20.01</version>
+        <version>5.10.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->
@@ -33,21 +33,20 @@
         <zipsource>r_emwin_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_cmt_rx</module>
-            <version>5.72</version>
+            <version>5.70</version>
         </dependency>
         <dependency>
             <module>r_gpio_rx</module>
-            <version>5.20</version>
+            <version>5.10</version>
         </dependency>
         <application>Graphic</application>
         <desc>Graphic Library with Graphical User Interface</desc>
         <details>emWin is designed to provide an efficient, processor- and display controller-independent graphical user interface for any application that operates with a graphical display. It is compatible with single-task and multitask environments, with a proprietary operating system or with any commercial RTOS. emWin is shipped as C source code. It may be adapted to any size physical and virtual display with any display controller and CPU.
-The version number 6.52 means the version of emWin library, and 1.00 means that of FIT module.
-This FIT module includes an installer of AppWizard v1.60.</details>
+The version number 6.34g means the version of emWin library, and 1.21 means that of FIT module.
+This FIT module includes an installer of AppWizard v1.40f.</details>
         <function>-</function>
         <incdir>r_config</incdir>
         <incdir>r_emwin_rx</incdir>
-        <incdir>r_emwin_rx/src</incdir>
         <incdir>r_emwin_rx/lib/Config</incdir>
         <incdir>r_emwin_rx/lib/GUI</incdir>
         <library>
@@ -112,6 +111,22 @@ This FIT module includes an installer of AppWizard v1.60.</details>
     <unsupportedfile>
         <toolchainfile>
             <product>RXC</product>
+            <folder>doc/Training/AlphaBlending/</folder>
+            <folder>doc/Training/AnimatedSprites/</folder>
+            <folder>doc/Training/AntiAliasing/</folder>
+            <folder>doc/Training/BitmapConverter/</folder>
+            <folder>doc/Training/Colors/</folder>
+            <folder>doc/Training/Configuration/</folder>
+            <folder>doc/Training/Core/</folder>
+            <folder>doc/Training/FontConverter/</folder>
+            <folder>doc/Training/GUIBuilder/</folder>
+            <folder>doc/Training/ImageFiles/</folder>
+            <folder>doc/Training/LanguageResources/</folder>
+            <folder>doc/Training/MemoryDevices/</folder>
+            <folder>doc/Training/Skinning/</folder>
+            <folder>doc/Training/VNC-Server/</folder>
+            <folder>doc/Training/WidgetLibrary/</folder>
+            <folder>doc/Training/WM/</folder>
             <file>lib/GUI/emWinLib_RXv1_IAR.a</file>
             <file>lib/GUI/emWinLib_RXv2_IAR.a</file>
             <file>lib/GUI/emWinLib_RXv3_IAR_d.a</file>
@@ -122,6 +137,22 @@ This FIT module includes an installer of AppWizard v1.60.</details>
         </toolchainfile>
         <toolchainfile>
             <product>GNURX</product>
+            <folder>doc/Training/AlphaBlending/</folder>
+            <folder>doc/Training/AnimatedSprites/</folder>
+            <folder>doc/Training/AntiAliasing/</folder>
+            <folder>doc/Training/BitmapConverter/</folder>
+            <folder>doc/Training/Colors/</folder>
+            <folder>doc/Training/Configuration/</folder>
+            <folder>doc/Training/Core/</folder>
+            <folder>doc/Training/FontConverter/</folder>
+            <folder>doc/Training/GUIBuilder/</folder>
+            <folder>doc/Training/ImageFiles/</folder>
+            <folder>doc/Training/LanguageResources/</folder>
+            <folder>doc/Training/MemoryDevices/</folder>
+            <folder>doc/Training/Skinning/</folder>
+            <folder>doc/Training/VNC-Server/</folder>
+            <folder>doc/Training/WidgetLibrary/</folder>
+            <folder>doc/Training/WM/</folder>
             <file>lib/GUI/emWinLib_RXv1_IAR.a</file>
             <file>lib/GUI/emWinLib_RXv2_IAR.a</file>
             <file>lib/GUI/emWinLib_RXv3_IAR_d.a</file>
@@ -133,6 +164,22 @@ This FIT module includes an installer of AppWizard v1.60.</details>
         </toolchainfile>
         <toolchainfile>
             <product>ICCRX</product>
+            <folder>doc/Training/AlphaBlending/</folder>
+            <folder>doc/Training/AnimatedSprites/</folder>
+            <folder>doc/Training/AntiAliasing/</folder>
+            <folder>doc/Training/BitmapConverter/</folder>
+            <folder>doc/Training/Colors/</folder>
+            <folder>doc/Training/Configuration/</folder>
+            <folder>doc/Training/Core/</folder>
+            <folder>doc/Training/FontConverter/</folder>
+            <folder>doc/Training/GUIBuilder/</folder>
+            <folder>doc/Training/ImageFiles/</folder>
+            <folder>doc/Training/LanguageResources/</folder>
+            <folder>doc/Training/MemoryDevices/</folder>
+            <folder>doc/Training/Skinning/</folder>
+            <folder>doc/Training/VNC-Server/</folder>
+            <folder>doc/Training/WidgetLibrary/</folder>
+            <folder>doc/Training/WM/</folder>
             <file>lib/GUI/emWinLib_RXv1_CCRX.lib</file>
             <file>lib/GUI/emWinLib_RXv2_CCRX.lib</file>
             <file>lib/GUI/emWinLib_RXv3_CCRX_d.lib</file>
@@ -195,27 +242,9 @@ This FIT module includes an installer of AppWizard v1.60.</details>
         </toolchainfile>
         <toolchainfile>
             <product>ICCRX</product>
-            <groups>RX66T</groups>
-            <groups>RX72T</groups>
-            <groups>RX660</groups>
-            <groups>RX26T</groups>
-            <groups>RX261</groups>
-            <groups>RX260</groups>
             <ccrx_ver>RXV3</ccrx_ver>
             <file>lib/GUI/emWinLib_RXv1_IAR.a</file>
             <file>lib/GUI/emWinLib_RXv2_IAR.a</file>
-            <file>lib/GUI/emWinLib_RXv3_IAR_d.a</file>
-        </toolchainfile>
-        <toolchainfile>
-            <product>ICCRX</product>
-            <groups>RX72N</groups>
-            <groups>RX66N</groups>
-            <groups>RX72M</groups>
-            <groups>RX671</groups>
-            <ccrx_ver>RXV3</ccrx_ver>
-            <file>lib/GUI/emWinLib_RXv1_IAR.a</file>
-            <file>lib/GUI/emWinLib_RXv2_IAR.a</file>
-            <file>lib/GUI/emWinLib_RXv3_IAR_s.a</file>
         </toolchainfile>
     </unsupportedfile>
 

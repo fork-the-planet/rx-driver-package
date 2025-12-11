@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : LCDConf_glcdc_if.c
- * Version      : 1.00
+ * Version      : 1.21
  * Description  : Display controller configuration (use RGB interface).
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -46,14 +46,6 @@
  *                                     Other fixed.
  *         : 30.08.2024 6.34.g.1.20    Fixed issue of R_DMACA_Close function in copy_buffer function.
  *         : 20.03.2025 6.34.g.1.21    Changed the disclaimer.
- *         : 09.12.2025 6.52  .1.00    Update emWin library to v6.52.
- *                                     Enable the following process to draw a polygon by DRW2D (Removal of restrictions)
- *                                      - draw_poly_outline_aa
- *                                     Integrated the function on the left below into the function on the right.
- *                                     r_emwin_rx_lcd_open          => init_controller
- *                                     r_emwin_rx_lcd_clut_update   => set_lut_entry
- *                                     r_emwin_rx_lcd_switch_buffer => switch_buffers_on_vsync
- *                                     r_emwin_rx_lcd_switch        => display_on_off
   *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -331,6 +323,15 @@ static int s_lcd_current_orientation;
 static void lcd_fill_rect (int32_t layer_index, int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t pixel_index);
 #endif
 
+static e_emwin_rx_err_t r_emwin_rx_lcd_open(void);
+static e_emwin_rx_err_t r_emwin_rx_lcd_switch_buffer(uint32_t * p_addr);
+static e_emwin_rx_err_t r_emwin_rx_lcd_switch(e_emwin_rx_lcd_switch_t lcd_switch);
+
+#if (EMWIN_BITS_PER_PIXEL < 16)
+static e_emwin_rx_err_t r_emwin_rx_lcd_clut_update(uint32_t * p_clut);
+#endif
+
+
 /**********************************************************************************************************************
  * Function Name: switch_buffers_on_vsync
  * Description  : .
@@ -339,34 +340,22 @@ static void lcd_fill_rect (int32_t layer_index, int32_t x0, int32_t y0, int32_t 
  *********************************************************************************************************************/
 static void switch_buffers_on_vsync(int32_t index)
 {
-    glcdc_err_t      glcdc_ret;
+    e_emwin_rx_err_t ret;
     uint32_t *       p_addr;
 
     p_addr = (uint32_t *)s_a_glcdc_buffer_ptr[index];
+    ret    = r_emwin_rx_lcd_switch_buffer(p_addr);
 
-    s_pending_buffer = 1;
-
-    /* WAIT_LOOP */
-    while (1 == s_pending_buffer)
-    {
-        /* Wait until s_pending_buffer is cleared by ISR */
-        R_BSP_NOP();
-    }
-
-    /* Graphic 2 Frame buffer address change */
-    glcdc_ret = R_GLCDC_BufferChange(GLCDC_FRAME_LAYER_2, p_addr);
-
-    if (GLCDC_SUCCESS == glcdc_ret)
+    if (EMWIN_RX_SUCCESS == ret)
     {
         GUI_MULTIBUF_ConfirmEx(0, index); /* Tell emWin that buffer is used */
     }
     else
     {
-        /* You should not end up here. Buffer change has failed, check "glcdc_ret" to get further information
+        /* You should not end up here. Buffer change has failed, check "ret" to get further information
          * or add code to debug the issue. */
         R_BSP_NOP();
     }
-
 }
 /**********************************************************************************************************************
  * End of function switch_buffers_on_vsync
@@ -380,120 +369,16 @@ static void switch_buffers_on_vsync(int32_t index)
  *********************************************************************************************************************/
 static void init_controller(void)
 {
-    static glcdc_cfg_t glcdc_cfg;
-    glcdc_err_t        glcdc_ret;
+    e_emwin_rx_err_t ret;
 
     /* Register Dave2D interrupt */
 #if (USE_DAVE2D == 1)
     R_BSP_InterruptWrite(BSP_INT_SRC_AL1_DRW2D_DRW_IRQ, (bsp_int_cb_t)drw_int_isr);
 #endif
 
+    ret = r_emwin_rx_lcd_open();
 
-#if (!defined(QE_DISPLAY_CONFIGURATION) && (GLCDC_CFG_CONFIGURATION_MODE == 0))
-    /* Configuration example for RX72N envision kit. */
-
-    /* Set the frequency of the LCD_CLK and PXCLK to suit the format and set the PANELCLK.CLKEN bit to 1 */
-    glcdc_cfg.output.clksrc          = GLCDC_CLK_SRC_INTERNAL;              /* Select PLL clock */
-    glcdc_cfg.output.clock_div_ratio = GLCDC_PANEL_CLK_DIVISOR_24; /* 240 / 24 = 10 MHz */
-
-    /* Definition of Background Screen */
-    glcdc_cfg.output.htiming.front_porch = 5;
-    glcdc_cfg.output.vtiming.front_porch = 8;
-    glcdc_cfg.output.htiming.back_porch  = 40;
-    glcdc_cfg.output.vtiming.back_porch  = 8;
-    glcdc_cfg.output.htiming.display_cyc = EMWIN_XSIZE_PHYS;
-    glcdc_cfg.output.vtiming.display_cyc = EMWIN_YSIZE_PHYS;
-    glcdc_cfg.output.htiming.sync_width  = 1;
-    glcdc_cfg.output.vtiming.sync_width  = 1;
-
-    /* Graphic 1 configuration */
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_1].p_base = NULL;
-
-    /* Graphic 2 configuration */
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].p_base             = (uint32_t *)EMWIN_GUI_FRAME_BUFFER1;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].offset             = LINE_OFFSET;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].format             = COLOR_FORMAT;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].visible            = true;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].blend_control      = GLCDC_BLEND_CONTROL_NONE;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].frame_edge         = false;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].frame_edge         = false;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].coordinate.y       = 0;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].vsize              = EMWIN_YSIZE_PHYS;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].coordinate.x       = 0;
-    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].hsize              = EMWIN_XSIZE_PHYS;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].start_coordinate.y = 0;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].end_coordinate.y   = EMWIN_YSIZE_PHYS;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].start_coordinate.x = 0;
-    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].end_coordinate.x   = EMWIN_XSIZE_PHYS;
-
-    /* Timing configuration */
-    glcdc_cfg.output.tcon_vsync           = GLCDC_TCON_PIN_0;
-    glcdc_cfg.output.tcon_hsync           = GLCDC_TCON_PIN_2;
-    glcdc_cfg.output.tcon_de              = GLCDC_TCON_PIN_3;
-    glcdc_cfg.output.data_enable_polarity = GLCDC_SIGNAL_POLARITY_HIACTIVE;
-    glcdc_cfg.output.hsync_polarity       = GLCDC_SIGNAL_POLARITY_LOACTIVE;
-    glcdc_cfg.output.vsync_polarity       = GLCDC_SIGNAL_POLARITY_LOACTIVE;
-    glcdc_cfg.output.sync_edge            = GLCDC_SIGNAL_SYNC_EDGE_RISING;
-
-    /* Output interface */
-    glcdc_cfg.output.format      = GLCDC_OUT_FORMAT_16BITS_RGB565;
-    glcdc_cfg.output.color_order = GLCDC_COLOR_ORDER_RGB;
-    glcdc_cfg.output.endian      = GLCDC_ENDIAN_LITTLE;
-
-    /* Brightness Adjustment */
-    glcdc_cfg.output.brightness.b = 0x200;
-    glcdc_cfg.output.brightness.g = 0x200;
-    glcdc_cfg.output.brightness.r = 0x200;
-
-    /* Contrast Adjustment Value */
-    glcdc_cfg.output.contrast.b = 0x80;
-    glcdc_cfg.output.contrast.g = 0x80;
-    glcdc_cfg.output.contrast.r = 0x80;
-
-    /* Disable Gamma */
-    glcdc_cfg.output.gamma.enable = false;
-
-    /* Disable Chromakey */
-    glcdc_cfg.chromakey[GLCDC_FRAME_LAYER_2].enable = false;
-
-    /* Disable Dithering */
-    glcdc_cfg.output.dithering.dithering_on = false;
-
-    /* CLUT Adjustment Value */
-    glcdc_cfg.clut[GLCDC_FRAME_LAYER_2].enable = false;
-
-    /* Enable VPOS ISR */
-    glcdc_cfg.detection.vpos_detect  = true;
-    glcdc_cfg.interrupt.vpos_enable  = true;
-    glcdc_cfg.detection.gr1uf_detect = false;
-    glcdc_cfg.detection.gr2uf_detect = false;
-    glcdc_cfg.interrupt.gr1uf_enable = false;
-    glcdc_cfg.interrupt.gr2uf_enable = false;
-
-    /* Set function to be called on VSYNC */
-    glcdc_cfg.p_callback = (void (*)(void *))_VSYNC_ISR;
-
-#endif /* (!defined(QE_DISPLAY_CONFIGURATION) && (GLCDC_CFG_CONFIGURATION_MODE == 0)) */
-
-    /* Initialize a first time interrupt flag
-     *   Unintended specified line notification from graphic 2 and graphic 1, 2 underflow is detected only
-     *   for first time after release GLCDC software reset.
-     *   This variable is a flag to skip the first time interrupt processing.
-     *   Refer to Graphic LCD Controller (GLCDC) section of User's Manual: Hardware for details. */
-    s_first_interrupt_flag = false;
-
-    /* R_GLCDC_Open function release stop state of GLCDC. */
-    glcdc_ret = R_GLCDC_Open(&glcdc_cfg);
-
-    if (GLCDC_SUCCESS == glcdc_ret)
-    {
-        R_GLCDC_BufferChange(GLCDC_FRAME_LAYER_2, (uint32_t *)s_a_glcdc_buffer_ptr[0]);
-
-        /* Function select of multiplex pins (Display B) */
-        R_GLCDC_PinSet();
-
-    }
-    else
+    if (EMWIN_RX_SUCCESS != ret)
     {
         /* WAIT_LOOP */
         while (1)
@@ -532,21 +417,14 @@ static void init_controller(void)
 static void set_lut_entry(LCD_COLOR color, uint8_t pos)
 {
 #if (EMWIN_BITS_PER_PIXEL < 16)
-    glcdc_err_t         glcdc_ret;
-    glcdc_clut_cfg_t    p_clut_cfg;
+    e_emwin_rx_err_t ret;
 
     s_a_clut[pos] = color;
 
     if (pos == (NUM_COLORS - 1))
     {
-        p_clut_cfg.enable = true;
-        p_clut_cfg.p_base = s_a_clut;
-        p_clut_cfg.size   = NUM_COLORS;
-        p_clut_cfg.start  = 0;
-
-        glcdc_ret = R_GLCDC_ClutUpdate(GLCDC_FRAME_LAYER_2, &p_clut_cfg);
-
-        if (GLCDC_SUCCESS != glcdc_ret)
+        ret = r_emwin_rx_lcd_clut_update(s_a_clut);
+        if (EMWIN_RX_SUCCESS != ret)
         {
             /* WAIT_LOOP */
             while (1)
@@ -555,7 +433,6 @@ static void set_lut_entry(LCD_COLOR color, uint8_t pos)
             }
         }
     }
-
 #else
     GUI_USE_PARA(color);
     GUI_USE_PARA(pos);
@@ -573,36 +450,31 @@ static void set_lut_entry(LCD_COLOR color, uint8_t pos)
  *********************************************************************************************************************/
 static void display_on_off(int32_t on_off)
 {
-    glcdc_err_t glcdc_ret;
+    e_emwin_rx_lcd_switch_t lcd_switch;
+#if (EMWIN_USE_BACKLIGHT_PIN == 1)
+    gpio_level_t            gpio_level;
+#endif
 
     if (on_off)
     {
-#ifdef __ICCRX__
-        R_GLCDC_Control(GLCDC_CMD_START_DISPLAY, (void *)FIT_NO_FUNC);
-#else
-        R_GLCDC_Control(GLCDC_CMD_START_DISPLAY, FIT_NO_FUNC);
-#endif
-
+        lcd_switch = EMWIN_RX_LCD_SWITCH_ON;
 #if (EMWIN_USE_BACKLIGHT_PIN == 1)
-        R_GPIO_PinWrite(EMWIN_BACKLIGHT_PIN, GPIO_LEVEL_HIGH);
+        gpio_level = GPIO_LEVEL_HIGH;
 #endif
     }
     else
     {
+        lcd_switch = EMWIN_RX_LCD_SWITCH_OFF;
 #if (EMWIN_USE_BACKLIGHT_PIN == 1)
-        R_GPIO_PinWrite(EMWIN_BACKLIGHT_PIN, GPIO_LEVEL_LOW);
+        gpio_level = GPIO_LEVEL_LOW;
 #endif
-
-        do
-        {
-#ifdef __ICCRX__
-            glcdc_ret = R_GLCDC_Control(GLCDC_CMD_STOP_DISPLAY, (void *)FIT_NO_FUNC);
-#else
-            glcdc_ret = R_GLCDC_Control(GLCDC_CMD_STOP_DISPLAY, FIT_NO_FUNC);
-#endif
-        }
-        while (GLCDC_ERR_INVALID_UPDATE_TIMING == glcdc_ret); /* WAIT_LOOP */
     }
+
+    r_emwin_rx_lcd_switch(lcd_switch);
+
+#if (EMWIN_USE_BACKLIGHT_PIN == 1)
+    R_GPIO_PinWrite(EMWIN_BACKLIGHT_PIN, gpio_level);
+#endif
 }
 /**********************************************************************************************************************
  * End of function display_on_off
@@ -1206,7 +1078,7 @@ static int32_t fill_polygon_aa(const GUI_POINT * p_points, int32_t num_points, i
 /**********************************************************************************************************************
  * End of function fill_polygon_aa
  *********************************************************************************************************************/
-#endif
+
 /**********************************************************************************************************************
  * Function Name: draw_poly_outline_aa
  * Description  : .
@@ -1258,7 +1130,7 @@ static int32_t draw_poly_outline_aa(const GUI_POINT * p_points, int32_t num_poin
 /**********************************************************************************************************************
  * End of function draw_poly_outline_aa
  *********************************************************************************************************************/
-
+#endif
 /**********************************************************************************************************************
  * Function Name: draw_arc_aa
  * Description  : .
@@ -1362,7 +1234,7 @@ void R_EMWIN_EnableDave2D(void)
         GUI_SetFuncDrawAlpha         ((GUI_DRAWMEMDEV_FUNC*) draw_memdev_alpha, (GUI_DRAWBITMAP_FUNC*) draw_bitmap_alpha);
         GUI_SetFuncDrawM565          ((GUI_DRAWMEMDEV_FUNC*) draw_memdev_alpha, (GUI_DRAWBITMAP_FUNC*) draw_bitmap_alpha);
         LCD_SetDevFunc               (0, LCD_DEVFUNC_DRAWBMP_16BPP, (void (*)(void)) draw_bitmap_16bpp);
-        GUI_AA_SetFuncDrawPolyOutline((DRAW_POLY_OUTLOINE*) draw_poly_outline_aa);
+/*      GUI_AA_SetFuncDrawPolyOutline((DRAW_POLY_OUTLOINE*) draw_poly_outline_aa); *//* Usage restriction */
         GUI_AA_SetFuncDrawArc        ((DRAW_ARC *)draw_arc_aa);
 /*      GUI_AA_SetFuncFillPolygon    ((FILL_POLYGON*) fill_polygon_aa); *//* Usage restriction */
     }
@@ -1547,6 +1419,253 @@ void * R_EMWIN_GetBufferAddr(void)
 }
 /**********************************************************************************************************************
  * End of function R_EMWIN_GetBufferAddr
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ * Function Name: r_emwin_rx_lcd_open
+ * Description  : .
+ * Arguments    : .
+ * Return Value : .
+ *********************************************************************************************************************/
+static e_emwin_rx_err_t r_emwin_rx_lcd_open(void)
+{
+    e_emwin_rx_err_t emwin_ret = EMWIN_RX_FAIL;
+
+    static glcdc_cfg_t glcdc_cfg;
+    glcdc_err_t        glcdc_ret;
+
+#if (!defined(QE_DISPLAY_CONFIGURATION) && (GLCDC_CFG_CONFIGURATION_MODE == 0))
+    /* Configuration example for RX72N envision kit. */
+
+    /* Set the frequency of the LCD_CLK and PXCLK to suit the format and set the PANELCLK.CLKEN bit to 1 */
+    glcdc_cfg.output.clksrc          = GLCDC_CLK_SRC_INTERNAL;              /* Select PLL clock */
+    glcdc_cfg.output.clock_div_ratio = GLCDC_PANEL_CLK_DIVISOR_24; /* 240 / 24 = 10 MHz */
+
+    /* Definition of Background Screen */
+    glcdc_cfg.output.htiming.front_porch = 5;
+    glcdc_cfg.output.vtiming.front_porch = 8;
+    glcdc_cfg.output.htiming.back_porch  = 40;
+    glcdc_cfg.output.vtiming.back_porch  = 8;
+    glcdc_cfg.output.htiming.display_cyc = EMWIN_XSIZE_PHYS;
+    glcdc_cfg.output.vtiming.display_cyc = EMWIN_YSIZE_PHYS;
+    glcdc_cfg.output.htiming.sync_width  = 1;
+    glcdc_cfg.output.vtiming.sync_width  = 1;
+
+    /* Graphic 1 configuration */
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_1].p_base = NULL;
+
+    /* Graphic 2 configuration */
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].p_base             = (uint32_t *)EMWIN_GUI_FRAME_BUFFER1;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].offset             = LINE_OFFSET;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].format             = COLOR_FORMAT;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].visible            = true;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].blend_control      = GLCDC_BLEND_CONTROL_NONE;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].frame_edge         = false;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].frame_edge         = false;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].coordinate.y       = 0;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].vsize              = EMWIN_YSIZE_PHYS;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].coordinate.x       = 0;
+    glcdc_cfg.input[GLCDC_FRAME_LAYER_2].hsize              = EMWIN_XSIZE_PHYS;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].start_coordinate.y = 0;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].end_coordinate.y   = EMWIN_YSIZE_PHYS;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].start_coordinate.x = 0;
+    glcdc_cfg.blend[GLCDC_FRAME_LAYER_2].end_coordinate.x   = EMWIN_XSIZE_PHYS;
+
+    /* Timing configuration */
+    glcdc_cfg.output.tcon_vsync           = GLCDC_TCON_PIN_0;
+    glcdc_cfg.output.tcon_hsync           = GLCDC_TCON_PIN_2;
+    glcdc_cfg.output.tcon_de              = GLCDC_TCON_PIN_3;
+    glcdc_cfg.output.data_enable_polarity = GLCDC_SIGNAL_POLARITY_HIACTIVE;
+    glcdc_cfg.output.hsync_polarity       = GLCDC_SIGNAL_POLARITY_LOACTIVE;
+    glcdc_cfg.output.vsync_polarity       = GLCDC_SIGNAL_POLARITY_LOACTIVE;
+    glcdc_cfg.output.sync_edge            = GLCDC_SIGNAL_SYNC_EDGE_RISING;
+
+    /* Output interface */
+    glcdc_cfg.output.format      = GLCDC_OUT_FORMAT_16BITS_RGB565;
+    glcdc_cfg.output.color_order = GLCDC_COLOR_ORDER_RGB;
+    glcdc_cfg.output.endian      = GLCDC_ENDIAN_LITTLE;
+
+    /* Brightness Adjustment */
+    glcdc_cfg.output.brightness.b = 0x200;
+    glcdc_cfg.output.brightness.g = 0x200;
+    glcdc_cfg.output.brightness.r = 0x200;
+
+    /* Contrast Adjustment Value */
+    glcdc_cfg.output.contrast.b = 0x80;
+    glcdc_cfg.output.contrast.g = 0x80;
+    glcdc_cfg.output.contrast.r = 0x80;
+
+    /* Disable Gamma */
+    glcdc_cfg.output.gamma.enable = false;
+
+    /* Disable Chromakey */
+    glcdc_cfg.chromakey[GLCDC_FRAME_LAYER_2].enable = false;
+
+    /* Disable Dithering */
+    glcdc_cfg.output.dithering.dithering_on = false;
+
+    /* CLUT Adjustment Value */
+    glcdc_cfg.clut[GLCDC_FRAME_LAYER_2].enable = false;
+
+    /* Enable VPOS ISR */
+    glcdc_cfg.detection.vpos_detect  = true;
+    glcdc_cfg.interrupt.vpos_enable  = true;
+    glcdc_cfg.detection.gr1uf_detect = false;
+    glcdc_cfg.detection.gr2uf_detect = false;
+    glcdc_cfg.interrupt.gr1uf_enable = false;
+    glcdc_cfg.interrupt.gr2uf_enable = false;
+
+    /* Set function to be called on VSYNC */
+    glcdc_cfg.p_callback = (void (*)(void *))_VSYNC_ISR;
+
+#endif /* (!defined(QE_DISPLAY_CONFIGURATION) && (GLCDC_CFG_CONFIGURATION_MODE == 0)) */
+
+    /* Initialize a first time interrupt flag
+     *   Unintended specified line notification from graphic 2 and graphic 1, 2 underflow is detected only
+     *   for first time after release GLCDC software reset.
+     *   This variable is a flag to skip the first time interrupt processing.
+     *   Refer to Graphic LCD Controller (GLCDC) section of User's Manual: Hardware for details. */
+    s_first_interrupt_flag = false;
+
+    /* R_GLCDC_Open function release stop state of GLCDC. */
+    glcdc_ret = R_GLCDC_Open(&glcdc_cfg);
+
+    if (GLCDC_SUCCESS == glcdc_ret)
+    {
+        R_GLCDC_BufferChange(GLCDC_FRAME_LAYER_2, (uint32_t *)s_a_glcdc_buffer_ptr[0]);
+
+        /* Function select of multiplex pins (Display B) */
+        R_GLCDC_PinSet();
+
+        emwin_ret = EMWIN_RX_SUCCESS;
+    }
+    else
+    {
+        emwin_ret = EMWIN_RX_FAIL;
+    }
+
+    return emwin_ret;
+}
+/**********************************************************************************************************************
+ * End of function r_emwin_rx_lcd_open
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ * Function Name: r_emwin_rx_lcd_switch_buffer
+ * Description  : .
+ * Arguments    : .
+ * Return Value : .
+ *********************************************************************************************************************/
+static e_emwin_rx_err_t r_emwin_rx_lcd_switch_buffer(uint32_t * p_addr)
+{
+    e_emwin_rx_err_t emwin_ret = EMWIN_RX_FAIL;
+
+    glcdc_err_t      glcdc_ret;
+
+    s_pending_buffer = 1;
+
+    /* WAIT_LOOP */
+    while (1 == s_pending_buffer)
+    {
+        /* Wait until s_pending_buffer is cleared by ISR */
+        R_BSP_NOP();
+    }
+
+    /* Graphic 2 Frame buffer address change */
+    glcdc_ret = R_GLCDC_BufferChange(GLCDC_FRAME_LAYER_2, p_addr);
+
+    if (GLCDC_SUCCESS == glcdc_ret)
+    {
+        emwin_ret = EMWIN_RX_SUCCESS;
+    }
+    else
+    {
+        emwin_ret = EMWIN_RX_FAIL;
+    }
+
+    return emwin_ret;
+}
+/**********************************************************************************************************************
+ * End of function r_emwin_rx_lcd_switch_buffer
+ *********************************************************************************************************************/
+
+#if (EMWIN_BITS_PER_PIXEL < 16)
+/**********************************************************************************************************************
+ * Function Name: r_emwin_rx_lcd_clut_update
+ * Description  : .
+ * Arguments    : .
+ * Return Value : .
+ *********************************************************************************************************************/
+static e_emwin_rx_err_t r_emwin_rx_lcd_clut_update(uint32_t * p_clut)
+{
+    e_emwin_rx_err_t    emwin_ret = EMWIN_RX_FAIL;
+
+    glcdc_err_t         glcdc_ret;
+    glcdc_clut_cfg_t    p_clut_cfg;
+
+    p_clut_cfg.enable = true;
+    p_clut_cfg.p_base = p_clut;
+    p_clut_cfg.size   = NUM_COLORS;
+    p_clut_cfg.start  = 0;
+
+    glcdc_ret = R_GLCDC_ClutUpdate(GLCDC_FRAME_LAYER_2, &p_clut_cfg);
+
+    if (GLCDC_SUCCESS == glcdc_ret)
+    {
+        emwin_ret = EMWIN_RX_SUCCESS;
+    }
+    else
+    {
+        emwin_ret = EMWIN_RX_FAIL;
+    }
+
+    return emwin_ret;
+}
+/**********************************************************************************************************************
+ * End of function r_emwin_rx_lcd_clut_update
+ *********************************************************************************************************************/
+#endif
+
+/**********************************************************************************************************************
+ * Function Name: r_emwin_rx_lcd_switch
+ * Description  : .
+ * Arguments    : .
+ * Return Value : .
+ *********************************************************************************************************************/
+static e_emwin_rx_err_t r_emwin_rx_lcd_switch(e_emwin_rx_lcd_switch_t lcd_switch)
+{
+    e_emwin_rx_err_t    emwin_ret = EMWIN_RX_FAIL;
+
+    glcdc_err_t         glcdc_ret;
+    glcdc_control_cmd_t glcdc_cmd;
+
+    if (EMWIN_RX_LCD_SWITCH_ON == lcd_switch)
+    {
+        glcdc_cmd = GLCDC_CMD_START_DISPLAY;
+    }
+    else /* EMWIN_RX_LCD_SWITCH_OFF == lcd_switch */
+    {
+        glcdc_cmd = GLCDC_CMD_STOP_DISPLAY;
+    }
+
+#ifdef __ICCRX__
+    glcdc_ret = R_GLCDC_Control(glcdc_cmd, (void *)FIT_NO_FUNC);
+#else
+    glcdc_ret = R_GLCDC_Control(glcdc_cmd, FIT_NO_FUNC);
+#endif
+    if (GLCDC_SUCCESS == glcdc_ret)
+    {
+        emwin_ret = EMWIN_RX_SUCCESS;
+    }
+    else
+    {
+        emwin_ret = EMWIN_RX_FAIL;
+    }
+
+    return emwin_ret;
+}
+/**********************************************************************************************************************
+ * End of function r_emwin_rx_lcd_switch
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************

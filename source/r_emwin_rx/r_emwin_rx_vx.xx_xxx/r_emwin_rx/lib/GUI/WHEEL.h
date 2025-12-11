@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.52 - Graphical user interface for embedded applications **
+** emWin V6.34 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2025-12-31
+SUA period:               2016-12-22 - 2023-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : WHEEL.h
@@ -141,8 +141,6 @@ int  WHEEL_GetSel                (WHEEL_Handle hObj);
 int  WHEEL_GetUserData           (WHEEL_Handle hObj, void * pDest, int NumBytes);
 int  WHEEL_InsertItemText        (WHEEL_Handle hObj, unsigned Index, unsigned Row, const char * s);
 int  WHEEL_IsMoving              (WHEEL_Handle hObj);
-int  WHEEL_OwnerDrawMorph        (const WIDGET_ITEM_DRAW_INFO * pDrawItemInfo);
-int  WHEEL_OwnerDrawPlain        (const WIDGET_ITEM_DRAW_INFO * pDrawItemInfo);
 void WHEEL_MoveToPos             (WHEEL_Handle hObj, int Index);
 void WHEEL_MoveToPosEx           (WHEEL_Handle hObj, int Index, U32 Period);
 void WHEEL_SetAlign              (WHEEL_Handle hObj, U8 Align);
@@ -159,7 +157,6 @@ void WHEEL_SetCenterTextAttrPlain(WHEEL_Handle hObj, unsigned Index, U8 Align, I
 void WHEEL_SetHBorder            (WHEEL_Handle hObj, U16 BorderText);
 int  WHEEL_SetItemText           (WHEEL_Handle hObj, unsigned Index, unsigned Row, const char * s);
 void WHEEL_SetMode               (WHEEL_Handle hObj, U16 Mode);
-void WHEEL_SetOwnerDraw          (WHEEL_Handle hObj, WIDGET_DRAW_ITEM_FUNC * pfDrawItem);
 void WHEEL_SetOverlay            (WHEEL_Handle hObj, unsigned Index, const GUI_BITMAP * pBitmap, U8 Align, I16 xOff, I16 yOff);
 void WHEEL_SetOverlayColor       (WHEEL_Handle hObj, unsigned Index, GUI_COLOR Color);
 void WHEEL_SetPeriod             (WHEEL_Handle hObj, U32 Period);

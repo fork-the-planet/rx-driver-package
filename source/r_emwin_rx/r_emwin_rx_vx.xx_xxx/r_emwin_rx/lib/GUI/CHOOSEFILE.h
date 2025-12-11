@@ -3,13 +3,13 @@
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2025  SEGGER Microcontroller GmbH                *
+*        (c) 1996 - 2023  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V6.52 - Graphical user interface for embedded applications **
+** emWin V6.34 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
@@ -24,7 +24,7 @@ License model:            License and Service Agreement, signed December 16th, 2
 License valid for:        RX (based on RX-V1, RX-V2 or RX-V3)
 ----------------------------------------------------------------------
 Support and Update Agreement (SUA)
-SUA period:               2016-12-22 - 2025-12-31
+SUA period:               2016-12-22 - 2023-12-31
 Contact to extend SUA:    sales@segger.com
 ----------------------------------------------------------------------
 File        : CHOOSEFILE.h
@@ -75,64 +75,25 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 *
 **********************************************************************
 */
-typedef struct CHOOSEFILE_INFO CHOOSEFILE_INFO;
-
 /*********************************************************************
 *
-*       CHOOSEFILE_GET_DATA_FUNC
-* 
-*  Function description
-*    A callback which has to pass information about the requested file
-*    to the dialog.
-* 
-*  Parameters
-*    pInfo: [IN/OUT] Pointer to a CHOOSEFILE_INFO structure which contains
-*                    all details of the requested file and needs to be
-*                    filled by the function.
-* 
-*  Return value
-*    == 0: On success.
-*    == 1: On error.
-* 
-*  Additional information
-*    The following structure elements of pInfo have to be set by this function:
-*      \item \bc{pInfo->Cmd:}     Determines if information about the first or
-*                                 the next file should be returned.
-*      \item \bc{pInfo->pRoot:}   Pointer to a string containing the path of the
-*                                 directory to be used. The \c{GetData()} function
-*                                 then has to use the following elements for providing
-*                                 information about the requested file to the dialog:
-*      \item \bc{pInfo->pAttrib:} Should point to a string which is shown in the 'Type'
-*                                 column. Because the CHOOSEFILE dialog can be used with
-*                                 any file system there are no special flags but a string
-*                                 which should be passed by the application to the dialog.
-*      \item \bc{pInfo->pName:}   Should point to a string which contains the file name
-*                                 without path and extension. Shown in the 'Name' column
-*                                 of the dialog.
-*      \item \bc{pInfo->pExt:}    Should point to a string which contains the extension
-*                                 of the file shown in the 'Type' column of the dialog.
-*      \item \bc{pInfo->SizeL:}   Should be set to the lower 32 bit of the file length.
-*      \item \bc{pInfo->SizeH:}   Should be set to the upper 32 bit of the file length
-*                                 in case of file larger than 4,294,967,295 bytes.
-*      \item \bc{pInfo->Flags:}   If the requested file is a directory this element has
-*                                 to be set to CHOOSEFILE_FLAG_DIRECTORY. Otherwise it
-*                                 has to be 0.
+*       CHOOSEFILE_INFO
 */
-typedef int CHOOSEFILE_GET_DATA_FUNC(CHOOSEFILE_INFO * pInfo);
+typedef struct CHOOSEFILE_INFO CHOOSEFILE_INFO;
 
 struct CHOOSEFILE_INFO {
-  int                        Cmd;                      // Command for GetData() function
-  int                        Id;                       // Id of pressed button (for internal use only)
-  const char               * pMask;                    // Mask to be used for searching files
-  char                     * pName;                    // (for internal use only)
-  char                     * pExt;                     // (for internal use only)
-  char                     * pAttrib;                  // (for internal use only)
-  WM_TOOLTIP_HANDLE          hToolTip;                 // (for internal use only)
-  U32                        SizeL;                    // FileSize low word
-  U32                        SizeH;                    // FileSize high word
-  U32                        Flags;                    // File flags
-  char                       pRoot[CHOOSEFILE_MAXLEN]; // Buffer used internally and for passing result
-  CHOOSEFILE_GET_DATA_FUNC * pfGetData;                // Pointer to GetData() function
+  int               Cmd;                                 // Command for GetData() function
+  int               Id;                                  // Id of pressed button (for internal use only)
+  const char      * pMask;                               // Mask to be used for searching files
+  char            * pName;                               // (for internal use only)
+  char            * pExt;                                // (for internal use only)
+  char            * pAttrib;                             // (for internal use only)
+  WM_TOOLTIP_HANDLE hToolTip;                            // (for internal use only)
+  U32               SizeL;                               // FileSize low word
+  U32               SizeH;                               // FileSize high word
+  U32               Flags;                               // File flags
+  char              pRoot[CHOOSEFILE_MAXLEN];            // Buffer used internally and for passing result
+  int            (* pfGetData)(CHOOSEFILE_INFO * pInfo); // Pointer to GetData() function
 };
 
 /*********************************************************************
