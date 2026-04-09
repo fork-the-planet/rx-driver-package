@@ -23,6 +23,7 @@
  *           31.05.2023 4.00    Added support for RX23E-B
  *           31.07.2024 5.00    Added support for RX260, RX261
  *           20.03.2025 5.01    Changed the disclaimer in program sources.
+ *           20.04.2026 5.02    Updated the minor version.
  *********************************************************************************************************************/
 
 /*******************************************************************************
@@ -38,7 +39,7 @@
 
 /* Version Number of API. */
 #define LPT_VERSION_MAJOR  (5)
-#define LPT_VERSION_MINOR  (01)
+#define LPT_VERSION_MINOR  (02)
 
 /* Wait time for Call R_LPT_Close after Called R_LPT_Open immediately */
 #define LPT_RSTWAIT_USEC   (LPT_LPTSRCCLK_CYC)

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+* Copyright (c) 2023 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+-->
 <refinfo>
   <toolchain>
     <brand>Renesas</brand>
@@ -9,6 +16,8 @@
     <version>3.03.00</version>
     <version>3.04.00</version>
     <version>3.05.00</version>
+    <version>3.06.00</version>
+    <version>3.07.00</version>
   </toolchain>
   <target>
     <family omit_series="true">RX</family>

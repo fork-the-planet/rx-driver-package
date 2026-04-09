@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_mesh_rx23w
-VERSION = 		1.31
+VERSION = 		1.32
 MDF = V2
 
 CONFIG_FOLDER = r_config

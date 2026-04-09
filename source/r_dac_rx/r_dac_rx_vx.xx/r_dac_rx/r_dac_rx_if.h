@@ -49,6 +49,7 @@
 *           15.03.2025 5.31    Updated disclaimer.
 *           23.06.2025 5.32    Removed doc folder and updated .rcpc file in FITDemos.
 *           30.10.2025 5.40    Added support for RX14T.
+*           30.03.2026 5.41    Included spdx file in the package.
 ***********************************************************************************************************************/
 #ifndef DAC_RX_IF_H
 #define DAC_RX_IF_H
@@ -73,7 +74,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define DAC_VERSION_MAJOR  (5)
-#define DAC_VERSION_MINOR  (40)
+#define DAC_VERSION_MINOR  (41)
 
 
 #if defined(BSP_MCU_RX23T) || defined(BSP_MCU_RX24T) || defined(BSP_MCU_RX13T) || defined(BSP_MCU_RX23E_B)

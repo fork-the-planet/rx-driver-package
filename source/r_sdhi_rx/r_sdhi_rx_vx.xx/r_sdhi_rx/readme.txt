@@ -5,12 +5,12 @@ r_sdhi_rx
 
 Document Number 
 ---------------
-R01AN3852EJ0220
-R01AN3852JJ0220
+R01AN3852EJ0221
+R01AN3852JJ0221
 
 Version
 -------
-v2.20
+v2.21
 
 Overview
 --------
@@ -91,7 +91,7 @@ Refer to "RX Smart Configurator User's Guide: IAREW (R20AN0535)" for details.
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX v14.02.00.202505
+* GCC for Renesas RX v14.02.00.202511
 * IAR C/C++ Compiler for Renesas RX v5.20.01
 
 File Structure
@@ -103,9 +103,9 @@ r_sdhi_rx
 +---doc
 |   |
 |   +---en
-|   |       r01an3852ej0220-rx-communication.pdf
+|   |       r01an3852ej0221-rx-communication.pdf
 |   +---ja
-|           r01an3852jj0220-rx-communication.pdf
+|           r01an3852jj0221-rx-communication.pdf
 |
 +---src
     |   r_sdhi_int.c

@@ -21,6 +21,7 @@
 *           30.11.2020 2.01    Changed minor version to 2.01 for e2studio 2020-10 support.
 *           20.03.2025 2.02    Changed minor version to 2.02 for e2studio 2025-01 support.
 *                              Changed the disclaimer in program sources
+*           20.04.2026 2.03    Changed minor version to 2.03 for e2studio 2025-12 support.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -36,7 +37,7 @@
 
 /* Version Number of API. */
 #define SCIF_VERSION_MAJOR  (2)
-#define SCIF_VERSION_MINOR  (02)
+#define SCIF_VERSION_MINOR  (03)
 
 /**********************************************************************************************************************
  Typedef definitions

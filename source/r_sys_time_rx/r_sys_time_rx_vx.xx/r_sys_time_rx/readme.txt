@@ -6,9 +6,7 @@ r_sys_time_rx
 Overview
 --------------------------------------------------------------------------------
 The r_sys_time_rx module has a system timer structure and simple-scheduler.
-Configuration options can be found in 
-"\r_config\r_sys_time_rx_config.h". An original copy of the configuration file 
-is stored in "r_sys_time_rx\ref\r_sys_time_rx_config_reference.h".
+Configuration options can be found in "\r_config\r_sys_time_rx_config.h".
 
 
 Features
@@ -23,12 +21,9 @@ r_sys_time_rx
 |
 +---doc
 |   +---ja
-|   |    r20an0431jj0102-rx-middle.pdf
+|   |    r20an0431jj0103-rx-middle.pdf
 |   +---en
-|        r20an0431ej0102-rx-middle.pdf
-|
-+---ref
-|       r_sys_time_rx_config_reference.h
+|        r20an0431ej0103-rx-middle.pdf
 |
 +---src
         r_sys_time_rx.c

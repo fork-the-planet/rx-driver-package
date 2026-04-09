@@ -11,6 +11,7 @@
 * History : DD.MM.YYYY Version Description           
 *           10.06.2020 1.00    Initial Release.
 *           20.03.2025 5.41    Changed the disclaimer in program sources.
+*           20.04.2026 5.51    Fixed to resolve waring [-Wmaybe-uninitialized].
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -260,10 +261,8 @@ adc_err_t adc_open(uint8_t     const  unit,
                     adc_cfg_t * const  p_cfg,
                     void     (* const  p_callback)(void *p_args))
 {
-    aregs_t     *p_regs;
+    aregs_t     *p_regs = NULL;
     aregs2_t     *p_regs2;
-    volatile uint16_t   u16_dummy;  /* Dummy read for "1" change to "0".(read first) */
-    volatile uint8_t    u8_dummy;   /* Dummy read for "1" change to "0".(read first) */
 #if ((R_BSP_VERSION_MAJOR == 5) && (R_BSP_VERSION_MINOR >= 30)) || (R_BSP_VERSION_MAJOR >= 6)
     volatile uint32_t   ipl_value;
 #endif
@@ -771,7 +770,7 @@ adc_err_t adc_control(uint8_t const       unit,
     adc_err_t       err = ADC_SUCCESS;
     adc_sst_t       *p_sample;
     adc_dda_t       *p_charge;
-    aregs_t         *p_regs;
+    aregs_t         *p_regs = NULL;
     aregs2_t        *p_regs2;
 
     /* A/D register address */
@@ -1156,7 +1155,7 @@ static adc_err_t adc_configure_scan(uint8_t const   unit,
     uint16_t    i=0;
     uint32_t    tmp_mask=0;
 
-    aregs_t     *p_regs;
+    aregs_t     *p_regs = NULL;
     aregs2_t     *p_regs2;
     uint16_t    trig_a;
     uint16_t    trig_b;
@@ -1493,7 +1492,7 @@ static adc_err_t adc_check_scan_config(uint8_t const   unit,
     uint32_t    b_mask;
     uint32_t    c_mask;
 
-    aregs_t     *p_regs;
+    aregs_t     *p_regs = NULL;
 
     /* A/D register address */
     if (0 == unit)
@@ -1910,7 +1909,7 @@ static void adc_enable_s12gcadi(uint8_t unit)
 *******************************************************************************/
 adc_err_t adc_close(uint8_t const  unit)
 {
-    aregs_t      *p_regs;
+    aregs_t      *p_regs = NULL;
     aregs2_t     *p_regs2;
     volatile    uint8_t i;
 

@@ -29,6 +29,7 @@
 *         : 30.10.2025 2.13    Removed doc folder and updated .rcpc file in FITDemos.
 *                              Modified comment of API function to Doxygen style.
 *         : 28.11.2025 2.20    Added support for Nested interrupt.
+*         : 30.03.2026 2.21    Included spdx file in the package.
 **********************************************************************************************************************/
 
 #ifndef SDHI_RX_H
@@ -51,7 +52,7 @@ Macro definitions
 /* #### SD Memory and common definitions #### */
 /* Version Number of API. */
 #define RX_SDHI_VERSION_MAJOR       (2)
-#define RX_SDHI_VERSION_MINOR       (20)
+#define RX_SDHI_VERSION_MINOR       (21)
 
 /* ==== Select use CBSY bit ==== */
 /*  #define     USE_INFO2_CBSY      */ /* Use SDHI_SDIMSK2_SCLKDIVEN   */

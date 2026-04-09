@@ -20,12 +20,13 @@
 
 #define LWIP_DRIVER_CFG_ETH_DRV_CH          (0)
 
-#define LWIP_DRIVER_CFG_MTU                 (1500U)
+#define LWIP_DRIVER_CFG_MTU                 (1500)
 
-/* Retry max count in the low_level_output()  */
+/* The maximum number of retries to obtain the transmit buffer in low_level_output(). */
 #define LWIP_DRIVER_CFG_SEND_MAX_LOOP       (20)
 
-/* Delay time when the send buffer full in the low_level_output(): usec */
+/* the delay time (in microseconds) to wait after the transmit buffer becomes full in low_level_output().
+ * This is only used if NO_SYS==1. */
 #define LWIP_DRIVER_CFG_SEND_DELAY_US       (50)
 
 #endif /* R_LWIP_DRIVER_RX_CONFIG_H */

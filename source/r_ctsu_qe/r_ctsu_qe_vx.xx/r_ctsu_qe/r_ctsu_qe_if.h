@@ -3,10 +3,7 @@
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
-/***********************************************************************************************************************
-* File Name    : r_ctsu_qe_if.h
-* Description  : This file contains the CTSU API and should be included by the application which uses this API.
-***********************************************************************************************************************/
+
 #ifndef R_CTSU_QE_IF_H
 #define R_CTSU_QE_IF_H
 

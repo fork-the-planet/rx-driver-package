@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
+<!--
+/*
+* Copyright (c) 2020 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+-->
 <refinfo>
 
     <!-- multiple versions permitted -->
@@ -11,7 +17,7 @@
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
-        <version>14.02.00.202505</version>
+        <version>14.02.00.202511</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>

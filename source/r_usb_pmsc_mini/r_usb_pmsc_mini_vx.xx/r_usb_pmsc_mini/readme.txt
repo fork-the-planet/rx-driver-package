@@ -10,7 +10,7 @@ R01AN2172JJ
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -70,9 +70,9 @@ r_usb_pmsc_mini
 |
 +---doc
 |     \en
-|     |   r01an2172ej0131_usb.pdf
+|     |   r01an2172ej0132_usb.pdf
 |     \jp
-|         r01an2172jj0131_usb.pdf
+|         r01an2172jj0132_usb.pdf
 |
 +---ref
 |       r_usb_pmsc_mini_config_reference.h

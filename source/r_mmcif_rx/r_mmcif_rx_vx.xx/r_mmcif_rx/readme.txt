@@ -5,12 +5,12 @@ r_mmcif_rx (MMC Mode MMCIF Driver)
 
 Document Number 
 ---------------
-R01AN4234JJ0122
-R01AN4234EJ0122
+R01AN4234JJ0123
+R01AN4234EJ0123
 
 Version
 -------
-v1.22
+v1.23
 
 Overview
 --------
@@ -79,9 +79,9 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.07
-* GCC for Renesas RX v8.3.0.202411
-* IAR C/C++ Compiler for Renesas RX v5.10.1
+* Renesas RX v3.07.00
+* GCC for Renesas RX v14.02.00.202511
+* IAR C/C++ Compiler for Renesas RX v5.20.1
 
 File Structure
 --------------
@@ -92,10 +92,10 @@ r_mmcif_rx
 +---doc
 |   |
 |   +---en
-|   |       r01an4234ej0122-rx-communication.pdf
+|   |       r01an4234ej0123-rx-communication.pdf
 |   |
 |   +---ja
-|           r01an4234jj0122-rx-communication.pdf
+|           r01an4234jj0123-rx-communication.pdf
 |
 +---src
     |   r_mmcif_cd.c

@@ -16,6 +16,7 @@ DD.MM.YYYY Version Description
                    Added the r_config folder and remove the ref folder.
 15.11.2024 1.13    Added WAIT_LOOP comment.
 20.03.2025 1.14    Changed the disclaimer.
+20.03.2026 1.15    Included spdx file in the package.
 
 File Structure
 --------------
@@ -26,7 +27,6 @@ drw_2d
 |    +-- d2_driver(TES's DRW2D documents)
 |    +-- en (APN English)
 |    +-- ja (APN Japanese)
-|    +-- License.txt
 |
 +---inc
 |    +-- tes (TES's driver version 3.17)

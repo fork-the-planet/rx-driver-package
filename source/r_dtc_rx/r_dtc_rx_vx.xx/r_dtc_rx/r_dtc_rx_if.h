@@ -55,6 +55,8 @@
 *         : 23.06.2025 4.52    Removed doc folder and updated .rcpc file in FITDemos.
 *         : 30.10.2025 4.60    Added support for RX14T.
 *                              Fixed to comply with GSCE Coding Standards Rev.6.6.0.
+*         : 30.03.2026 4.61    Included spdx file in the package.
+*                              Fixed warnings in GCC.
 *******************************************************************************/
 #ifndef DTC_RX_IF_H
 #define DTC_RX_IF_H
@@ -77,7 +79,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define DTC_VERSION_MAJOR  (4)
-#define DTC_VERSION_MINOR  (60)
+#define DTC_VERSION_MINOR  (61)
 
 /*******************************************************************************
 Typedef definitions

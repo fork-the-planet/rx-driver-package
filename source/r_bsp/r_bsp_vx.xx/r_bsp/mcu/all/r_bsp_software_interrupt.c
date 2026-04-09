@@ -13,6 +13,7 @@
 *         : 10.12.2019 1.01     Modified comment.
 *         : 18.05.2021 1.02     Modified bsp_swint_clear_task function and bsp_swint_clear_all_task function.
 *         : 26.02.2025 1.03     Changed the disclaimer.
+*         : 04.03.2026 1.04     Fixed the warning of R_BSP_SoftwareInterruptClose function for GCC.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -184,7 +185,7 @@ e_bsp_swint_err_t R_BSP_SoftwareInterruptOpen(e_bsp_swint_unit_t unit)
  */
 e_bsp_swint_err_t R_BSP_SoftwareInterruptClose(e_bsp_swint_unit_t unit)
 {
-    bool lock_ret;
+    bool lock_ret = false;
     e_bsp_swint_err_t swint_ret;
     uint8_t buf_num;
 

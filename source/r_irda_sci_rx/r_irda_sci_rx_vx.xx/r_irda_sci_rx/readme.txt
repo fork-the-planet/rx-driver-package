@@ -5,11 +5,11 @@ r_irda_sci_rx
 
 Document Number 
 ---------------
-R01AN2175JJ0103
+R01AN2175JJ0104
 
 Version
 -------
-v1.03
+v1.04
 
 Overview
 --------------------------------------------------------------------------------
@@ -19,8 +19,7 @@ initializes the IrDA module, transmits and receives data, and disables the IrDA 
 To change the communication bit rate, disable the IrDA module once, and initialize 
 the IrDA module with the new communication bit rate. The code size can be reduced by 
 removing code for parameter checking, unused channels, or unused modes. These 
-configuration options can be found in "r_config\r_irda_sci_rx_config.h". An original 
-copy of the configuration file is stored in "r_sci_rx\ref\r_irda_sci_rx_config_reference.h".
+configuration options can be found in "r_config\r_irda_sci_rx_config.h".
 
 
 Features
@@ -82,9 +81,9 @@ r_irda_sci_rx
 |
 +---doc
 |   +---en
-|   |      r01an2175ej0103_rx.pdf
+|   |      r01an2175ej0104_rx.pdf
 |   \---ja 
-|          r01an2175jj0103_rx.pdf
+|          r01an2175jj0104_rx.pdf
 |
 +---src
     |

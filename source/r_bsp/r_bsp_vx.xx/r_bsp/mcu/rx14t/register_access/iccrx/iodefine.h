@@ -18,6 +18,7 @@
 *            : V0.40B (2025-06-11)  [Hardware Manual Revision : 0.40]
 *            : V0.40C (2025-06-24)  [Hardware Manual Revision : 0.40]
 *            : V0.50  (2025-07-29)  [Hardware Manual Revision : 0.50]
+*            : V1.00  (2025-09-04)  [Hardware Manual Revision : 1.00]
 *
 * Note       : THIS IS A TYPICAL EXAMPLE.
 *

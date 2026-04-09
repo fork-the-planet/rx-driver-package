@@ -53,7 +53,7 @@
 #define R_RSIP_CM_ECCP256_PRIVATE_KEY_INDEX_WORD_SIZE    (13U)
 
 #define R_RSIP_CM_VERSION_MAJOR                          (1U)
-#define R_RSIP_CM_VERSION_MINOR                          (0U)
+#define R_RSIP_CM_VERSION_MINOR                          (1U)
 
 /**********************************************************************************************************************
  * Global Typedef definitions

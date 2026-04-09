@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2024 - 2025 Renesas Electronics Corporation and/or its affiliates
+* Copyright (c) 2024 - 2026 Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -12,6 +12,7 @@
 *         : 15.10.2024 1.00     First Release.
 *         : 31.07.2025 2.00     Added support for ECDH KDF and HMAC Suspend, Resume
 *         :                     Revised key management specification
+*         : 20.03.2026 2.01     Updated the minor version.
 ***********************************************************************************************************************/
 
 /*******************************************************************************************************************//**
@@ -38,7 +39,7 @@ Includes   <System Includes> , "Project Includes"
  Macro definitions
  *********************************************************************************************************************/
 #define RSIP_VERSION_MAJOR    (2u)
-#define RSIP_VERSION_MINOR    (00u)
+#define RSIP_VERSION_MINOR    (01u)
 
 /* Internal macro (calculation of key type values) */
 #define RSIP_PRV_KEY_TYPE_VAL(plain_words, alg, subtype)    (((alg) << 24) | ((subtype) << 16) | (plain_words))

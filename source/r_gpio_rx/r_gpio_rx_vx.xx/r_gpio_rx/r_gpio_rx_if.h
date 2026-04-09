@@ -83,6 +83,7 @@
 *         : 23.06.2025 5.20    Added support for RX26T 32pins.
 *                              Removed doc folder and updated .rcpc file in FITDemos.
 *         : 30.10.2025 5.30    Added support for RX14T.
+*         : 30.03.2026 5.31    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #ifndef GPIO_RX_INTERFACE_HEADER_FILE
@@ -167,7 +168,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define GPIO_RX_VERSION_MAJOR           (5)
-#define GPIO_RX_VERSION_MINOR           (30)
+#define GPIO_RX_VERSION_MINOR           (31)
 
 /***********************************************************************************************************************
 Typedef definitions

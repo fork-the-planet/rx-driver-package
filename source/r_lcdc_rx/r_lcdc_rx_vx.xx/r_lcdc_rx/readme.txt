@@ -5,12 +5,12 @@ r_lcdc_rx
 
 Document Number
 ---------------
-R01AN1980JJ0201
-R01AN1980EJ0201
+R01AN1980JJ0202
+R01AN1980EJ0202
 
 Version
 -------
-v2.01
+v2.02
 
 Overview
 --------
@@ -51,52 +51,11 @@ Required Packages
 -----------------
 * r_bsp     v7.40
 
-How to add to your project
---------------------------
-The driver must be added to an existing e2 Studio project.
-It is best to use the e2Studio FIT plugin to add the driver to your project
-as that will automatically update the include file paths for you. 
-Alternatively,the driver can be imported from the archive that
-accompanies this application note and manually added by following these steps:
-
-1. This application note is distributed with a zip file package
-   that includes the FIT Simple IIC support module in its own folder r_lcdc_rx.
-2. Unzip the package into the location of your choice.
-3. In a file browser window, browse to the directory where you unzipped the 
-   distribution package and locate the r_lcdc_rx folder.
-4. Open your e2 Studio workspace.
-5. In the e2 Studio project explorer window, select the project 
-   that you want to add the simple IIC module to.
-6. Drag and drop the r_lcdc_rx folder from the browser window (orcopy/paste)
-   into your e2 Studio project at the top level of the project.
-7. Update the source search/include paths for your project by adding the paths 
-   to the module files:
-   a. Navigate to the "Add directory path" control:
-      i. 'project name'->properties->C/C++ Build->Settings->Compiler->Source -Add (green + icon)
-   b. Add the following paths:
-      i. "${workspace_loc:/${ProjName}/r_lcdc_rx}"
-     ii. "${workspace_loc:/${ProjName}/r_lcdc_rx/src}"
-
-Whether you used the plug-in or manually added the package to your project,
-it is necessary to configure the driver for yourapplication.
-
-8. Locate the r_lcdc_rx_config_reference.h file in the rlcdc_rx/ref/targets/rx113 source folder in your project and copy it to your project's r_config folder.
-9. Change the name of the copy in the r_config folder to r_lcdc_rx_config.h
-10. Make the required configuration settings by editing the copied
-    r_lcdc_rx_config.h file. See Configuration Overview.
-
-The LCDC module uses the r_bsp package for certain MCU information
-and support functions. The r_bsp package is easily configured through the platform.h header file 
-which is located in the r_bsp folder. To configure the r_bsppackage, open up platform.h and uncomment the #include for the board you are using.
-For example, to run the demo on a RSKRX111 board, the user would uncomment the #include for 
-'./board/rskrx111/r_bsp.h' macro and make sure all other board #includes are commented out.
-
-
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX 8.03.00.202411
-* IAR C/C++ Compiler for Renesas RX version 5.10.1
+* GCC for Renesas RX 14.02.00.202511
+* IAR C/C++ Compiler for Renesas RX version 5.20.1
 
 
 File Structure

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2013-2025 Renesas Electronics Corporation and/or its affiliates
+* Copyright (c) 2013-2026 Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -14,6 +14,7 @@
 *                              Changed:   Error code macro name from SYS_TIME_BAD_xxx to SYS_TIME_ERR_BAD_xxx.
 *                              Added support GCC RX compiler and IAR RX compiler .
 *           20.03.2025 1.02    Changed the disclaimer.
+*           20.03.2026 1.03    Updated the minor version.
 ***********************************************************************************************************************/
 
 #ifndef SYS_TIME_IF_H
@@ -29,7 +30,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define SYS_TIME_VERSION_MAJOR  (1)
-#define SYS_TIME_VERSION_MINOR  (02)
+#define SYS_TIME_VERSION_MINOR  (03)
 
 #define SYS_TIME_UTC_MINUS_1200 "UTC-12:00"
 #define SYS_TIME_UTC_MINUS_1100 "UTC-11:00"

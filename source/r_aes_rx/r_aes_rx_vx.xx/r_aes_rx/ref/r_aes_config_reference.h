@@ -1,8 +1,8 @@
 /* Generated configuration header file - do not edit */
-/*​
-* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates​
-*​
-* SPDX-License-Identifier: BSD-3-Clause​
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
 */
 /***********************************************************************************************************************
  * @file         r_aes_config.h

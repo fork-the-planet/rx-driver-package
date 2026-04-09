@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_usb_hmsc
-VERSION = 		1.44
+VERSION = 		1.45
 MDF = NOT_SUPPORTED
 
 TARGET_FOLDER = ../../FITModules
@@ -7,7 +7,7 @@ TARGET_FOLDER = ../../FITModules
 $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).zip: $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).xml
 	cd ./$(MODULE_NAME)_vx.xx; \
 	zip ../$(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).zip -r ./$(MODULE_NAME); \
-	cd ../;	\
+	cd ../;
 
 $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).xml:
 	cp ./$(MODULE_NAME)_vx.xx.xml tmp.xml

@@ -1,7 +1,7 @@
-/*​
-* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates​
-*​
-* SPDX-License-Identifier: BSD-3-Clause​
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
 */
 /***********************************************************************************************************************
  * @file         aes128Ecb_small.c

@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_src_api_rx
-VERSION = 		1.15
+VERSION = 		1.16
 MDF = V2
 
 CONFIG_FOLDER = r_config

@@ -15,7 +15,7 @@
 #include "cri_aero_flash_internal.h"
 
 #if CRI_AERO_CONFIG_AIS_USE_FLASH
-#include "r_flash_spi_lib.h"
+#include "cri_flash_spi_lib.h"
 
 CriBool CriAeroFlash_Initialize_AIS(void)
 {

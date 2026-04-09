@@ -89,6 +89,7 @@
 *           30.10.2025 5.60    Added support for RX14T.
 *                              Fixed to comply with GSCE Coding Standards Rev.6.6.0.
 *                              Updated MDF using Category.
+*           30.03.2026 5.61    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #ifndef SCI_IF_H
@@ -118,7 +119,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define SCI_VERSION_MAJOR  (5)
-#define SCI_VERSION_MINOR  (60)
+#define SCI_VERSION_MINOR  (61)
 
 #define SCI_DTC_DMACA_DISABLE  (0x0)
 #define SCI_DTC_ENABLE         (0x1)

@@ -81,6 +81,9 @@
 *                               - bsp_calc_cosine_fsp
 *                               - bsp_calc_atan_fsp
 *                               - bsp_calc_squareroot_fsp
+*        : 04.03.2026 1.08      Fixed compile switches the following functions.
+*                               - bsp_move_from_acc_hi_long
+*                               - bsp_move_from_acc_mi_long
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -110,12 +113,10 @@ R_BSP_ATTRIB_STATIC_INLINE_ASM void bsp_get_bpc(uint32_t *data);
 #ifdef BSP_MCU_EXCEPTION_TABLE
 R_BSP_ATTRIB_STATIC_INLINE_ASM void bsp_get_extb(uint32_t *data);
 #endif /* BSP_MCU_EXCEPTION_TABLE */
-#endif /* defined(__ICCRX__) */
 
-#if defined(__GNUC__) || defined(__ICCRX__)
 R_BSP_ATTRIB_STATIC_INLINE_ASM void bsp_move_from_acc_hi_long(uint32_t *data);
 R_BSP_ATTRIB_STATIC_INLINE_ASM void bsp_move_from_acc_mi_long(uint32_t *data);
-#endif /* defined(__GNUC__) || defined(__ICCRX__)  */
+#endif /* defined(__ICCRX__) */
 
 /***********************************************************************************************************************
 * Function Name: R_BSP_Max

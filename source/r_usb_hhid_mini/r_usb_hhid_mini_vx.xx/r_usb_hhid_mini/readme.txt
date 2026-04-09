@@ -10,7 +10,7 @@ R01AN2168JJ
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -68,9 +68,9 @@ r_usb_hhid_mini
 |
 +---doc
 |     \en
-|     |   r01an2168ej0131_usb.pdf
+|     |   r01an2168ej0132_usb.pdf
 |     \jp
-|         r01an2168jj0131_usb.pdf
+|         r01an2168jj0132_usb.pdf
 |
 +---ref
 |       r_usb_hhid_mini_config_reference.h

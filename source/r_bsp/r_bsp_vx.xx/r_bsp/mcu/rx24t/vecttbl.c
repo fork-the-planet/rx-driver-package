@@ -18,6 +18,7 @@
 *                               Fixed coding style.
 *         : 08.10.2019 3.01     Changed for added support of Renesas RTOS (RI600V4 or RI600PX).
 *         : 26.02.2025 3.02     Changed the disclaimer.
+*         : 04.03.2026 3.03     Fixed comment.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -132,7 +133,7 @@ R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 R_BSP_ATTRIB_SECTION_CHANGE_END
 #endif /* defined(__CCRX__), defined(__GNUC__) */
 
-#endif/* BSP_CFG_RTOS_USED */
+#endif /* BSP_CFG_RTOS_USED */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */
 

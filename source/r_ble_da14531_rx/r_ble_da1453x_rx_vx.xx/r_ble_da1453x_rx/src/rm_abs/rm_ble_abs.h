@@ -4,10 +4,10 @@
 * SPDX-License-Identifier: BSD-3-Clause
 */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * @addtogroup BLE_ABS BLE_ABS
  * @{
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 #ifndef RM_BLE_ABS_H
 #define RM_BLE_ABS_H
@@ -20,9 +20,9 @@
 /* Common macro for FSP header files. There is also a corresponding FSP_FOOTER macro at the end of this file. */
 FSP_HEADER
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Macro definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /** The timer type. */
 typedef enum
@@ -34,20 +34,38 @@ typedef enum
 /** The timer callback invoked when the timer expired. */
 typedef void (* ble_abs_timer_cb_t)(uint32_t timer_hdl);
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Typedef definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /** advertising set parameters structure */
 typedef struct st_abs_advertising_parameter
 {
     union
     {
-        ble_abs_legacy_advertising_parameter_t          legacy_advertising_parameter;          ///< Legacy advertising parameters.
-        ble_abs_extend_advertising_parameter_t          extend_advertising_parameter;          ///< Extended advertising parameters.
-        ble_abs_non_connectable_advertising_parameter_t non_connectable_advertising_parameter; ///< Non-Connectable advertising parameters.
-        ble_abs_periodic_advertising_parameter_t        periodic_advertising_parameter;        ///< Periodic advertising parameters.
-    } advertising_parameter;                                                                   ///< Advertising parameters.
+    /**
+     * Legacy advertising parameters.
+     */
+    ble_abs_legacy_advertising_parameter_t legacy_advertising_parameter;
+
+    /**
+     * Extended advertising parameters.
+     */
+    ble_abs_extend_advertising_parameter_t extend_advertising_parameter;
+
+    /**
+     * Non-Connectable advertising parameters.
+     */
+    ble_abs_non_connectable_advertising_parameter_t non_connectable_advertising_parameter;
+
+    /**
+     * Periodic advertising parameters.
+     */
+    ble_abs_periodic_advertising_parameter_t periodic_advertising_parameter;
+    /**
+     * Advertising parameters.
+     */
+    } advertising_parameter;
 
     uint32_t advertising_status;                              ///< Advertising status.
 
@@ -97,8 +115,7 @@ typedef struct st_ble_abs_identity_address_info
 typedef struct st_ble_abs_instance_ctrl
 {
     uint32_t     open;                             ///< Indicates whether the open() API has been successfully called.
-    void   * p_context;                                                             ///< Placeholder for user data.  Passed to the user callback in ble_abs_callback_args_t.
-                                                   ///< Passed to the user callback in ble_abs_callback_args_t.
+    void   * p_context;                            ///< Placeholder for user data.
     ble_gap_application_callback_t             abs_gap_callback;               ///< GAP callback function
     ble_vendor_specific_application_callback_t abs_vendor_specific_callback;   ///< Vendor specific callback function
     ble_abs_delete_bond_application_callback_t abs_delete_bond_callback; ///< Delete bond information callback function
@@ -127,7 +144,7 @@ void r_ble_rf_notify_deep_sleep(uint32_t param);
 
 /**********************************************************************************************************************
  * Exported global variables
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /** @cond INC_HEADER_DEFS_SEC */
 /** Filled in Interface API structure for this Instance. */
@@ -137,7 +154,7 @@ extern const ble_abs_api_t g_ble_abs_on_ble;
 
 /**********************************************************************************************************************
  * Public Function Prototypes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_Open(ble_abs_ctrl_t * const p_ctrl, ble_abs_cfg_t const * const p_cfg);
 
 fsp_err_t RM_BLE_ABS_Close(ble_abs_ctrl_t * const p_ctrl);
@@ -186,6 +203,6 @@ FSP_FOOTER
 
 #endif                                 // RM_BLE_ABS_H
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * @} (end addtogroup BLE_ABS)
- **********************************************************************************************************************/
+ *********************************************************************************************************************/

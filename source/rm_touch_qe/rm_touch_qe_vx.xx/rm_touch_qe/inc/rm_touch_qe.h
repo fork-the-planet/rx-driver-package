@@ -3,10 +3,6 @@
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
-/***********************************************************************************************************************
-* File Name    : rm_touch_qe.h
-* Description  : This file contains the TOUCH API and should be included by the application which uses this API.
-***********************************************************************************************************************/
 
 /*******************************************************************************************************************//**
  * @addtogroup TOUCH
@@ -29,7 +25,7 @@ FSP_HEADER
  * Macro definitions
  **********************************************************************************************************************/
 #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
-#define TOUCH_AUTO_JUDGE_MONITOR   (1)
+ #define TOUCH_AUTO_JUDGE_MONITOR    (1)
 #endif
 
 /***********************************************************************************************************************
@@ -148,9 +144,8 @@ typedef struct st_touch_instance_ctrl
     touch_pad_info_t        pinfo;                ///< Information of pad.
     touch_cfg_t const     * p_touch_cfg;          ///< Pointer to initial configurations.
     ctsu_instance_t const * p_ctsu_instance;      ///< Pointer to CTSU instance.
-    touch_mm_info_t       * p_touch_mm_info;      ///< Pointer to information of touch button judge
+    touch_mm_info_t       * p_touch_mm_info;      ///< Pointer to information of touch button judge.
 } touch_instance_ctrl_t;
-
 
 /**********************************************************************************************************************
  * Exported global variables
@@ -185,10 +180,11 @@ fsp_err_t RM_TOUCH_SensitivityRatioGet(touch_ctrl_t * const       p_ctrl,
                                        touch_sensitivity_info_t * p_touch_sensitivity_info);
 fsp_err_t RM_TOUCH_ThresholdAdjust(touch_ctrl_t * const p_ctrl, touch_sensitivity_info_t * p_touch_sensitivity_info);
 fsp_err_t RM_TOUCH_DriftControl(touch_ctrl_t * const p_ctrl, uint16_t input_drift_freq);
-fsp_err_t RM_TOUCH_MonitorAddressGet (touch_ctrl_t * const p_ctrl,
-                                        uint8_t ** pp_monitor_buf,
-                                        uint8_t ** pp_monitor_id,
-                                        uint16_t ** pp_monitor_size);
+fsp_err_t RM_TOUCH_MonitorAddressGet(touch_ctrl_t * const p_ctrl,
+                                     uint8_t           ** pp_monitor_buf,
+                                     uint8_t           ** pp_monitor_id,
+                                     uint16_t          ** pp_monitor_size);
+
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
 FSP_FOOTER
 

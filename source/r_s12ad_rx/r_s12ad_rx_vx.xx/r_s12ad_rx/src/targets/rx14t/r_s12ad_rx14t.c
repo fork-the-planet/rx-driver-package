@@ -10,6 +10,7 @@
 /**********************************************************************************************************************
 * History : DD.MM.YYYY Version Description           
 *           10.07.2025 1.00    Initial Release.
+*           20.04.2026 5.51    Fixed to resolve waring [-Wunused -variable].
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -190,8 +191,6 @@ adc_err_t adc_open(uint8_t     const  unit,
                     void     (* const  p_callback)(void *p_args))
 {
     aregs_t     *p_regs;
-    volatile uint16_t   u16_dummy;  /* Dummy read for "1" change to "0".(read first) */
-    volatile uint8_t    u8_dummy;   /* Dummy read for "1" change to "0".(read first) */
 #if ((R_BSP_VERSION_MAJOR == 5) && (R_BSP_VERSION_MINOR >= 30)) || (R_BSP_VERSION_MAJOR >= 6)
     volatile uint32_t   ipl_value;
 #endif

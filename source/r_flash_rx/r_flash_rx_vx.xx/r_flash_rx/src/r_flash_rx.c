@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014-2025 Renesas Electronics Corporation and/or its affiliates
+* Copyright (C) 2014-2026 Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -30,6 +30,7 @@
 *                                    ROM access occurs during P/E mode.)
 *              : 15.11.2024 5.21    Added WAIT_LOOP comment.
 *              : 20.03.2025 5.22    Changed the disclaimer in program sources
+*              : 20.03.2026 5.31    Fixed some warnings in R_FlashCodeCopy functions when using the GCC compiler.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -43,27 +44,39 @@ Includes   <System Includes> , "Project Includes"
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-/* ---------- Bit Manipulation ---------- */
+
 #if defined(__CCRX__)
 
+/* ---------- Bit Manipulation ---------- */
 /* void __bclr(unsigned char *data, unsigned long bit) */
 #define R_FLASH_BIT_CLEAR(x, y)      __bclr((unsigned char *)(x), (unsigned long)(y))
 /* void __bset(unsigned char *data, unsigned long bit) */
 #define R_FLASH_BIT_SET(x, y)        __bset((unsigned char *)(x), (unsigned long)(y))
 
+/* ---------- Operators ---------- */
+#define R_FLASH_SECTION_OPERATORS_INIT(name)    /* none */
+
 #elif defined(__GNUC__)
 
+/* ---------- Bit Manipulation ---------- */
 /* void R_FLASH_BitClear(uint8_t *data, uint32_t bit) (This macro uses API function of FLASH.) */
 #define R_FLASH_BIT_CLEAR(x, y)      R_FLASH_BitClear((uint8_t *)(x), (uint32_t)(y))
 /* void R_FLASH_BitSet(uint8_t *data, uint32_t bit) (This macro uses API function of FLASH.) */
 #define R_FLASH_BIT_SET(x, y)        R_FLASH_BitSet((uint8_t *)(x), (uint32_t)(y))
+
+/* ---------- Operators ---------- */
+#define R_FLASH_SECTION_OPERATORS_INIT(name)    extern uint8_t name##_start[];
 
 #elif defined(__ICCRX__)
 
+/* ---------- Bit Manipulation ---------- */
 /* void R_FLASH_BitClear(uint8_t *data, uint32_t bit) (This macro uses API function of FLASH.) */
 #define R_FLASH_BIT_CLEAR(x, y)      R_FLASH_BitClear((uint8_t *)(x), (uint32_t)(y))
 /* void R_FLASH_BitSet(uint8_t *data, uint32_t bit) (This macro uses API function of FLASH.) */
 #define R_FLASH_BIT_SET(x, y)        R_FLASH_BitSet((uint8_t *)(x), (uint32_t)(y))
+
+/* ---------- Operators ---------- */
+#define R_FLASH_SECTION_OPERATORS_INIT(name)    R_BSP_PRAGMA(section = #name);
 
 #endif
 
@@ -148,11 +161,11 @@ static void R_FlashCodeCopy(void)
 #if defined(__CCRX__) || defined(__GNUC__)
 
 #if (FLASH_CFG_CODE_FLASH_RUN_FROM_ROM == 0)
-    R_BSP_SECTION_OPERATORS_INIT(RPFRAM)
+    R_FLASH_SECTION_OPERATORS_INIT(RPFRAM)
     R_BSP_SECTION_OPERATORS_INIT(PFRAM)
 #endif /* (FLASH_CFG_CODE_FLASH_RUN_FROM_ROM == 0) */
 #ifdef FLASH_IN_DUAL_BANK_MODE
-    R_BSP_SECTION_OPERATORS_INIT(RPFRAM2)
+    R_FLASH_SECTION_OPERATORS_INIT(RPFRAM2)
     R_BSP_SECTION_OPERATORS_INIT(PFRAM2)
 #endif /* FLASH_IN_DUAL_BANK_MODE */
 
@@ -185,12 +198,12 @@ static void R_FlashCodeCopy(void)
 #elif defined(__ICCRX__)
 
 #if (FLASH_CFG_CODE_FLASH_RUN_FROM_ROM == 0)
-    R_BSP_SECTION_OPERATORS_INIT(PFRAM)
-    R_BSP_SECTION_OPERATORS_INIT(PFRAM_init);
+    R_FLASH_SECTION_OPERATORS_INIT(PFRAM)
+    R_BSP_SECTION_OPERATORS_INIT(PFRAM_init)
 #endif /* (FLASH_CFG_CODE_FLASH_RUN_FROM_ROM == 0) */
 #ifdef FLASH_IN_DUAL_BANK_MODE
-    R_BSP_SECTION_OPERATORS_INIT(PFRAM2)
-    R_BSP_SECTION_OPERATORS_INIT(PFRAM2_init);
+    R_FLASH_SECTION_OPERATORS_INIT(PFRAM2)
+    R_BSP_SECTION_OPERATORS_INIT(PFRAM2_init)
 #endif /* FLASH_IN_DUAL_BANK_MODE */
 
 #if (FLASH_CFG_CODE_FLASH_RUN_FROM_ROM == 0)

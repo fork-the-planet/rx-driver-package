@@ -30,11 +30,11 @@ r_sha_rx
 |   r_sha.h
 |
 +---doc
-|	en
-|           r20an0157ej0106-rx-sha.pdf
+|   en
+|           r20an0157ej0107-rx-sha.pdf
 |           r20uw0101ej0200-sha.pdf
-|	ja
-|           r20an0157jj0106-rx-sha.pdf
+|   ja
+|           r20an0157jj0107-rx-sha.pdf
 |           r20uw0101jj0200-sha.pdf
 |
 +---ref

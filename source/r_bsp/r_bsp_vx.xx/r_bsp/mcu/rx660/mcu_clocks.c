@@ -14,6 +14,7 @@
 *                               Added the bsp_mcu_clock_reset_bootloader function.
 *                               Changed MOFCR setting timing.
 *         : 26.02.2025 1.02     Changed the disclaimer.
+*         : 04.03.2026 1.03     Fixed the warning of clock_source_select function for GCC.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -413,6 +414,10 @@ static void clock_source_select (void)
 {
     volatile uint8_t i;
     volatile uint8_t dummy;
+
+#if defined(__GNUC__)
+    INTERNAL_NOT_USED(&dummy);
+#endif
 
 #if BSP_CFG_MAIN_CLOCK_OSCILLATE_ENABLE == 1
     /* Main clock oscillator is chosen. Start it operating. */

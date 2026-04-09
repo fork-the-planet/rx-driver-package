@@ -27,6 +27,7 @@
 *                                   Updated file description.
 *              : 15.03.2025 1.21    Updated disclaimer.
 *              : 23.06.2025 1.22    Removed doc folder and updated .rcpc file in FITDemos.
+*              : 30.03.2026 1.23    Included spdx file in the package.
 **********************************************************************************************************************/
 
 #ifndef _MMC_IF_H
@@ -47,7 +48,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RX_MMC_API_VERSION_MAJOR            (1)
-#define RX_MMC_API_VERSION_MINOR            (22)
+#define RX_MMC_API_VERSION_MINOR            (23)
 
 /* ==== IP selection ==== */
 #define MMC_MMCMEM_MAX_TRANS                (65535)

@@ -10,7 +10,7 @@ R01AN2166JJ
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -69,9 +69,9 @@ r_usb_basic_mini
 |
 +---doc
 |     \en
-|     |   r01an2166ej0131_usb.pdf
+|     |   r01an2166ej0132_usb.pdf
 |     \jp
-|         r01an2166jj0131_usb.pdf
+|         r01an2166jj0132_usb.pdf
 |
 +---ref
 |       r_usb_config_mini_reference.h

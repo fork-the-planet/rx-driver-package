@@ -22,6 +22,7 @@
 *         : 20.11.2020 2.01      Modified the proccess of bsp_adc_initial_configure function.
 *         : 21.11.2023 2.02      Added compile switch of BSP_CFG_BOOTLOADER_PROJECT.
 *         : 26.02.2025 2.03      Changed the disclaimer.
+*         : 04.03.2026 2.04      Fixed comment.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -91,7 +92,7 @@ static void bsp_adc_initial_configure(void);
 #if defined(BSP_MCU_RX65N_2MB)
 /* BUS initial configuration function declaration */
 static void bsp_bsc_initial_configure(void);
-#endif/* BSP_MCU_RX65N_2MB */
+#endif /* BSP_MCU_RX65N_2MB */
 #endif /* BSP_CFG_BOOTLOADER_PROJECT == 0 */
 
 /***********************************************************************************************************************
@@ -122,7 +123,7 @@ void hardware_setup(void)
     bsp_adc_initial_configure();
   #if defined(BSP_MCU_RX65N_2MB)
     bsp_bsc_initial_configure();
-  #endif/* BSP_MCU_RX65N_2MB */
+  #endif /* BSP_MCU_RX65N_2MB */
 #endif /* BSP_CFG_BOOTLOADER_PROJECT == 0 */
 } /* End of function hardware_setup() */
 
@@ -265,6 +266,6 @@ static void bsp_bsc_initial_configure(void)
     /* Set to EBMAPCR register */
     BSC.EBMAPCR.LONG = bsp_bsc.ebmapcr.u_long;
 } /* End of function bsp_bsc_initial_configure() */
-#endif/* BSP_MCU_RX65N_2MB */
+#endif /* BSP_MCU_RX65N_2MB */
 #endif /* BSP_CFG_BOOTLOADER_PROJECT == 0 */
 

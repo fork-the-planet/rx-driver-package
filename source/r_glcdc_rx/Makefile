@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_glcdc_rx
-VERSION = 		1.61
+VERSION = 		1.62
 MDF = V1,V2
 
 CONFIG_FOLDER = r_config

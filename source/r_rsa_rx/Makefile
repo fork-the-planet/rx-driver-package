@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_rsa_rx
-VERSION = 		1.05
+VERSION = 		1.06
 MDF = NOT_SUPPORTED
 
 CONFIG_FOLDER = r_config

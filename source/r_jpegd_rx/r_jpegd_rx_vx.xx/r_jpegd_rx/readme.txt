@@ -10,7 +10,7 @@ R20AN0104EJ
 
 Version
 -------
-v2.08
+v2.09
 
 Overview
 --------
@@ -93,11 +93,11 @@ r_jpegd_rx
 |
 +---doc
 |   +---en
-|   |       r20an0104ej0208_rx_jpegd.pdf
+|   |       r20an0104ej0209_rx_jpegd.pdf
 |   |       r20uw0075ej0103_jpegd.pdf
 |   |
 |   \---ja
-|           r20an0104jj0208_rx_jpegd.pdf
+|           r20an0104jj0209_rx_jpegd.pdf
 |           r20uw0075jj0103_jpegd.pdf
 |
 +---lib

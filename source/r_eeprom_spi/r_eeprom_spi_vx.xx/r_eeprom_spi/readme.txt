@@ -5,12 +5,12 @@ r_eeprom_spi (SPI serial EEPROM control software)
 
 Document Number 
 ---------------
-R01AN2325EJ0322
-R01AN2325JJ0322
+R01AN2325EJ0323
+R01AN2325JJ0323
 
 Version
 -------
-v3.22
+v3.23
 
 Overview
 --------

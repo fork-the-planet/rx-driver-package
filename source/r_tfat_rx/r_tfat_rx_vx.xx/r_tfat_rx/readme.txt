@@ -21,9 +21,9 @@ r_tfat_rx
 |
 +---doc
 |   +---en
-|       r20an0038ej0415-rx-tfat.pdf
+|       r20an0038ej0416-rx-tfat.pdf
 |   +---ja
-|       r20an0038jj0415-rx-tfat.pdf
+|       r20an0038jj0416-rx-tfat.pdf
 |
 +---src
         diskio.h

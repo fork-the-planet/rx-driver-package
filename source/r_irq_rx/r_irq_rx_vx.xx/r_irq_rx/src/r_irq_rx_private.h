@@ -57,6 +57,7 @@
 *                               Removed doc folder and updated .rcpc file in FITDemos.
 *         : 30.10.2025  4.90    Added support for RX14T.
 *                               Updated MDF using Category.
+*         : 30.03.2026  4.91    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #include "platform.h"
@@ -70,7 +71,7 @@ Macro definitions
 ******************************************************************************/
 /* Version Number of API. */
 #define IRQ_RX_VERSION_MAJOR           (4)
-#define IRQ_RX_VERSION_MINOR           (90)
+#define IRQ_RX_VERSION_MINOR           (91)
 
 /* Bit position of interrupt enable bits in interrupt enable register. */
 #define IRQ_IEN_MASK_IRQ0   (0x01)

@@ -33,6 +33,7 @@
         <version>8.03.00.202311</version>
         <version>8.03.00.202405</version>
         <version>8.03.00.202411</version>
+        <version>14.02.00.202505</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -80,7 +81,7 @@
         </dependency>
         <dependency>
 		        <module>r_ctsu_qe</module>
-		        <version>3.20</version>
+		        <version>3.30</version>
         </dependency>
 		<zipsource>rm_touch_qe_vx.xx.zip</zipsource>
 		<application>Capacitive Touch</application>

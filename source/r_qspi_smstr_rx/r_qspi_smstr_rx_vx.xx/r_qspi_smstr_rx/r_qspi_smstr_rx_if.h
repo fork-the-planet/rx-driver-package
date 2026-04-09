@@ -36,6 +36,7 @@
 *              : 15.03.2025 1.22     Updated disclaimer
 *              : 30.10.2025 1.30     Removed doc folder and updated .rcpc file in FITDemos.
 *              :                     Added support Nested Interrupt
+*              : 30.03.2026 1.31     Included spdx file in the package
 *******************************************************************************/
 #ifndef QSPI_SMSTR_IF_H_
 #define QSPI_SMSTR_IF_H_
@@ -55,7 +56,7 @@ Macro definitions
 #endif
 
 #define QSPI_SMSTR_VERSION_MAJOR      (1)
-#define QSPI_SMSTR_VERSION_MINOR      (30)
+#define QSPI_SMSTR_VERSION_MINOR      (31)
 
 
 /*******************************************************************************

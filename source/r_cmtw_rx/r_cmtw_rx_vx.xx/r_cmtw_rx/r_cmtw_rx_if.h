@@ -31,6 +31,7 @@
 *         : 28.06.2024 2.90    Added support Nested Interrupt.
 *         : 15.03.2025 2.91    Updated disclaimer.
 *         : 23.06.2025 2.92    Removed doc folder and updated .rcpc file in FITDemos.
+*         : 30.03.2026 2.93    Included spdx file in the package.
 ***********************************************************************************************************************/
 #ifndef CMTW_RX_IF_H
 #define CMTW_RX_IF_H
@@ -52,7 +53,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define CMTW_RX_VERSION_MAJOR       (02)
-#define CMTW_RX_VERSION_MINOR       (92)
+#define CMTW_RX_VERSION_MINOR       (93)
 
 /***********************************************************************************************************************
 Typedef definitions

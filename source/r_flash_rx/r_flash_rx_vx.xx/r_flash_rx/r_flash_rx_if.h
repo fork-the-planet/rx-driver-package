@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014-2025 Renesas Electronics Corporation and/or its affiliates
+* Copyright (C) 2014-2026 Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -154,8 +154,9 @@
 *                              (When using the GCC or IAR compiler in non-blocking mode,
 *                               ROM access occurs during P/E mode.)
 *           15.11.2024 5.21    Added WAIT_LOOP comment.
-*           20.03.2025 5.22    Changed the disclaimer in program sources
-*           31.07.2025 5.30    Added support for RX14T
+*           20.03.2025 5.22    Changed the disclaimer in program sources.
+*           31.07.2025 5.30    Added support for RX14T.
+*           20.03.2026 5.31    Changed the minor version.
 ***********************************************************************************************************************/
 
 #ifndef FLASH_INTERFACE_HEADER_FILE
@@ -173,7 +174,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Driver Version Number. */
 #define FLASH_RX_VERSION_MAJOR           (5)
-#define FLASH_RX_VERSION_MINOR           (30)
+#define FLASH_RX_VERSION_MINOR           (31)
 
 
 /***********************************************************************************************************************

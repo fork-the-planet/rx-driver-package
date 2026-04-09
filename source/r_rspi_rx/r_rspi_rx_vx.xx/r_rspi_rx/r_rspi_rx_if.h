@@ -56,6 +56,7 @@
 *                               Added byte swap feature.
 *         : 28.11.2025 3.80     Added support Nested interrupt.
 *                               Modified comment of API function to Doxygen style.
+*         : 30.03.2026 3.81     Included spdx file in the package
 ***********************************************************************************************************************/
 #ifndef RSPI_API_HEADER_FILE
 #define RSPI_API_HEADER_FILE
@@ -81,7 +82,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RSPI_RX_VERSION_MAJOR           (3)
-#define RSPI_RX_VERSION_MINOR           (80)
+#define RSPI_RX_VERSION_MINOR           (81)
 
 /***********************************************************************************************************************
 Typedef definitions

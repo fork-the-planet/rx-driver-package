@@ -5,11 +5,11 @@ r_nfc_ptx_rx
 
 Document Number
 ---------------
-R01AN7890EU0100 (English version)
+R01AN7890EU0120 (English version)
 
 Version
 -------
-v1.00
+v1.20
 
 Overview
 --------------------------------------------------------------------------------
@@ -29,6 +29,8 @@ Features
 * Exchanges RF data and bitstreams
 * Stops RF communication
 * Controls various GPIO pins of the PTX chip
+* Provides NDEF (NFC Data Exchange Format) message handling for standardized NFC data exchange operations
+* Native-Tag add-on API for implementing the Application Protocol Data Units (APDU) over ISO-DEP
 
 Supported MCUs
 --------------
@@ -65,7 +67,7 @@ r_nfc_ptx_rx
 |
 +---doc
 |    \---en
-|           r01an7890eu0100-rx-ptx-nfc.pdf
+|           r01an7890eu0120-rx-ptx-nfc.pdf
 |
 +---lib
 |    \---nfc_reader_ptx_sdk

@@ -10,6 +10,8 @@
 /***********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 30.10.2025 1.00     First Release
+ *         : 30.03.2026 1.01     Included spdx file in the package.
+ *                               Fixed warnings in GCC.
  **********************************************************************************************************************/
 /* Guards against multiple inclusion */
 #ifndef RSCI_IIC_IF_H
@@ -27,7 +29,7 @@ R_BSP_PRAGMA_UNPACK
 
 /* Version Number of API. */
     #define RSCI_IIC_VERSION_MAJOR  (1)
-    #define RSCI_IIC_VERSION_MINOR  (00)
+    #define RSCI_IIC_VERSION_MINOR  (01)
 
 /***********************************************************************************************************************
  Typedef definitions

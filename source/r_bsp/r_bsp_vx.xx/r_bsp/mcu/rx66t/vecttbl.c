@@ -28,6 +28,7 @@
 *                                - BSP_PRV_SPCC_SPE
 *         : 25.11.2022 3.05      Deleted the duplicate definition.
 *         : 26.02.2025 3.06      Changed the disclaimer.
+*         : 04.03.2026 3.07      Added a compile switch to disable the reset vector table when using User Boot mode.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -238,6 +239,7 @@ R_BSP_ATTRIB_SECTION_CHANGE_END
 /***********************************************************************************************************************
 * The following array fills in the reset vector.
 ***********************************************************************************************************************/
+#if BSP_CFG_USER_BOOT_ENABLE == 0
 #if defined(__CCRX__) || defined(__GNUC__)
 R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 {
@@ -245,8 +247,8 @@ R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 };
 R_BSP_ATTRIB_SECTION_CHANGE_END
 #endif /* defined(__CCRX__), defined(__GNUC__) */
-
-#endif/* BSP_CFG_RTOS_USED */
+#endif /* BSP_CFG_USER_BOOT_ENABLE == 0 */
+#endif /* BSP_CFG_RTOS_USED */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */
 

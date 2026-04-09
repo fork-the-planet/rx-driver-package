@@ -7,7 +7,7 @@
 #ifndef RM_BLE_ABS_API_H
 #define RM_BLE_ABS_API_H
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * @ingroup RENESAS_NETWORKING_INTERFACES
  * @defgroup BLE_ABS_API BLE ABS Interface
  * @brief Interface for BLE Abstraction functions.
@@ -17,11 +17,11 @@
  *
  *
  * @{
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Includes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /* Register definitions, common services and error codes. */
 #include "platform.h"
@@ -35,7 +35,7 @@ FSP_HEADER
 
 /**********************************************************************************************************************
  * Macro definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /* Configure ABS */
 #define BLE_ABS_CFG_TIMER_NUMBER_OF_SLOT            (10)
@@ -63,17 +63,14 @@ FSP_HEADER
 #define DA1453X_GTL_UART_RX_PIN     1
 #define DA1453X_GTL_UART_TX_PIN     0
 #define DA1453X_GTL_POR_PIN         9
-
 #else
-
 #define DA1453X_GTL_UART_RX_PIN     5
 #define DA1453X_GTL_UART_TX_PIN     6
 #define DA1453X_GTL_POR_PIN         0
-
 #endif
 /**********************************************************************************************************************
  * Typedef definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 /* SCI configuration */
 typedef struct
 {
@@ -188,9 +185,20 @@ typedef struct st_ble_gap_scan_on
 /** Callback function parameter data */
 typedef struct st_ble_abs_callback_args
 {
-    uint32_t       channel;            ///< Select a channel corresponding to the channel number of the hardware.
-    ble_event_cb_t ble_abs_event;      ///< The event can be used to identify what caused the callback.
-    void         * p_context;          ///< Placeholder for user data.  Set in ble_abs_api_t::open function in ::ble_abs_cfg_t.
+    /**
+     * Select a channel corresponding to the channel number of the hardware.
+     */
+    uint32_t channel;
+
+    /**
+     * The event can be used to identify what caused the callback.
+     */
+    ble_event_cb_t ble_abs_event;
+
+    /**
+     * Placeholder for user data. Set in ble_abs_api_t::open function in ::ble_abs_cfg_t.
+     */
+    void * p_context;
 } ble_abs_callback_args_t;
 
 /** BLE ABS control block.  Allocate an instance specific control block to pass into the BLE ABS API calls.
@@ -213,14 +221,14 @@ typedef struct st_ble_abs_pairing_parameter
 typedef struct st_ble_abs_gatt_server_callback_set
 {
     ble_gatt_server_application_callback_t gatt_server_callback_function; ///< GATT Server callback function.
-    uint8_t gatt_server_callback_priority;                                ///< The priority number of GATT Server callback function.
+    uint8_t gatt_server_callback_priority;         ///< The priority number of GATT Server callback function.
 } ble_abs_gatt_server_callback_set_t;
 
 /** GATT Client callback function and the priority. */
 typedef struct st_ble_abs_gatt_client_callback_set
 {
     ble_gatt_client_application_callback_t gatt_client_callback_function; ///< GATT Client callback function.
-    uint8_t gatt_client_callback_priority;                                ///< The priority number of GATT Client callback function.
+    uint8_t gatt_client_callback_priority;          ///< The priority number of GATT Client callback function.
 } ble_abs_gatt_client_callback_set_t;
 
 /** st_ble_abs_legacy_advertising_parameter_t is the parameters for legacy advertising. */
@@ -258,8 +266,8 @@ typedef struct st_ble_abs_legacy_advertising_parameter
     uint32_t fast_advertising_interval;
 
     /**
-     *  @brief After the elapse of the @ref fast_advertising_period, advertising with the @ref slow_advertising_interval
-     *  parameter continues \n
+     *  @brief After the elapse of the @ref fast_advertising_period,
+     *  advertising with the @ref slow_advertising_interval parameter continues \n
      *  for the period specified by the @ref slow_advertising_period parameter.\n
      *  Time(ms) = @ref slow_advertising_interval * 0.625. \n
      *  Valid range is 0x00000020 - 0x00FFFFFF.
@@ -575,7 +583,8 @@ typedef struct st_ble_abs_periodic_advertising_parameter
     ble_abs_non_connectable_advertising_parameter_t advertising_parameter;
 
     /**
-     *  @brief Periodic advertising data. If p_perd_adv_data is specified as NULL, periodic advertising data is not set.
+     *  @brief Periodic advertising data.
+     *  If p_perd_adv_data is specified as NULL, periodic advertising data is not set.
      */
     uint8_t * p_periodic_advertising_data;
 
@@ -816,7 +825,8 @@ typedef struct st_ble_abs_connection_parameter
     ble_device_address_t * p_device_address;
 
     /**
-     *  @brief The filter field specifies whether the White List is used or not, when connecting with a remote device.\n
+     *  @brief The filter field specifies whether the White List is used or not,
+     *         when connecting with a remote device.\n
      *    - Address type setting (Field [7:4])
      *    |  macro                           |   description                                               |
      *    |:---------------------------------|:------------------------------------------------------------|
@@ -879,7 +889,7 @@ typedef struct st_ble_abs_cfg
     st_sci_tbl_t         p_sci_instance;                        ///< SCI UART instance
 #endif
     void (* p_callback)(ble_abs_callback_args_t * p_args);     ///< Callback provided when a BLE ISR occurs.
-    void const * p_context;    ///< Placeholder for user data. Passed to the user callback in ble_abs_callback_args_t.
+    void       * p_context;    ///< Placeholder for user data.  Passed to the user callback in ble_abs_callback_args_t.
     void const * p_extend;                                     ///< Placeholder for user extension.
 } ble_abs_cfg_t;
 
@@ -941,7 +951,8 @@ typedef struct st_ble_abs_api
      * @param[in]  p_ctrl       Pointer to control structure.
      * @param[in]  p_scan_parameter        Pointer to scan parameter.
      */
-    fsp_err_t (* startScanning)(ble_abs_ctrl_t * const p_ctrl, ble_abs_scan_parameter_t const * const p_scan_parameter);
+    fsp_err_t (* startScanning)(ble_abs_ctrl_t * const p_ctrl,
+                                ble_abs_scan_parameter_t const * const p_scan_parameter);
 
     /** Request create connection.
      * @param[in]  p_ctrl       Pointer to control structure.
@@ -1002,9 +1013,9 @@ typedef struct st_ble_abs_instance
     ble_abs_api_t const * p_api;       ///< Pointer to the API structure for this instance
 } ble_abs_instance_t;
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * @} (end addtogroup BLE_ABS_API)
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /* Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
 FSP_FOOTER

@@ -10,7 +10,7 @@ R01AN2171JJ
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -67,9 +67,9 @@ r_usb_phid_mini
 |
 +---doc
 |     \en
-|     |   r01an2171ej0131_usb.pdf
+|     |   r01an2171ej0132_usb.pdf
 |     \jp
-|         r01an2171jj0131_usb.pdf
+|         r01an2171jj0132_usb.pdf
 |
 +---ref
 |       r_usb_phid_mini_config_reference.h

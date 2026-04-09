@@ -5,12 +5,12 @@ r_rsip_protected_rx
 
 Document Number
 ---------------
-R20AN0748JJ0200-RX-RSIP-SECURITY
-R20AN0748EJ0200-RX-RSIP-SECURITY
+R20AN0748JJ0201-RX-RSIP-SECURITY
+R20AN0748EJ0201-RX-RSIP-SECURITY
 
 Version
 -------
-v2.00
+v2.01
 
 Overview
 --------
@@ -77,8 +77,8 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 Toolchain(s) Used
 -----------------
 * Renesas RXC 3.07.00
-* GNU GNURX 8.03.00.202405
-* IAR ICCRX 5.10.01
+* GNU GNURX 14.02.00.202511
+* IAR ICCRX 5.20.01
 
 File Structure
 --------------
@@ -88,9 +88,9 @@ r_rsip_protected_rx
 |
 +---doc
 |   +---ja
-|   |    r20an0748jj0200-rx-rsip-security.pdf
+|   |    r20an0748jj0201-rx-rsip-security.pdf
 |   +---en
-|        r20an0748ej0200-rx-rsip-security.pdf
+|        r20an0748ej0201-rx-rsip-security.pdf
 |
 +---src
     |

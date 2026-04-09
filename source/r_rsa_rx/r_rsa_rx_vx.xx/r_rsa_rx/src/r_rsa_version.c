@@ -1,7 +1,7 @@
-/*​
-* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates​
-*​
-* SPDX-License-Identifier: BSD-3-Clause​
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
 */
 /**********************************************************************************************************************
  * @file         r_rsa_version.c
@@ -18,7 +18,7 @@
  Macro definitions
  **********************************************************************************************************************/
 #define __COMPLIER_VER_UNDEFINED__ (0xFFFFFFFF)
-#define __RSA_VERSION__ "1.05"
+#define __RSA_VERSION__ "1.06"
 
 #if defined(__GNUC__)
     #define __RENESAS_VERSION__  (__GNUC__* 0x1000000 + __GNUC_MINOR__* 0x10000 + __GNUC_PATCHLEVEL__)

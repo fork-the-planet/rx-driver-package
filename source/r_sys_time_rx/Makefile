@@ -1,10 +1,9 @@
 MODULE_NAME = 	r_sys_time_rx
-VERSION = 		1.02
+VERSION = 		1.03
 MDF = NOT_SUPPORTED
 
 CONFIG_FOLDER = r_config
 TARGET_FOLDER = ../../FITModules
-FILE_PATH = $(MODULE_NAME)_vx.xx/$(MODULE_NAME)/ref
 
 $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).zip: $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).xml
 	cd ./$(MODULE_NAME)_vx.xx; \

@@ -5,12 +5,12 @@ r_ether_rx
 
 Document Number
 ---------------
-R01AN2009EJ0124 (English version)
-R01AN2009JJ0124 (Japanese version)
+R01AN2009EJ0125 (English version)
+R01AN2009JJ0125 (Japanese version)
 
 Version
 -------
-v1.24
+v1.25
 
 Overview
 --------
@@ -23,8 +23,8 @@ to implement Ethernet/IEEE 802.3 frame transmission and reception. This module s
 duplex, 10 or 100 Mbps transfer rate) is set in the ETHERC.
 This driver is tested and works with the following toolchain:
   Renesas RX Toolchain v.3.07.00
-  GCC for Renesas RX 8.03.00.202411
-  IAR C/C++ Compiler for Renesas RX 5.10.1
+  GCC for Renesas RX 14.02.00.202511
+  IAR C/C++ Compiler for Renesas RX 5.20.1
 All API calls and their supporting interface definitions are located in r_ether_rx_if.h.
 
 Features
@@ -72,8 +72,8 @@ Please refer to the Adding Firmware Integration Technology Modules to Projects.
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX 8.03.00.202411
-* IAR C/C++ Compiler for Renesas RX 5.10.1
+* GCC for Renesas RX 14.02.00.202511
+* IAR C/C++ Compiler for Renesas RX 5.20.1
 
 File Structure
 --------------
@@ -84,10 +84,10 @@ r_ether_rx
 +---doc
 |   |
 |   +---en
-|   |   r01an2009ej0124-rx-ether.pdf
+|   |   r01an2009ej0125-rx-ether.pdf
 |   |
 |   \---ja
-|       r01an2009jj0124-rx-ether.pdf
+|       r01an2009jj0125-rx-ether.pdf
 |
 \---src
     |   r_ether_rx.c

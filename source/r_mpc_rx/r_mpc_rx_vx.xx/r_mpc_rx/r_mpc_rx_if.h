@@ -55,6 +55,7 @@
 *         : 23.06.2025 5.10    Updated dependency module version.
 *                              Removed doc folder and updated .rcpc file in FITDemos.
 *         : 30.10.2025 5.20    Added support for RX14T.
+*         : 30.03.2026 5.21    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #ifndef MPC_RX_INTERFACE_HEADER_FILE
@@ -78,7 +79,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define MPC_RX_VERSION_MAJOR           (5)
-#define MPC_RX_VERSION_MINOR           (20)
+#define MPC_RX_VERSION_MINOR           (21)
 
 /***********************************************************************************************************************
 Typedef definitions

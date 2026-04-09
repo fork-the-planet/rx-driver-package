@@ -11,6 +11,7 @@
 * History : DD.MM.YYYY Version Description
 *           29.12.2021 1.00    Initial Release.
 *           20.03.2025 5.41    Changed the disclaimer in program sources.
+*           20.04.2026 5.51    Fixed to resolve waring [-Wunused -but-set-variable].
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -172,9 +173,12 @@ adc_err_t adc_open(uint8_t const          unit,
                     void         (* const  p_callback)(void *p_args))
 {
     aregs_t     *p_regs;
-    volatile uint16_t   u16_dummy;  /* Dummy read for "1" change to "0".(read first) */
-    volatile uint8_t    u8_dummy;   /* Dummy read for "1" change to "0".(read first) */
-
+    volatile uint16_t   u16_dummy = 0;  /* Dummy read for "1" change to "0".(read first) */
+    volatile uint8_t    u8_dummy = 0;   /* Dummy read for "1" change to "0".(read first) */
+#if defined(__GNUC__)
+    ADC_PRV_INTERNAL_NOT_USED(u16_dummy);
+    ADC_PRV_INTERNAL_NOT_USED(u8_dummy);
+#endif
 #if ((R_BSP_VERSION_MAJOR == 5) && (R_BSP_VERSION_MINOR >= 30)) || (R_BSP_VERSION_MAJOR >= 6)
     bsp_int_ctrl_t int_ctrl;
 #endif
@@ -1567,10 +1571,6 @@ static adc_err_t adc_check_scan_config(uint8_t const   unit,
 {
     volatile uint32_t    i = 0;
     uint32_t    tmp_mask = 0;
-    volatile uint32_t    a_mask;
-    volatile uint32_t    b_mask;
-    volatile uint32_t    c_mask;
-    volatile uint32_t    tmp_adcsr;
     volatile uint32_t    tmp_adansa;
     volatile uint32_t    bit_cnt;
 
@@ -1990,7 +1990,6 @@ adc_err_t adc_close(uint8_t const  unit)
 
     /* Get S12AD register address */
     aregs_t     *p_regs = (aregs_t *)&S12AD;
-    volatile    uint8_t i;
     uint32_t    adc_wait_microsecs;
 #if ((R_BSP_VERSION_MAJOR == 5) && (R_BSP_VERSION_MINOR >= 30)) || (R_BSP_VERSION_MAJOR >= 6)
     bsp_int_ctrl_t int_ctrl;

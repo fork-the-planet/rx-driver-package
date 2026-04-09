@@ -36,6 +36,7 @@
 *              : 28.06.2024 4.80     Added Nested interrupt support.
 *                                    Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *              : 15.03.2025 4.81     Updated disclaimer.
+*              : 30.03.2026 4.91     Fixed warnings in GCC.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -59,6 +60,7 @@ Includes <System Includes> , "Project Includes"
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
+#define LVD_PRV_INTERNAL_NOT_USED(p) ((void)(p))
 
 /***********************************************************************************************************************
 Typedef definitions
@@ -417,7 +419,10 @@ RETURN_LVD_HW_CHECK_LOCO_LIMITATION:
 ***********************************************************************************************************************/
 void lvd_hw_clear_lvd_status(lvd_channel_t ch)
 {
-    uint8_t volatile dummy_read;
+    uint8_t volatile dummy_read = 0;
+
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    LVD_PRV_INTERNAL_NOT_USED(&dummy_read);
 
     if (LVD_CHANNEL_1 == ch)
     {
@@ -1298,7 +1303,10 @@ void lvd_hw_enable_nmi(lvd_channel_t ch, bool b_enable_flag)
 ***********************************************************************************************************************/
 void lvd_hw_dummy_read_dfilter(lvd_channel_t ch)
 {
-    uint8_t volatile dummy_read;
+    uint8_t volatile dummy_read = 0;
+
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    LVD_PRV_INTERNAL_NOT_USED(&dummy_read);
 
     if (LVD_CHANNEL_1 == ch)
     {
@@ -1330,7 +1338,10 @@ void lvd_hw_dummy_read_dfilter(lvd_channel_t ch)
 ***********************************************************************************************************************/
 void lvd_hw_dummy_read_circuit(lvd_channel_t ch)
 {
-    uint8_t volatile dummy_read;
+    uint8_t volatile dummy_read = 0;
+
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    LVD_PRV_INTERNAL_NOT_USED(&dummy_read);
 
     if (LVD_CHANNEL_1 == ch)
     {
@@ -1358,7 +1369,10 @@ void lvd_hw_dummy_read_circuit(lvd_channel_t ch)
 ***********************************************************************************************************************/
 void lvd_hw_dummy_read_output(lvd_channel_t ch)
 {
-    uint8_t volatile dummy_read;
+    uint8_t volatile dummy_read = 0;
+
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    LVD_PRV_INTERNAL_NOT_USED(&dummy_read);
 
     if (LVD_CHANNEL_1 == ch)
     {

@@ -47,6 +47,7 @@
 *           15.03.2025 4.51    Updated disclaimer
 *           23.06.2025 4.52    Removed doc folder and updated .rcpc file in FITDemos.
 *           30.10.2025 4.60    Added support for RX14T.
+*           30.03.2026 4.61    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #ifndef IWDT_RX_IF_H
@@ -67,7 +68,7 @@ Macro definitions
 #endif
 /* Version Number of API. */
 #define IWDT_RX_VERSION_MAJOR   (4)
-#define IWDT_RX_VERSION_MINOR   (60)
+#define IWDT_RX_VERSION_MINOR   (61)
 
 #define OFS0_IWDT_DISABLED      (0x00000002)
 

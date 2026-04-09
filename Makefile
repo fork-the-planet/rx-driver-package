@@ -1,5 +1,5 @@
 RELEASE_TAG_COMMIT_NUMBER_LATEST = 5e7a3d97ed5208111e46a451d00ba7164f1aa112
-RELEASE_TAG_COMMIT_VERSION_LATEST = 1.49
+RELEASE_TAG_COMMIT_VERSION_LATEST = 1.50
 VERSIONS_FILE_NAME = versions.xml
 
 MODULE_NAME_LIST_LATEST = 	r_aeropoint_rx r_aes_rx \
@@ -7,7 +7,7 @@ MODULE_NAME_LIST_LATEST = 	r_aeropoint_rx r_aes_rx \
 					r_can_rx r_canfd_rx r_cellular r_cmt_rx r_cmtw_rx r_ctsu_qe \
 					r_dac_rx r_datfrx_rx r_dmaca_rx r_drw2d_rx r_dsmif_rx r_dtc_rx \
 					r_eeprom_spi r_elc_rx r_emwin_rx r_ether_rx \
-					r_flash_rx r_flash_spi r_fwup \
+					r_flash_rx r_flash_spi r_fwup r_fwupcomm \
 					r_glcdc_rx r_gpio_rx \
 					r_irda_sci_rx r_irq_rx r_iwdt_rx \
 					r_jpegd_rx r_jpege_rx \

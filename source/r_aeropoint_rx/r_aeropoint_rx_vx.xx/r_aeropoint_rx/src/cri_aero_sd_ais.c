@@ -14,7 +14,7 @@
 
 #if CRI_AERO_CONFIG_AIS_USE_SD
 
-#include "r_sdc_sdmem_rx_lib.h"
+#include "cri_sdc_sdmem_rx_lib.h"
 
 CriBool CriAeroSD_Initialize_AIS(void)
 {

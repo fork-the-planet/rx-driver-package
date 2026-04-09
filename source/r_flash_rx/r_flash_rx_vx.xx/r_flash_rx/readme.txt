@@ -5,12 +5,14 @@ r_flash_rx
 
 Document Number 
 ---------------
-r01an2184ej0530
-r01an2184jj0530
+r01an2184ej0531
+r01an2184jj0531
+
 
 Version
 -------
-v5.30
+v5.31
+
 
 Overview
 --------
@@ -21,6 +23,7 @@ User Mode programming is the term used to describe a Renesas MCU's ability to
 reprogram its own internal flash memory while running in its normal operational 
 mode. 
 
+
 Features
 --------
 * Data Flash and ROM Erase
@@ -30,6 +33,8 @@ Features
 * ROM Area Protection support
 * ROM Start-Up Program Protection support
 * ROM Cache
+etc.
+
 
 Supported MCUs
 --------------
@@ -62,85 +67,23 @@ Supported MCUs
 * RX72T Group
 
 
-Boards Tested On
-----------------
-* RSKRX110
-* RSKRX111
-* RSKRX113
-* RSKRX130
-* RX13T CPU Card
-* RX140 Target Board
-* MCB-RX14T
-* RSKRX231
-* RSSKRX23E-A
-* RSSKRX23E-B
-* RSKRX23T
-* RSSKRX23W
-* RSKRX24T
-* RSKRX24U
-* RX261 EK Board
-* MCK-RX26T
-* RSKRX64M
-* RSKRX65N
-* RSKRX65N-2MB
-* RSKRX660
-* RSKRX66T
-* RSKRX671
-* RSKRX71M
-* RSKRX72M
-* RSKRX72N
-* RSKRX72T
-
-
 Limitations
 -----------
-* This code is not re-entrant and protects against multiple concurrent
-    function calls.
+* This code is not re-entrant and protects against multiple concurrent function calls.
 * During ROM operations neither ROM nor dataflash (DF) can be accessed. 
-    If using ROM with BGO, then make sure the code runs from RAM.
-* During DF operations, the DF cannot be accessed but ROM can be accessed 
-    normally.
-
-Peripherals Used Directly
--------------------------
-* Flash Control Unit (FCU) - RX200, RX600, and RX700
+  If using ROM with BGO, then make sure the code runs from RAM.
+* During DF operations, the DF cannot be accessed but ROM can be accessed normally.
 
 
 Required Packages
 -----------------
 * r_bsp      V7.70
 
-How to add to your project
---------------------------
-* Add the r_flash_rx and r_config folders to your project.
-
-* Add a project include path for the 'r_flash_rx' directory. 
-* Add a project include path for the 'r_flash_rx\src' directory.
-* Add a project include path for the 'r_flash_rx\src\targets' directory.
-* Add a project include path for the 'r_flash_rx\src\flash_type_x' directory,
-    where "x" is 1, 3, or 4 (see app note for MCU flash type assignments).
-    Adding all 3 flash type paths will not cause a build issue.
-* Add a project include path for the 'r_config' directory.
-* Copy the reference configuration file from the '\r_flash_rx\ref' directory 
-    into the 'r_config' directory and rename it to 'r_flash_rx_config.h'.
-* Open "r_config\r_flash_rx_config.h" file and configure the driver for your 
-  project.
-* Add a #include for r_flash_rx_if.h to any source files that need to use the 
-  API functions.
-
-* (The following steps are only required if you are programming or erasing ROM.
-    If you are only operating on data flash, then these steps can be ignored. 
-    These steps are discussed with more detail in the app note.)
-* Make a linker ROM section named 'PFRAM'.
-* Make a linker RAM section named 'RPFRAM'.
-* Configure your linker such that code in the 'FRAM' section will be executed 
-    in RAM (see app note PFRAM=RPFRAM in linker output).
-
 
 Toolchain(s) Used
 -----------------
 * Renesas RXC 3.07.00
-* GNU GNURX 14.2.0.202505
+* GNU GNURX 14.2.0.202511
 * IAR ICCRX 5.20.01
 
 
@@ -152,12 +95,9 @@ r_flash_rx
 |
 +---doc
 |   +-- en
-|   |   +-- r01an2184ej0530-rx-flash.pdf
+|   |   +-- r01an2184ej0531-rx-flash.pdf
 |   +-- ja
-|       +-- r01an2184jj0530-rx-flash.pdf
-|
-+---ref
-|   +-- r_flash_rx_config_reference.h
+|       +-- r01an2184jj0531-rx-flash.pdf
 |
 +---src
     +-- r_flash_rx.c

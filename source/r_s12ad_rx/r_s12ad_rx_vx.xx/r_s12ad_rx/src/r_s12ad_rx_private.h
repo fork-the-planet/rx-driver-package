@@ -40,6 +40,7 @@
 *           13.02.2024 5.40    Added RX260 and RX261 support.
 *           20.03.2025 5.41    Changed the disclaimer in program sources.
 *           13.07.2025 5.50    Added RX14T support.
+*           20.04.2026 5.51    Added to resolve waring [-Wunused but-set-variable].
 *******************************************************************************/
 
 #ifndef S12AD_PRV_PRIVATE_H
@@ -703,5 +704,9 @@ void adc_enable_s12adi0(void);
     && !defined(BSP_MCU_RX671) && !defined(BSP_MCU_RX26T)) */
 
 
+/******************************************************************************
+ Added to resolve waring [-Wunused but-set-variable]. 
+*******************************************************************************/
+#define ADC_PRV_INTERNAL_NOT_USED(p)    ((void)(p))
 #endif /* S12AD_PRV_PRIVATE_H */
 

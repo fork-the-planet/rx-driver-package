@@ -17,6 +17,7 @@
 *         : 30.06.2020 1.20 Added support for RTOS.
 *         : 30.04.2024 1.30 Added support for RX261.
 *         : 20.03.2025 1.31 Changed the disclaimer.
+*         : 20.04.2026 1.32 Updated the minor version.
  ***********************************************************************************************************************/
 
 
@@ -98,7 +99,7 @@
  **********************************************************************************************************************/
 /* Version Number of API. */
 #define USB_VERSION_MAJOR       (1)
-#define USB_VERSION_MINOR       (31)
+#define USB_VERSION_MINOR       (32)
 
 #define CLSDATASIZE             (255u)                  /* Transfer data size for Standard Request */
 #if (BSP_CFG_RTOS_USED != 0)                            /* Use RTOS */

@@ -5,12 +5,12 @@ r_tsip_rx
 
 Document Number
 ---------------
-R20AN0371JJ0123-RX-TSIP-SECURITY
-R20AN0371EJ0123-RX-TSIP-SECURITY
+R20AN0371JJ0124-RX-TSIP-SECURITY
+R20AN0371EJ0124-RX-TSIP-SECURITY
 
 Version
 -------
-v1.23
+v1.24
 
 Overview
 --------
@@ -95,9 +95,9 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 
 Toolchain(s) Used
 -----------------
-* Renesas RXC 3.06.00
-* GNU GNURX 8.03.00.202405
-* IAR ICCRX 5.10.01
+* Renesas RXC 3.07.00
+* GNU GNURX 14.02.00.202511
+* IAR ICCRX 5.20.01
 
 File Structure
 --------------
@@ -107,9 +107,9 @@ r_tsip_rx
 |
 +---doc
 |   +---ja
-|   |    r20an0371jj0123-rx-tsip-security.pdf
+|   |    r20an0371jj0124-rx-tsip-security.pdf
 |   +---en
-|        r20an0371ej0123-rx-tsip-security.pdf
+|        r20an0371ej0124-rx-tsip-security.pdf
 |
 +---src
     |

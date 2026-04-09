@@ -10,7 +10,7 @@ R01AN2169JJ
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -69,9 +69,9 @@ r_usb_hmsc_mini
 |
 +---doc
 |     \en
-|     |   r01an2169ej0131_usb.pdf
+|     |   r01an2169ej0132_usb.pdf
 |     \jp
-|         r01an2169jj0131_usb.pdf
+|         r01an2169jj0132_usb.pdf
 |
 +---ref
 |       r_usb_hmsc_mini_config_reference.h

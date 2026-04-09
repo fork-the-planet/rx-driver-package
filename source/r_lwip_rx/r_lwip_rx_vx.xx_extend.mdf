@@ -11,16 +11,15 @@
 
     <fileTemplate></fileTemplate>
     <configuration>
-        <property id="NO_SYS" display="NO_SYS" default="1" type="combobox">
+        <property id="NO_SYS" display="NO_SYS" default="1" type="checkbox">
+            <option id="NO_SYS.0" display="OS used" value="0"/>
             <option id="NO_SYS.1" display="OS not used" value="1"/>
-            <constraint display="The NO_SYS is fixed" actionOnFail="disable">${NO_SYS} &lt; 0</constraint>
             <description>Selects whether or not an OS is to be used.
-Be sure to set 1. The setting 0 (OS used) is not supported.
 0: OS used; 1: OS not used</description>
         </property>
-        <property id="SYS_LIGHTWEIGHT_PROT" display="SYS_LIGHTWEIGHT_PROT" default="0" type="combobox">
-            <option id="SYS_LIGHTWEIGHT_PROT.1" display="Enabled" value="1"/>
+        <property id="SYS_LIGHTWEIGHT_PROT" display="SYS_LIGHTWEIGHT_PROT" default="0" type="checkbox">
             <option id="SYS_LIGHTWEIGHT_PROT.0" display="Disabled" value="0"/>
+            <option id="SYS_LIGHTWEIGHT_PROT.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable protection between tasks (and protection against interrupts of tasks) for the specific critical areas during the allocation and release of buffers and the allocation of memory.
 If the setting of this macro is 1 (enabled) and that of the NO_SYS macro is 1, the I flag of the CPU in the critical section in lwIP is set to 0 (prohibiting interrupts).
 0: Disabled; 1: Enabled</description>
@@ -34,119 +33,693 @@ An attempted change to the setting may lead to incorrect operation of this FIT m
         <property id="MEM_SIZE" display="MEM_SIZE" default="20*1024" type="textbox">
             <description>Sets the size of heap memory.</description>
         </property>
-        <property id="MEMP_NUM_PBUF" display="MEMP_NUM_PBUF" default="50" type="textbox">
+        <category id="LWIP_MEMP" display="LWIP_MEMP">
+            <description></description>
+        </category>
+        <property id="MEMP_NUM_PBUF" display="MEMP_NUM_PBUF" default="50" type="textbox" category="LWIP_MEMP">
             <description>Set the number of pbufs for the memp structure.</description>
         </property>
-        <property id="MEMP_NUM_UDP_PCB" display="MEMP_NUM_UDP_PCB" default="6" type="textbox">
+        <property id="MEMP_NUM_UDP_PCB" display="MEMP_NUM_UDP_PCB" default="6" type="textbox" category="LWIP_MEMP">
             <description>Sets the number of UDP control blocks.</description>
         </property>
-        <property id="MEMP_NUM_TCP_PCB" display="MEMP_NUM_TCP_PCB" default="10" type="textbox">
+        <property id="MEMP_NUM_TCP_PCB" display="MEMP_NUM_TCP_PCB" default="10" type="textbox" category="LWIP_MEMP">
             <description>Sets the number of TCP connections.</description>
         </property>
-        <property id="MEMP_NUM_TCP_PCB_LISTEN" display="MEMP_NUM_TCP_PCB_LISTEN" default="5" type="textbox">
+        <property id="MEMP_NUM_TCP_PCB_LISTEN" display="MEMP_NUM_TCP_PCB_LISTEN" default="5" type="textbox" category="LWIP_MEMP">
             <description>Sets the number of TCP connections in the listening state.</description>
         </property>
-        <property id="MEMP_NUM_TCP_SEG" display="MEMP_NUM_TCP_SEG" default="16" type="textbox">
+        <property id="MEMP_NUM_TCP_SEG" display="MEMP_NUM_TCP_SEG" default="16" type="textbox" category="LWIP_MEMP">
             <description>Sets the number of TCP segments the queue can hold.</description>
         </property>
-        <property id="MEMP_NUM_SYS_TIMEOUT" display="MEMP_NUM_SYS_TIMEOUT" default="LWIP_NUM_SYS_TIMEOUT_INTERNAL" type="textbox">
-            <description>Sets the number of timeouts to be used by this FIT module.</description>
+        <property id="MEMP_NUM_REASSDATA" display="MEMP_NUM_REASSDATA" default="5" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of IP packets simultaneously queued to reassemble IP fragments.</description>
+        </property>
+        <property id="MEMP_NUM_FRAG_PBUF" display="MEMP_NUM_FRAG_PBUF" default="15" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of pbufs the lwIP can allocate to send IP fragments. This option is used if the LWIP_NETIF_TX_SINGLE_PBUF is 0.
+This option is used if the LWIP_NETIF_TX_SINGLE_PBUF is 0.</description>
+        </property>
+        <property id="MEMP_NUM_ARP_QUEUE" display="MEMP_NUM_ARP_QUEUE" default="30" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of simultaneously queued outgoing packets (pbufs) that are waiting for an ARP request to finish.
+This option requires using ARP queueing with the ARP_QUEUEING set to 1.</description>
+        </property>
+        <property id="MEMP_NUM_IGMP_GROUP" display="MEMP_NUM_IGMP_GROUP" default="8" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of multicast groups whose network interfaces can be members at the same time.
+This option requires that the LWIP_IGMP is set to 1.</description>
+        </property>
+        <property id="MEMP_NUM_SYS_TIMEOUT" display="MEMP_NUM_SYS_TIMEOUT" default="LWIP_NUM_SYS_TIMEOUT_INTERNAL" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of simultaneously active timeouts.</description>
+        </property>
+        <property id="MEMP_NUM_NETBUF" display="MEMP_NUM_NETBUF" default="2" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of struct netbufs.</description>
+        </property>
+        <property id="MEMP_NUM_NETCONN" display="MEMP_NUM_NETCONN" default="2" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of struct netconns.</description>
+        </property>
+        <property id="MEMP_NUM_TCPIP_MSG_API" display="MEMP_NUM_TCPIP_MSG_API" default="8" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of struct tcpip_msg, which are used for callback/timeout API communication.</description>
+        </property>
+        <property id="MEMP_NUM_TCPIP_MSG_INPKT" display="MEMP_NUM_TCPIP_MSG_INPKT" default="8" type="textbox" category="LWIP_MEMP">
+            <description>Sets the number of struct tcpip_msg, which are used for incoming packets.</description>
         </property>
         <property id="PBUF_POOL_SIZE" display="PBUF_POOL_SIZE" default="16" type="textbox">
             <description>Sets the number of buffers in the pbuf pool.</description>
         </property>
-        <property id="LWIP_ARP" display="LWIP_ARP" default="1" type="combobox">
-            <option id="LWIP_ARP.1" display="Enabled" value="1"/>
+        <category id="LWIP_CAPABILITY" display="LWIP_CAPABILITY">
+            <description></description>
+        </category>
+        <property id="LWIP_ARP" display="LWIP_ARP" default="1" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_ARP.0" display="Disabled" value="0"/>
+            <option id="LWIP_ARP.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable the ARP function.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_IPV4" display="LWIP_IPV4" default="1" type="combobox">
-            <option id="LWIP_IPV4.1" display="Enabled" value="1"/>
+        <property id="ARP_TABLE_SIZE" display="ARP_TABLE_SIZE" default="10" type="textbox">
+            <description>Sets the number of active MAC-IP address pairs cached.</description>
+        </property>
+        <property id="ARP_QUEUEING" display="ARP_QUEUEING" default="0" type="checkbox">
+            <option id="ARP_QUEUEING.0" display="Disabled" value="0"/>
+            <option id="ARP_QUEUEING.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable the ARP queueing.</description>
+        </property>
+        <property id="ETH_PAD_SIZE" display="ETH_PAD_SIZE" default="2" type="textbox">
+            <description>Sets the number of bytes added before the ethernet header.</description>
+        </property>
+        <property id="LWIP_IPV4" display="LWIP_IPV4" default="1" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_IPV4.0" display="Disabled" value="0"/>
+            <option id="LWIP_IPV4.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable IPv4.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_ICMP" display="LWIP_ICMP" default="1" type="combobox">
-            <option id="LWIP_ICMP.1" display="Enabled" value="1"/>
+        <property id="IP_FRAG" display="IP_FRAG" default="1" type="checkbox">
+            <option id="IP_FRAG.0" display="Disabled" value="0"/>
+            <option id="IP_FRAG.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable the function that fragments outgoing IP packets if their size exceeds MTU.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IP_REASS_MAXAGE" display="IP_REASS_MAXAGE" default="15" type="textbox">
+            <description>Sets maximum time a fragmented IP packet waits for all fragments to arrive in seconds.</description>
+        </property>
+        <property id="IP_DEFAULT_TTL" display="IP_DEFAULT_TTL" default="255" type="textbox">
+            <description>Sets default value for Time-To-Live (TTL) used by transport layers.</description>
+        </property>
+        <property id="LWIP_ICMP" display="LWIP_ICMP" default="1" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_ICMP.0" display="Disabled" value="0"/>
+            <option id="LWIP_ICMP.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable the ICMP module.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_DHCP" display="LWIP_DHCP" default="0" type="combobox">
-            <option id="LWIP_DHCP.1" display="Enabled" value="1"/>
+        <property id="LWIP_RAW" display="LWIP_RAW" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_RAW.0" display="Disabled" value="0"/>
+            <option id="LWIP_RAW.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable to use the raw API.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="RAW_TTL" display="RAW_TTL" default="IP_DEFAULT_TTL" type="textbox">
+            <description>Sets the default Time-To-Live (TTL) value for IP packets sent using the raw API.</description>
+        </property>
+        <property id="LWIP_DHCP" display="LWIP_DHCP" default="0" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_DHCP.0" display="Disabled" value="0"/>
+            <option id="LWIP_DHCP.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable the DHCP module.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_IGMP" display="LWIP_IGMP" default="1" type="combobox">
-            <option id="LWIP_IGMP.1" display="Enabled" value="1"/>
+        <property id="LWIP_AUTOIP" display="LWIP_AUTOIP" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_AUTOIP.0" display="Disabled" value="0"/>
+            <option id="LWIP_AUTOIP.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable the autoIP module.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_DHCP_AUTOIP_COOP" display="LWIP_DHCP_AUTOIP_COOP" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_DHCP_AUTOIP_COOP.0" display="Disabled" value="0"/>
+            <option id="LWIP_DHCP_AUTOIP_COOP.1" display="Enabled" value="1"/>
+            <description>Sets whether to enable or disable cooperation between DHCP and AutoIP. If the value of this option is 1 (enabled), this option allows DHCP and AUTOIP to be both enabled on the same interface at the same time.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_ACD" display="LWIP_ACD" default="LWIP_AUTOIP || LWIP_DHCP_DOES_ACD_CHECK" type="textbox" category="LWIP_CAPABILITY">
+            <description>Selects whether to enable or disable the Address Conflict Detection (ACD) module.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_IGMP" display="LWIP_IGMP" default="0" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_IGMP.0" display="Disabled" value="0"/>
+            <option id="LWIP_IGMP.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable the IGMP module.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_UDP" display="LWIP_UDP" default="1" type="combobox">
-            <option id="LWIP_UDP.1" display="Enabled" value="1"/>
+        <property id="LWIP_DNS" display="LWIP_DNS" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_DNS.0" display="Disabled" value="0"/>
+            <option id="LWIP_DNS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable the DNS client function.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_UDP" display="LWIP_UDP" default="1" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_UDP.0" display="Disabled" value="0"/>
+            <option id="LWIP_UDP.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable the UDP.
 0: Disabled; 1: Enabled</description>
         </property>
         <property id="UDP_TTL" display="UDP_TTL" default="IP_DEFAULT_TTL" type="textbox">
-            <description>Sets the default value for time-to-live.</description>
+            <description>Sets the default Time-To-Live (TTL) value for UDP packets.</description>
         </property>
-        <property id="LWIP_TCP" display="LWIP_TCP" default="1" type="combobox">
-            <option id="LWIP_TCP.1" display="Enabled" value="1"/>
+        <property id="LWIP_TCP" display="LWIP_TCP" default="1" type="checkbox" category="LWIP_CAPABILITY">
             <option id="LWIP_TCP.0" display="Disabled" value="0"/>
+            <option id="LWIP_TCP.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable the TCP.
 0: Disabled; 1: Enabled</description>
         </property>
         <property id="TCP_TTL" display="TCP_TTL" default="IP_DEFAULT_TTL" type="textbox">
-            <description>Sets the default value for time-to-live.</description>
+            <description>Sets the default Time-To-Live (TTL) value for TCP segments.</description>
         </property>
         <property id="TCP_WND" display="TCP_WND" default="4 * TCP_MSS" type="textbox">
-            <description>Sets the size of the TCP window.</description>
+            <description>Sets the size of the TCP window in bytes.</description>
         </property>
-        <property id="TCP_QUEUE_OOSEQ" display="TCP_QUEUE_OOSEQ" default="0" type="combobox">
-            <option id="TCP_QUEUE_OOSEQ.1" display="Enabled" value="1"/>
-            <option id="TCP_QUEUE_OOSEQ.0" display="Disabled" value="0"/>
+        <property id="TCP_QUEUE_OOSEQ" display="TCP_QUEUE_OOSEQ" default="LWIP_TCP" type="textbox">
             <description>Selects whether to enable or disable queuing of TCP segments that arrive out of order when such segments are received.
 0: Disabled; 1: Enabled</description>
         </property>
         <property id="TCP_MSS" display="TCP_MSS" default="1500 - 40" type="textbox">
-            <description>Sets the maximum size of a TCP segment.</description>
+            <description>Sets the maximum size of a TCP segment in bytes.</description>
         </property>
         <property id="TCP_SND_BUF" display="TCP_SND_BUF" default="4 * TCP_MSS" type="textbox">
-            <description>Sets the TCP transmission buffer space in bytes.</description>
+            <description>Sets the TCP sender buffer space in bytes.</description>
         </property>
         <property id="TCP_SND_QUEUELEN" display="TCP_SND_QUEUELEN" default="2 * TCP_SND_BUF/TCP_MSS" type="textbox">
-            <description>Sets the TCP transmission buffer space with the pbuf size as the unit. </description>
+            <description>Sets the TCP sender buffer space with the pbuf size as the unit. This must be at least as much as (2 * TCP_SND_BUF/TCP_MSS) for things to work.</description>
+        </property>
+        <property id="TCP_OOSEQ_MAX_BYTES" display="TCP_OOSEQ_MAX_BYTES" default="0" type="textbox">
+            <description>Sets the maximum number of bytes that can be queued for out-of-sequence TCP segments per TCP Control Block (PCB). The default is 0 that means no limit. This option is valid if the TCP_QUEUE_OOSEQ is 1.</description>
+        </property>
+        <property id="TCP_OOSEQ_MAX_PBUFS" display="TCP_OOSEQ_MAX_PBUFS" default="0" type="textbox">
+            <description>Sets the default maximum number of pbufs queued on out-of-order per TCP Control Block (PCB). The default is 0 that means no limit.
+This option is valid if the TCP_QUEUE_OOSEQ is 1.</description>
+        </property>
+        <property id="TCP_LISTEN_BACKLOG" display="TCP_LISTEN_BACKLOG" default="0" type="checkbox">
+            <option id="TCP_LISTEN_BACKLOG.0" display="Disabled" value="0"/>
+            <option id="TCP_LISTEN_BACKLOG.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable the function that limits the number of listening PCBs to be queued.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="TCP_DEFAULT_LISTEN_BACKLOG" display="TCP_DEFAULT_LISTEN_BACKLOG" default="0xff" type="textbox">
+            <description>Sets the default maximum number of listening PCBs to be queued.</description>
+        </property>
+        <property id="LWIP_ALTCP" display="LWIP_ALTCP" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_ALTCP.0" display="Disabled" value="0"/>
+            <option id="LWIP_ALTCP.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable Application Layered TCP (ALTCP) API.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_ALTCP_TLS" display="LWIP_ALTCP_TLS" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_ALTCP_TLS.0" display="Disabled" value="0"/>
+            <option id="LWIP_ALTCP_TLS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable Transport Layer Security (TLS) support over the Application Layered TCP (ALTCP) interface.
+0: Disabled; 1: Enabled</description>
         </property>
         <property id="PBUF_POOL_BUFSIZE" display="PBUF_POOL_BUFSIZE" default="LWIP_MEM_ALIGN_SIZE(TCP_MSS+PBUF_IP_HLEN+PBUF_TRANSPORT_HLEN+PBUF_LINK_ENCAPSULATION_HLEN+PBUF_LINK_HLEN)" type="textbox">
-            <description>Sets the size of each pbuf in the pbuf pool.</description>
+            <description>Sets the size of each pbuf in the pbuf pool. The default is designed to accommodate single full size TCP frame in one pbuf, including TCP_MSS, IP header, and link header.</description>
         </property>
-        <property id="LWIP_NETIF_LINK_CALLBACK" display="LWIP_NETIF_LINK_CALLBACK" default="0" type="combobox">
-            <option id="LWIP_NETIF_LINK_CALLBACK.1" display="Enabled" value="1"/>
+        <property id="LWIP_NETIF_HOSTNAME" display="LWIP_NETIF_HOSTNAME" default="0" type="checkbox">
+            <option id="LWIP_NETIF_HOSTNAME.0" display="Disabled" value="0"/>
+            <option id="LWIP_NETIF_HOSTNAME.1" display="Enabled" value="1"/>
+            <description>Selects whether to use DHCP_OPTION_HOSTNAME with netif's hostname field.
+0: Not used; 1: Used</description>
+        </property>
+        <property id="LWIP_NETIF_API" display="LWIP_NETIF_API" default="0" type="checkbox">
+            <option id="LWIP_NETIF_API.0" display="Disabled" value="0"/>
+            <option id="LWIP_NETIF_API.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable netif API.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_NETIF_LINK_CALLBACK" display="LWIP_NETIF_LINK_CALLBACK" default="0" type="checkbox">
             <option id="LWIP_NETIF_LINK_CALLBACK.0" display="Disabled" value="0"/>
+            <option id="LWIP_NETIF_LINK_CALLBACK.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable a callback function for notification of a change to the link state.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_NETCONN" display="LWIP_NETCONN" default="0" type="combobox">
-            <option id="LWIP_NETCONN.1" display="Enabled" value="1"/>
+        <property id="LWIP_NETIF_TX_SINGLE_PBUF" display="LWIP_NETIF_TX_SINGLE_PBUF" default="0" type="checkbox">
+            <option id="LWIP_NETIF_TX_SINGLE_PBUF.0" display="Disabled" value="0"/>
+            <option id="LWIP_NETIF_TX_SINGLE_PBUF.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable the function the lwIP tries to put all data to be sent into one single pbuf.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="TCPIP_THREAD_NAME" display="TCPIP_THREAD_NAME" default="&quot;tcpip_thread&quot;" type="textbox">
+            <description>Sets the name assigned to the main tcpip thread.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="TCPIP_THREAD_STACKSIZE" display="TCPIP_THREAD_STACKSIZE" default="2048" type="textbox">
+            <description>Sets the stack size used by the main tcpip thread.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="TCPIP_THREAD_PRIO" display="TCPIP_THREAD_PRIO" default="configMAX_PRIORITIES - 2" type="textbox">
+            <description>Sets the priority assigned to the main tcpip thread.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="TCPIP_MBOX_SIZE" display="TCPIP_MBOX_SIZE" default="6" type="textbox">
+            <description>Sets the mailbox size for the tcpip thread messages.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_THREAD_NAME" display="DEFAULT_THREAD_NAME" default="&quot;lwIP&quot;" type="textbox">
+            <description>Sets the name assigned to any other lwIP thread.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_THREAD_STACKSIZE" display="DEFAULT_THREAD_STACKSIZE" default="2048" type="textbox">
+            <description>Sets the stack size used by any other lwIP thread.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_THREAD_PRIO" display="DEFAULT_THREAD_PRIO" default="configMAX_PRIORITIES - 3" type="textbox">
+            <description>Sets the priority assigned to any other lwIP thread.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_RAW_RECVMBOX_SIZE" display="DEFAULT_RAW_RECVMBOX_SIZE" default="8" type="textbox">
+            <description>Sets the mailbox size for the incoming packets on a NETCONN_RAW.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_UDP_RECVMBOX_SIZE" display="DEFAULT_UDP_RECVMBOX_SIZE" default="8" type="textbox">
+            <description>Sets the mailbox size for the incoming packets on a NETCONN_UDP.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_TCP_RECVMBOX_SIZE" display="DEFAULT_TCP_RECVMBOX_SIZE" default="8" type="textbox">
+            <description>Sets the mailbox size for the incoming packets on a NETCONN_TCP.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="DEFAULT_ACCEPTMBOX_SIZE" display="DEFAULT_ACCEPTMBOX_SIZE" default="8" type="textbox">
+            <description>Sets the mailbox size for the incoming connections.
+This option is used if the NO_SYS option is set to 0.</description>
+        </property>
+        <property id="LWIP_NETCONN" display="LWIP_NETCONN" default="0" type="checkbox">
             <option id="LWIP_NETCONN.0" display="Disabled" value="0"/>
+            <option id="LWIP_NETCONN.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable Netconn API functions.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_SOCKET" display="LWIP_SOCKET" default="0" type="combobox">
-            <option id="LWIP_SOCKET.1" display="Enabled" value="1"/>
+        <category id="LWIP_SOCKET" display="LWIP_SOCKET">
+            <description></description>
+        </category>
+        <property id="LWIP_SOCKET" display="LWIP_SOCKET" default="0" type="checkbox" category="LWIP_SOCKET">
             <option id="LWIP_SOCKET.0" display="Disabled" value="0"/>
+            <option id="LWIP_SOCKET.1" display="Enabled" value="1"/>
             <description>Selects whether to enable or disable socket API functions.
 0: Disabled; 1: Enabled</description>
         </property>
-        <property id="LWIP_STATS" display="LWIP_STATS" default="0" type="combobox">
-            <option id="LWIP_STATS.1" display="Enabled" value="1"/>
-            <option id="LWIP_STATS.0" display="Disabled" value="0"/>
+        <property id="LWIP_SO_SNDTIMEO" display="LWIP_SO_SNDTIMEO" default="0" type="checkbox" category="LWIP_SOCKET">
+            <option id="LWIP_SO_SNDTIMEO.0" display="Disabled" value="0"/>
+            <option id="LWIP_SO_SNDTIMEO.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable send timeout for sockets/netconns and SO_SNDTIMEO processing.
+This option is used if the NO_SYS option is set to 0.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_SO_RCVTIMEO" display="LWIP_SO_RCVTIMEO" default="0" type="checkbox" category="LWIP_SOCKET">
+            <option id="LWIP_SO_RCVTIMEO.0" display="Disabled" value="0"/>
+            <option id="LWIP_SO_RCVTIMEO.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable receive timeout for sockets/netconns and SO_RCVTIMEO processing.
+This option is used if the NO_SYS option is set to 0.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_SO_RCVBUF" display="LWIP_SO_RCVBUF" default="0" type="checkbox" category="LWIP_SOCKET">
+            <option id="LWIP_SO_RCVBUF.0" display="Disabled" value="0"/>
+            <option id="LWIP_SO_RCVBUF.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable SO_RCVBUF processing.
+This option is used if the NO_SYS option is set to 0.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_SO_LINGER" display="LWIP_SO_LINGER" default="0" type="checkbox" category="LWIP_SOCKET">
+            <option id="LWIP_SO_LINGER.0" display="Disabled" value="0"/>
+            <option id="LWIP_SO_LINGER.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable SO_LINGER processing.
+This option is used if the NO_SYS option is set to 0.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <category id="LWIP_DEBUG" display="LWIP_DEBUG">
             <description>Selects whether to enable or disable statistics collection in lwip_stats.
 0: Disabled; 1: Enabled</description>
+        </category>
+        <property id="LWIP_STATS" display="LWIP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="LWIP_STATS.0" display="Disabled" value="0"/>
+            <option id="LWIP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable statistics collection in lwip_stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_STATS_DISPLAY" display="LWIP_STATS_DISPLAY" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="LWIP_STATS_DISPLAY.0" display="Disabled" value="0"/>
+            <option id="LWIP_STATS_DISPLAY.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable the statistics output functions.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LINK_STATS" display="LINK_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="LINK_STATS.0" display="Disabled" value="0"/>
+            <option id="LINK_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable link stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="ETHARP_STATS" display="ETHARP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="ETHARP_STATS.0" display="Disabled" value="0"/>
+            <option id="ETHARP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable etharp stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IP_STATS" display="IP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="IP_STATS.0" display="Disabled" value="0"/>
+            <option id="IP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable IP stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IPFRAG_STATS" display="IPFRAG_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="IPFRAG_STATS.0" display="Disabled" value="0"/>
+            <option id="IPFRAG_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable IP fragmentation stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="ICMP_STATS" display="ICMP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="ICMP_STATS.0" display="Disabled" value="0"/>
+            <option id="ICMP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable ICMP stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IGMP_STATS" display="IGMP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="IGMP_STATS.0" display="Disabled" value="0"/>
+            <option id="IGMP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable IGMP stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="UDP_STATS" display="UDP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="UDP_STATS.0" display="Disabled" value="0"/>
+            <option id="UDP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable UDP stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="TCP_STATS" display="TCP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_STATS.0" display="Disabled" value="0"/>
+            <option id="TCP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable TCP stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="MEM_STATS" display="MEM_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="MEM_STATS.0" display="Disabled" value="0"/>
+            <option id="MEM_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable memory manager (mem.c) stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="MEMP_STATS" display="MEMP_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="MEMP_STATS.0" display="Disabled" value="0"/>
+            <option id="MEMP_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable pool memory manager (memp.c) stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="SYS_STATS" display="SYS_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="SYS_STATS.0" display="Disabled" value="0"/>
+            <option id="SYS_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable system stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IP6_STATS" display="IP6_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="IP6_STATS.0" display="Disabled" value="0"/>
+            <option id="IP6_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable IPv6 stats.</description>
+        </property>
+        <property id="ICMP6_STATS" display="ICMP6_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="ICMP6_STATS.0" display="Disabled" value="0"/>
+            <option id="ICMP6_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable ICMP for IPv6 stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IP6_FRAG_STATS" display="IP6_FRAG_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="IP6_FRAG_STATS.0" display="Disabled" value="0"/>
+            <option id="IP6_FRAG_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable IPv6 fragmentation stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="MLD6_STATS" display="MLD6_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="MLD6_STATS.0" display="Disabled" value="0"/>
+            <option id="MLD6_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable MLD for IPv6 stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="ND6_STATS" display="ND6_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="ND6_STATS.0" display="Disabled" value="0"/>
+            <option id="ND6_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable ND for IPv6 stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="MIB2_STATS" display="MIB2_STATS" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="MIB2_STATS.0" display="Disabled" value="0"/>
+            <option id="MIB2_STATS.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable SNMP MIB-II compliant stats.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_IPV6" display="LWIP_IPV6" default="0" type="checkbox" category="LWIP_CAPABILITY">
+            <option id="LWIP_IPV6.0" display="Disabled" value="0"/>
+            <option id="LWIP_IPV6.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable IPv6.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="IPV6_REASS_MAXAGE" display="IPV6_REASS_MAXAGE" default="60" type="textbox">
+            <description>Sets the maximum time a fragmented IPv6 packet waits for all fragments to arrive.</description>
+        </property>
+        <property id="LWIP_IPV6_SCOPES" display="LWIP_IPV6_SCOPES" default="LWIP_IPV6 &amp;&amp; !LWIP_SINGLE_NETIF" type="textbox">
+            <description>Selects whether to enable or disable support for IPv6 address scopes.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_IPV6_NUM_ADDRESSES" display="LWIP_IPV6_NUM_ADDRESSES" default="3" type="textbox">
+            <description>Sets the number of IPv6 addresses per netif.</description>
+        </property>
+        <property id="LWIP_IPV6_FRAG" display="LWIP_IPV6_FRAG" default="1" type="checkbox">
+            <option id="LWIP_IPV6_FRAG.0" display="Disabled" value="0"/>
+            <option id="LWIP_IPV6_FRAG.1" display="Enabled" value="1"/>
+            <description>Selects whether the lwIP fragments outgoing IPv6 packets that are too big.
+0: Packets not fragmented; 1: Packets fragmented</description>
+        </property>
+        <property id="LWIP_IPV6_DHCP6" display="LWIP_IPV6_DHCP6" default="0" type="checkbox">
+            <option id="LWIP_IPV6_DHCP6.0" display="Disabled" value="0"/>
+            <option id="LWIP_IPV6_DHCP6.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable DHCPv6 stateful/stateless address autoconfiguration.
+0: Disabled; 1: Enabled</description>
+        </property>
+        <property id="LWIP_DBG_MIN_LEVEL" display="LWIP_DBG_MIN_LEVEL" default="LWIP_DBG_LEVEL_ALL" type="combobox" category="LWIP_DEBUG">
+            <option id="LWIP_DBG_MIN_LEVEL.LWIP_DBG_LEVEL_ALL" display="LWIP_DBG_LEVEL_ALL" value="LWIP_DBG_LEVEL_ALL"/>
+            <option id="LWIP_DBG_MIN_LEVEL.LWIP_DBG_LEVEL_WARNING" display="LWIP_DBG_LEVEL_WARNING" value="LWIP_DBG_LEVEL_WARNING"/>
+            <option id="LWIP_DBG_MIN_LEVEL.LWIP_DBG_LEVEL_SERIOUS" display="LWIP_DBG_LEVEL_SERIOUS" value="LWIP_DBG_LEVEL_SERIOUS"/>
+            <option id="LWIP_DBG_MIN_LEVEL.LWIP_DBG_LEVEL_SEVERE" display="LWIP_DBG_LEVEL_SEVERE" value="LWIP_DBG_LEVEL_SEVERE"/>
+            <description>Sets the minimum level at which debug messages are written.</description>
+        </property>
+        <property id="LWIP_DBG_TYPES_ON" display="LWIP_DBG_TYPES_ON" default="LWIP_DBG_ON" type="combobox" category="LWIP_DEBUG">
+            <option id="LWIP_DBG_TYPES_ON.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <option id="LWIP_DBG_TYPES_ON.LWIP_DBG_TRACE" display="LWIP_DBG_TRACE" value="LWIP_DBG_TRACE"/>
+            <option id="LWIP_DBG_TYPES_ON.LWIP_DBG_STATE" display="LWIP_DBG_STATE" value="LWIP_DBG_STATE"/>
+            <option id="LWIP_DBG_TYPES_ON.LWIP_DBG_FRESH" display="LWIP_DBG_FRESH" value="LWIP_DBG_FRESH"/>
+            <option id="LWIP_DBG_TYPES_ON.LWIP_DBG_HALT" display="LWIP_DBG_HALT" value="LWIP_DBG_HALT"/>
+            <description>Sets a mask that can be used to globally enable/disable debug messages of certain types. Multiple values can be specified using the bitwise OR operator.
+LWIP_DBG_ON: Flag for LWIP_DEBUGF to enable debug messages;
+LWIP_DBG_TRACE: Flag for LWIP_DEBUGF indicating a tracing message to follow program flow;
+LWIP_DBG_STATE: Flag for LWIP_DEBUGF indicating a state debug message to follow module states;
+LWIP_DBG_HALT: Flag for LWIP_DEBUGF to halt after printing this debug message</description>
+        </property>
+        <property id="ETHARP_DEBUG" display="ETHARP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="ETHARP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="ETHARP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in etharp.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="NETIF_DEBUG" display="NETIF_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="NETIF_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="NETIF_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in netif.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="PBUF_DEBUG" display="PBUF_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="PBUF_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="PBUF_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in pbuf.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="API_LIB_DEBUG" display="API_LIB_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="API_LIB_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="API_LIB_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in api_lib.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="API_MSG_DEBUG" display="API_MSG_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="API_MSG_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="API_MSG_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in api_msg.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="SOCKETS_DEBUG" display="SOCKETS_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="SOCKETS_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="SOCKETS_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in sockets.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="ICMP_DEBUG" display="ICMP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="ICMP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="ICMP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in icmp.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="IGMP_DEBUG" display="IGMP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="IGMP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="IGMP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in igmp.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="INET_DEBUG" display="INET_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="INET_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="INET_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in inet.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="IP_DEBUG" display="IP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="IP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="IP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for IP.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="IP_REASS_DEBUG" display="IP_REASS_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="IP_REASS_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="IP_REASS_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in ip_frag.c for both frag &amp; reass.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="RAW_DEBUG" display="RAW_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="RAW_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="RAW_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in raw.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="MEM_DEBUG" display="MEM_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="MEM_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="MEM_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in mem.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="MEMP_DEBUG" display="MEMP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="MEMP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="MEMP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in memp.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="SYS_DEBUG" display="SYS_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="SYS_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="SYS_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in sys.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TIMERS_DEBUG" display="TIMERS_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TIMERS_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TIMERS_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in timers.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_DEBUG" display="TCP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for TCP.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_INPUT_DEBUG" display="TCP_INPUT_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_INPUT_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_INPUT_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in tcp_in.c for incoming debug.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_FR_DEBUG" display="TCP_FR_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_FR_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_FR_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in tcp_in.c for fast retransmit.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_RTO_DEBUG" display="TCP_RTO_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_RTO_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_RTO_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in TCP for retransmit timeout.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_CWND_DEBUG" display="TCP_CWND_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_CWND_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_CWND_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for TCP congestion window.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_WND_DEBUG" display="TCP_WND_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_WND_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_WND_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in tcp_in.c for window updating.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_OUTPUT_DEBUG" display="TCP_OUTPUT_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_OUTPUT_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_OUTPUT_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in tcp_out.c output functions.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_RST_DEBUG" display="TCP_RST_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_RST_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_RST_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for TCP with the RST message.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCP_QLEN_DEBUG" display="TCP_QLEN_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCP_QLEN_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCP_QLEN_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for TCP queue lengths.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="UDP_DEBUG" display="UDP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="UDP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="UDP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in UDP.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="TCPIP_DEBUG" display="TCPIP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="TCPIP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="TCPIP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in tcpip.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="SLIP_DEBUG" display="SLIP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="SLIP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="SLIP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in slipif.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="DHCP_DEBUG" display="DHCP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="DHCP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="DHCP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in dhcp.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="AUTOIP_DEBUG" display="AUTOIP_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="AUTOIP_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="AUTOIP_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in autoip.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="ACD_DEBUG" display="ACD_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="ACD_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="ACD_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in acd.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="DNS_DEBUG" display="DNS_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="DNS_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="DNS_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for DNS.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="IP6_DEBUG" display="IP6_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="IP6_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="IP6_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging for IPv6.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="DHCP6_DEBUG" display="DHCP6_DEBUG" default="LWIP_DBG_OFF" type="checkbox" category="LWIP_DEBUG">
+            <option id="DHCP6_DEBUG.LWIP_DBG_OFF" display="LWIP_DBG_OFF" value="LWIP_DBG_OFF"/>
+            <option id="DHCP6_DEBUG.LWIP_DBG_ON" display="LWIP_DBG_ON" value="LWIP_DBG_ON"/>
+            <description>Selects whether to enable or disable debugging in dhcp6.c.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
+        </property>
+        <property id="LWIP_PERF" display="LWIP_PERF" default="0" type="checkbox" category="LWIP_DEBUG">
+            <option id="LWIP_PERF.0" display="Disabled" value="0"/>
+            <option id="LWIP_PERF.1" display="Enabled" value="1"/>
+            <description>Selects whether to enable or disable performance testing for lwIP.
+LWIP_DBG_OFF: Disabled; LWIP_DBG_ON: Enabled</description>
         </property>
     </configuration>
 </module>

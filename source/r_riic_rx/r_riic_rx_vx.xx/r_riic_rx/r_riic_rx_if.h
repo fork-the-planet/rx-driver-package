@@ -72,6 +72,8 @@
  *         : 30.10.2025 3.10     Added RX14T support.
  *                               Fixed to comply with GSCE Coding Standards Rev.6.6.0.
  *                               Updated MDF using Category.
+ *         : 30.03.2026 3.11     Included spdx file in the package.
+ *                               Modified comment of API function to Doxygen style.
  **********************************************************************************************************************/
 /* Guards against multiple inclusion */
 #ifndef RIIC_IF_H
@@ -94,7 +96,7 @@ R_BSP_PRAGMA_UNPACK
 
 /* Version Number of API. */
     #define RIIC_VERSION_MAJOR      (3)
-    #define RIIC_VERSION_MINOR      (10)
+    #define RIIC_VERSION_MINOR      (11)
 
 /*----------------------------------------------------------------------------*/
 /*   Defines the argument of the R_RIIC_Control function.                     */

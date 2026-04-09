@@ -7,18 +7,18 @@
 #ifndef R_BLE_GTL_SECURITY_H
 #define R_BLE_GTL_SECURITY_H
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Includes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #include <stdint.h>
 #include "rm_ble_abs_api.h"
 #include "r_ble_gtl_typedef.h"
 
-/**********************************************************************************************************************
+/*********************************************************************************************************************
  * Macro definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #if(BLE_ABS_CFG_ENABLE_SECURE_DATA == 1)
-#define ENABLE_STORAGE
+#define ENABLE_STORAGE  1
 #else
 #undef ENABLE_STORAGE
 #endif
@@ -40,6 +40,7 @@
 #define INVALID_IDX                         0xFF
 #define EMPTY_VAL                           0xFF
 #define ZERO_VAL                            0x00
+#define ENC_KEY_SIZE                        16
 
 /* Temporary Key Type */
 typedef enum
@@ -64,11 +65,11 @@ typedef enum
     RAND_RSLV_ADDR = 0x40,     /// Private resolvable address      - 01 (MSB->LSB)
     RAND_UNKNOWN_ADDR = 0x80,  /// Unknown address                 - 10 (MSB->LSB)
 } rand_addr_type_t;
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * 
  * Security related structures. 
  * Keep compatibility with GTL protocol for the DA14xxx devices
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 /* GTL message header */
 #pragma pack
 typedef struct r_ble_gtl_msg_hdr
@@ -199,8 +200,16 @@ typedef struct r_ble_gtl_app_gen_rand_rsp
 {
     uint8_t status;
     uint8_t rand_size;
-    uint8_t rand[BLE_GAP_LTK_SIZE + BLE_GAP_EDIV_SIZE + BLE_GAP_RAND_64_BIT_SIZE + BLE_GAP_IRK_SIZE + BLE_GAP_ID_ADDR_SIZE + BLE_GAP_CSRK_SIZE];
+    uint8_t rand[BLE_GAP_LTK_SIZE + BLE_GAP_EDIV_SIZE + BLE_GAP_RAND_64_BIT_SIZE + BLE_GAP_IRK_SIZE + 
+                                                            BLE_GAP_ID_ADDR_SIZE + BLE_GAP_CSRK_SIZE];
 } r_ble_gtl_app_gen_rand_rsp_t;
+
+typedef struct r_ble_gtl_app_gen_enc_key_rsp
+{
+    uint8_t status;
+    uint8_t rand_size;
+    uint8_t rand[ENC_KEY_SIZE];
+} r_ble_gtl_app_gen_enc_key_rsp_t;
 
 typedef struct gapc_security_cmd
 {
@@ -240,10 +249,10 @@ typedef enum {
 
 } gap_sec_level_t;
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Random Address Resolution related structures. 
  * Keep compatibility with GTL protocol for the DA14xxx devices
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /* Resolve Address command */
 typedef struct r_ble_gtl_gapm_resolv_addr_cmd
@@ -270,9 +279,9 @@ typedef struct BLE_PACKED_OPTION
 } sec_ble_dev_addr_t;
 typedef struct BLE_PACKED_OPTION
 {
-    uint8_t security;		// Unauthenticated (0x01) or Authenticated (0x02)
-    uint8_t pair_mode;		// Legacy(0x01) or Secure Connections (0x02)
-    uint8_t bonding;		// Stores (0x00) or not the Bonding information (0x01) 
+    uint8_t security;        // Unauthenticated (0x01) or Authenticated (0x02)
+    uint8_t pair_mode;        // Legacy(0x01) or Secure Connections (0x02)
+    uint8_t bonding;        // Stores (0x00) or not the Bonding information (0x01) 
     uint8_t ekey_size;
 } sec_ble_gap_auth_info_t;
 typedef struct BLE_PACKED_OPTION
@@ -295,6 +304,7 @@ typedef struct BLE_PACKED_OPTION
     sec_ble_dev_addr_t p_addr;
     sec_ble_gap_auth_info_t p_auth_info;
     sec_ble_gap_key_ex_param_t p_keys;
+    uint8_t crypto_pad[1];  // Padding to align the structure size to 16 bytes for AES encryption
 } sec_ble_gap_bond_info_t;
 
 /* Connections LUT */
@@ -315,9 +325,9 @@ typedef struct r_ble_gtl_conn_LUT
     uint8_t role;                       /* Device role */
 } r_ble_gtl_conn_lut_t;
 
-/**********************************************************************************************************************
+/*********************************************************************************************************************
  * Public Function Prototypes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 uint8_t r_ble_gtl_sec_loc_key_dist(void);
 uint8_t r_ble_gtl_sec_get_bond_var(void);
 uint8_t r_ble_gtl_sec_get_sec_conn_var(void);
@@ -331,12 +341,22 @@ uint8_t r_ble_gtl_sec_get_security_req(void);
 sec_ble_gap_bond_info_t *r_ble_gtl_sec_get_rem_bond_data(uint8_t idx);
 uint8_t r_ble_gtl_sec_resolve_rand_addr(uint8_t *remote_addr, r_ble_gtl_gapm_addr_solved_ind_t *addr_solved_rsp);
 uint8_t r_ble_gtl_sec_lut_table_info(lut_actions_t action, uint8_t *addr, uint16_t conn_handle, uint8_t role);
-uint8_t r_ble_gtl_sec_find_static_addr(uint8_t *remote_addr);
 uint8_t r_ble_gtl_sec_get_db_auth(uint8_t db_index);
 uint8_t r_ble_gtl_sec_get_dev_role(uint16_t conn_handle);
 uint8_t r_ble_gtl_sec_get_active_bond_entries(void);
 void r_ble_gtl_sec_clear_ram_db(void);
-fsp_err_t r_ble_gtl_sec_rem_all_bond_data(void);
-fsp_err_t r_ble_gtl_sec_rem_specific_bond_data(ble_device_address_t *remote_addr);
+void r_ble_gtl_sec_rem_all_bond_data(void);
+fsp_err_t r_ble_gtl_sec_rem_specific_bond_data(ble_device_address_t *remote_addr, uint8_t *ret_idx);
+
+void r_ble_gtl_sec_handle_conn_addr(st_ble_gap_conn_evt_t * p_gap_conn_evt_param);
+void r_ble_gtl_sec_recvremkeys(st_ble_gap_peer_key_info_evt_t *p_peer_key);
+void r_ble_gtl_sec_clear_db_on_disconn(uint16_t conn_hdl);
+void r_ble_gtl_sec_ReplyExKeyInfoReq(uint16_t conn_hdl);
+ble_status_t r_ble_gtl_sec_ReplyLtkReq(uint16_t conn_hdl, uint16_t ediv, uint8_t * p_peer_rand, uint8_t response);
+
+void r_ble_gtl_sec_pairing_complete(st_ble_gap_pairing_info_evt_t *p_param, uint8_t *bond_idx, 
+                                    uint8_t *bond_size, uint8_t **bonded_addr);
+void r_ble_gtl_sec_pairing_failed(uint16_t conn_hdl);
+fsp_err_t r_ble_gtl_sec_push_bond_data_to_ram (uint8_t *p_bond_addr, uint16_t bond_size);
 
 #endif  /* R_BLE_GTL_SECURITY_H */

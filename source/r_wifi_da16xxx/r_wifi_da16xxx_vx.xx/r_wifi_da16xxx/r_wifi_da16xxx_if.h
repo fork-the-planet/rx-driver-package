@@ -29,7 +29,7 @@
 
 /* Version Number of API. */
 #define WIFI_VERSION_MAJOR  (1)
-#define WIFI_VERSION_MINOR  (40)
+#define WIFI_VERSION_MINOR  (41)
 
 /**********************************************************************************************************************
  Global Typedef definitions

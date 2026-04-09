@@ -5,11 +5,11 @@ rm_touch_qe
 
 Document Number 
 ---------------
-r01an4470jj0320
+r01an4470jj0330
 
 Version
 -------
-v3.20
+v3.30
 
 Overview
 --------
@@ -45,11 +45,11 @@ Supported MCUs
 
 Boards Tested On
 ----------------
-* RX130 Capacitive Touch Kit
+* RSSK-RX130
+* RSSK-RX140
+* RSSK-RX671
+* RSSK-RX261
 * RSKRX231
-* RX140 Capacitive Touch Kit
-* RX671 Capacitive Touch Kit
-* RX261 Capacitive Touch Kit
 
 
 Limitations
@@ -65,7 +65,7 @@ Peripherals Used Directly
 Required Packages
 -----------------
 * r_bsp      v7.50
-* r_ctsu_qe  v3.20
+* r_ctsu_qe  v3.30
 
 
 Toolchain(s) Used

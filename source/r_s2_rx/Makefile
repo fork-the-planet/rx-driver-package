@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_s2_rx
-VERSION = 		3.05
+VERSION = 		3.06
 MDF = NOT_SUPPORTED
 
 CONFIG_FOLDER = r_config

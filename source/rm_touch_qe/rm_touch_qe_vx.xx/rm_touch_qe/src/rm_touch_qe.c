@@ -3,10 +3,6 @@
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
-/***********************************************************************************************************************
-* File Name    : rm_touch_qe.c
-* Description  : This module implements the QE TOUCH API
-***********************************************************************************************************************/
 
 /***********************************************************************************************************************
  * Includes
@@ -38,8 +34,8 @@
 
 #define TOUCH_SLIDER_ELEMENTS_MIN             (3)
 #define TOUCH_SLIDER_ELEMENTS_MAX             (10)
-#define TOUCH_WHEEL_ELEMENTS_SMALL            (4)
-#define TOUCH_WHEEL_ELEMENTS_LARGE            (8)
+#define TOUCH_WHEEL_ELEMENTS_MIN              (3)
+#define TOUCH_WHEEL_ELEMENTS_MAX              (8)
 #define TOUCH_SLIDER_RESOLUTION               (100)
 #define TOUCH_WHEEL_RESOLUTION                (360)
 #define TOUCH_DECIMAL_POINT_PRECISION         (100)
@@ -118,81 +114,66 @@
  #if (TOUCH_CFG_UART_MONITOR_SUPPORT == 1)
 
 /* Monitor none value */
-  #define TOUCH_UART_MONITOR_NONE             (0xFF)
+  #define TOUCH_UART_MONITOR_NONE               (0xFF)
 
 /* Control byte */
-  #define TOUCH_UART_HEADER                   (0x55)
-  #define TOUCH_UART_FOOTER                   (0x0A)
+  #define TOUCH_UART_HEADER                     (0x55)
+  #define TOUCH_UART_FOOTER                     (0x0A)
 
 /* Command ID */
-  #define TOUCH_UART_COMMAND_START            (0x11)
-  #define TOUCH_UART_COMMAND_STOP             (0x12)
-  #define TOUCH_UART_COMMAND_READ             (0x13)
-  #define TOUCH_UART_COMMAND_WRITE            (0x14)
-  #define TOUCH_UART_COMMAND_VERSION          (0x15)
-  #define TOUCH_UART_COMMAND_THREE_FREQ_READ  (0x16)
+  #define TOUCH_UART_COMMAND_START              (0x11)
+  #define TOUCH_UART_COMMAND_STOP               (0x12)
+  #define TOUCH_UART_COMMAND_READ               (0x13)
+  #define TOUCH_UART_COMMAND_WRITE              (0x14)
+  #define TOUCH_UART_COMMAND_VERSION            (0x15)
+  #define TOUCH_UART_COMMAND_THREE_FREQ_READ    (0x16)
 
-  #define TOUCH_UART_COMMAND_TOP_NUM          (0x1)
+  #define TOUCH_UART_COMMAND_TOP_NUM            (0x1)
 
 /* Response ID */
-  #define TOUCH_UART_RESPONSE_BIT             (0x80)
-  #define TOUCH_UART_RESPONSE_ERROR_BIT       (0xA0)
-  #define TOUCH_UART_RESPONSE_MONITOR         (0xA1)
-  #define TOUCH_UART_RESPONSE_MONITOR2        (0xA2)
+  #define TOUCH_UART_RESPONSE_BIT               (0x80)
+  #define TOUCH_UART_RESPONSE_ERROR_BIT         (0xA0)
+  #define TOUCH_UART_RESPONSE_MONITOR           (0xA1)
+  #define TOUCH_UART_RESPONSE_MONITOR2          (0xA2)
 
 /* Write Request Type */
-  #define TOUCH_UART_WRITE_DRIFT              (0x01)
-  #define TOUCH_UART_WRITE_CANCEL             (0x02)
-  #define TOUCH_UART_WRITE_POSITIVE           (0x03)
-  #define TOUCH_UART_WRITE_NEGATIVE           (0x04)
-  #define TOUCH_UART_WRITE_MOVING_AVG         (0x05)
-  #define TOUCH_UART_WRITE_THRESHOLD          (0x06)
-  #define TOUCH_UART_WRITE_HYSTERESIS         (0x07)
-  #define TOUCH_UART_WRITE_THRESH_SLDR        (0x08)
-  #define TOUCH_UART_WRITE_THRESH_WHEL        (0x09)
-  #define TOUCH_UART_WRITE_CTSUSO             (0x0A)
-  #define TOUCH_UART_WRITE_CTSUSNUM           (0x0B)
-  #define TOUCH_UART_WRITE_CTSUSDPA           (0x0C)
-  #define TOUCH_UART_WRTIE_PAD_THRESHOLD      (0x0D)
-  #define TOUCH_UART_WRTIE_PAD_RX_PIXEL       (0x0E)
-  #define TOUCH_UART_WRTIE_PAD_TX_PIXEL       (0x0F)
-  #define TOUCH_UART_WRTIE_PAD_MAX_TOUCH      (0x10)
-  #define TOUCH_UART_WRTIE_PAD_DRIFT          (0x11)
-  #define TOUCH_UART_WRITE_THRESHOLD2         (0x12)
-  #define TOUCH_UART_WRITE_HYSTERESIS2        (0x13)
-  #define TOUCH_UART_WRITE_THRESHOLD3         (0x16)
-  #define TOUCH_UART_WRITE_HYSTERESIS3        (0x17)
+  #define TOUCH_UART_WRITE_DRIFT                (0x01)
+  #define TOUCH_UART_WRITE_CANCEL               (0x02)
+  #define TOUCH_UART_WRITE_POSITIVE             (0x03)
+  #define TOUCH_UART_WRITE_NEGATIVE             (0x04)
+  #define TOUCH_UART_WRITE_MOVING_AVG           (0x05)
+  #define TOUCH_UART_WRITE_THRESHOLD            (0x06)
+  #define TOUCH_UART_WRITE_HYSTERESIS           (0x07)
+  #define TOUCH_UART_WRITE_THRESH_SLDR          (0x08)
+  #define TOUCH_UART_WRITE_THRESH_WHEL          (0x09)
+  #define TOUCH_UART_WRITE_CTSUSO               (0x0A)
+  #define TOUCH_UART_WRITE_CTSUSNUM             (0x0B)
+  #define TOUCH_UART_WRITE_CTSUSDPA             (0x0C)
+  #define TOUCH_UART_WRTIE_PAD_THRESHOLD        (0x0D)
+  #define TOUCH_UART_WRTIE_PAD_RX_PIXEL         (0x0E)
+  #define TOUCH_UART_WRTIE_PAD_TX_PIXEL         (0x0F)
+  #define TOUCH_UART_WRTIE_PAD_MAX_TOUCH        (0x10)
+  #define TOUCH_UART_WRTIE_PAD_DRIFT            (0x11)
+  #define TOUCH_UART_WRITE_THRESHOLD2           (0x12)
+  #define TOUCH_UART_WRITE_HYSTERESIS2          (0x13)
+  #define TOUCH_UART_WRITE_THRESHOLD3           (0x16)
+  #define TOUCH_UART_WRITE_HYSTERESIS3          (0x17)
 
 /* Method Number Maximum */
-  #define TOUCH_UART_INSTANCE_MAX             (32)
+  #define TOUCH_UART_INSTANCE_MAX               (32)
 
 /* UART Receive Buffer Size */
-  #define TOUCH_UART_RECIEVE_BUF_SIZE         (13)
+  #define TOUCH_UART_RECEIVE_BUF_SIZE           (13)
 
 /* UART Command version */
-  #define TOUCH_UART_VERSION_MAJOR            ((uint8_t) 0x01U)
-  #define TOUCH_UART_VERSION_MINOR            ((uint8_t) 0x00U)
+  #define TOUCH_UART_VERSION_MAJOR              ((uint8_t) 0x01U)
+  #define TOUCH_UART_VERSION_MINOR              ((uint8_t) 0x00U)
 
  #endif
 
 /* Method Number Maximum */
- #define TOUCH_UART_INSTANCE_MAX              (32)
+ #define TOUCH_UART_INSTANCE_MAX                (32)
 #endif
-#if (TOUCH_CFG_PAD_ENABLE)
- #define TOUCH_MAP_X                          (3)
- #define TOUCH_MAP_Y                          (3)
- #define TOUCH_PAD_TEMP_VALUE_OVERFLOW_BIT    (0x8000)
- #define TOUCH_PAD_MONITOR_TOUCH_NUM_MAX      (10)
-#endif
-
-#if (CTSU_CFG_SUMULTI0 == 0x3F)
-#define TOUCH_CFG_PHASE1_SDPA_VALUE                    (0x1F)
-#endif
-#if (CTSU_CFG_SUMULTI0 == 0x2F)
-#define TOUCH_CFG_PHASE1_SDPA_VALUE                    (0x17)
-#endif
-
-#define TOUCH_RATIO_CALC(a)    ((uint16_t) (a / 100))
 
 #if ((TOUCH_CFG_UART_MONITOR_SUPPORT == 1) || (TOUCH_CFG_UART_TUNING_SUPPORT == 1))
  #if (TOUCH_CFG_UART_MODULE_TYPE == 1)
@@ -215,6 +196,22 @@
   #define R_SCI_Receive     R_RSCI_Receive
  #endif
 #endif
+
+#if (TOUCH_CFG_PAD_ENABLE)
+ #define TOUCH_MAP_X                            (3)
+ #define TOUCH_MAP_Y                            (3)
+ #define TOUCH_PAD_TEMP_VALUE_OVERFLOW_BIT      (0x8000)
+ #define TOUCH_PAD_MONITOR_TOUCH_NUM_MAX        (10)
+#endif
+
+#if (CTSU_CFG_SUMULTI0 == 0x3F)
+ #define TOUCH_CFG_PHASE1_SDPA_VALUE            (0x1F)
+#endif
+#if (CTSU_CFG_SUMULTI0 == 0x2F)
+ #define TOUCH_CFG_PHASE1_SDPA_VALUE            (0x17)
+#endif
+
+#define TOUCH_RATIO_CALC(a)    ((uint16_t) (a / 100))
 
 #if (TOUCH_CFG_UART_TUNING_SUPPORT == 1)
  #define TOUCH_TUNING_CH_REG_MAX_NUM                   (32)
@@ -280,9 +277,9 @@
  #define TOUCH_TUNING_VARIABLE_MUTUAL_TARGET_VALUE     (0x18)
  #if (BSP_FEATURE_CTSU_VERSION == 2)
   #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
- #define TOUCH_TUNING_VARIABLE_QE_TSOD                 (0x19)
- #define TOUCH_TUNING_VARIABLE_QE_MEC_TS               (0x1A)
- #define TOUCH_TUNING_VARIABLE_QE_MEC_SHIELD_TS        (0x1B)
+   #define TOUCH_TUNING_VARIABLE_QE_TSOD               (0x19)
+   #define TOUCH_TUNING_VARIABLE_QE_MEC_TS             (0x1A)
+   #define TOUCH_TUNING_VARIABLE_QE_MEC_SHIELD_TS      (0x1B)
   #endif
  #endif
 #endif
@@ -306,10 +303,11 @@
  #endif
 
  #define TOUCH_TUNING_COMMAND_BUF_NUM     (0x2)
- #define TOUCH_TUNING_RECIEVE_BUF_SIZE    (0xF)
+ #define TOUCH_TUNING_RECEIVE_BUF_SIZE    (0xF)
  #define TOUCH_TUNING_ICOG_100            (0)                     // ICOG = 100%
  #define TOUCH_TUNING_ICOG_66             (1)                     // ICOG = 66%
  #define TOUCH_TUNING_RICOA_RECOMMEND     (0xFF)                  // ICO input current
+
  #if (CTSU_CFG_MCU_PROCESS_MF3 == 1)
   #define TOUCH_TUNING_ICOG_RECOMMEND     (TOUCH_TUNING_ICOG_66)  // Recommended setting value
  #endif
@@ -320,8 +318,8 @@
 #endif
 
 #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
- #define TOUCH_MUTUAL_SECONDARY_MAX     (45000)             // Mutual Secondary count MAX
- #define TOUCH_MUTUAL_INT16_MAX         (32767)             // int16 Max Value
+ #define TOUCH_MUTUAL_SECONDARY_MAX    (45000) // Mutual Secondary count MAX
+ #define TOUCH_MUTUAL_INT16_MAX        (32767) // int16 Max Value
 #endif
 
 /***********************************************************************************************************************
@@ -422,6 +420,7 @@ static uint16_t        g_touch_button_off_count[TOUCH_CFG_NUM_BUTTONS * CTSU_MAJ
 static uint32_t        g_touch_button_drift_buf[TOUCH_CFG_NUM_BUTTONS * CTSU_MAJORITY_MODE_ELEMENTS];
 static uint16_t        g_touch_button_drift_count[TOUCH_CFG_NUM_BUTTONS * CTSU_MAJORITY_MODE_ELEMENTS];
 static touch_mm_info_t g_button_mm_info[TOUCH_CFG_NUM_BUTTONS];
+
 #endif
 #if (TOUCH_CFG_NUM_SLIDERS != 0)
 static uint8_t  g_touch_slider_index = 0;
@@ -490,9 +489,9 @@ static uint16_t              g_touch_tuning_self_target_value;
 static uint16_t              g_touch_tuning_mutual_target_value;
  #if (BSP_FEATURE_CTSU_VERSION == 2)
   #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
-static volatile uint8_t      g_touch_tuning_qe_tsod;
-static volatile uint8_t      g_touch_tuning_qe_mec_ts;
-static volatile uint8_t      g_touch_tuning_qe_mec_shield_ts;
+static volatile uint8_t g_touch_tuning_qe_tsod;
+static volatile uint8_t g_touch_tuning_qe_mec_ts;
+static volatile uint8_t g_touch_tuning_qe_mec_shield_ts;
   #endif
  #endif
 
@@ -520,15 +519,15 @@ static uint8_t g_touch_tuning_tx_buf[TOUCH_TUNING_TRANSMIT_BUF_SIZE];
 volatile uint8_t g_touch_uart_transmit_flag;
 volatile uint8_t g_touch_uart_command_top;
 
-static uint8_t           g_touch_uart_rx_buf[TOUCH_TUNING_RECIEVE_BUF_SIZE];
+static uint8_t           g_touch_uart_rx_buf[TOUCH_TUNING_RECEIVE_BUF_SIZE];
 
-    /* UART receive interrupt count number */
-    volatile uint8_t   g_receive_intterupt_count = 0;
-    static   sci_cfg_t g_touch_uart_config;
-    static   sci_hdl_t g_touch_uart_control;
+/* UART receive interrupt count number */
+volatile uint8_t   g_receive_intterupt_count = 0;
+static   sci_cfg_t g_touch_uart_config;
+static   sci_hdl_t g_touch_uart_control;
 
-    /* Reconnection due to UART baud rate difference. */
-    static   uint8_t   g_touch_uart_baudrate_err_flag = 0;
+/* Reconnection due to UART baud rate difference. */
+static   uint8_t   g_touch_uart_baudrate_err_flag = 0;
 #endif
 
 /***********************************************************************************************************************
@@ -700,8 +699,8 @@ fsp_err_t RM_TOUCH_Open (touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
 
         for (id = 0; id < p_cfg->num_wheels; id++)
         {
-            if ((TOUCH_WHEEL_ELEMENTS_LARGE != p_cfg->p_wheels[id].num_elements) &&
-                (TOUCH_WHEEL_ELEMENTS_SMALL != p_cfg->p_wheels[id].num_elements))
+            if ((TOUCH_WHEEL_ELEMENTS_MIN > p_cfg->p_wheels[id].num_elements) ||
+                (TOUCH_WHEEL_ELEMENTS_MAX < p_cfg->p_wheels[id].num_elements))
             {
                 err = FSP_ERR_INVALID_ARGUMENT;
             }
@@ -831,6 +830,9 @@ fsp_err_t RM_TOUCH_Open (touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
         (uint16_t) (g_touch_monitor_size[num] + TOUCH_MONITOR_HEADER_SIZE + TOUCH_MONITOR_FOOTER_SIZE);
 
  #if (TOUCH_CFG_UART_MONITOR_SUPPORT == 1)
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+    ctsu_instance_ctrl_t * p_ctsu_instance_ctrl = (ctsu_instance_ctrl_t *) p_instance_ctrl->p_ctsu_instance->p_ctrl;
+  #endif
     if (0 == g_touch_uart_open_bitmap)
     {
         g_touch_uart_config.async.baud_rate    = TOUCH_CFG_UART_BAUDRATE;
@@ -843,7 +845,12 @@ fsp_err_t RM_TOUCH_Open (touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
 
         R_SCI_Open(TOUCH_CFG_UART_NUMBER, SCI_MODE_ASYNC, &g_touch_uart_config, touch_uart_callback, &g_touch_uart_control);
 
-        R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,TOUCH_UART_RECIEVE_BUF_SIZE);
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,CTSU_DIAG_DEBUG_REQUEST_SIZE);
+        p_ctsu_instance_ctrl->p_diag_info->debug_state = CTSU_DIAG_DEBUG_INIT;
+  #else
+        R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,TOUCH_UART_RECEIVE_BUF_SIZE);
+  #endif
 
         g_touch_uart_monitor_num = TOUCH_UART_MONITOR_NONE;
     }
@@ -861,6 +868,12 @@ fsp_err_t RM_TOUCH_Open (touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
 
     /* Mark driver as open */
     p_instance_ctrl->open = TOUCH_OPEN;
+
+#if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+    while (CTSU_DIAG_DEBUG_PROGRESS != p_ctsu_instance_ctrl->p_diag_info->debug_state)
+    {
+    }
+#endif
 
     return err;
 }
@@ -901,13 +914,18 @@ fsp_err_t RM_TOUCH_ScanStart (touch_ctrl_t * const p_ctrl)
  * Also, this function gets the current position of where slider or wheel is being pressed.
  * If initial offset tuning is enabled, The first several calls are used to tuning for the sensors.
  * Implements @ref touch_api_t::dataGet.
+ * @note
+ * - The value of 'Secondary - Primary' is modified from uint16_t to int16_t.
+ * When the value of 'Secondary - Primary' is larger than 32767 and less than -32767, this API return FSP_ERR_INVALID_DATA.
+ * - An upper limit is set for the value of Secondary.
+ * When the value of Secondary is larger than 45000, this API return FSP_ERR_INVALID_HW_CONDITION.
  *
  * @retval FSP_SUCCESS              Successfully data decoded.
  * @retval FSP_ERR_ASSERTION        Null pointer passed as a parameter.
  * @retval FSP_ERR_NOT_OPEN         Module is not open.
+ * @retval FSP_ERR_INVALID_HW_CONDITION        Values scanned by CTSU show abnormal values
  * @retval FSP_ERR_CTSU_SCANNING    Scanning this instance.
  * @retval FSP_ERR_CTSU_INCOMPLETE_TUNING      Incomplete initial offset tuning.
- * @retval FSP_ERR_INVALID_HW_CONDITION        Values scanned by CTSU show abnormal values
  **********************************************************************************************************************/
 fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
                             uint64_t           * p_button_status,
@@ -920,6 +938,7 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
 #if ((TOUCH_CFG_NUM_SLIDERS != 0) || (TOUCH_CFG_NUM_WHEELS != 0))
     uint16_t sensor_val = 0;
 #endif
+
 #if (TOUCH_CFG_NUM_SLIDERS != 0)
     const touch_slider_cfg_t * p_slider;
     uint8_t  slider_id;
@@ -928,7 +947,7 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
 #if (TOUCH_CFG_NUM_WHEELS != 0)
     const touch_wheel_cfg_t * p_wheel;
     uint8_t  wheel_id;
-    uint16_t wheel_data[TOUCH_WHEEL_ELEMENTS_LARGE];
+    uint16_t wheel_data[TOUCH_WHEEL_ELEMENTS_MAX];
 #endif
 #if ((TOUCH_CFG_NUM_SLIDERS != 0) || (TOUCH_CFG_NUM_WHEELS != 0))
     uint8_t element_id;
@@ -976,6 +995,26 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
     touch_tuning_baudrate_err_reconnect ();
 #endif
 
+#if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+    ctsu_instance_ctrl_t * p_ctsu_instance_ctrl = (ctsu_instance_ctrl_t *) p_instance_ctrl->p_ctsu_instance->p_ctrl;
+    if (CTSU_DIAG_DEBUG_COMPLETE == p_ctsu_instance_ctrl->p_diag_info->debug_state)
+    {
+        p_ctsu_instance_ctrl->p_diag_info->debug_state = CTSU_DIAG_DEBUG_SENDING;
+        g_touch_uart_transmit_flag = 1;
+        R_SCI_Send(g_touch_uart_control,
+                   (uint8_t *)p_ctsu_instance_ctrl->p_diag_info->debug_buffer,
+                   CTSU_DIAG_DEBUG_BUFFER_SIZE);
+
+        while (CTSU_DIAG_DEBUG_PROGRESS != p_ctsu_instance_ctrl->p_diag_info->debug_state)
+        {
+        }
+        R_SCI_Receive(g_touch_uart_control,
+                      &g_touch_uart_rx_buf[0] ,
+                      TOUCH_TUNING_COMMAND_BUF_NUM);
+        p_ctsu_instance_ctrl->p_diag_info->debug_id++;
+    }
+#endif
+
     /* get results from previous scan */
     err = p_instance_ctrl->p_ctsu_instance->p_api->dataGet(p_instance_ctrl->p_ctsu_instance->p_ctrl, g_data);
     FSP_ERROR_RETURN(FSP_ERR_CTSU_SCANNING != err, FSP_ERR_CTSU_SCANNING);
@@ -1003,7 +1042,6 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
         }
 
         touch_slider_decode(&p_instance_ctrl->sinfo, slider_data, p_slider->num_elements, slider_id);
-
         if (p_slider_position != NULL)
         {
             *p_slider_position = *(p_instance_ctrl->sinfo.p_position + slider_id);
@@ -1026,7 +1064,6 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
         }
 
         touch_wheel_decode(&p_instance_ctrl->winfo, wheel_data, p_wheel->num_elements, wheel_id);
-
         if (p_wheel_position != NULL)
         {
             *p_wheel_position = *(p_instance_ctrl->winfo.p_position + wheel_id);
@@ -1247,7 +1284,6 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
         g_touch_monitor_buf[3]       = (uint8_t) (index >> 8);
         g_touch_uart_transmit_flag   = 1;
         R_SCI_Send(g_touch_uart_control, &g_touch_monitor_buf[0] ,index);
-
     }
  #endif
 #endif
@@ -1258,12 +1294,17 @@ fsp_err_t RM_TOUCH_DataGet (touch_ctrl_t * const p_ctrl,
 /*******************************************************************************************************************//**
  * @brief This function gets the current position of pad is being pressed.
  * Implements @ref touch_api_t::padDataGet , g_touch_on_ctsu
+ * @note
+ * - The value of 'Secondary - Primary' is modified from uint16_t to int16_t.
+ * When the value of 'Secondary - Primary' is larger than 32767 and less than -32767, this API return FSP_ERR_INVALID_DATA.
+ * - An upper limit is set for the value of Secondary.
+ * When the value of Secondary is larger than 45000, this API return FSP_ERR_INVALID_HW_CONDITION.
  *
- * @retval FSP_SUCCESS                  Successfully data decoded.
- * @retval FSP_ERR_ASSERTION            Null pointer.
- * @retval FSP_ERR_NOT_OPEN             Module is not open.
- * @retval FSP_ERR_CTSU_SCANNING        Scanning this instance.
- * @retval FSP_ERR_INVALID_HW_CONDITION Values scanned by CTSU show abnormal values
+ * @retval FSP_SUCCESS              Successfully data decoded.
+ * @retval FSP_ERR_ASSERTION        Null pointer.
+ * @retval FSP_ERR_NOT_OPEN         Module is not open.
+ * @retval FSP_ERR_INVALID_HW_CONDITION Values scanned by CTSU show abnormal values.
+ * @retval FSP_ERR_CTSU_SCANNING    Scanning this instance.
  **********************************************************************************************************************/
 fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
                                uint16_t           * p_pad_rx_coordinate,
@@ -1287,9 +1328,9 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
  #if (TOUCH_CFG_MONITOR_ENABLE)
     uint16_t index = 0;
  #endif
-    int32_t  primary;
-    int32_t  secondary;
-    int32_t  mutual_diff;
+    int32_t primary;
+    int32_t secondary;
+    int32_t mutual_diff;
 
  #if (TOUCH_CFG_PARAM_CHECKING_ENABLE == 1)
     FSP_ASSERT(p_instance_ctrl);
@@ -1312,7 +1353,8 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
     element_num = (uint16_t) (num_x * num_y);
 
     /* Data get */
-    err = p_instance_ctrl->p_ctsu_instance->p_api->dataGet(p_instance_ctrl->p_ctsu_instance->p_ctrl, (uint16_t *)g_touch_pad_buf);
+    err = p_instance_ctrl->p_ctsu_instance->p_api->dataGet(p_instance_ctrl->p_ctsu_instance->p_ctrl,
+                                                           (uint16_t *) g_touch_pad_buf);
     FSP_ERROR_RETURN(FSP_ERR_CTSU_SCANNING != err, FSP_ERR_CTSU_SCANNING);
 
     /* check for max touch */
@@ -1328,8 +1370,8 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
     /* make difference value = secondary - primary */
     for (i = 0; i < element_num; i++)
     {
-        primary   = g_touch_pad_buf[i * 2];
-        secondary = g_touch_pad_buf[(i * 2) + 1];
+        primary     = g_touch_pad_buf[i * 2];
+        secondary   = g_touch_pad_buf[(i * 2) + 1];
         mutual_diff = secondary - primary;
         FSP_ERROR_RETURN(secondary < TOUCH_MUTUAL_SECONDARY_MAX, FSP_ERR_INVALID_HW_CONDITION);
         FSP_ERROR_RETURN(mutual_diff < TOUCH_MUTUAL_INT16_MAX, FSP_ERR_INVALID_HW_CONDITION);
@@ -1348,8 +1390,13 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
             for (i = 0; i < num_y; i++)
             {
                 *(p_instance_ctrl->pinfo.p_base_buf + j + (i * num_x)) = (uint16_t)
-                    (g_touch_pad_buf[*(p_instance_ctrl->p_touch_cfg->p_pad->p_elem_index_rx + j) +
-                                     (*(p_instance_ctrl->p_touch_cfg->p_pad->p_elem_index_tx + i) * num_x)]);
+                                                                         (g_touch_pad_buf[*(p_instance_ctrl->p_touch_cfg
+                                                                                            ->p_pad->p_elem_index_rx +
+                                                                                            j) +
+                                                                                          (*(p_instance_ctrl->
+                                                                                             p_touch_cfg->p_pad->
+                                                                                             p_elem_index_tx + i) *
+                                                                                           num_x)]);
             }
         }
 
@@ -1367,7 +1414,7 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
                                             (*(p_instance_ctrl->p_touch_cfg->p_pad->p_elem_index_tx + i) * num_x)];
 
                 /* make difference from base value */
-                tmp_diff = (int32_t)(*(p_instance_ctrl->pinfo.p_base_buf + j + (i * num_x)));
+                tmp_diff = (int32_t) (*(p_instance_ctrl->pinfo.p_base_buf + j + (i * num_x)));
                 tmp_diff = tmp_diff - tmp_value;
 
                 /* save difference value to buffer in the second half */
@@ -1404,9 +1451,9 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
                         /* It is an addition for the drift correction average calculation */
                         tmp_count = g_touch_pad_buf[element_num + j + (i * num_x)];
 
-                        drift_diff  = (int32_t)(*(p_instance_ctrl->pinfo.p_drift_buf + (j + (i * num_x))));
+                        drift_diff  = *(p_instance_ctrl->pinfo.p_drift_buf + (j + (i * num_x)));
                         drift_diff += (int32_t) tmp_count;
-                        *(p_instance_ctrl->pinfo.p_drift_buf + (j + (i * num_x))) = (uint32_t)drift_diff;
+                        *(p_instance_ctrl->pinfo.p_drift_buf + (j + (i * num_x))) = drift_diff;
 
                         if (*(p_instance_ctrl->pinfo.p_drift_count) >= p_instance_ctrl->pinfo.num_drift)
                         {
@@ -1488,6 +1535,7 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
             {
                 tmp_value = 0;
             }
+
             g_touch_monitor_buf[index++] = (uint8_t) (tmp_value);
             g_touch_monitor_buf[index++] = (uint8_t) (tmp_value >> 8);
         }
@@ -1533,9 +1581,7 @@ fsp_err_t RM_TOUCH_PadDataGet (touch_ctrl_t * const p_ctrl,
         g_touch_monitor_buf[2]       = (uint8_t) (index);
         g_touch_monitor_buf[3]       = (uint8_t) (index >> 8);
         g_touch_uart_transmit_flag   = 1;
-        gp_touch_uart_instance->p_api->write(gp_touch_uart_instance->p_ctrl,
-                                             (uint8_t *) g_touch_monitor_buf,
-                                             index);
+        gp_touch_uart_instance->p_api->write(gp_touch_uart_instance->p_ctrl, (uint8_t *) g_touch_monitor_buf, index);
     }
   #endif
  #endif                                /* TOUCH_CFG_MONITOR_ENABLE */
@@ -1690,6 +1736,7 @@ fsp_err_t RM_TOUCH_SensitivityRatioGet (touch_ctrl_t * const       p_ctrl,
     int16_t                 elem_num;
     uint16_t                data[CTSU_CFG_NUM_SELF_ELEMENTS + (CTSU_CFG_NUM_MUTUAL_ELEMENTS * 2) *
                                  CTSU_MAJORITY_MODE_ELEMENTS];
+
     uint8_t button_id;
     uint8_t i;
 #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
@@ -1859,38 +1906,41 @@ fsp_err_t RM_TOUCH_DriftControl (touch_ctrl_t * const p_ctrl, uint16_t input_dri
 }
 
 /*******************************************************************************************************************//**
- * @brief This function get the variable address of QE Monitor. 
+ * @brief This function get the variable address of QE Monitor.
  * This function is used for QE Monitor when both automatic judgement and software judgement are operated.
  * Implements @ref touch_api_t::monitorAddressGet
  *
  * @retval FSP_SUCCESS              Successfully QE monitor variable address was got.
  * @retval FSP_ERR_ASSERTION        Null pointer passed as a parameter.
- * @retval FSP_ERR_NOT_OPEN         Module is not open.
- * @retval FSP_ERR_NOT_ENABLED      Requested operation is not enabled
+ * @retval FSP_ERR_NOT_OPEN         Module is not opened.
+ * @retval FSP_ERR_NOT_ENABLED      Requested operation is not enabled.
  **********************************************************************************************************************/
 fsp_err_t RM_TOUCH_MonitorAddressGet (touch_ctrl_t * const p_ctrl,
-                                        uint8_t ** pp_monitor_buf,
-                                        uint8_t ** pp_monitor_id,
-                                        uint16_t ** pp_monitor_size)
+                                      uint8_t           ** pp_monitor_buf,
+                                      uint8_t           ** pp_monitor_id,
+                                      uint16_t          ** pp_monitor_size)
 {
 #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
  #if TOUCH_CFG_MONITOR_ENABLE
-    touch_instance_ctrl_t * p_instance_ctrl = (touch_instance_ctrl_t *) p_ctrl;
-
   #if (TOUCH_CFG_PARAM_CHECKING_ENABLE == 1)
+    touch_instance_ctrl_t * p_instance_ctrl = (touch_instance_ctrl_t *) p_ctrl;
     FSP_ASSERT(p_instance_ctrl);
     TOUCH_ERROR_RETURN(TOUCH_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
+  #else
+    FSP_PARAMETER_NOT_USED(p_ctrl);
   #endif
 
-    * pp_monitor_buf  = (uint8_t *)g_touch_monitor_buf;
-    * pp_monitor_id   = &g_touch_monitor_id;
-    * pp_monitor_size = g_touch_monitor_size;
+    *pp_monitor_buf  = (uint8_t *) g_touch_monitor_buf;
+    *pp_monitor_id   = &g_touch_monitor_id;
+    *pp_monitor_size = g_touch_monitor_size;
+
     return FSP_SUCCESS;
  #else
     FSP_PARAMETER_NOT_USED(pp_monitor_buf);
     FSP_PARAMETER_NOT_USED(pp_monitor_id);
     FSP_PARAMETER_NOT_USED(pp_monitor_size);
     FSP_PARAMETER_NOT_USED(p_ctrl);
+
     return FSP_ERR_NOT_ENABLED;
  #endif
 #else
@@ -1898,6 +1948,7 @@ fsp_err_t RM_TOUCH_MonitorAddressGet (touch_ctrl_t * const p_ctrl,
     FSP_PARAMETER_NOT_USED(pp_monitor_id);
     FSP_PARAMETER_NOT_USED(pp_monitor_size);
     FSP_PARAMETER_NOT_USED(p_ctrl);
+
     return FSP_ERR_NOT_ENABLED;
 #endif
 }
@@ -2024,7 +2075,7 @@ static fsp_err_t touch_button_process (touch_instance_ctrl_t * p_instance_ctrl, 
  * Description  : Self Touch Button decoding
  * Arguments    : touch_button_info_t  p_binfo : Pointer to Button Information structure
  *              : uint16_t value               : Sensor value from CTSU
- *              : touch_mm_info_t  p_button_mm_info  : Button infomation structure
+ *              : touch_mm_info_t  p_button_mm_info  : Button information structure
  * Return Value : None
  ***********************************************************************************************************************/
 void touch_button_self_decode (touch_button_info_t * p_binfo, uint16_t value, touch_mm_info_t * p_button_mm_info)
@@ -2174,7 +2225,7 @@ void touch_button_self_decode (touch_button_info_t * p_binfo, uint16_t value, to
  * Description  : Mutual Touch Button decoding
  * Arguments    : touch_button_info_t  p_binfo : Pointer to Button Information structure
  *              : int16_t value                : Sensor value from CTSU
- *              : touch_mm_info_t  p_button_mm_info  : Button infomation structure
+ *              : touch_mm_info_t  p_button_mm_info  : Button information structure
  * Return Value : None
  ***********************************************************************************************************************/
 void touch_button_mutual_decode (touch_button_info_t * p_binfo, int16_t value, touch_mm_info_t * p_button_mm_info)
@@ -2332,7 +2383,7 @@ void touch_button_mutual_decode (touch_button_info_t * p_binfo, int16_t value, t
  * Description  : Touch Button drift process
  * Arguments    : touch_button_info_t  p_binfo : Pointer to Button Information structure
  *              : uint16_t value               : Sensor value from CTSU
- *              : touch_mm_info_t  button_mm_info  : Button frq infomation structure
+ *              : touch_mm_info_t  button_mm_info  : Button frq information structure
  * Return Value : None
  ***********************************************************************************************************************/
 void touch_button_drift (touch_button_info_t * p_binfo, uint16_t value, touch_mm_info_t button_mm_info)
@@ -2480,7 +2531,8 @@ void touch_slider_decode (touch_slider_info_t * p_sinfo, uint16_t * slider_data,
     uint16_t resol_plus;
     uint16_t dsum;
 
-    if (num_elements < 3)
+    /* This is a workaround for the build warning. Already checked in RM_TOUCH_Open(). */
+    if (num_elements < TOUCH_SLIDER_ELEMENTS_MIN)
     {
         return;
     }
@@ -2527,7 +2579,9 @@ void touch_slider_decode (touch_slider_info_t * p_sinfo, uint16_t * slider_data,
         }
 
         /* x : y = d1 : d2 */
-        d3 = (uint16_t) (TOUCH_DECIMAL_POINT_PRECISION + ((d2 * TOUCH_DECIMAL_POINT_PRECISION) / d1));
+        d3 =
+            (uint16_t) (TOUCH_DECIMAL_POINT_PRECISION +
+                        (uint32_t) ((uint32_t) (d2 * TOUCH_DECIMAL_POINT_PRECISION) / d1));
 
         slider_rpos = (uint16_t) (((TOUCH_DECIMAL_POINT_PRECISION * TOUCH_SLIDER_RESOLUTION) / d3) +
                                   (TOUCH_SLIDER_RESOLUTION * max_data_num));
@@ -2559,13 +2613,10 @@ void touch_slider_decode (touch_slider_info_t * p_sinfo, uint16_t * slider_data,
             else
             {
                 slider_rpos = (uint16_t) (slider_rpos - (TOUCH_SLIDER_RESOLUTION / 2));
+                slider_rpos = (uint16_t) ((slider_rpos * 2) / num_elements);
                 if (0 == slider_rpos)
                 {
                     slider_rpos = 1;
-                }
-                else
-                {
-                    slider_rpos = (uint16_t) ((slider_rpos * 2) / num_elements);
                 }
             }
         }
@@ -2606,7 +2657,8 @@ void touch_wheel_decode (touch_wheel_info_t * p_winfo, uint16_t * wheel_data, ui
     uint16_t dsum;
     uint16_t unit;
 
-    if (num_elements < 3)
+    /* This is a workaround for the build warning. Already checked in RM_TOUCH_Open(). */
+    if (num_elements < TOUCH_WHEEL_ELEMENTS_MIN)
     {
         return;
     }
@@ -2651,7 +2703,9 @@ void touch_wheel_decode (touch_wheel_info_t * p_winfo, uint16_t * wheel_data, ui
     /* Constant decision for operation of angle of wheel    */
     if (dsum > *(p_winfo->p_threshold + wheel_id))
     {
-        d3 = (uint16_t) (TOUCH_DECIMAL_POINT_PRECISION + ((d2 * TOUCH_DECIMAL_POINT_PRECISION) / d1));
+        d3 =
+            (uint16_t) (TOUCH_DECIMAL_POINT_PRECISION +
+                        (uint32_t) ((uint32_t) (d2 * TOUCH_DECIMAL_POINT_PRECISION) / d1));
 
         unit       = (uint16_t) (TOUCH_WHEEL_RESOLUTION / num_elements);
         wheel_rpos = (uint16_t) (((unit * TOUCH_DECIMAL_POINT_PRECISION) / d3) + (unit * max_data_num));
@@ -2662,7 +2716,7 @@ void touch_wheel_decode (touch_wheel_info_t * p_winfo, uint16_t * wheel_data, ui
         {
             wheel_rpos = TOUCH_WHEEL_RESOLUTION;
         }
-        else if ((TOUCH_WHEEL_RESOLUTION + 1) < wheel_rpos)
+        else if (TOUCH_WHEEL_RESOLUTION < wheel_rpos)
         {
             wheel_rpos = 1;
         }
@@ -2996,20 +3050,22 @@ void touch_uart_callback (void *pargs)
  #if (TOUCH_CFG_UART_TUNING_SUPPORT == 1)
     touch_instance_ctrl_t * p_instance_ctrl = gp_touch_isr_context;
     uint16_t                element_id;
-    uint8_t               * port_adress_8;
-    uint16_t              * port_adress_16;
-    uint32_t              * port_adress_32;
+    uint8_t               * port_address_8;
+    uint16_t              * port_address_16;
+    uint32_t              * port_address_32;
     uint8_t                 write_byte;
  #endif
 
     args = (sci_cb_args_t *)pargs;
 
+#if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 0)
     if (args->event == SCI_EVT_TEI)
     {
         g_touch_uart_transmit_flag = 0;
 
         return;
     }
+#endif
 
     if (args->event == SCI_EVT_RX_CHAR)
     {
@@ -3021,7 +3077,7 @@ void touch_uart_callback (void *pargs)
     if ((args->event == SCI_EVT_RX_CHAR) && (TOUCH_TUNING_COMMAND_BUF_NUM ==  g_receive_intterupt_count))
     {
         /* Restart reception */
-        R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,TOUCH_TUNING_COMMAND_BUF_NUM);
+        R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0], TOUCH_TUNING_COMMAND_BUF_NUM);
 
         g_touch_uart_command_top = g_touch_uart_rx_buf[1] >> 4;
 
@@ -3038,15 +3094,55 @@ void touch_uart_callback (void *pargs)
 
 #endif
 
+
+#if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+    p_ctsu_ctrl = (ctsu_instance_ctrl_t *) gp_touch_ctrl_list[0]->p_ctsu_instance->p_ctrl;
+    args = (sci_cb_args_t *)pargs;
+
+    if (args->event == SCI_EVT_TEI)
+    {
+        p_ctsu_ctrl->p_diag_info->debug_state  = CTSU_DIAG_DEBUG_PROGRESS;
+        return;
+    }
+
+    p_ctsu_ctrl = (ctsu_instance_ctrl_t *) gp_touch_ctrl_list[0]->p_ctsu_instance->p_ctrl;
+
+    if ((args->event == SCI_EVT_RX_CHAR) && (CTSU_DIAG_DEBUG_REQUEST_SIZE ==  g_receive_intterupt_count))
+    {
+        R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[2] ,CTSU_DIAG_REMAINING_DATA_BYTES);
+
+        if ((TOUCH_UART_HEADER == g_touch_uart_rx_buf[CTSU_DIAG_DEBUG_HEADER_INDEX]) &&
+            (TOUCH_UART_FOOTER == g_touch_uart_rx_buf[CTSU_DIAG_DEBUG_REQUEST_FOOTER_INDEX]))
+        {
+            /* Received start command */
+            if (CTSU_DIAG_DEBUG_COMMAND_START == g_touch_uart_rx_buf[CTSU_DIAG_DEBUG_COMMAND_INDEX])
+            {
+                p_ctsu_ctrl->p_diag_info->debug_state  = CTSU_DIAG_DEBUG_PROGRESS;
+                g_receive_intterupt_count = 0;
+            }
+            /* Received stop command */
+            else if (CTSU_DIAG_DEBUG_COMMAND_STOP == g_touch_uart_rx_buf[CTSU_DIAG_DEBUG_COMMAND_INDEX])
+            {
+                /* change the state right after API call so that no other SCI API is called in main function */
+                p_ctsu_ctrl->p_diag_info->debug_state = CTSU_DIAG_DEBUG_INIT;
+                g_receive_intterupt_count = 0;
+                R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,CTSU_DIAG_DEBUG_REQUEST_SIZE);
+            }
+        }
+    }
+
+    return;
+#endif
+
 #if (TOUCH_CFG_MONITOR_ENABLE &&(TOUCH_CFG_UART_MONITOR_SUPPORT == 1))
     if ((g_touch_uart_command_top == TOUCH_UART_COMMAND_TOP_NUM) &&
             (args->event == SCI_EVT_RX_CHAR) &&
-            (TOUCH_UART_RECIEVE_BUF_SIZE ==  g_receive_intterupt_count))
+            (TOUCH_UART_RECEIVE_BUF_SIZE ==  g_receive_intterupt_count))
     {
         /* Restart reception */
         R_SCI_Receive(g_touch_uart_control,
                 &g_touch_uart_rx_buf[TOUCH_TUNING_COMMAND_BUF_NUM] ,
-                (TOUCH_UART_RECIEVE_BUF_SIZE - TOUCH_TUNING_COMMAND_BUF_NUM));
+                (TOUCH_UART_RECEIVE_BUF_SIZE - TOUCH_TUNING_COMMAND_BUF_NUM));
         g_receive_intterupt_count = 0;
 
         if (1 == g_touch_uart_transmit_flag)
@@ -3135,7 +3231,6 @@ void touch_uart_callback (void *pargs)
                     ctsuso2 = (uint16_t) (*p_ctsuso2 & TOUCH_UART_CTSUSO_MASK);
                     ctsuso3 = (uint16_t) (*p_ctsuso3 & TOUCH_UART_CTSUSO_MASK);
                 }
-
   #endif
                 ctsusnum = (uint8_t) ((*p_ctsusnum >> TOUCH_UART_CTSUSNUM_SHIFT) & TOUCH_UART_CTSUSNUM_MASK);
                 ctsusdpa = (uint8_t) ((*p_ctsusdpa >> TOUCH_UART_CTSUSDPA_SHIFT) & TOUCH_UART_CTSUSDPA_MASK);
@@ -3165,7 +3260,7 @@ void touch_uart_callback (void *pargs)
                     /* CTSUSO (element freq1) */
                     g_touch_monitor_buf[index++] = (uint8_t) (ctsuso);
                     g_touch_monitor_buf[index++] = (uint8_t) (ctsuso >> 8);
-#if (BSP_FEATURE_CTSU_VERSION == 2)
+  #if (BSP_FEATURE_CTSU_VERSION == 2)
                     if (g_touch_uart_rx_buf[1] == TOUCH_UART_COMMAND_THREE_FREQ_READ)
                     {
                         /* CTSUSO (element freq2) */
@@ -3176,7 +3271,6 @@ void touch_uart_callback (void *pargs)
                         g_touch_monitor_buf[index++] = (uint8_t) (ctsuso3);
                         g_touch_monitor_buf[index++] = (uint8_t) (ctsuso3 >> 8);
                     }
-
   #endif
 
                     /* CTSUSNUM (element) */
@@ -3262,7 +3356,8 @@ void touch_uart_callback (void *pargs)
                         case TOUCH_UART_WRITE_CTSUSNUM:
                         {
   #if (BSP_FEATURE_CTSU_VERSION == 2)
-                            *p_ctsusnum &= (~((uint32_t) TOUCH_UART_CTSUSNUM_MASK << TOUCH_UART_CTSUSNUM_SHIFT));
+                            *p_ctsusnum &=
+                                (~((uint32_t) TOUCH_UART_CTSUSNUM_MASK << TOUCH_UART_CTSUSNUM_SHIFT));
                             *p_ctsusnum |= ((uint32_t) write_data << TOUCH_UART_CTSUSNUM_SHIFT);
   #endif
   #if (BSP_FEATURE_CTSU_VERSION == 1)
@@ -3275,7 +3370,8 @@ void touch_uart_callback (void *pargs)
                         case TOUCH_UART_WRITE_CTSUSDPA:
                         {
   #if (BSP_FEATURE_CTSU_VERSION == 2)
-                            *p_ctsusdpa &= (~((uint32_t) TOUCH_UART_CTSUSDPA_MASK << TOUCH_UART_CTSUSDPA_SHIFT));
+                            *p_ctsusdpa &=
+                                (~((uint32_t) TOUCH_UART_CTSUSDPA_MASK << TOUCH_UART_CTSUSDPA_SHIFT));
                             *p_ctsusdpa |= ((uint32_t) write_data << TOUCH_UART_CTSUSDPA_SHIFT);
   #endif
   #if (BSP_FEATURE_CTSU_VERSION == 1)
@@ -3376,6 +3472,7 @@ void touch_uart_callback (void *pargs)
         /* Start transmission */
         g_touch_uart_transmit_flag = 1;
         R_SCI_Send(g_touch_uart_control, &g_touch_monitor_buf[0] ,index);
+
         return;
     }
  #endif
@@ -3383,12 +3480,12 @@ void touch_uart_callback (void *pargs)
 #if (TOUCH_CFG_UART_TUNING_SUPPORT == 1)
     if ((g_touch_uart_command_top == TOUCH_TUNING_COMMAND_TOP_NUM) &&
             (args->event == SCI_EVT_RX_CHAR) &&
-            (TOUCH_TUNING_RECIEVE_BUF_SIZE ==  g_receive_intterupt_count))
+            (TOUCH_TUNING_RECEIVE_BUF_SIZE ==  g_receive_intterupt_count))
     {
         /* Restart reception */
         R_SCI_Receive(g_touch_uart_control,
                 &g_touch_uart_rx_buf[TOUCH_TUNING_COMMAND_BUF_NUM] ,
-                (TOUCH_TUNING_RECIEVE_BUF_SIZE - TOUCH_TUNING_COMMAND_BUF_NUM));
+                (TOUCH_TUNING_RECEIVE_BUF_SIZE - TOUCH_TUNING_COMMAND_BUF_NUM));
         g_receive_intterupt_count = 0;
 
         if (1 == g_touch_uart_transmit_flag)
@@ -3632,27 +3729,28 @@ void touch_uart_callback (void *pargs)
                     touch_tuning_get16(&g_touch_tuning_mutual_target_value, 7);
                     break;
                 }
-   #if (BSP_FEATURE_CTSU_VERSION == 2)
-    #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
+
+  #if (BSP_FEATURE_CTSU_VERSION == 2)
+   #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
                 case TOUCH_TUNING_VARIABLE_QE_TSOD:
                 {
-                    touch_tuning_get8((uint8_t *)&g_touch_tuning_qe_tsod, 7);
+                    touch_tuning_get8((uint8_t *) &g_touch_tuning_qe_tsod, 7);
                     break;
                 }
 
                 case TOUCH_TUNING_VARIABLE_QE_MEC_TS:
                 {
-                    touch_tuning_get8((uint8_t *)&g_touch_tuning_qe_mec_ts, 7);
+                    touch_tuning_get8((uint8_t *) &g_touch_tuning_qe_mec_ts, 7);
                     break;
                 }
 
-                case TOUCH_TUNING_VARIABLE_QE_MEC_SHIELD_TS :
+                case TOUCH_TUNING_VARIABLE_QE_MEC_SHIELD_TS:
                 {
-                    touch_tuning_get8((uint8_t *)&g_touch_tuning_qe_mec_shield_ts, 7);
+                    touch_tuning_get8((uint8_t *) &g_touch_tuning_qe_mec_shield_ts, 7);
                     break;
                 }
-    #endif
    #endif
+  #endif
 
                 default:
                 {
@@ -3888,8 +3986,8 @@ void touch_uart_callback (void *pargs)
                     break;
                 }
 
-   #if (BSP_FEATURE_CTSU_VERSION == 2)
-    #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
+  #if (BSP_FEATURE_CTSU_VERSION == 2)
+   #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
                 case TOUCH_TUNING_VARIABLE_QE_TSOD:
                 {
                     element_id               = g_touch_uart_rx_buf[6];
@@ -3902,19 +4000,19 @@ void touch_uart_callback (void *pargs)
                 {
                     element_id               = g_touch_uart_rx_buf[6];
                     g_touch_tuning_tx_buf[6] = (uint8_t) element_id;
-                    touch_tuning_send8((uint8_t )g_touch_tuning_qe_mec_ts, 7);
+                    touch_tuning_send8((uint8_t) g_touch_tuning_qe_mec_ts, 7);
                     break;
                 }
 
-                case TOUCH_TUNING_VARIABLE_QE_MEC_SHIELD_TS :
+                case TOUCH_TUNING_VARIABLE_QE_MEC_SHIELD_TS:
                 {
-                     element_id               = g_touch_uart_rx_buf[6];
+                    element_id               = g_touch_uart_rx_buf[6];
                     g_touch_tuning_tx_buf[6] = (uint8_t) element_id;
-                    touch_tuning_send8((uint8_t )g_touch_tuning_qe_mec_shield_ts, 7);
+                    touch_tuning_send8((uint8_t) g_touch_tuning_qe_mec_shield_ts, 7);
                     break;
                 }
-    #endif
    #endif
+  #endif
                 default:
                 {
                     break;
@@ -3929,31 +4027,31 @@ void touch_uart_callback (void *pargs)
 
             if (1 == write_byte)
             {
-                port_adress_8 = (uint8_t *) (g_touch_uart_rx_buf[5] |
+                port_address_8 = (uint8_t *) (g_touch_uart_rx_buf[5] |
                                              (g_touch_uart_rx_buf[6] << 8) |
                                              (g_touch_uart_rx_buf[7] << 16) |
                                              (g_touch_uart_rx_buf[8] << 24));
 
-                (*port_adress_8) |= (g_touch_uart_rx_buf[10]);
+                (*port_address_8) |= (g_touch_uart_rx_buf[10]);
             }
             else if (2 == write_byte)
             {
-                port_adress_16 = (uint16_t *) (g_touch_uart_rx_buf[5] |
+                port_address_16 = (uint16_t *) (g_touch_uart_rx_buf[5] |
                                                (g_touch_uart_rx_buf[6] << 8) |
                                                (g_touch_uart_rx_buf[7] << 16) |
                                                (g_touch_uart_rx_buf[8] << 24));
 
-                (*port_adress_16) |= (uint16_t) (g_touch_uart_rx_buf[10] |
+                (*port_address_16) |= (uint16_t) (g_touch_uart_rx_buf[10] |
                                                  (g_touch_uart_rx_buf[11] << 8));
             }
             else
             {
-                port_adress_32 = (uint32_t *) (g_touch_uart_rx_buf[5] |
+                port_address_32 = (uint32_t *) (g_touch_uart_rx_buf[5] |
                                                (g_touch_uart_rx_buf[6] << 8) |
                                                (g_touch_uart_rx_buf[7] << 16) |
                                                (g_touch_uart_rx_buf[8] << 24));
 
-                (*port_adress_32) |= (uint32_t) (g_touch_uart_rx_buf[10] |
+                (*port_address_32) |= (uint32_t) (g_touch_uart_rx_buf[10] |
                                                  (g_touch_uart_rx_buf[11] << 8) |
                                                  (g_touch_uart_rx_buf[12] << 16) |
                                                  (g_touch_uart_rx_buf[13] << 24));
@@ -3967,30 +4065,30 @@ void touch_uart_callback (void *pargs)
 
             if (1 == write_byte)
             {
-                port_adress_8 = (uint8_t *) (g_touch_uart_rx_buf[5] |
+                port_address_8 = (uint8_t *) (g_touch_uart_rx_buf[5] |
                                              (g_touch_uart_rx_buf[6] << 8) |
                                              (g_touch_uart_rx_buf[7] << 16) |
                                              (g_touch_uart_rx_buf[8] << 24));
 
-                touch_tuning_send8((*port_adress_8), 6);
+                touch_tuning_send8((*port_address_8), 6);
             }
             else if (2 == write_byte)
             {
-                port_adress_16 = (uint16_t *) (g_touch_uart_rx_buf[5] |
+                port_address_16 = (uint16_t *) (g_touch_uart_rx_buf[5] |
                                                (g_touch_uart_rx_buf[6] << 8) |
                                                (g_touch_uart_rx_buf[7] << 16) |
                                                (g_touch_uart_rx_buf[8] << 24));
 
-                touch_tuning_send16((*port_adress_16), 6);
+                touch_tuning_send16((*port_address_16), 6);
             }
             else
             {
-                port_adress_32 = (uint32_t *) (g_touch_uart_rx_buf[5] |
+                port_address_32 = (uint32_t *) (g_touch_uart_rx_buf[5] |
                                                (g_touch_uart_rx_buf[6] << 8) |
                                                (g_touch_uart_rx_buf[7] << 16) |
                                                (g_touch_uart_rx_buf[8] << 24));
 
-                touch_tuning_send32((*port_adress_32), 6);
+                touch_tuning_send32((*port_address_32), 6);
             }
         }
         else if (g_touch_uart_rx_buf[1] == TOUCH_TUNING_COMMAND_PHASE_RUN)
@@ -4016,6 +4114,7 @@ void touch_uart_callback (void *pargs)
         /* Start transmission */
         g_touch_uart_transmit_flag = 1;
         R_SCI_Send(g_touch_uart_control, &g_touch_tuning_tx_buf[0] ,index);
+
         return;
     }
  #endif
@@ -4498,6 +4597,7 @@ void touch_tuning_scan_mode_select (touch_instance_ctrl_t * const p_instance_ctr
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)
   #if (CTSU_CFG_NUM_CFC != 0)
+
     /* CFCON register */
     if ((TOUCH_TUNING_SCAN_MUTUAL_CFC == g_touch_tuning_scan_mode) &&
         (TOUCH_TUNING_MODE_MEASURE_PHASE1 != g_touch_tuning_mode))
@@ -4534,12 +4634,11 @@ void touch_tuning_scan_register_setting (touch_instance_ctrl_t * const p_instanc
     p_ctsu_instance_ctrl->ctsucr2  = (uint8_t) (g_touch_tuning_qe_atune & 0x02);
     p_ctsu_instance_ctrl->ctsucr2 |= (uint8_t) ((g_touch_tuning_md & 0x04) >> 2);
     p_ctsu_instance_ctrl->ctsucr2 |= (uint8_t) (g_touch_tuning_qe_posel << 4);
-
-  #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
+ #endif
+ #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
     p_ctsu_instance_ctrl->tsod          = g_touch_tuning_qe_tsod;
     p_ctsu_instance_ctrl->mec_ts        = g_touch_tuning_qe_mec_ts;
     p_ctsu_instance_ctrl->mec_shield_ts = g_touch_tuning_qe_mec_shield_ts;
-  #endif
  #endif
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)
@@ -4605,15 +4704,12 @@ void touch_tuning_ts_setup (touch_instance_ctrl_t * const p_instance_ctrl)
         touch_tuning_count_element(element_maska, &p_ctsu_instance_ctrl->num_elements);
         touch_tuning_count_element(element_maskb, &p_ctsu_instance_ctrl->num_elements);
 
- #if (BSP_FEATURE_CTSU_VERSION == 2)
-  #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
-       if (1 == g_touch_tuning_qe_tsod)
-       {
-           p_ctsu_instance_ctrl->num_elements = 1;
-       }
-  #endif
+ #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
+        if (1 == g_touch_tuning_qe_tsod)
+        {
+            p_ctsu_instance_ctrl->num_elements = 1;
+        }
  #endif
-
     }
     else if (TOUCH_TUNING_SCAN_MUTUAL == g_touch_tuning_scan_mode)
     {
@@ -4738,7 +4834,7 @@ void touch_tuning_uart_connect (void)
 
     err = R_SCI_Open(TOUCH_CFG_UART_NUMBER, SCI_MODE_ASYNC, &g_touch_uart_config, touch_uart_callback, &g_touch_uart_control);
 
-    err = R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,TOUCH_TUNING_RECIEVE_BUF_SIZE);
+    err = R_SCI_Receive(g_touch_uart_control, &g_touch_uart_rx_buf[0] ,TOUCH_TUNING_RECEIVE_BUF_SIZE);
 
     return;
 }
@@ -4758,14 +4854,14 @@ void touch_tuning_open (touch_instance_ctrl_t * const p_instance_ctrl)
         p_ctsu_instance_ctrl->p_self_corr =
             (p_ctsu_instance_ctrl->p_self_corr -
              ((p_ctsu_instance_ctrl->self_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
-#if (BSP_FEATURE_CTSU_VERSION == 2)
+  #if (BSP_FEATURE_CTSU_VERSION == 2)
         p_ctsu_instance_ctrl->p_self_mfc =
             (p_ctsu_instance_ctrl->p_self_mfc -
              ((p_ctsu_instance_ctrl->self_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
         p_ctsu_instance_ctrl->p_selected_freq_self =
             (p_ctsu_instance_ctrl->p_selected_freq_self -
              ((p_ctsu_instance_ctrl->ctsu_elem_index - p_ctsu_instance_ctrl->num_elements)));
-#endif
+  #endif
     }
  #endif
 
@@ -4788,7 +4884,7 @@ void touch_tuning_open (touch_instance_ctrl_t * const p_instance_ctrl)
         p_ctsu_instance_ctrl->p_mutual_snd_data =
             (p_ctsu_instance_ctrl->p_mutual_snd_data -
              ((p_ctsu_instance_ctrl->mutual_elem_index - p_ctsu_instance_ctrl->num_elements)));
-#if (BSP_FEATURE_CTSU_VERSION == 2)
+  #if (BSP_FEATURE_CTSU_VERSION == 2)
         p_ctsu_instance_ctrl->p_mutual_pri_mfc =
             (p_ctsu_instance_ctrl->p_mutual_pri_mfc -
              ((p_ctsu_instance_ctrl->mutual_elem_index - p_ctsu_instance_ctrl->num_elements) * CTSU_CFG_NUM_SUMULTI));
@@ -4798,8 +4894,7 @@ void touch_tuning_open (touch_instance_ctrl_t * const p_instance_ctrl)
         p_ctsu_instance_ctrl->p_selected_freq_mutual =
             (p_ctsu_instance_ctrl->p_selected_freq_mutual -
              ((p_ctsu_instance_ctrl->ctsu_elem_index - p_ctsu_instance_ctrl->num_elements)));
-#endif
-
+  #endif
     }
  #endif
     p_ctsu_instance_ctrl->p_element_complete_flag =
@@ -4845,13 +4940,13 @@ void touch_tuning_dataget (touch_instance_ctrl_t * const p_instance_ctrl)
                 else if (TOUCH_TUNING_SCAN_MUTUAL == g_touch_tuning_scan_mode)
                 {
                     /* Due to different buffer compositions for CTSU1 and CTSU2 */
-#if (BSP_FEATURE_CTSU_VERSION == 1)
+  #if (BSP_FEATURE_CTSU_VERSION == 1)
                     g_touch_tuning_ico_data[i * 2]     = p_ctsu_instance_ctrl->p_mutual_pri_corr[i];
                     g_touch_tuning_ico_data[i * 2 + 1] = p_ctsu_instance_ctrl->p_mutual_snd_corr[i];
-#endif
-#if (BSP_FEATURE_CTSU_VERSION == 2)
+  #endif
+  #if (BSP_FEATURE_CTSU_VERSION == 2)
                     g_touch_tuning_ico_data[i] = p_ctsu_instance_ctrl->p_mutual_pri_corr[i];
-#endif
+  #endif
                 }
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)

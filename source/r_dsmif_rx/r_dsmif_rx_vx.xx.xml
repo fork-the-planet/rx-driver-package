@@ -20,12 +20,14 @@
         <product>GNURX</product>
         <version>4.08.04.201803</version>
         <version>8.03.00.202411</version>
+        <version>14.02.00.202511</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
         <product>ICCRX</product>
         <version>4.12.01</version>
         <version>5.10.01</version>
+        <version>5.20.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->

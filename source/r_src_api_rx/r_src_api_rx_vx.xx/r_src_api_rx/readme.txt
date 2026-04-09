@@ -5,13 +5,13 @@ r_src_api_rx
 
 Document Number 
 ---------------
-r01an2090jj0115
-r01an2090ej0115
+r01an2090jj0116
+r01an2090ej0116
 
 
 Version
 -------
-v1.15
+v1.16
 
 Overview
 --------
@@ -49,15 +49,14 @@ How to add to your project
 * Add src\r_src_api_rx.c to your project.
 * Add an include path to the 'r_src_api_rx' directory. 
 * Add an include path to the 'r_src_api_rx\src' directory.
-* Copy r_src_api_rx_config_reference.h from 'ref' directory to your desired location and rename to r_src_api_rx_config.h.
 * Configure this API through r_src_api_rx_config.h.
 * Add a #include for r_src_api_rx_if.h in any source file that needs to use this API.
 
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX 8.3.0.202411
-* IAR C/C++ Compiler for Renesas RX version 5.10.1
+* GCC for Renesas RX 14.2.0.202511
+* IAR C/C++ Compiler for Renesas RX version 5.20.1
 
 File Structure
 --------------
@@ -67,10 +66,10 @@ r_src_api_rx
 |
 +---doc
 |   +---en
-|   |   r01an2090ej0115-rx-src.pdf
+|   |   r01an2090ej0116-rx-src.pdf
 |   |
 |   +---ja
-|       r01an2090jj0115-rx-src.pdf
+|       r01an2090jj0116-rx-src.pdf
 |
 |
 \---src

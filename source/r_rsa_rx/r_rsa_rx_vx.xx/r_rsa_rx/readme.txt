@@ -34,12 +34,12 @@ r_rsa_rx
 |   r_rsa.h
 |
 +---doc
-|	en
+|   en
 |           r20uw0115ej0200-rsa.pdf
-|           r20an0292ej0105-rx-rsa.pdf
-|	ja
+|           r20an0292ej0106-rx-rsa.pdf
+|   ja
 |           r20uw0115jj0200-rsa.pdf
-|           r20an0292jj0105-rx-rsa.pdf
+|           r20an0292jj0106-rx-rsa.pdf
 |
 +---ref
 |       r_rsa_config_reference.h

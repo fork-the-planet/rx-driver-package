@@ -5,22 +5,21 @@ r_aeropoint_rx
 
 Document Number
 ---------------
-R01AN5793EJ0100 (English version)
-R01AN5793JJ0100 (Japanese version)
+R01AN5793EJ0101 (English version)
+R01AN5793JJ0101 (Japanese version)
 
 Version
 -------
-v1.00
+v1.01
 
 Overview
 --------
 Aeropoint GUI is designed to provide the one-stop solution to plan, design, embed and validate in a GUI development for embedded system with MCU. Aeropoint GUI realizes the division of labor between designing GUI and developing MCU system. Engineers and designers can design and implement GUI with modifying PowerPoint(r) file. It makes easy to make variations such as multiple variations and inexpensive edition.
 
 Aeropoint FIT module provides above features as library files to be used in RX MCU. This module can be implemented with
-using Smart Configurator and QE for Display. Then the dependent modules can also be implemented simultaneously. In 
-order to implement this module manually, the configuration options need to be modified which is found in 
-"r_config\cri_aero_config_ais.h". An original copy of the configuration file is stored in 
-"r_aeropoint_rx\ref\cri_aero_config_ais_reference.h".
+using Smart Configurator and QE for Display. Then the dependent modules can also be implemented simultaneously.
+In order to implement this module manually, the configuration options need to be modified which is found in 
+"r_config\cri_aero_config_ais.h". 
 
 Features
 --------
@@ -80,8 +79,7 @@ Touch
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.02.00
-* Renesas RX v2.08.01
+* Renesas RX v3.07.00
 
 File Structure
 --------------
@@ -91,11 +89,11 @@ r_aeropoint_rx
 +---doc
 |   +---en
 |   |       AeropointGUI_UsersManual_xxxxxxxx_EN.pdf
-|   |       r01an5793ej0100-rx-aeropoint.pdf
+|   |       r01an5793ej0101-rx-aeropoint.pdf
 |   |
 |   +---ja
 |           AeropointGUI_UsersManual_xxxxxxxx_JP.pdf
-|           r01an5793jj0100-rx-aeropoint.pdf
+|           r01an5793jj0101-rx-aeropoint.pdf
 |
 +---include
 |      cri_aero.h
@@ -148,19 +146,16 @@ r_aeropoint_rx
 |      cri_xpt.h
 |      cri_xpts_aerolite.h
 |      cri_xpt_post.h
-|      r_flash_spi_lib.h
-|      r_sdc_sdmem_rx_lib.h
-|      r_sdc_sdmem_rx_pin.h
-|      r_sdc_sdmem_rx_pin_config.h
+|      cri_flash_spi_lib.h
+|      cri_sdc_sdmem_rx_lib.h
+|      cri_sdc_sdmem_rx_pin.h
+|      cri_sdc_sdmem_rx_pin_config.h
 |
 +---lib
 |      libcri_AeropointLite_RXv2_CCRX.lib
 |      libcri_AeropointLite_RXv3_CCRX.lib
 |      libcri_Atom_Multiplayer_RXv2_CCRX.lib
 |      libcri_Atom_Multiplayer_RXv3_CCRX.lib
-|
-+---ref
-|      cri_aero_config_ais_reference.h
 |
 +---src
 |  |  cri_aero_config_ais.c
@@ -174,9 +169,9 @@ r_aeropoint_rx
 |  |  cri_aero_support_atom_ais.c
 |  |  cri_aero_timer_ais.c
 |  |  cri_aero_touch_ais.c
-|  |  r_flash_spi_lib.c
-|  |  r_sdc_sdmem_rx_lib.c
-|  |  r_sdc_sdmem_rx_pin.c
+|  |  cri_flash_spi_lib.c
+|  |  cri_sdc_sdmem_rx_lib.c
+|  |  cri_sdc_sdmem_rx_pin.c
 |  |
 |  +---targets
 |      +---rx65n

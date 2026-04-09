@@ -53,6 +53,7 @@
 *         : 15.03.2025 5.71    Updated disclaimer.
 *         : 23.06.2025 5.72    Removed doc folder and updated .rcpc file in FITDemos.
 *         : 30.10.2025 5.80    Added support for RX14T.
+*         : 30.03.2026 5.81    Included spdx file in the package.
 ***********************************************************************************************************************/
 #ifndef CMT_HEADER_FILE
 #define CMT_HEADER_FILE
@@ -71,7 +72,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define CMT_RX_VERSION_MAJOR            (5)
-#define CMT_RX_VERSION_MINOR            (80)
+#define CMT_RX_VERSION_MINOR            (81)
 
 /* This define is used with the R_CMT_Control() function if not channel needs to input. */
 #define CMT_RX_NO_CHANNEL               (0xFFFFFFFF)

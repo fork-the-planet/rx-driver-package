@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2017-2025 Renesas Electronics Corporation and/or its affiliates
+ * Copyright (c) 2017-2026 Renesas Electronics Corporation and/or its affiliates
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 /***********************************************************************************************************************
  * File Name    : r_glcdc_rx_if.h
- * Version      : 1.61
+ * Version      : 1.62
  * Description  : GLCDC interface header file
  **********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -28,6 +28,8 @@
  *                               Changed Minor version to 1.60.
  *                               Changed from include"stdbool.h to include"platform.h"
  *         : 20.03.2025 1.61     Changed the disclaimer.
+ *         : 20.03.2026 1.62     Changed Minor version to 1.62.
+ *                               Fixed the problem when including this header file in C++ source.
  **********************************************************************************************************************/
 
 #ifndef R_GLCDC_RX_IF_H
@@ -44,7 +46,7 @@
  **********************************************************************************************************************/
 /* Version Number of API. */
 #define GLCDC_RX_VERSION_MAJOR         (1)
-#define GLCDC_RX_VERSION_MINOR         (61)
+#define GLCDC_RX_VERSION_MINOR         (62)
 
 /* Number of Gamma correction setting items  */
 #define GLCDC_GAMMA_CURVE_GAIN_ELEMENT_NUM      (16)
@@ -282,7 +284,12 @@ typedef struct st_glcdc_timing
 } glcdc_timing_t;
 
 /** RGB Color setting */
+#if (defined(__CCRX__) && defined(__cplusplus))
+#pragma unpack
+#pragma bit_order left
+#else
 R_BSP_PRAGMA_UNPACK
+#endif
 typedef struct st_glcdc_color
 {
     union
@@ -297,7 +304,11 @@ typedef struct st_glcdc_color
         ) byte;
     };
 } glcdc_color_t;
+#if (defined(__CCRX__) && defined(__cplusplus))
+#pragma packoption
+#else
 R_BSP_PRAGMA_PACKOPTION
+#endif
 
 /** Coordinate */
 typedef struct st_glcdc_coordinate

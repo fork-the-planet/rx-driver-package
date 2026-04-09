@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+/*
+* Copyright (c) 2016 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+-->
 <refinfo>
 
     <!-- multiple versions permitted -->
@@ -11,7 +17,7 @@
     <toolchain>
         <brand>GNU</brand>
         <product>GNURX</product>
-        <version>14.2.0.202505</version>
+        <version>14.2.0.202511</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -32,7 +38,7 @@
         <group omit_board="true">RX130</group>
         <group omit_board="true">RX13T</group>
         <group omit_board="true">RX140</group>
-		<group omit_board="true">RX14T</group>
+        <group omit_board="true">RX14T</group>
         <group omit_board="true">RX230</group>
         <group omit_board="true">RX231</group>
         <group omit_board="true">RX23E-A</group>
@@ -63,12 +69,12 @@
     <package>
         <type>fitmodule</type>
         <name>r_flash_rx</name>
-        <version>5.30</version>
+        <version>x.xx</version>
         <dependency>
                 <module>r_bsp</module>
                 <version>7.70</version>
         </dependency>
-        <zipsource>r_flash_rx_v5.30.zip</zipsource>
+        <zipsource>r_flash_rx_vx.xx.zip</zipsource>
         <application>Non-Volatile Storage</application>
         <function>Flash</function>
         <function>Data Flash</function>

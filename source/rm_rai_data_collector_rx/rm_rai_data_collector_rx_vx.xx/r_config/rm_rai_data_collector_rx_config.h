@@ -1,5 +1,9 @@
-/* Generated configuration header file - do not edit */
-/* generated configuration header file - do not edit */
+/*
+* Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+/* Guards against multiple inclusion */
 #ifndef RM_RAI_DATA_COLLECTOR_CFG_H_
 #define RM_RAI_DATA_COLLECTOR_CFG_H_
 #ifdef __cplusplus

@@ -14,8 +14,7 @@
 /**********************************************************************************************************************
  * Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
-#include "lwip/err.h"
-#include "lwip/netif.h"
+#include "r_lwip_driver_rx_if.h"
 
 /**********************************************************************************************************************
  * Macro definitions
@@ -29,21 +28,32 @@
 #define LWIP_DRIVER_LINK_STATUS_FLAG_OFF        (0)
 #define LWIP_DRIVER_LINK_STATUS_FLAG_ON         (1)
 
+#if !NO_SYS
+#if LWIP_TCPIP_CORE_LOCKING
+#define LWIP_DRIVER_LOCK_TCPIP_CORE()           LOCK_TCPIP_CORE()
+#define LWIP_DRIVER_UNLOCK_TCPIP_CORE()         UNLOCK_TCPIP_CORE()
+#else
+#error LWIP_TCPIP_CORE_LOCKING must be 1.
+#endif
+#else
+#define LWIP_DRIVER_LOCK_TCPIP_CORE()
+#define LWIP_DRIVER_UNLOCK_TCPIP_CORE()
+#endif
+
 /**********************************************************************************************************************
  Exported global functions (to be accessed by other files)
  *********************************************************************************************************************/
+#if NO_SYS
 void r_lwip_driver_timer_callback (void * pdata);
+#endif
 
-uint32_t r_lwip_driver_get_linkstatus(uint32_t eth_ch);
+uint32_t r_lwip_driver_get_linkstatus (uint32_t eth_ch);
+uint32_t r_lwip_driver_get_linkchange (uint32_t eth_ch);
+err_t r_lwip_driver_low_level_init (struct netif * netif);
+struct pbuf* r_lwip_driver_low_level_input (struct netif * netif);
 
-uint32_t r_lwip_driver_get_linkchange(uint32_t eth_ch);
-
-err_t r_lwip_driver_low_level_init(struct netif *netif);
-
-struct pbuf* r_lwip_driver_low_level_input(struct netif *netif);
-
-#if BSP_CFG_MCU_PART_ENCRYPTION_INCLUDED != true &&  BSP_CFG_MCU_PART_FUNCTION != (0x11)
-uint32_t r_lwip_driver_Xorshift(uint32_t z);
-#endif /* BSP_CFG_MCU_PART_ENCRYPTION_INCLUDED != true &&  BSP_CFG_MCU_PART_FUNCTION != (0x11) */
+#if !R_LWIP_DRIVER_USE_TSIP
+uint32_t r_lwip_driver_Xorshift (uint32_t z);
+#endif /* !R_LWIP_DRIVER_USE_TSIP */
 
 #endif /* R_LWIP_DRIVER_RX_PRIVATE_H */

@@ -4,9 +4,9 @@
 * SPDX-License-Identifier: BSD-3-Clause
 */
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Includes
- ***********************************************************************************************************************/
+ *********************************************************************************************************************/
 #include <stdint.h>
 #include <stdlib.h>
 #include <rm_ble_abs.h>
@@ -38,9 +38,9 @@
 volatile uint8_t active_sleep_mode;
 #endif
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Defines
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 #ifndef BLE_CFG_DEVICE_ROLE
 #define BLE_CFG_DEVICE_ROLE                (0x0A)
@@ -201,6 +201,8 @@ volatile uint8_t active_sleep_mode;
 #define R_BLE_GTL_AUX_SET_SLEEP_MODE_CFM        0xA00B
 #define R_BLE_GTL_AUX_SET_BD_ADDRESS_CMD        0xA00C
 #define R_BLE_GTL_AUX_SET_BD_ADDRESS_CFM        0xA00D
+#define R_BLE_GTL_AUX_GET_ENC_RAND_REQ          0xA00E
+#define R_BLE_GTL_AUX_GET_ENC_RAND_RSP          0xA00F
 
 
 #define R_BLE_GTL_ADV_FLAG_FIELD_LEN            3
@@ -260,8 +262,8 @@ volatile uint8_t active_sleep_mode;
 #define R_BLE_GTL_CHAR_PERIPH_PREF_CONN_PARAMS  0x2A04
 #define R_BLE_GTL_CHAR_SERVICE_CHANGED          0x2A05
 
-#define R_BLE_GTL_CHAR_MIN_UUID					0x2A00
-#define R_BLE_GTL_CHAR_MAX_UUID					0x2C19
+#define R_BLE_GTL_CHAR_MIN_UUID                    0x2A00
+#define R_BLE_GTL_CHAR_MAX_UUID                    0x2C19
 
 /* Service permissions defined in GTL messages(s), can be or'd together */
 #define R_BLE_GTL_SVC_PERM_ENABLE               (0x01 << 2)
@@ -308,6 +310,7 @@ volatile uint8_t active_sleep_mode;
 
 /* Defines for scan parameters */
 #define R_BLE_GTL_GAPM_STATIC_ADDR  0x00
+
 #define R_BLE_GTL_GAP_GEN_DISCOVERY 0x00
 #define R_BLE_GTL_GAP_LIM_DISCOVERY 0x01
 #define R_BLE_GTL_GAP_OBSERVER_MODE 0x02
@@ -325,9 +328,9 @@ volatile uint8_t active_sleep_mode;
 #define R_BLE_GTL_GAPM_RMV_DEV_FRM_WLIST    0x0A
 #define R_BLE_GTL_GAPM_CLEAR_WLIST          0x0B
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Enumerations
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 typedef enum e_r_ble_gtl_rx_msg_parser_state
 {
     R_BLE_GTL_RX_MSG_PARSER_STATE_IDLE = 0,
@@ -469,7 +472,7 @@ typedef enum e_r_ble_gtl_device_state
     R_BLE_GTL_DEV_STATE_IDLE = 0x00,
     R_BLE_GTL_DEV_STATE_CONNECTED,
     R_BLE_GTL_DEV_STATE_CONNECTING,
-	R_BLE_GTL_DEV_STATE_ADVERTISING = 0x10
+    R_BLE_GTL_DEV_STATE_ADVERTISING = 0x10
 } r_ble_gtl_device_state_t;
 
 /* Common GTL message parameters */
@@ -701,7 +704,8 @@ typedef struct  r_ble_gtl_gapc_set_sleep_mode_cmd
     r_ble_gtl_msg_hdr_t hdr;
     uint8_t sleep_mode;
     uint8_t ram_retention;
-    uint8_t pin_selection;
+    uint16_t wkup_pin_mask;
+    uint16_t wkup_pol_mask;
 } r_ble_gtl_gapc_set_sleep_mode_cmd_t;
 
 typedef struct  ble_gtl_gapc_set_sleep_mode_cmp
@@ -989,6 +993,7 @@ typedef struct r_ble_gtl_gattc_read_multi_cmd
     r_ble_gtl_read_multi_att_t      att_list[0];
 } r_ble_gtl_gattc_read_multi_cmd_t;
 
+
 typedef struct r_ble_gtl_whitelist_devices
 {
     uint8_t                         addr[BLE_BD_ADDR_LEN];
@@ -1002,6 +1007,7 @@ typedef struct r_ble_gtl_gattm_white_list_mgt_cmd
     uint8_t                         nb;
     r_ble_gtl_whitelist_devices_t   dev_list[0];
 } r_ble_gtl_gattm_white_list_mgt_cmd_t;
+
 
 typedef struct r_ble_gtl_gattc_write_cmd
 {
@@ -1144,7 +1150,7 @@ typedef struct r_ble_gtl_gattc_disc_svc_incl_ind
     uint16_t                        end_hdl;
     uint8_t                         uuid_len;
     r_ble_gtl_uuid_value_t          uuid;
-    uint8_t			    pad;
+    uint8_t                pad;
 } r_ble_gtl_gattc_disc_svc_incl_ind_t;
 
 typedef struct r_ble_gtl_gattc_read_ind
@@ -1331,10 +1337,11 @@ typedef struct r_ble_gtl_boot_header
 
  
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Extern variables
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 extern ble_abs_instance_ctrl_t * gp_instance_ctrl;
+
 #if (BLE_CFG_HOST_BOOT_MODE > 0)
 extern st_sci_conf_t * s_port_cfg;
 #endif
@@ -1343,9 +1350,9 @@ extern st_sci_conf_t * s_port_cfg;
  extern EventGroupHandle_t       g_ble_event_group_handle;
 #endif
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Static Private Variables
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint8_t                        * p_rx_buf = NULL;
 static uint16_t                         rx_msg_ix = 0;
 static r_ble_gtl_rx_msg_parser_state_t  rx_gtl_msg_parser_state;
@@ -1361,7 +1368,9 @@ static uint16_t                         slv_pref_con_par_index   = 0;
 static uint16_t                         service_changed_index    = 0;
 static uint16_t                         device_name_index        = 0;
 static uint16_t                         device_appearance_index  = 0;
+#if BLE_CFG_PARAM_CHECKING_ENABLE
 static uint32_t                         g_gtl_open               = 0;
+#endif
 
 /* Buffers must be aligned to 32-bit boundary as messages contain 16 and 32-bit data types which can be 
    dereferenced via pointers */
@@ -1375,6 +1384,9 @@ static volatile bool                    g_booting = false;
 /* When booting DA1453x from host MCU received bytes are stored in this variable and are processed by 
    the boot loader function */
 static volatile uint8_t                 g_rx_boot_byte = 0;
+#if (R_BLE_GTL_SIGNED_IMAGE == 1|| BLE_CFG_HOST_BOOT_MODE > 0)
+static volatile uint8_t                 g_rx_boot_byte_received = 0;
+#endif
 #endif
 
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -1390,9 +1402,15 @@ static EventGroupHandle_t               g_events;
 #elif BSP_CFG_RTOS_USED == 5 /* ThreadX */
 static uint8_t                          g_cb_evt_queue_buff[sizeof(ULONG)*(TX_1_ULONG)*(R_BLE_GTL_CB_EVT_QUEUE_LEN)];
 static TX_QUEUE                         g_cb_evt_queue;
-static uint8_t                          g_pend_gtl_msg_queue_buff[sizeof(ULONG)*(TX_1_ULONG)*(R_BLE_GTL_MSG_QUEUE_LEN)];
-static uint8_t                          g_used_gtl_msg_queue_buff[sizeof(ULONG)*(TX_1_ULONG)*(R_BLE_GTL_MSG_QUEUE_LEN)];
-static uint8_t                          g_free_gtl_msg_queue_buff[sizeof(ULONG)*(TX_1_ULONG)*(R_BLE_GTL_MSG_QUEUE_LEN)];
+static uint8_t                          g_pend_gtl_msg_queue_buff[sizeof(ULONG)*
+                                                                 (TX_1_ULONG)*
+                                                                 (R_BLE_GTL_MSG_QUEUE_LEN)];
+static uint8_t                          g_used_gtl_msg_queue_buff[sizeof(ULONG)*
+                                                                 (TX_1_ULONG)*
+                                                                 (R_BLE_GTL_MSG_QUEUE_LEN)];
+static uint8_t                          g_free_gtl_msg_queue_buff[sizeof(ULONG)*
+                                                                 (TX_1_ULONG)*
+                                                                 (R_BLE_GTL_MSG_QUEUE_LEN)];
 static TX_QUEUE                         g_pend_gtl_msg_queue;
 static TX_QUEUE                         g_used_gtl_msg_queue;
 static TX_QUEUE                         g_free_gtl_msg_queue;
@@ -1416,6 +1434,7 @@ static uint8_t                        * g_pend_gtl_msg_buf[R_BLE_GTL_MSG_QUEUE_L
 static r_ble_gtl_fifo_t                 g_pend_gtl_msg_queue;
 static volatile bool                    g_uart_tei_sem;
 #endif
+
 
 /* Mapping of power level returned by DA1453x to actual power in dBm */
 #if  (DA14531_DEVICE == BLE_CFG_DA1453X_DEVICE)
@@ -1453,9 +1472,9 @@ static const int8_t tx_pwr_lut[] =
      4   /* 12 - RF_TX_PWR_LVL_PLUS_4d0 */
 };
 #endif
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Local function prototypes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool                 r_ble_gtl_msg_queue_init(void);
 static ble_status_t         r_ble_gtl_msg_queue_add(uint8_t ** p_rx_msg);
 static bool                 r_ble_gtl_msg_queue_empty(void);
@@ -1471,9 +1490,9 @@ static void                 r_ble_gtl_msg_buffer_free(uint8_t * p_msg);
 static void                 r_ble_gtl_msg_buffer_free_from_isr(uint8_t * p_msg);
 static uint8_t            * r_ble_gtl_msg_parse_rx_char(uint8_t rxd_byte);
 static ble_status_t         r_ble_gtl_msg_wait_for_response(uint16_t rsp_msg_id, uint8_t * p_rsp_param, 
-															uint32_t rsp_param_len, uint32_t timeout_ms);
+                                                            uint32_t rsp_param_len, uint32_t timeout_ms);
 static ble_status_t         r_ble_gtl_msg_wait_for_cmd_complete(uint16_t cmp_evt, uint8_t operation,
-															uint8_t cmd_status, uint32_t timeout_ms);
+                                                            uint8_t cmd_status, uint32_t timeout_ms);
 static ble_status_t r_ble_check_completion_message(uint8_t * p_msg, uint8_t operation, uint16_t value_hdl);
 static ble_status_t         r_ble_gtl_gapm_send_start_adv_cmd(void);
 static ble_status_t         r_ble_gtl_gapm_send_reset_cmd(void);
@@ -1487,102 +1506,129 @@ static ble_status_t         r_ble_gtl_gapm_gen_rand_nb(r_ble_gtl_gapm_gen_rand_n
 static ble_status_t         r_ble_gtl_gapm_reset(void);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_handler(uint8_t * p_gtl_msg);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_connection_req_handler(uint16_t conn_hdl,
-																 r_ble_gtl_gapc_connection_req_ind_t * p_param);
+                                                                 r_ble_gtl_gapc_connection_req_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_disconnect_ind_handler(uint16_t conn_hdl, 
-																 r_ble_gtl_gapc_disconnect_ind_t * p_param);
+                                                                 r_ble_gtl_gapc_disconnect_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_le_pkt_size_ind_handler(uint16_t conn_hdl, 
-																	r_ble_gtl_gapc_le_pkt_size_ind_t * p_param);
+                                                                    r_ble_gtl_gapc_le_pkt_size_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_param_update_ind_handler(uint16_t conn_hdl, 
-																	r_ble_gtl_gapc_param_update_ind_t * p_param);
+                                                                    r_ble_gtl_gapc_param_update_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_get_dev_info_req_ind_handler(uint16_t conn_hdl, 
-																	r_ble_gtl_gapc_get_dev_info_req_ind_t * p_param);
+                                                                    r_ble_gtl_gapc_get_dev_info_req_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_set_dev_info_req_ind_handler(uint16_t conn_hdl, 
-																	r_ble_gtl_gapc_set_dev_info_req_ind_t * p_param);
+                                                                    r_ble_gtl_gapc_set_dev_info_req_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_parm_update_req_ind_handler(uint16_t conn_hdl, 
-																	r_ble_gtl_gapc_param_update_req_ind_t * p_param);
+                                                                    r_ble_gtl_gapc_param_update_req_ind_t * p_param);
 static ble_status_t         r_ble_gtl_gapc_send_param_update_cmd(uint16_t conn_hdl, 
-																st_ble_gap_conn_param_t * p_conn_updt_param);
+                                                                st_ble_gap_conn_param_t * p_conn_updt_param);
 static ble_status_t         r_ble_gtl_gapc_send_le_pkt_size_cmd(uint16_t conn_hdl, 
-																uint16_t tx_octets, uint16_t tx_time);
+                                                                uint16_t tx_octets, uint16_t tx_time);
 static ble_status_t         r_ble_gtl_gapc_send_get_info_cmd(uint16_t conn_hdl, uint8_t operation);
 static ble_status_t         r_ble_gtl_gapc_send_param_update_cfm(uint16_t conn_hdl, uint8_t accept);
 static ble_status_t         r_ble_gtl_gapc_set_le_pkt_size(uint16_t conn_hdl, uint16_t tx_octets, uint16_t tx_time);
 static ble_status_t         r_ble_gtl_gapc_get_peer_version(uint16_t conn_hdl, 
-															r_ble_gtl_gapc_peer_version_ind_t * p_version);
+                                                            r_ble_gtl_gapc_peer_version_ind_t * p_version);
 static ble_status_t         r_ble_gtl_gapc_get_peer_features(uint16_t conn_hdl, 
-															r_ble_gtl_gapc_peer_features_ind_t * p_features);
+                                                            r_ble_gtl_gapc_peer_features_ind_t * p_features);
 static ble_status_t         r_ble_gtl_gapc_get_con_rssi(uint16_t conn_hdl, 
-														r_ble_gtl_gapc_con_rssi_ind_t * p_param);
+                                                        r_ble_gtl_gapc_con_rssi_ind_t * p_param);
 static ble_status_t         r_ble_gtl_gapc_get_channel_map(uint16_t conn_hdl, 
-														r_ble_gtl_gapc_con_channel_map_ind_t * p_param);
+                                                        r_ble_gtl_gapc_con_channel_map_ind_t * p_param);
 static ble_status_t         r_ble_gtl_gapc_disconnect(uint16_t conn_hdl, uint8_t reason);
-static ble_status_t         r_ble_gtl_gapc_param_update(uint16_t conn_hdl, st_ble_gap_conn_param_t * p_conn_update_param,
+static ble_status_t         r_ble_gtl_gapc_param_update(uint16_t conn_hdl, 
+                                                        st_ble_gap_conn_param_t * p_conn_update_param,
                                                         r_ble_gtl_gapc_param_update_ind_t * p_param_update_ind);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_write_req_ind_handler(uint16_t conn_hdl, 
-														r_ble_gtl_gattc_write_req_ind_t * p_param, bool local_db);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_read_req_ind_t * p_param);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_ccc_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_read_req_ind_t * p_param);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_mtu_changed_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_mtu_changed_ind_t * p_param);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_att_info_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_att_info_req_t * p_param);
+                                                        r_ble_gtl_gattc_write_req_ind_t * p_param, bool local_db);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_hdl, 
+                                                                r_ble_gtl_gattc_read_req_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_ccc_ind_handler(uint16_t conn_hdl, 
+                                                                r_ble_gtl_gattc_read_req_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_mtu_changed_ind_handler(uint16_t conn_hdl, 
+                                                                    r_ble_gtl_gattc_mtu_changed_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_att_info_req_ind_handler(uint16_t conn_hdl, 
+                                                                    r_ble_gtl_gattc_att_info_req_t * p_param);
 static ble_status_t         r_ble_gtl_gattc_send_write_cfm(uint16_t conn_hdl, uint8_t wr_status, uint16_t att_handle);
-static ble_status_t         r_ble_gtl_gattc_send_disc_cmd(uint16_t conn_hdl, uint8_t operation, uint16_t seq_num, uint16_t start_hdl,
+static ble_status_t         r_ble_gtl_gattc_send_disc_cmd(uint16_t conn_hdl, uint8_t operation, 
+                                                          uint16_t seq_num, uint16_t start_hdl,
                                                           uint16_t end_hdl, r_ble_gtl_uuid_t * p_uuid);
-static ble_status_t         r_ble_gtl_gattc_write(uint8_t operation, uint8_t auto_exec, uint16_t conn_hdl, uint16_t att_hdl,
+static ble_status_t         r_ble_gtl_gattc_write(uint8_t operation, uint8_t auto_exec, 
+                                                  uint16_t conn_hdl, uint16_t att_hdl,
                                                   uint8_t * p_value, uint16_t length, uint16_t offset);
-static ble_status_t         r_ble_gtl_gattc_send_write_cmd(uint8_t operation, uint8_t auto_exec, uint16_t conn_hdl, uint16_t att_hdl,
+static ble_status_t         r_ble_gtl_gattc_send_write_cmd(uint8_t operation, uint8_t auto_exec, 
+                                                           uint16_t conn_hdl, uint16_t att_hdl,
                                                            uint8_t * p_value, uint16_t length, uint16_t offset);
 static ble_status_t         r_ble_gtl_gattc_send_read_cfm(uint16_t conn_hdl, uint8_t rd_status, 
-														uint16_t att_hdl, uint16_t value_len, uint8_t * p_value);
+                                                        uint16_t att_hdl, uint16_t value_len, uint8_t * p_value);
 static ble_status_t         r_ble_gtl_gattc_send_write_execute_cmd(uint16_t conn_hdl, uint8_t execute);
 static ble_status_t         r_ble_gtl_gattc_send_att_info_cfm(uint16_t conn_hdl, uint16_t att_hdl, 
-														uint16_t value_len, uint8_t cmd_status);
+                                                        uint16_t value_len, uint8_t cmd_status);
 static ble_status_t         r_ble_gtl_gattc_send_read_cmd(uint16_t conn_hdl, uint8_t operation, 
-															uint16_t att_hdl, uint16_t offset, uint16_t length);
-static ble_status_t         r_ble_gtl_gattc_send_read_by_uuid_cmd(uint16_t conn_hdl, uint16_t start_hdl, uint16_t end_hdl,
-																 r_ble_gtl_uuid_t * p_uuid);
+                                                            uint16_t att_hdl, uint16_t offset, uint16_t length);
+static ble_status_t         r_ble_gtl_gattc_send_read_by_uuid_cmd(uint16_t conn_hdl, 
+                                                                  uint16_t start_hdl, uint16_t end_hdl,
+                                                                 r_ble_gtl_uuid_t * p_uuid);
 static ble_status_t         r_ble_gtl_gattc_send_read_multiple_cmd(uint16_t conn_hdl, uint8_t number,
-																	uint16_t * p_hdl_list, uint16_t *p_length_list);
+                                                                   uint16_t * p_hdl_list, uint16_t *p_length_list);
 static ble_status_t         r_ble_gtl_gattc_send_write_execute(uint16_t conn_hdl, uint8_t execute);
 static ble_status_t         r_ble_gtl_gattc_exch_mtu(uint16_t conn_hdl, uint16_t * p_mtu_rsp);
 static ble_status_t         r_ble_gtl_gattc_send_exch_mtu_cmd(uint16_t conn_hdl);
-static ble_status_t         r_ble_gtl_gattc_notify(uint16_t conn_hdl, uint16_t attr_hdl, uint8_t * p_value, uint16_t length);
-static ble_status_t         r_ble_gtl_gattc_indicate(uint16_t conn_hdl, uint16_t attr_hdl, uint8_t * p_value, uint16_t length);
-static ble_status_t         r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operation, uint16_t start_hdl, uint16_t end_hdl,
+static ble_status_t         r_ble_gtl_gattc_notify(uint16_t conn_hdl, uint16_t attr_hdl, 
+                                                   uint8_t * p_value, uint16_t length);
+static ble_status_t         r_ble_gtl_gattc_indicate(uint16_t conn_hdl, uint16_t attr_hdl,
+                                                     uint8_t * p_value, uint16_t length);
+static ble_status_t         r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operation,
+                                                     uint16_t start_hdl, uint16_t end_hdl,
                                                      r_ble_gtl_uuid_t * p_uuid, r_ble_gtl_disc_events_t * p_disc_evts);
 static ble_status_t         r_ble_gtl_gattc_send_evt_cmd(uint8_t operation, uint16_t conn_hdl, uint16_t attr_hdl, 
-														uint8_t * p_value, uint16_t length);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_event_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_event_ind_t * p_param);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_event_svc_changed_handler(uint16_t conn_hdl, r_ble_gtl_gattc_svc_changed_cfg_ind_t * p_param);
-static ble_status_t         r_ble_gtl_gattc_handle_discovered_svc(uint16_t conn_hdl, r_ble_gtl_gattc_disc_svc_ind_t * p_disc_svc_ind,
-																	r_ble_gtl_disc_events_t * p_disc_evts);
-static ble_status_t         r_ble_gtl_gattc_handle_discovered_char(uint16_t conn_hdl, r_ble_gtl_gattc_disc_char_ind_t * p_disc_char_ind,
-																	r_ble_gtl_disc_events_t * p_disc_evts);
+                                                        uint8_t * p_value, uint16_t length);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_event_ind_handler(uint16_t conn_hdl,
+                                                              r_ble_gtl_gattc_event_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_event_svc_changed_handler(uint16_t conn_hdl,
+                                                                      r_ble_gtl_gattc_svc_changed_cfg_ind_t * p_param);
+static ble_status_t         r_ble_gtl_gattc_handle_discovered_svc(uint16_t conn_hdl,
+                                                                  r_ble_gtl_gattc_disc_svc_ind_t * p_disc_svc_ind,
+                                                                    r_ble_gtl_disc_events_t * p_disc_evts);
+static ble_status_t         r_ble_gtl_gattc_handle_discovered_char(uint16_t conn_hdl,
+                                                                   r_ble_gtl_gattc_disc_char_ind_t * p_disc_char_ind,
+                                                                   r_ble_gtl_disc_events_t * p_disc_evts);
 static ble_status_t         r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_hdl, 
-                                                                    r_ble_gtl_gattc_disc_char_desc_ind_t * p_disc_char_desc_ind,
-																	r_ble_gtl_disc_events_t * p_disc_evts);
-static ble_status_t         r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hdl, r_ble_gtl_gattc_disc_svc_incl_ind_t * p_disc_svc_incl_ind,
-																		r_ble_gtl_disc_events_t * p_disc_evts);
-static ble_status_t         r_ble_gtl_gattc_send_read_char_event( uint16_t conn_hdl, uint16_t type,  r_ble_gtl_gattc_read_ind_t * p_read_ind );
-static ble_status_t         r_ble_gtl_gattc_send_service_changed(uint16_t conn_hdl, uint16_t start_handle, uint16_t end_handle);
+                                                        r_ble_gtl_gattc_disc_char_desc_ind_t * p_disc_char_desc_ind,
+                                                        r_ble_gtl_disc_events_t * p_disc_evts);
+static ble_status_t         r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hdl,
+                                                            r_ble_gtl_gattc_disc_svc_incl_ind_t * p_disc_svc_incl_ind,
+                                                            r_ble_gtl_disc_events_t * p_disc_evts);
+static ble_status_t         r_ble_gtl_gattc_send_read_char_event( uint16_t conn_hdl, uint16_t type, 
+                                                                  r_ble_gtl_gattc_read_ind_t * p_read_ind );
+static ble_status_t         r_ble_gtl_gattc_send_service_changed(uint16_t conn_hdl, 
+                                                                 uint16_t start_handle, uint16_t end_handle);
 static ble_status_t         r_ble_gtl_gattc_send_event_cfm(uint16_t conn_hdl, uint16_t attr_hdl);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapm_handler(uint8_t * p_gtl_msg);
 static ble_status_t         r_ble_gtl_gattm_add_service(uint8_t perm, uint8_t nbr_att, r_ble_gtl_uuid_t * p_uuid,
-                                                        r_ble_gtl_gattm_att_desc_t * p_att_descs, uint16_t * p_start_hdl);
-static ble_status_t         r_ble_gtl_gattm_set_att_value(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value);
-static ble_status_t         r_ble_gtl_gattm_set_att_value_int(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value);
-static ble_status_t         r_ble_gtl_gattm_read_cfm_value(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value);
-static ble_status_t         r_ble_gtl_gattm_get_att_value(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value);
-static ble_status_t         r_ble_gtl_att_build_descriptor(r_ble_gtl_gattm_att_desc_t * p_att_desc, attribute_t * p_att, uint16_t nbr_atts);
+                                                        r_ble_gtl_gattm_att_desc_t * p_att_descs,
+                                                        uint16_t * p_start_hdl);
+static ble_status_t         r_ble_gtl_gattm_set_att_value(uint16_t conn_hdl, uint16_t attr_hdl,
+                                                          st_ble_gatt_value_t * p_value);
+static ble_status_t         r_ble_gtl_gattm_set_att_value_int(uint16_t conn_hdl, uint16_t attr_hdl,
+                                                          st_ble_gatt_value_t * p_value);
+static ble_status_t         r_ble_gtl_gattm_read_cfm_value(uint16_t conn_hdl, uint16_t attr_hdl,
+                                                          st_ble_gatt_value_t * p_value);
+static ble_status_t         r_ble_gtl_gattm_get_att_value(uint16_t conn_hdl, uint16_t attr_hdl,
+                                                          st_ble_gatt_value_t * p_value);
+static ble_status_t         r_ble_gtl_att_build_descriptor(r_ble_gtl_gattm_att_desc_t * p_att_desc,
+                                                           attribute_t * p_att, uint16_t nbr_atts);
 static ble_status_t         r_ble_gtl_gap_get_char_value_by_uuid(uint16_t uuid, uint8_t * p_value, uint8_t len);
-static ble_status_t         r_ble_gtl_gap_get_char_value_by_handle(uint16_t handle, uint8_t ** p_value, uint16_t * p_len);
+static ble_status_t         r_ble_gtl_gap_get_char_value_by_handle(uint16_t handle, 
+                                                                   uint8_t ** p_value, uint16_t * p_len);
 static ble_status_t         r_ble_gtl_gap_stop_adv(uint8_t adv_hdl, uint8_t reason);
 static ble_status_t         r_ble_gtl_aux_get_tx_power(int8_t * p_tx_pwr);
 static ble_status_t         r_ble_gtl_aux_set_tx_power(uint8_t tx_pwr);
 static ble_status_t         r_ble_gtl_aux_send_get_tx_power_cmd(void);
 static ble_status_t         r_ble_gtl_aux_send_set_tx_power_cmd(uint8_t operation);
 static ble_status_t         r_ble_gtl_aux_set_bd_address_cmd(st_ble_dev_addr_t * p_addr);
-static ble_status_t         r_ble_gtl_aux_set_sleep_mode_cmd(uint8_t sleep_mode, uint8_t ram_retention, uint8_t pin_selection);
+static ble_status_t         r_ble_gtl_aux_set_sleep_mode_cmd(uint8_t sleep_mode, uint8_t ram_retention, 
+                                                             uint16_t wkup_pin_mask, uint16_t wkup_pol_mask);
 static void                 r_ble_gtl_cleanup_open(void);
 static bool                 r_ble_gtl_cb_evt_queue_init(void);
 static bool                 r_ble_gtl_cb_evt_queue_empty(void);
@@ -1630,20 +1676,20 @@ static uint16_t             r_ble_gtl_is_ri_index(uint16_t db_index);
 static uint16_t             r_ble_gtl_is_ccc_ri_index(uint16_t db_index);
 static uint16_t             r_ble_gtl_get_ri_value_with_db_index(uint16_t db_index, uint16_t ** p_value);
  
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_bond_req_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hdl,
+                                                                r_ble_gtl_gapc_bond_req_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_bond_ind_t * p_param);
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_encrypt_req_ind_t * p_param);
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_req_ind_handler(uint16_t conn_hdl,
+                                                                   r_ble_gtl_gapc_encrypt_req_ind_t * p_param);
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_ind_handler(uint16_t conn_hdl, gapc_encrypt_ind_t *p_param);
 static void                 r_ble_gtl_gapc_security_ind_handler(uint16_t conn_hdl, gapc_security_ind_t *p_param);
-
 static uint8_t int_conn_addr[BLE_BD_ADDR_LEN] = {0x00,0x00,0x00,0x00,0x00,0x00}; // Inteded address for conn
 extern st_ble_gap_pairing_param_t  ble_pairing_param_local;
-extern st_ble_gap_key_dist_t       pair_key_dist_local;
 extern st_ble_gap_key_dist_t       pair_key_dist_tmp;
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Public Functions Implementation
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t R_BLE_GTL_Open (r_ble_gtl_transport_api_t * p_api)
 {
 #if BLE_CFG_PARAM_CHECKING_ENABLE
@@ -1651,6 +1697,7 @@ ble_status_t R_BLE_GTL_Open (r_ble_gtl_transport_api_t * p_api)
     FSP_ERROR_RETURN(NULL != gp_instance_ctrl->p_cfg, BLE_ERR_INVALID_STATE);
     FSP_ERROR_RETURN(NULL != p_api, BLE_ERR_INVALID_ARG);
     FSP_ERROR_RETURN(R_BLE_GTL_CLOSED == g_gtl_open, BLE_ERR_ALREADY_INITIALIZED);
+    g_gtl_open = R_BLE_GTL_OPEN;
 #endif
 
     int          ret;
@@ -1694,7 +1741,7 @@ ble_status_t R_BLE_GTL_Open (r_ble_gtl_transport_api_t * p_api)
     FSP_ERROR_RETURN(true == mutex_init, BLE_ERR_MEM_ALLOC_FAILED);
 
 #if (BSP_CFG_RTOS_USED == 1) || (BSP_CFG_RTOS_USED == 5) /* ThreadX or FreeRTOS */
-    /* Initialize event signalling mechanism */
+    /* Initialize event signaling mechanism */
     bool event_init = r_ble_gtl_event_init();
     if (false == event_init)
     {
@@ -1732,7 +1779,9 @@ ble_status_t R_BLE_GTL_Open (r_ble_gtl_transport_api_t * p_api)
                                              R_BLE_GTL_MSG_RSP_TIMEOUT_MS);
     FSP_ERROR_RETURN(BLE_SUCCESS == status, status);
 
+#if BLE_CFG_PARAM_CHECKING_ENABLE
     g_gtl_open = R_BLE_GTL_OPEN;
+#endif
 
     return BLE_SUCCESS;
 }
@@ -1767,7 +1816,11 @@ ble_status_t R_BLE_GTL_Close (r_ble_gtl_transport_api_t * p_api)
     g_dev_params.state = R_BLE_GTL_DEV_STATE_IDLE;
     g_dev_params.nof_active_connections = 0;
     gp_instance_ctrl->open = 0;
+
+#if BLE_CFG_PARAM_CHECKING_ENABLE
+
     g_gtl_open = R_BLE_GTL_CLOSED;
+#endif
 
     return status;
 }
@@ -1911,24 +1964,25 @@ ble_status_t R_BLE_GTL_GAP_Init(ble_gap_app_cb_t gap_cb)
                                                  0,
                                                  R_BLE_GTL_MSG_RSP_TIMEOUT_MS);
     FSP_ERROR_RETURN(BLE_SUCCESS == status, status);
-    slv_pref_con_par_index = r_ble_gtl_is_characteristic_present(R_BLE_GTL_SVC_GAP_UUID, R_BLE_GTL_CHAR_PERIPH_PREF_CONN_PARAMS);
-    service_changed_index = r_ble_gtl_is_characteristic_present(R_BLE_GTL_SVC_GATT_UUID, R_BLE_GTL_CHAR_SERVICE_CHANGED);
-
+    slv_pref_con_par_index = r_ble_gtl_is_characteristic_present(R_BLE_GTL_SVC_GAP_UUID, 
+                                                                R_BLE_GTL_CHAR_PERIPH_PREF_CONN_PARAMS);
+    service_changed_index = r_ble_gtl_is_characteristic_present(R_BLE_GTL_SVC_GATT_UUID, 
+                                                                R_BLE_GTL_CHAR_SERVICE_CHANGED);
     device_name_index = r_ble_gtl_is_characteristic_present(R_BLE_GTL_SVC_GAP_UUID, R_BLE_GTL_CHAR_DEVICE_NAME);
     device_appearance_index = r_ble_gtl_is_characteristic_present(R_BLE_GTL_SVC_GAP_UUID, R_BLE_GTL_CHAR_APPEARANCE);
 
     /* Initialize BD Address. If the BD address is public then the command is invoked prior to configuration.
      * If the BD address is random it will included in configuration command.
      */
-
+    /* Initialize GAP layer */
     #ifdef ENABLE_STORAGE
-    memset(empty_bd_address, 0, BLE_BD_ADDR_LEN);
 
-    status = R_BLE_GTL_VS_GetBdAddr_dflash(0, &bd_address);
-    if((status == BLE_SUCCESS) && (memcmp(bd_address.addr, empty_bd_address, BLE_BD_ADDR_LEN) != 0))
-    {
-        R_BLE_VS_SetBdAddr(BLE_VS_ADDR_AREA_REG, &bd_address);
-    };
+        memset(empty_bd_address, 0, BLE_BD_ADDR_LEN);
+        status = rm_ble_abs_gtl_storage_get_addr(&bd_address);
+        if ((status == BLE_SUCCESS) && (memcmp(bd_address.addr, empty_bd_address, BLE_BD_ADDR_LEN) != 0))
+        {
+            R_BLE_VS_SetBdAddr(BLE_VS_ADDR_AREA_REG, &bd_address);
+        }
     #endif
 
     /* Configure DA1453x device */
@@ -2086,6 +2140,9 @@ ble_status_t R_BLE_GTL_GAP_Disconnect(uint16_t conn_hdl, uint8_t reason)
             p_discon_param->reason   = reason;
 
             status = r_ble_gtl_cb_evt_queue_add(p_cb_evt);
+
+            /* Clear the active DB */
+            r_ble_gtl_sec_clear_db_on_disconn(conn_hdl);
         }
 
         g_dev_params.nof_active_connections -= 1;
@@ -2110,7 +2167,8 @@ static ble_status_t  r_ble_gtl_gapm_send_white_list_mgt_cmd(uint8_t op, st_ble_d
          p_cmd = (r_ble_gtl_gattm_white_list_mgt_cmd_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPM_WHITE_LIST_MGT_CMD,
                                                                           R_BLE_GTL_TASK_ID_GAPM,
                                                                           R_BLE_GTL_TASK_ID_GTL,
-                                                                          (uint16_t)(sizeof(r_ble_gtl_gattm_white_list_mgt_cmd_t) + (device_num * sizeof(r_ble_gtl_whitelist_devices_t))));
+                                                            (uint16_t)(sizeof(r_ble_gtl_gattm_white_list_mgt_cmd_t) + 
+                                                            (device_num * sizeof(r_ble_gtl_whitelist_devices_t))));
         if (NULL != p_cmd)
         {
             p_cmd->operation = op;
@@ -2597,23 +2655,28 @@ ble_status_t R_BLE_GTL_GAP_SetPairingParams (st_ble_gap_pairing_param_t * p_pair
 
     /* MITM protection policy. */
     FSP_ERROR_RETURN((p_pair_param->mitm == BLE_GAP_SEC_MITM_STRICT) ||
-                                            (p_pair_param->mitm == BLE_GAP_SEC_MITM_BEST_EFFORT), BLE_ERR_INVALID_DATA);
+                                            (p_pair_param->mitm == BLE_GAP_SEC_MITM_BEST_EFFORT), 
+                                                                   BLE_ERR_INVALID_DATA);
 
     /* Bonding policy. */
     FSP_ERROR_RETURN((p_pair_param->bonding == BLE_GAP_BONDING) || 
-                                                 (p_pair_param->bonding == BLE_GAP_BONDING_NONE), BLE_ERR_INVALID_DATA);
+                                                 (p_pair_param->bonding == BLE_GAP_BONDING_NONE), 
+                                                                        BLE_ERR_INVALID_DATA);
 
     /* Maximum LTK size(in bytes). */
     FSP_ERROR_RETURN((p_pair_param->max_key_size > 7) &&
-                                                (p_pair_param->max_key_size <= BLE_GAP_LTK_SIZE), BLE_ERR_INVALID_DATA);
+                                                (p_pair_param->max_key_size <= BLE_GAP_LTK_SIZE), 
+                                                                           BLE_ERR_INVALID_DATA);
 
     /* Minimum LTK size(in bytes). */
     FSP_ERROR_RETURN((p_pair_param->min_key_size > 7) &&
-                                                (p_pair_param->min_key_size <= BLE_GAP_LTK_SIZE), BLE_ERR_INVALID_DATA);
+                                                (p_pair_param->min_key_size <= BLE_GAP_LTK_SIZE), 
+                                                                           BLE_ERR_INVALID_DATA);
 
     /* Determine whether to accept only Secure Connections or not. */
     FSP_ERROR_RETURN((p_pair_param->sec_conn_only == BLE_GAP_SC_STRICT) ||
-                                         (p_pair_param->sec_conn_only == BLE_GAP_SC_BEST_EFFORT), BLE_ERR_INVALID_DATA);
+                                         (p_pair_param->sec_conn_only == BLE_GAP_SC_BEST_EFFORT), 
+                                                                            BLE_ERR_INVALID_DATA);
 #endif
 
     ble_pairing_param_local.iocap = p_pair_param->iocap;
@@ -2626,6 +2689,11 @@ ble_status_t R_BLE_GTL_GAP_SetPairingParams (st_ble_gap_pairing_param_t * p_pair
     ble_pairing_param_local.sec_conn_only = p_pair_param->sec_conn_only;
 
     return BLE_SUCCESS;
+}
+
+ble_status_t R_BLE_GTL_ReplyLtkReq(uint16_t conn_hdl, uint16_t ediv, uint8_t * p_peer_rand, uint8_t response)
+{
+    return r_ble_gtl_sec_ReplyLtkReq(conn_hdl, ediv, p_peer_rand, response);
 }
 
 static uint16_t r_ble_gtl_is_characteristic_present(uint16_t service_uuid, uint16_t characteristic_uuid)
@@ -2682,11 +2750,14 @@ ble_status_t R_BLE_GTL_GATTS_SetDbInst(st_ble_gatts_db_cfg_t * p_db_inst)
 
     /* Store GAP service characteristic values so we can respond with them if requested 
        via R_BLE_GTL_GAPC_GET_DEV_INFO_REQ_IND command */
-    r_ble_gtl_gap_get_char_value_by_uuid(R_BLE_GTL_CHAR_DEVICE_NAME, &g_dev_params.dev_name[0], R_BLE_GTL_GAP_DEV_NAME_LEN_MAX);
+    r_ble_gtl_gap_get_char_value_by_uuid(R_BLE_GTL_CHAR_DEVICE_NAME, &g_dev_params.dev_name[0], 
+                                                                R_BLE_GTL_GAP_DEV_NAME_LEN_MAX);
     g_dev_params.dev_name_length = (uint16_t)strlen((const char *)g_dev_params.dev_name);
 
-    r_ble_gtl_gap_get_char_value_by_uuid(R_BLE_GTL_CHAR_APPEARANCE, (uint8_t *)&g_dev_params.appearance, sizeof(g_dev_params.appearance));
-    r_ble_gtl_gap_get_char_value_by_uuid(R_BLE_GTL_CHAR_PERIPH_PREF_CONN_PARAMS, (uint8_t *)&g_dev_params.ppcp, sizeof(g_dev_params.ppcp));
+    r_ble_gtl_gap_get_char_value_by_uuid(R_BLE_GTL_CHAR_APPEARANCE, (uint8_t *)&g_dev_params.appearance, 
+                                                                    sizeof(g_dev_params.appearance));
+    r_ble_gtl_gap_get_char_value_by_uuid(R_BLE_GTL_CHAR_PERIPH_PREF_CONN_PARAMS, (uint8_t *)&g_dev_params.ppcp, 
+                                                                    sizeof(g_dev_params.ppcp));
 
     /* When a service is registered with the DA1453x it selects the starting handle, this may be different from
        the handle in the QE profile database. The offset between the two is captured in  when the
@@ -2814,8 +2885,8 @@ ble_status_t R_BLE_GTL_GATTS_SetDbInst(st_ble_gatts_db_cfg_t * p_db_inst)
 
                                         }
                                         else if ((adopted_uuid > R_BLE_GTL_CHAR_MIN_UUID) &&
-                                        		 (adopted_uuid > R_BLE_GTL_CHAR_MAX_UUID) &&
-												 (p_qe_att[att_ix].uuid_length == QE_BLE_PROFILE_UUID_SIZE_ADOPTED))
+                                                 (adopted_uuid > R_BLE_GTL_CHAR_MAX_UUID) &&
+                                                 (p_qe_att[att_ix].uuid_length == QE_BLE_PROFILE_UUID_SIZE_ADOPTED))
                                         {
                                               st_ble_gatt_value_t value;
                                               value.value_len = p_qe_att[att_ix].value_length;
@@ -2830,7 +2901,7 @@ ble_status_t R_BLE_GTL_GATTS_SetDbInst(st_ble_gatts_db_cfg_t * p_db_inst)
                                     }   
                                     else
                                     {
-                                    	/* RI value, can also ve a declaration if marked as RI*/
+                                        /* RI value, can also ve a declaration if marked as RI*/
                                     }
                                 }
                                 db_ix += p_qe_att->encapsulated_attributes;
@@ -3029,10 +3100,6 @@ ble_status_t R_BLE_GTL_GATTS_GetAttr(uint16_t conn_hdl, uint16_t attr_hdl, st_bl
         {
             memcpy(p_value->p_value, &qe_ble_profile[attr_hdl].value, qe_ble_profile[attr_hdl].value_length);
             status = BLE_SUCCESS;
-        }
-        else if( r_ble_gtl_attribute_is_ri(attr_hdl))
-        {
-            memcpy(p_value->p_value, &qe_ble_profile[attr_hdl].value, qe_ble_profile[attr_hdl].value_length);
         }
         else
         {
@@ -3391,7 +3458,7 @@ ble_status_t R_BLE_GTL_GATTC_ReadChar(uint16_t conn_hdl, uint16_t value_hdl)
                 {
                     p_read_ind = (r_ble_gtl_gattc_read_ind_t *)&p_msg[sizeof(r_ble_gtl_msg_hdr_t)];
 
-                    status = r_ble_gtl_gattc_send_read_char_event (conn_hdl, BLE_GATTC_EVENT_CHAR_READ_RSP, p_read_ind);
+                    status = r_ble_gtl_gattc_send_read_char_event (conn_hdl, BLE_GATTC_EVENT_CHAR_READ_RSP,p_read_ind);
 
                     if (status != BLE_SUCCESS)
                     {
@@ -3486,7 +3553,8 @@ ble_status_t R_BLE_GTL_GATTC_ReadCharUsingUuid(uint16_t                  conn_hd
                     {
                         p_read_ind = (r_ble_gtl_gattc_read_ind_t *)&p_msg[sizeof(r_ble_gtl_msg_hdr_t)];
 
-                        status = r_ble_gtl_gattc_send_read_char_event (conn_hdl, BLE_GATTC_EVENT_CHAR_READ_BY_UUID_RSP,
+                        status = r_ble_gtl_gattc_send_read_char_event (conn_hdl, 
+                                                                       BLE_GATTC_EVENT_CHAR_READ_BY_UUID_RSP, 
                                                                        p_read_ind);
 
                         if (status != BLE_SUCCESS)
@@ -3561,7 +3629,8 @@ ble_status_t R_BLE_GTL_GATTC_ReadLongChar(uint16_t conn_hdl, uint16_t value_hdl,
                 if (R_BLE_GTL_GATTC_READ_IND == ((r_ble_gtl_msg_hdr_t *)p_msg)->msg_id)
                 {
                     p_read_ind = (r_ble_gtl_gattc_read_ind_t *)&p_msg[sizeof(r_ble_gtl_msg_hdr_t)];
-                    status = r_ble_gtl_gattc_send_read_char_event(conn_hdl, BLE_GATTC_EVENT_CHAR_PART_READ_RSP, p_read_ind);
+                    status = r_ble_gtl_gattc_send_read_char_event(conn_hdl, BLE_GATTC_EVENT_CHAR_PART_READ_RSP, 
+                                                                                                    p_read_ind);
 
                     if (status != BLE_SUCCESS)
                     {
@@ -3587,7 +3656,8 @@ ble_status_t R_BLE_GTL_GATTC_ReadLongChar(uint16_t conn_hdl, uint16_t value_hdl,
     return status;
 }
 
-static ble_status_t r_ble_gtl_gattc_send_read_char_event( uint16_t conn_hdl, uint16_t type,  r_ble_gtl_gattc_read_ind_t * p_read_ind )
+static ble_status_t r_ble_gtl_gattc_send_read_char_event( uint16_t conn_hdl, uint16_t type, 
+                                                        r_ble_gtl_gattc_read_ind_t * p_read_ind )
 {
     ble_status_t status = BLE_ERR_MEM_ALLOC_FAILED;
     r_ble_gtl_cb_evt_t *p_cb_evt;
@@ -3648,7 +3718,8 @@ ble_status_t R_BLE_GTL_GATTC_ReadMultiChar(uint16_t conn_hdl, st_ble_gattc_rd_mu
     if (true == r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX))
     {
         /* Length of 0 means read all */
-        status = r_ble_gtl_gattc_send_read_multiple_cmd(conn_hdl, (uint8_t)p_list->list_count, p_list->p_hdl_list, p_list->p_len_list);
+        status = r_ble_gtl_gattc_send_read_multiple_cmd(conn_hdl, (uint8_t)p_list->list_count, 
+                                                        p_list->p_hdl_list, p_list->p_len_list);
 
         while ((BLE_SUCCESS == status) && (false == complete))
         {
@@ -3792,7 +3863,9 @@ ble_status_t R_BLE_GTL_GATTC_WriteChar(uint16_t conn_hdl, st_ble_gatt_hdl_value_
                                    0);
    
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_CHAR_WRITE_RSP, ((BLE_SUCCESS == status)?BLE_SUCCESS:(BLE_ERR_GROUP_GATT | status)), sizeof(st_ble_gattc_wr_char_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_CHAR_WRITE_RSP, 
+                                            ((BLE_SUCCESS == status)?BLE_SUCCESS:(BLE_ERR_GROUP_GATT | status)), 
+                                            sizeof(st_ble_gattc_wr_char_evt_t));
 
         if (NULL != p_cb_evt)
         {
@@ -3832,7 +3905,9 @@ ble_status_t R_BLE_GTL_GATTC_WriteLongChar(uint16_t conn_hdl, st_ble_gatt_hdl_va
                                    offset);
     
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_LONG_CHAR_WRITE_COMP, ((BLE_SUCCESS == status)?BLE_SUCCESS:(BLE_ERR_GROUP_GATT | status)), sizeof(st_ble_gattc_char_part_wr_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_LONG_CHAR_WRITE_COMP, 
+                                            ((BLE_SUCCESS == status)?BLE_SUCCESS:(BLE_ERR_GROUP_GATT | status)), 
+                                            sizeof(st_ble_gattc_char_part_wr_evt_t));
 
         if (NULL != p_cb_evt)
         {
@@ -3914,7 +3989,8 @@ ble_status_t R_BLE_GTL_GATTC_ExecWrite(uint16_t conn_hdl, uint8_t exe_flag)
     status = r_ble_gtl_gattc_send_write_execute(conn_hdl, exe_flag);
     if (BLE_SUCCESS == status)
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_EXECUTE_WRITE_COMP, BLE_SUCCESS, sizeof(st_ble_gattc_reliable_writes_comp_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_EXECUTE_WRITE_COMP, 
+                                            BLE_SUCCESS, sizeof(st_ble_gattc_reliable_writes_comp_evt_t));
 
         if (NULL != p_cb_evt)
         {
@@ -3994,31 +4070,29 @@ ble_status_t R_BLE_GTL_VS_GetBdAddr_dflash(uint8_t addr_type, st_ble_dev_addr_t 
     /* All address types returned by same command */
     FSP_PARAMETER_NOT_USED(addr_type);
 
-    ble_status_t                       status   = BLE_ERR_NOT_FOUND;
-    r_ble_gtl_cb_evt_t               * p_cb_evt = NULL;
-    st_ble_vs_get_bd_addr_comp_evt_t * p_bd_addr_evt;
-    st_ble_dev_addr_t                  bd_addr;
-    fsp_err_t                          fsp_status;
-      
-    fsp_status = r_ble_gtl_storage_read_bd(&bd_addr);
+    ble_status_t status = BLE_ERR_NOT_FOUND;
+    r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
+    st_ble_vs_get_bd_addr_comp_evt_t *p_bd_addr_evt;
+    
+    fsp_err_t fsp_status = rm_ble_abs_gtl_storage_get_addr(p_addr);
 
-    if (FSP_SUCCESS == fsp_status)
+    if(fsp_status != FSP_SUCCESS)
     {
-        p_addr->type = bd_addr.type;
-        memcpy(&p_addr->addr[0], &bd_addr.addr[0], BLE_BD_ADDR_LEN);
-        memcpy(gp_instance_ctrl->loc_bd_addr.addr, &bd_addr.addr[0], BLE_BD_ADDR_LEN);
-    }
- 
-    if (FSP_SUCCESS == fsp_status)
+        memset(p_addr->addr, 0, BLE_BD_ADDR_LEN);
+        memcpy(gp_instance_ctrl->loc_bd_addr.addr, p_addr->addr, BLE_BD_ADDR_LEN);
+        gp_instance_ctrl->loc_bd_addr.type = p_addr->type;
+    }    
+    else
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_VS_EVENT_GET_ADDR_COMP, BLE_SUCCESS, sizeof(st_ble_vs_get_bd_addr_comp_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_VS_EVENT_GET_ADDR_COMP, BLE_SUCCESS, 
+                                                                        sizeof(st_ble_vs_get_bd_addr_comp_evt_t));
         if (NULL != p_cb_evt)
         {
             p_bd_addr_evt = p_cb_evt->data.vs.p_param;
             p_bd_addr_evt->area = BLE_VS_ADDR_AREA_DATA_FLASH;
             /* Address type enumeration in GTL message matches BLE API address type enumeration */
-            p_bd_addr_evt->addr.type = bd_addr.type;
-            memcpy(&p_bd_addr_evt->addr.addr[0], &bd_addr.addr[0], BLE_BD_ADDR_LEN);
+            p_bd_addr_evt->addr.type = p_addr->type;
+            memcpy(&p_bd_addr_evt->addr.addr[0], p_addr->addr, BLE_BD_ADDR_LEN);
 
             status = r_ble_gtl_cb_evt_queue_add(p_cb_evt);
         }
@@ -4029,7 +4103,8 @@ ble_status_t R_BLE_GTL_VS_GetBdAddr_dflash(uint8_t addr_type, st_ble_dev_addr_t 
     }
     return status;
 }
-#endif
+#endif // ENABLE_STORAGE
+
 ble_status_t R_BLE_GTL_VS_SetBdAddr(st_ble_dev_addr_t * p_addr)
 {
 #if BLE_CFG_PARAM_CHECKING_ENABLE
@@ -4053,20 +4128,10 @@ ble_status_t R_BLE_GTL_VS_SetBdAddr(st_ble_dev_addr_t * p_addr)
     {
 
     }
+
     return status;
 }
 
-#ifdef ENABLE_STORAGE
-ble_status_t R_BLE_GTL_VS_SetBdAddr_dflash(st_ble_dev_addr_t * p_addr)
-{
-#if BLE_ABS_CFG_PARAM_CHECKING_ENABLE
-    FSP_ERROR_RETURN(NULL != p_addr, BLE_ERR_INVALID_ARG);
-#endif
-    ble_status_t status = BLE_ERR_INVALID_ARG;
-    r_ble_gtl_storage_write_bd(*p_addr);
-    return status;
-}
-#endif
 ble_status_t R_BLE_GTL_VS_GetRand(uint8_t rand_size)
 {
 #if BLE_CFG_PARAM_CHECKING_ENABLE
@@ -4191,13 +4256,52 @@ ble_status_t R_BLE_GTL_VS_SetTxPower (uint16_t conn_hdl, uint8_t tx_power)
     return status;
 }
 
+ble_status_t R_BLE_GTL_VS_GetEncKey(uint8_t rand_size, r_ble_gtl_app_gen_enc_key_rsp_t *data)
+{
+    ble_status_t status = BLE_ERR_INVALID_ARG;
+    r_ble_gtl_app_gen_rand_req_t *p_rand_cmd;
+    r_ble_gtl_app_gen_rand_rsp_t p_rand_rsp;
+
+    FSP_PARAMETER_NOT_USED(rand_size);
+
+
+    if (true == r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX))
+    {
+        p_rand_cmd = (r_ble_gtl_app_gen_rand_req_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_AUX_GET_ENC_RAND_REQ,
+                                                                            R_BLE_GTL_TASK_ID_AUX,
+                                                                            R_BLE_GTL_TASK_ID_GTL,
+                                                                            sizeof(r_ble_gtl_app_gen_rand_req_t));
+        if (NULL != p_rand_cmd)
+        {
+            p_rand_cmd->rand_size = 16;
+            status = r_ble_gtl_msg_transmit((uint8_t *)p_rand_cmd);
+        }
+
+        if (BLE_SUCCESS == status)
+        {
+            status = r_ble_gtl_msg_wait_for_response(R_BLE_GTL_AUX_GET_ENC_RAND_RSP,
+                                                     (uint8_t *)&p_rand_rsp,
+                                                     sizeof(r_ble_gtl_app_gen_enc_key_rsp_t),
+                                                     R_BLE_GTL_MSG_RSP_TIMEOUT_MS/20);
+            if (BLE_SUCCESS == status)
+            {
+                memcpy(data, &p_rand_rsp, sizeof(r_ble_gtl_app_gen_enc_key_rsp_t));
+            }
+        }
+        r_ble_gtl_mutex_give(R_BLE_GTL_MUTEX_RX);
+    }
+
+
+    return status;
+}
+
 /*******************************************************************************************************************//**
  *  Handle interrupt from UART. Name of function name is displayed in e2 Studio configurator but is locked and can't
  *  be changed.
  *
  * @param[in]  p_args    Pointer to callabck arguments which includes received data etc.
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #if defined (BLE_CFG_TRANSPORT_INTERFACE_UART)
 void R_BLE_GTL_UartCallback (void * pArgs)
 {
@@ -4232,6 +4336,7 @@ void R_BLE_GTL_UartCallback (void * pArgs)
                 by image loading function. OK to overwrite previously received data,
                 we are only interested in the last received byte. */
                 g_rx_boot_byte = data_byte;
+                g_rx_boot_byte_received = 1;
             }
 #endif
             break;
@@ -4256,13 +4361,23 @@ void R_BLE_GTL_UartCallback (void * pArgs)
 
 ble_status_t R_BLE_GTL_VS_SetSleepMode(uint8_t sleep_mode, uint8_t ram_retention, uint8_t pin_selection)
 {
+    FSP_PARAMETER_NOT_USED(sleep_mode);
+    FSP_PARAMETER_NOT_USED(ram_retention);
+    FSP_PARAMETER_NOT_USED(pin_selection);
+
+    return BLE_ERR_UNSUPPORTED;
+}
+
+ble_status_t R_BLE_GTL_VS_SetSleepModeExt(uint8_t sleep_mode, uint8_t ram_retention, 
+                                                              uint16_t wkup_pin_mask, uint16_t wkup_pol_mask)
+{
 #if BLE_ABS_CFG_PARAM_CHECKING_ENABLE
     FSP_ERROR_RETURN(NULL != gp_instance_ctrl, BLE_ERR_INVALID_STATE);
     FSP_ERROR_RETURN(R_BLE_GTL_OPEN == g_gtl_open, BLE_ERR_INVALID_STATE);
 #endif
     ble_status_t status = BLE_ERR_INVALID_ARG;
 
-    status = r_ble_gtl_aux_set_sleep_mode_cmd(sleep_mode, ram_retention, pin_selection);
+    status = r_ble_gtl_aux_set_sleep_mode_cmd(sleep_mode, ram_retention, wkup_pin_mask, wkup_pol_mask);
     if (BLE_SUCCESS == status)
     {
         #if (BLE_DA1453x_SLEEP_FLOW_CONTROL)
@@ -4276,11 +4391,12 @@ ble_status_t R_BLE_GTL_VS_SetSleepMode(uint8_t sleep_mode, uint8_t ram_retention
 
 
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Local Functions definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/*******************************************************************************************************************//**
+
+/******************************************************************************************************************//**
  *  Get the value of an RI type attribute from a local database
  *
  * @param[in]  db_index         Index in the database
@@ -4288,7 +4404,7 @@ ble_status_t R_BLE_GTL_VS_SetSleepMode(uint8_t sleep_mode, uint8_t ram_retention
  *
  * @retval DB_VALID_RI_INDEX       The indexed attribute had been found in the database. *value holds its value.
  * @retval DB_NON_RI_INDEX     The indexed attribute had not been found in the database. *value remains unchanged.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint16_t r_ble_gtl_get_ri_value_with_db_index(uint16_t db_index, uint16_t ** p_value)
 {
     uint16_t status = DB_NON_RI_INDEX;
@@ -4319,14 +4435,14 @@ static uint16_t r_ble_gtl_get_ri_value_with_db_index(uint16_t db_index, uint16_t
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Checks if the database index holds an RI type attribute.
  *
  * @param[in]  db_index         Index in the database
  *
  * @retval DB_VALID_RI_INDEX       The indexed attribute had been found in the database.
  * @retval DB_NON_RI_INDEX     The indexed attribute had not been found in the database.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint16_t r_ble_gtl_is_ri_index(uint16_t db_index)
 {
     uint16_t status = DB_NON_RI_INDEX;
@@ -4354,14 +4470,14 @@ static uint16_t r_ble_gtl_is_ri_index(uint16_t db_index)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Checks if the database index holds an CCC type attribute (notification or indication).
  *
  * @param[in]  db_index         Index in the database
  *
  * @retval DB_VALID_RI_INDEX       The indexed attribute had been found in the database.
  * @retval DB_NON_RI_INDEX     The indexed attribute had not been found in the database.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint16_t r_ble_gtl_is_ccc_ri_index(uint16_t db_index)
 {
     uint16_t status = DB_NON_RI_INDEX;
@@ -4383,7 +4499,7 @@ static uint16_t r_ble_gtl_is_ccc_ri_index(uint16_t db_index)
 
 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Sets the value of an RI type attribute in the local database.
  *
  * @param[in]  db_index         Index in the database
@@ -4391,7 +4507,8 @@ static uint16_t r_ble_gtl_is_ccc_ri_index(uint16_t db_index)
  *
  * @retval DB_VALID_RI_INDEX       The indexed attribute had been found in the database. Successful write.
  * @retval DB_NON_RI_INDEX     The indexed attribute had not been found in the database. Unsuccessful write.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
+
 static uint16_t r_ble_gtl_set_ri_value_with_db_index(uint16_t db_index, uint16_t *p_value, uint16_t length )
 {
     uint16_t status = DB_INVALID_PARAM;
@@ -4406,14 +4523,14 @@ static uint16_t r_ble_gtl_set_ri_value_with_db_index(uint16_t db_index, uint16_t
     return status;
 }
  
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Process incoming GTL messages received via transport layer. Messages might generated a callback event.
  *
  * @param[in]  p_gtl_msg        Pointer to buffer containing received GTL message
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_msg_process(uint8_t * p_gtl_msg)
 {
     r_ble_gtl_msg_hdr_t * p_gtl_msg_hdr = (r_ble_gtl_msg_hdr_t *)p_gtl_msg;
@@ -4455,14 +4572,14 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_msg_process(uint8_t * p_gtl_msg)
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle received GAP client messages. Messages might generated a callback event.
  *
  * @param[in]  p_gtl_msg        Pointer to buffer containing received GAP client message (including header)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_handler(uint8_t * p_gtl_msg)
 {
     uint16_t              conn_hdl      = 0x0000;
@@ -4517,7 +4634,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_handler(uint8_t * p_gtl_msg)
 
         case R_BLE_GTL_GAPC_SET_DEV_INFO_REQ_IND:
         {
-             r_ble_gtl_gapc_set_dev_info_req_ind_t * p_param = (r_ble_gtl_gapc_set_dev_info_req_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+             r_ble_gtl_gapc_set_dev_info_req_ind_t * p_param = (r_ble_gtl_gapc_set_dev_info_req_ind_t *)
+                                                                &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
              p_cb_evt = r_ble_gtl_gapc_set_dev_info_req_ind_handler(conn_hdl, p_param);
              break;
         }
@@ -4574,7 +4692,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_handler(uint8_t * p_gtl_msg)
 
     return p_cb_evt;
 }
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GATT client write request indication message for RI attributes.
 
  *
@@ -4582,9 +4700,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_handler(uint8_t * p_gtl_msg)
  * @param[in]  p_param          Pointer to buffer containing received GATT client write request indication message
  *
  * @retval NULL                 No callback event generated by message processing
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_write_req_ind_handler(uint16_t conn_hdl,
-									 r_ble_gtl_gattc_write_req_ind_t * p_param, bool local_db)
+                                     r_ble_gtl_gattc_write_req_ind_t * p_param, bool local_db)
 {
     ble_status_t                   status;
     r_ble_gtl_cb_evt_t           * p_cb_evt = NULL;
@@ -4592,7 +4710,27 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_write_req_ind_handler(uint16_t conn_
     st_ble_gatts_db_access_evt_t * p_db_access_evt;
     st_ble_gatt_value_t            value;
 
-    status = r_ble_gtl_gattc_send_write_cfm(conn_hdl, R_BLE_GTL_GAP_ERR_NO_ERROR, p_param->handle);
+    uint16_t db_indx = (uint16_t)(p_param->handle - g_dev_params.att_hndl_offset);
+
+    r_ble_gtl_attr_write_cmd_t value_check_func = *(qe_ble_profile[db_indx].p_write_cmd_cb);
+
+    if(value_check_func != NULL)
+    {
+        uint8_t err = value_check_func(conn_hdl, db_indx, p_param);
+        if( err == R_BLE_GTL_GAP_ERR_NO_ERROR)
+        {
+            status = r_ble_gtl_gattc_send_write_cfm(conn_hdl, R_BLE_GTL_GAP_ERR_NO_ERROR, p_param->handle);
+        }
+        else
+        {
+            r_ble_gtl_gattc_send_write_cfm(conn_hdl, err, p_param->handle);
+            return p_cb_evt;
+        }
+    }
+    else
+    {
+        status = r_ble_gtl_gattc_send_write_cfm(conn_hdl, R_BLE_GTL_GAP_ERR_NO_ERROR, p_param->handle);
+    }
 
     p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTS_EVENT_WRITE_RSP_COMP, status, sizeof(st_ble_gatts_write_rsp_evt_t));
     if (NULL != p_cb_evt)
@@ -4608,7 +4746,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_write_req_ind_handler(uint16_t conn_
     /* Update the attribute database with the value written */
     if ( local_db)
     {
-        r_ble_gtl_set_ri_value_with_db_index((uint16_t)(p_param->handle - g_dev_params.att_hndl_offset) ,  (uint16_t *)p_param->value, p_param->length);
+        r_ble_gtl_set_ri_value_with_db_index((uint16_t)(p_param->handle - g_dev_params.att_hndl_offset) , 
+                                            (uint16_t *)p_param->value, p_param->length);
     }
     else
     {
@@ -4663,7 +4802,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_write_req_ind_handler(uint16_t conn_
      return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GATT client read request indication message. 
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -4671,8 +4810,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_write_req_ind_handler(uint16_t conn_
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_read_req_ind_t * p_param)
+ *********************************************************************************************************************/
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_hdl, 
+                                                                r_ble_gtl_gattc_read_req_ind_t * p_param)
 {
     uint8_t status = R_BLE_GTL_ATT_ERR_REQUEST_NOT_SUPPORTED;
     uint8_t *p_value = NULL;
@@ -4683,7 +4823,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_h
     uint16_t *p_ccc_val = 0;
 
   
-    /* All characteristic values are stored in the DA1453x, except for client configuration characteristics that are RI type*/
+    /* All characteristic values are stored in the DA1453x, 
+                                                    except for client configuration characteristics that are RI type*/
     if ( DB_VALID_RI_INDEX == r_ble_gtl_get_ri_value_with_db_index (att_index, &p_ccc_val))
     {
         status = R_BLE_GTL_GAP_ERR_NO_ERROR;
@@ -4743,9 +4884,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_h
 
     return p_cb_evt;
 }
-/*******************************************************************************************************************//**
- *  Handle GATT client handles read indication request for a Client Characteristic Configuration. These values are always
- *  stored in RA CPU database.
+/******************************************************************************************************************//**
+ *  Handle GATT client handles read indication request for a Client Characteristic Configuration. 
+ * These values are always stored in RA CPU database.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
  * @param[in]  p_param          Pointer to buffer containing received GATT client read request indication message
@@ -4753,7 +4894,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_req_ind_handler(uint16_t conn_h
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
  ********************************************************************************************************************/
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_ccc_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_read_req_ind_t * p_param)
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_ccc_ind_handler(uint16_t conn_hdl, 
+                                                                r_ble_gtl_gattc_read_req_ind_t * p_param)
 {
     uint8_t status = R_BLE_GTL_ATT_ERR_REQUEST_NOT_SUPPORTED;
     uint8_t *p_value = NULL;
@@ -4762,7 +4904,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_ccc_ind_handler(uint16_t conn_h
     r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
     st_ble_gatts_db_access_evt_t *p_db_access_evt;
    
-    /* All characteristic values are stored in the DA1453x, except for client configuration characteristics that are RI type*/
+    /* All characteristic values are stored in the DA1453x, 
+                                                    except for client configuration characteristics that are RI type*/
     p_cb_evt = r_ble_gtl_cb_evt_allocate (BLE_GATTS_EVENT_DB_ACCESS_IND, status, sizeof(p_param->handle));
     if (NULL != p_cb_evt)
     {
@@ -4783,21 +4926,22 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_read_ccc_ind_handler(uint16_t conn_h
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle received GATT client messages. Messages might generated a callback event.
  *
  * @param[in]  p_gtl_msg        Pointer to buffer containing received GATT client message (including header)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
 {
     uint16_t              conn_hdl      = 0x0000;
     r_ble_gtl_cb_evt_t  * p_cb_evt      = NULL;
     r_ble_gtl_msg_hdr_t * p_gtl_msg_hdr = (r_ble_gtl_msg_hdr_t *)p_gtl_msg;
 
-    /* Connection handle is part of the source ID - it only has 8-bit range but is stored as uint16_t to be consistent with the R_BLE API */
+    /* Connection handle is part of the source ID 
+    - it only has 8-bit range but is stored as uint16_t to be consistent with the R_BLE API */
     conn_hdl = p_gtl_msg_hdr->src_id >> 8;
 
     switch (p_gtl_msg_hdr->msg_id)
@@ -4805,7 +4949,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
         case R_BLE_GTL_GATTC_EVENT_REQ_IND:
         case R_BLE_GTL_GATTC_EVENT_IND:
         {
-            r_ble_gtl_gattc_event_ind_t * p_param = (r_ble_gtl_gattc_event_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            r_ble_gtl_gattc_event_ind_t * p_param = (r_ble_gtl_gattc_event_ind_t *)
+                                                    &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
 
             p_cb_evt = r_ble_gtl_gattc_event_ind_handler(conn_hdl, p_param);
             break;
@@ -4817,7 +4962,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
                                         (r_ble_gtl_gattc_write_req_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
 
             /* If the atttibute is RI type, then it should not be accessed via
-			 DA1453x database but through host database */
+             DA1453x database but through host database */
             uint16_t db_index= (uint16_t)(p_param->handle - g_dev_params.att_hndl_offset);
             if (r_ble_gtl_is_ri_index(db_index) == DB_VALID_RI_INDEX)
             {
@@ -4833,12 +4978,14 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
 
         case R_BLE_GTL_GATTC_READ_REQ_IND:
         {
-            r_ble_gtl_gattc_read_req_ind_t * p_param = (r_ble_gtl_gattc_read_req_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            r_ble_gtl_gattc_read_req_ind_t * p_param = (r_ble_gtl_gattc_read_req_ind_t *)
+                                                       &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
 
             uint16_t db_index= (uint16_t)(p_param->handle - g_dev_params.att_hndl_offset);
             /* If the user has not mark the CCC as notify_read, the CCC will be handled automatically */
             /* CCC attributes for DA1453x are always RI type */
-            if ((r_ble_gtl_is_ccc_ri_index(db_index) == DB_VALID_RI_INDEX) && (r_ble_gtl_attribute_is_ri(db_index)==false))
+            if ((r_ble_gtl_is_ccc_ri_index(db_index) == DB_VALID_RI_INDEX) && 
+                                          (r_ble_gtl_attribute_is_ri(db_index)==false))
             {
                 p_cb_evt = r_ble_gtl_gattc_read_ccc_ind_handler(conn_hdl, p_param);
             }
@@ -4859,14 +5006,16 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
 
         case R_BLE_GTL_GATTC_ATT_INFO_REQ_IND:
         {
-            r_ble_gtl_gattc_att_info_req_t * p_param = (r_ble_gtl_gattc_att_info_req_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            r_ble_gtl_gattc_att_info_req_t * p_param = (r_ble_gtl_gattc_att_info_req_t *)
+                                                        &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
             p_cb_evt = r_ble_gtl_gattc_att_info_req_ind_handler(conn_hdl, p_param);
             break;
         }
 
         case R_BLE_GTL_GATTC_SVC_CHANGED_CFG_IND:
         {
-            r_ble_gtl_gattc_svc_changed_cfg_ind_t * p_param = (r_ble_gtl_gattc_svc_changed_cfg_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            r_ble_gtl_gattc_svc_changed_cfg_ind_t * p_param = (r_ble_gtl_gattc_svc_changed_cfg_ind_t *)
+                                                              &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
             p_cb_evt = r_ble_gtl_gattc_event_svc_changed_handler(conn_hdl, p_param);
             break;
 
@@ -4882,7 +5031,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC connection request message. Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -4890,7 +5039,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_handler(uint8_t * p_gtl_msg)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_connection_req_handler(uint16_t conn_hdl, 
                                                 r_ble_gtl_gapc_connection_req_ind_t * p_param)
 {
@@ -4954,7 +5103,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_connection_req_handler(uint16_t conn_
 
         if (BLE_SUCCESS == status)
         {
-            p_cb_evt_ind = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_CONN_IND, BLE_SUCCESS, sizeof(st_ble_gap_conn_evt_t));
+            p_cb_evt_ind = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_CONN_IND, BLE_SUCCESS, 
+                                                    sizeof(st_ble_gap_conn_evt_t));
 
             if (NULL != p_cb_evt_ind)
             {
@@ -4972,16 +5122,23 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_connection_req_handler(uint16_t conn_
                 memset(int_conn_addr, 0x00, BLE_BD_ADDR_LEN);
 
                 /* Remote_rpa needs to be updated TODO*/
-                    p_conn_param->clk_acc = p_param->clk_accuracy;
-                    p_conn_param->conn_hdl = p_param->conhdl;
-                    p_conn_param->conn_latency = p_param->con_latency;
-                    p_conn_param->conn_intv = p_param->con_interval;
-                    p_conn_param->sup_to = p_param->sup_to;
-                    p_conn_param->remote_addr_type = p_param->peer_addr_type;
-                    memcpy(&p_conn_param->remote_addr[0], &p_param->peer_addr.addr[0], BLE_BD_ADDR_LEN);
-                }
+                p_conn_param->clk_acc = p_param->clk_accuracy;
+                p_conn_param->conn_hdl = p_param->conhdl;
+                p_conn_param->conn_latency = p_param->con_latency;
+                p_conn_param->conn_intv = p_param->con_interval;
+                p_conn_param->sup_to = p_param->sup_to;
+                p_conn_param->remote_addr_type = p_param->peer_addr_type;
+                memcpy(&p_conn_param->remote_addr[0], &p_param->peer_addr.addr[0], BLE_BD_ADDR_LEN);
+
+                /* Perform Address Resolution and DB storage */
+                /*release mutex to allow the stack to process the address resolution (Random mun 531 cmd)*/
+                r_ble_gtl_mutex_give(R_BLE_GTL_MUTEX_RX);
+                r_ble_gtl_sec_handle_conn_addr(p_conn_param);
+                r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX);       // re-acquire mutex to protect the stack
             }
         }
+    }
+
     if((NULL != p_cb_evt_ind) && (NULL != p_cb_evt))
     {
         r_ble_gtl_cb_evt_queue_add(p_cb_evt_ind);
@@ -5003,26 +5160,29 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_connection_req_handler(uint16_t conn_
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_connection_cfm_cmd(uint16_t conn_hdl, uint8_t auth_par)
 {
     ble_status_t status = BLE_ERR_UNSPECIFIED;
     r_ble_gtl_gapc_connection_cfm_t *p_cfm;
 
     p_cfm = (r_ble_gtl_gapc_connection_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_CONNECTION_CFM,
-                                                                      R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                                      R_BLE_GTL_TASK_ID_GAPC + 
+                                                                      (uint16_t)(conn_hdl << 8),
                                                                       R_BLE_GTL_TASK_ID_GTL,
                                                                       sizeof(r_ble_gtl_gapc_connection_cfm_t));
 
     if (NULL != p_cfm)
     {
-        // auth_temp = (uint8_t)((ble_pairing_param_local.bonding << 0) | (ble_pairing_param_local.mitm << 2) | (ble_pairing_param_local.sec_conn_only << 3));
+        /* auth_temp = (uint8_t)((ble_pairing_param_local.bonding << 0) 
+        | (ble_pairing_param_local.mitm << 2) 
+        | (ble_pairing_param_local.sec_conn_only << 3))*/;
         p_cfm->auth = auth_par;
         status = r_ble_gtl_msg_transmit((uint8_t *)p_cfm);
     }
     return status;
 }
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC disconnect request message. Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5030,7 +5190,7 @@ ble_status_t r_ble_gtl_connection_cfm_cmd(uint16_t conn_hdl, uint8_t auth_par)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_disconnect_ind_handler(uint16_t conn_hdl, 
                                                                 r_ble_gtl_gapc_disconnect_ind_t * p_param)
 {
@@ -5044,6 +5204,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_disconnect_ind_handler(uint16_t conn_
         st_ble_gap_disconn_evt_t * p_discon_param = p_cb_evt->data.gap.p_param;
         p_discon_param->conn_hdl = p_param->conhdl;
         p_discon_param->reason   = p_param->reason;
+
+        /* Clear the active DB */
+        r_ble_gtl_sec_clear_db_on_disconn(conn_hdl);
     }
 
     g_dev_params.nof_active_connections -= 1;
@@ -5055,7 +5218,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_disconnect_ind_handler(uint16_t conn_
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC LE packet size indication message. Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5063,7 +5226,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_disconnect_ind_handler(uint16_t conn_
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_le_pkt_size_ind_handler(uint16_t conn_hdl, 
                                                                 r_ble_gtl_gapc_le_pkt_size_ind_t * p_param)
 {
@@ -5086,7 +5249,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_le_pkt_size_ind_handler(uint16_t conn
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC connection parameter update message. Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5094,7 +5257,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_le_pkt_size_ind_handler(uint16_t conn
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_param_update_ind_handler(uint16_t conn_hdl, 
                                                                 r_ble_gtl_gapc_param_update_ind_t * p_param)
 {
@@ -5116,7 +5279,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_param_update_ind_handler(uint16_t con
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC device information request message. Message does not generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5124,9 +5287,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_param_update_ind_handler(uint16_t con
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_get_dev_info_req_ind_handler(uint16_t conn_hdl, 
-                                                                        r_ble_gtl_gapc_get_dev_info_req_ind_t * p_param)
+                                                                    r_ble_gtl_gapc_get_dev_info_req_ind_t * p_param)
 {
     switch (p_param->operation)
     {
@@ -5137,7 +5300,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_get_dev_info_req_ind_handler(uint16_t
             p_cmd = (r_ble_gtl_gapc_get_dev_info_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_GET_DEV_INFO_CFM,
                                                                 R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
                                                                 R_BLE_GTL_TASK_ID_GTL,
-                                                                                sizeof (r_ble_gtl_gapc_get_dev_info_cfm_t) + g_dev_params.dev_name_length);
+                                                                sizeof (r_ble_gtl_gapc_get_dev_info_cfm_t) +
+                                                                g_dev_params.dev_name_length);
             if (NULL != p_cmd)
             {
                 p_cmd->req = p_param->operation;
@@ -5177,14 +5341,15 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_get_dev_info_req_ind_handler(uint16_t
             r_ble_gtl_gapc_get_dev_info_cfm_t * p_cmd;
 
             p_cmd = (r_ble_gtl_gapc_get_dev_info_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_GET_DEV_INFO_CFM,
-                                                                               R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
-                                                                               R_BLE_GTL_TASK_ID_GTL,
-                                                                               sizeof (r_ble_gtl_gapc_get_dev_info_cfm_t));
+                                                                        R_BLE_GTL_TASK_ID_GAPC + 
+                                                                        (uint16_t)(conn_hdl << 8),
+                                                                        R_BLE_GTL_TASK_ID_GTL,
+                                                                        sizeof (r_ble_gtl_gapc_get_dev_info_cfm_t));
             if (NULL != p_cmd)
             {
                 p_cmd->req = p_param->operation;
-                p_cmd->hdr.param_length = sizeof(p_cmd->req) + sizeof(p_cmd->padding) + sizeof(r_ble_gtl_gap_slv_pref_params_t);
-
+                p_cmd->hdr.param_length = sizeof(p_cmd->req) + sizeof(p_cmd->padding) 
+                                          + sizeof(r_ble_gtl_gap_slv_pref_params_t);
                 p_cmd->info.slv_pref_params.con_intv_max = g_dev_params.ppcp.con_intv_max;
                 p_cmd->info.slv_pref_params.con_intv_min = g_dev_params.ppcp.con_intv_min;
                 p_cmd->info.slv_pref_params.conn_timeout = g_dev_params.ppcp.conn_timeout;
@@ -5218,7 +5383,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_get_dev_info_req_ind_handler(uint16_t
     return NULL;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC device information requestindication  message. Message does not generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5226,8 +5391,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_get_dev_info_req_ind_handler(uint16_t
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_set_dev_info_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_set_dev_info_req_ind_t * p_param)
+ *********************************************************************************************************************/
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_set_dev_info_req_ind_handler(uint16_t conn_hdl, 
+                                                                    r_ble_gtl_gapc_set_dev_info_req_ind_t * p_param)
 {
     r_ble_gtl_gapc_set_dev_info_cfm_t *p_cmd;
     uint8_t status = R_BLE_GTL_GAP_ERR_REJECTED;
@@ -5256,7 +5422,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_set_dev_info_req_ind_handler(uint16_t
     }
 
     p_cmd = (r_ble_gtl_gapc_set_dev_info_cfm_t*) r_ble_gtl_msg_allocate (R_BLE_GTL_GAPC_SET_DEV_INFO_CFM,
-                                                                         R_BLE_GTL_TASK_ID_GAPC + (uint16_t) (conn_hdl << 8),
+                                                                         R_BLE_GTL_TASK_ID_GAPC + 
+                                                                         (uint16_t) (conn_hdl << 8),
                                                                          R_BLE_GTL_TASK_ID_GTL,
                                                                          sizeof(r_ble_gtl_gapc_set_dev_info_cfm_t));
     if (NULL != p_cmd)
@@ -5270,15 +5437,15 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_set_dev_info_req_ind_handler(uint16_t
     return NULL;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC connection parameter indication message. Message does not generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
- * @param[in]  p_param          Pointer to buffer containing received GAP client connection parameter indication message
- *
+ * @param[in]  p_param          Pointer to buffer containing received GAP client connection parameter 
+ *                              indication message
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_parm_update_req_ind_handler(uint16_t conn_hdl, 
                                                                     r_ble_gtl_gapc_param_update_req_ind_t * p_param)
 {
@@ -5290,7 +5457,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_parm_update_req_ind_handler(uint16_t 
     return NULL;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handles the recepcion of GATTC message SVC CHANGED
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5298,8 +5465,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_parm_update_req_ind_handler(uint16_t 
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
-static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_svc_changed_handler(uint16_t conn_hdl, r_ble_gtl_gattc_svc_changed_cfg_ind_t * p_param)
+ *********************************************************************************************************************/
+static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_svc_changed_handler(uint16_t conn_hdl, 
+                                                                       r_ble_gtl_gattc_svc_changed_cfg_ind_t * p_param)
 {
     uint16_t type = BLE_GATTC_EVENT_HDL_VAL_SVC_CHNG;
     st_ble_gattc_svc_chng_evt_t *p_evt_svc_chng_param;
@@ -5316,7 +5484,7 @@ static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_svc_changed_handler(uint16_t
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handles the reception of GATTC message NOTIFY/INDICATE
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5324,8 +5492,9 @@ static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_svc_changed_handler(uint16_t
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
-static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_event_ind_t * p_param)
+ *********************************************************************************************************************/
+static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_ind_handler(uint16_t conn_hdl, 
+                                                               r_ble_gtl_gattc_event_ind_t * p_param)
 {
     uint16_t                 type        = BLE_GATTC_EVENT_ERROR_RSP;
     st_ble_gattc_ntf_evt_t * p_evt_ntf_param;
@@ -5390,7 +5559,7 @@ static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_ind_handler(uint16_t conn_hd
 }
 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GATT client MTU changed indication message. Message does not generate callback events.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5398,7 +5567,7 @@ static  r_ble_gtl_cb_evt_t *  r_ble_gtl_gattc_event_ind_handler(uint16_t conn_hd
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_mtu_changed_ind_handler(uint16_t conn_hdl, 
                                                                     r_ble_gtl_gattc_mtu_changed_ind_t * p_param)
 {
@@ -5410,7 +5579,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_mtu_changed_ind_handler(uint16_t con
     return NULL;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GATT client REQUEST ATT INFO indication message.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -5418,8 +5587,9 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_mtu_changed_ind_handler(uint16_t con
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
-static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_att_info_req_ind_handler(uint16_t conn_hdl, r_ble_gtl_gattc_att_info_req_t * p_param)
+ *********************************************************************************************************************/
+static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_att_info_req_ind_handler(uint16_t conn_hdl, 
+                                                                    r_ble_gtl_gattc_att_info_req_t * p_param)
 {
     r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
     st_ble_gattc_att_info_req_ind_evt_t *p_att_info = NULL;
@@ -5429,7 +5599,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_att_info_req_ind_handler(uint16_t co
 
     status = r_ble_gtl_gattc_send_att_info_cfm(conn_hdl, p_param->handle, qe_ble_profile[index].value_length, 0);
 
-    p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_ATT_INFO_REQ_IND, status, sizeof(st_ble_gattc_att_info_req_ind_evt_t));
+    p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GATTC_EVENT_ATT_INFO_REQ_IND, status, 
+               sizeof(st_ble_gattc_att_info_req_ind_evt_t));
 
     if (BLE_SUCCESS == status)
     {
@@ -5447,14 +5618,14 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gattc_att_info_req_ind_handler(uint16_t co
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Request DA14xxx device generates a random number
  *
  * @param[in]  p_rand_nb                Pointer to structure in which generated number should be stored.
  *
  * @retval BLE_SUCCESS                  Random number generated.
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Module is busy processing another request.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_gen_rand_nb(r_ble_gtl_gapm_gen_rand_nb_ind_t * p_rand_nb)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5482,14 +5653,14 @@ static ble_status_t r_ble_gtl_gapm_gen_rand_nb(r_ble_gtl_gapm_gen_rand_nb_ind_t 
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read Bluetooth Device Address from DA14xxx
  *
  * @param[in]  p_bd_addr                Pointer to data structure in which BD address should be written once read.
  *
  * @retval BLE_SUCCESS                  BD address successfully read from DA14xxx.
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Module is busy processing another request.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_get_bd_addr(r_ble_gtl_gapm_dev_bdaddr_ind_t * p_bd_addr)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5517,14 +5688,14 @@ static ble_status_t r_ble_gtl_gapm_get_bd_addr(r_ble_gtl_gapm_dev_bdaddr_ind_t *
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read device version information from DA14xxx.
  *
  * @param[in]  p_version                Pointer to data structure into which version information should be written.
  *
  * @retval BLE_SUCCESS                  Version information successfully read from DA14xxx.
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Module is busy processing another request.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_get_get_dev_version(r_ble_gtl_gapm_dev_version_ind_t * p_version)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5552,12 +5723,12 @@ static ble_status_t r_ble_gtl_gapm_get_get_dev_version(r_ble_gtl_gapm_dev_versio
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Perform a software reset of the DA14xxx.
  *
  * @retval BLE_SUCCESS                  Reset successful.
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Module is busy processing another request.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_reset(void)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5577,14 +5748,14 @@ static ble_status_t r_ble_gtl_gapm_reset(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send start advertising command to the DA14xxx. Advertising parameters are configured via calls to
  *  R_BLE_GTL_GAP_SetAdvParam and R_BLE_GTL_GAP_SetAdvSresData functions.
  *
  * @retval BLE_SUCCESS                  Advertising started
  * @retval BLE_ERR_INVALID_ARG          Advertising parameters invalid
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_start_adv_cmd(void)
 {
     ble_status_t                           status;
@@ -5659,7 +5830,7 @@ static ble_status_t r_ble_gtl_gapm_send_start_adv_cmd(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send get device information command to the DA14xxx.
  *
  * @param[in]  operation                Type of information to read (R_BLE_GTL_GAPM_OP_GET_DEV_VERSION or
@@ -5667,7 +5838,7 @@ static ble_status_t r_ble_gtl_gapm_send_start_adv_cmd(void)
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_get_dev_info_cmd(uint8_t operation)
 {
     ble_status_t                        status;
@@ -5690,12 +5861,12 @@ static ble_status_t r_ble_gtl_gapm_send_get_dev_info_cmd(uint8_t operation)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send reset command to the DA14xxx.
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_reset_cmd(void)
 {
     ble_status_t                 status = BLE_ERR_MEM_ALLOC_FAILED;
@@ -5714,14 +5885,14 @@ static ble_status_t r_ble_gtl_gapm_send_reset_cmd(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send cancel operation command to the DA14xxx.
  *
  * @param[in]  operation                Operation to be cancelled
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_cancel_cmd(uint8_t operation)
 {
     ble_status_t                  status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5757,12 +5928,12 @@ static ble_status_t r_ble_gtl_gapm_send_cancel_cmd(uint8_t operation)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send generate random number command to the DA14xxx.
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_gen_rand_nb_cmd(void)
 {
     ble_status_t                       status = BLE_ERR_MEM_ALLOC_FAILED;
@@ -5793,12 +5964,12 @@ static ble_status_t r_ble_gtl_gapm_send_gen_rand_nb_cmd(void)
 
 
 #define ENABLE_ALL_FLAGS (R_BLE_GTL_ATT_CFG_GAPM_NAME_PERM_WRITE_ENABLE | R_BLE_GTL_ATT_CFG_GAPM_APP_PERM_WRITE_ENABLE)
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send configure device command to the DA14xxx. Configuration information is taken from a global data structure.
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_dev_config_cmd(void)
 {
     ble_status_t                          status = BLE_ERR_MEM_ALLOC_FAILED;
@@ -5888,15 +6059,16 @@ static ble_status_t r_ble_gtl_gapm_send_dev_config_cmd(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Get version information from peer device.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
- * @param[in]  p_version                Pointer to data structure into which peer version information should be written.
+ * @param[in]  p_version                Pointer to data structure into which peer version 
+ *                                      information should be written.
  *
  * @retval BLE_SUCCESS                  Version information read successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_get_peer_version(uint16_t conn_hdl, r_ble_gtl_gapc_peer_version_ind_t * p_version)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5924,7 +6096,7 @@ static ble_status_t r_ble_gtl_gapc_get_peer_version(uint16_t conn_hdl, r_ble_gtl
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Get features supported by peer device.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -5932,8 +6104,9 @@ static ble_status_t r_ble_gtl_gapc_get_peer_version(uint16_t conn_hdl, r_ble_gtl
  *
  * @retval BLE_SUCCESS                  Feature information read successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
-static ble_status_t r_ble_gtl_gapc_get_peer_features(uint16_t conn_hdl, r_ble_gtl_gapc_peer_features_ind_t * p_features)
+ *********************************************************************************************************************/
+static ble_status_t r_ble_gtl_gapc_get_peer_features(uint16_t conn_hdl, 
+                                                    r_ble_gtl_gapc_peer_features_ind_t * p_features)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
 
@@ -5960,7 +6133,7 @@ static ble_status_t r_ble_gtl_gapc_get_peer_features(uint16_t conn_hdl, r_ble_gt
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Get connection received signal strength indiciation (RSSI)
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -5968,7 +6141,7 @@ static ble_status_t r_ble_gtl_gapc_get_peer_features(uint16_t conn_hdl, r_ble_gt
  *
  * @retval BLE_SUCCESS                  RSSI read successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_get_con_rssi(uint16_t conn_hdl, r_ble_gtl_gapc_con_rssi_ind_t * p_param)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -5996,7 +6169,7 @@ static ble_status_t r_ble_gtl_gapc_get_con_rssi(uint16_t conn_hdl, r_ble_gtl_gap
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Get map of used/unused channels
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6004,7 +6177,7 @@ static ble_status_t r_ble_gtl_gapc_get_con_rssi(uint16_t conn_hdl, r_ble_gtl_gap
  *
  * @retval BLE_SUCCESS                  Channel map read successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_get_channel_map(uint16_t conn_hdl, r_ble_gtl_gapc_con_channel_map_ind_t * p_param)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6032,7 +6205,7 @@ static ble_status_t r_ble_gtl_gapc_get_channel_map(uint16_t conn_hdl, r_ble_gtl_
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Set packet size parameters, may generated a callback event.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6041,7 +6214,7 @@ static ble_status_t r_ble_gtl_gapc_get_channel_map(uint16_t conn_hdl, r_ble_gtl_
  *
  * @retval BLE_SUCCESS                  Packet size set successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_set_le_pkt_size(uint16_t conn_hdl, uint16_t tx_octets, uint16_t tx_time)
 {
     ble_status_t   status   = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6093,7 +6266,7 @@ static ble_status_t r_ble_gtl_gapc_set_le_pkt_size(uint16_t conn_hdl, uint16_t t
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Update connection parameters.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6102,7 +6275,7 @@ static ble_status_t r_ble_gtl_gapc_set_le_pkt_size(uint16_t conn_hdl, uint16_t t
  *
  * @retval BLE_SUCCESS                  Packet size set successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_param_update(uint16_t conn_hdl, st_ble_gap_conn_param_t * p_conn_update_param, 
                                                 r_ble_gtl_gapc_param_update_ind_t * p_param_update_ind)
 {
@@ -6160,7 +6333,7 @@ static ble_status_t r_ble_gtl_gapc_param_update(uint16_t conn_hdl, st_ble_gap_co
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Disconnect from central device
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6169,7 +6342,7 @@ static ble_status_t r_ble_gtl_gapc_param_update(uint16_t conn_hdl, st_ble_gap_co
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_disconnect(uint16_t conn_hdl, uint8_t reason)
 {
     ble_status_t                      status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6206,15 +6379,16 @@ static ble_status_t r_ble_gtl_gapc_disconnect(uint16_t conn_hdl, uint8_t reason)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send connection parameter update command to the DA14xxx.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
 
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
-static ble_status_t r_ble_gtl_gapc_send_param_update_cmd(uint16_t conn_hdl, st_ble_gap_conn_param_t * p_conn_updt_param)
+ *********************************************************************************************************************/
+static ble_status_t r_ble_gtl_gapc_send_param_update_cmd(uint16_t conn_hdl, 
+                                                        st_ble_gap_conn_param_t * p_conn_updt_param)
 {
     ble_status_t                        status;
     r_ble_gtl_gapc_param_update_cmd_t * p_cmd = NULL;
@@ -6245,7 +6419,7 @@ static ble_status_t r_ble_gtl_gapc_send_param_update_cmd(uint16_t conn_hdl, st_b
 }
 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send connection parameter update confirmation command to the DA14xxx.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6253,7 +6427,7 @@ static ble_status_t r_ble_gtl_gapc_send_param_update_cmd(uint16_t conn_hdl, st_b
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_send_param_update_cfm(uint16_t conn_hdl, uint8_t accept)
 {
     ble_status_t                        status;
@@ -6278,7 +6452,7 @@ static ble_status_t r_ble_gtl_gapc_send_param_update_cfm(uint16_t conn_hdl, uint
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send set packet size command to the DA14xxx.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6287,7 +6461,7 @@ static ble_status_t r_ble_gtl_gapc_send_param_update_cfm(uint16_t conn_hdl, uint
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_send_le_pkt_size_cmd(uint16_t conn_hdl, uint16_t tx_octets, uint16_t tx_time)
 {
     ble_status_t                           status = BLE_ERR_INVALID_ARG;
@@ -6313,7 +6487,7 @@ static ble_status_t r_ble_gtl_gapc_send_le_pkt_size_cmd(uint16_t conn_hdl, uint1
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send get device information command to the DA14xxx.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made.
@@ -6321,7 +6495,7 @@ static ble_status_t r_ble_gtl_gapc_send_le_pkt_size_cmd(uint16_t conn_hdl, uint1
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_send_get_info_cmd(uint16_t conn_hdl, uint8_t operation)
 {
     ble_status_t                    status = BLE_ERR_INVALID_ARG;
@@ -6345,7 +6519,7 @@ static ble_status_t r_ble_gtl_gapc_send_get_info_cmd(uint16_t conn_hdl, uint8_t 
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Add GATT service based on supplied parameters
  *
  * @param[in]  perm                     Service permissions
@@ -6356,7 +6530,7 @@ static ble_status_t r_ble_gtl_gapc_send_get_info_cmd(uint16_t conn_hdl, uint8_t 
  *
  * @retval BLE_SUCCESS                  Service added successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_gattm_add_service(uint8_t perm, uint8_t nbr_att, r_ble_gtl_uuid_t * p_uuid, 
                                          r_ble_gtl_gattm_att_desc_t * p_att_descs, uint16_t * p_start_hdl)
 {
@@ -6407,7 +6581,7 @@ ble_status_t r_ble_gtl_gattm_add_service(uint8_t perm, uint8_t nbr_att, r_ble_gt
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read an attribute value from DA14xxx database
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -6416,7 +6590,7 @@ ble_status_t r_ble_gtl_gattm_add_service(uint8_t perm, uint8_t nbr_att, r_ble_gt
  *
  * @retval BLE_SUCCESS                  Value read successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattm_get_att_value(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value)
 {
     FSP_PARAMETER_NOT_USED(conn_hdl);
@@ -6465,7 +6639,7 @@ static ble_status_t r_ble_gtl_gattm_get_att_value(uint16_t conn_hdl, uint16_t at
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Write an attribute value from DA14xxx database
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -6474,7 +6648,7 @@ static ble_status_t r_ble_gtl_gattm_get_att_value(uint16_t conn_hdl, uint16_t at
  *
  * @retval BLE_SUCCESS                  Value written successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattm_set_att_value(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6489,7 +6663,7 @@ static ble_status_t r_ble_gtl_gattm_set_att_value(uint16_t conn_hdl, uint16_t at
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Provide an RI vaule after GATTC_READ_REQ_IND
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -6498,7 +6672,7 @@ static ble_status_t r_ble_gtl_gattm_set_att_value(uint16_t conn_hdl, uint16_t at
  *
  * @retval BLE_SUCCESS                  Value written successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattm_read_cfm_value(uint16_t conn_hdl, uint16_t attr_hdl, st_ble_gatt_value_t * p_value)
 {
     uint8_t status = R_BLE_GTL_GAP_ERR_NO_ERROR;
@@ -6515,7 +6689,7 @@ static ble_status_t r_ble_gtl_gattm_read_cfm_value(uint16_t conn_hdl, uint16_t a
 }
 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Write an attribute value from DA14xxx database
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -6524,7 +6698,7 @@ static ble_status_t r_ble_gtl_gattm_read_cfm_value(uint16_t conn_hdl, uint16_t a
  *
  * @retval BLE_SUCCESS                  Value written successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattm_set_att_value_int(uint16_t conn_hdl, uint16_t attr_hdl, 
                                                       st_ble_gatt_value_t * p_value)
 {
@@ -6564,7 +6738,7 @@ static ble_status_t r_ble_gtl_gattm_set_att_value_int(uint16_t conn_hdl, uint16_
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Write value to peer device attribute
  *
  * @param[in]  operation                Type of write operation
@@ -6576,7 +6750,7 @@ static ble_status_t r_ble_gtl_gattm_set_att_value_int(uint16_t conn_hdl, uint16_
  *
  * @retval BLE_SUCCESS                  Value written successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_write(uint8_t operation, uint8_t auto_exec, uint16_t conn_hdl, uint16_t att_hdl,
                                           uint8_t * p_value, uint16_t length, uint16_t offset)
 {
@@ -6598,7 +6772,7 @@ static ble_status_t r_ble_gtl_gattc_write(uint8_t operation, uint8_t auto_exec, 
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Exchange MTU with peer device.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made
@@ -6606,7 +6780,7 @@ static ble_status_t r_ble_gtl_gattc_write(uint8_t operation, uint8_t auto_exec, 
 
  * @retval BLE_SUCCESS                  Value written successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_exch_mtu(uint16_t conn_hdl, uint16_t * p_mtu_rsp)
 {
     ble_status_t                      status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6640,7 +6814,7 @@ static ble_status_t r_ble_gtl_gattc_exch_mtu(uint16_t conn_hdl, uint16_t * p_mtu
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send execute write request to peer device
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made
@@ -6648,7 +6822,7 @@ static ble_status_t r_ble_gtl_gattc_exch_mtu(uint16_t conn_hdl, uint16_t * p_mtu
 
  * @retval BLE_SUCCESS                  Value written successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_write_execute(uint16_t conn_hdl, uint8_t execute)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6669,7 +6843,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_execute(uint16_t conn_hdl, uint8_
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Notify client of change to attribute value.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made
@@ -6679,7 +6853,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_execute(uint16_t conn_hdl, uint8_
  *
  * @retval BLE_SUCCESS                  Notify successful
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_notify(uint16_t conn_hdl, uint16_t attr_hdl, uint8_t * p_value, uint16_t length)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6709,9 +6883,10 @@ static ble_status_t r_ble_gtl_gattc_send_service_changed(uint16_t conn_hdl, uint
         r_ble_gtl_gattc_send_svc_changed_cmd_t * p_cmd;
 
         p_cmd = (r_ble_gtl_gattc_send_svc_changed_cmd_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GATTC_SEND_SVC_CHANGED_CMD,
-                                                                                 R_BLE_GTL_TASK_ID_GATTC + (uint16_t)(conn_hdl << 8),
-                                                                                 R_BLE_GTL_TASK_ID_GTL,
-                                                                                 sizeof (r_ble_gtl_gattc_send_svc_changed_cmd_t));
+                                                                    R_BLE_GTL_TASK_ID_GATTC + 
+                                                                    (uint16_t)(conn_hdl << 8),
+                                                                    R_BLE_GTL_TASK_ID_GTL,
+                                                                    sizeof (r_ble_gtl_gattc_send_svc_changed_cmd_t));
         if (NULL != p_cmd)
         {
            p_cmd->operation = R_BLE_GTL_GATTC_OP_SVC_CHANGED;
@@ -6732,7 +6907,7 @@ static ble_status_t r_ble_gtl_gattc_send_service_changed(uint16_t conn_hdl, uint
 }
 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Indicate to client a change to attribute value.
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made
@@ -6742,7 +6917,7 @@ static ble_status_t r_ble_gtl_gattc_send_service_changed(uint16_t conn_hdl, uint
  *
  * @retval BLE_SUCCESS                  Indicate successful
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_indicate(uint16_t conn_hdl, uint16_t attr_hdl, uint8_t * p_value, uint16_t length)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -6763,7 +6938,7 @@ static ble_status_t r_ble_gtl_gattc_indicate(uint16_t conn_hdl, uint16_t attr_hd
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Dsicover peer services/characteristics
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made
@@ -6775,9 +6950,10 @@ static ble_status_t r_ble_gtl_gattc_indicate(uint16_t conn_hdl, uint16_t attr_hd
  *
  * @retval BLE_SUCCESS                  Discovery successful
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as command already in progress
- **********************************************************************************************************************/
-static ble_status_t r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operation, uint16_t start_hdl, uint16_t end_hdl,
-                                             r_ble_gtl_uuid_t * p_uuid, r_ble_gtl_disc_events_t * p_disc_evts)
+ *********************************************************************************************************************/
+static ble_status_t r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operation, uint16_t start_hdl, 
+                                             uint16_t end_hdl, r_ble_gtl_uuid_t * p_uuid, 
+                                             r_ble_gtl_disc_events_t * p_disc_evts)
 {
     uint8_t                         * p_msg    = NULL;
     bool                              complete = false;
@@ -6824,8 +7000,10 @@ static ble_status_t r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operatio
                     }
                     else if (R_BLE_GTL_GATTC_DISC_SVC_INCL_IND == msg_id)
                     {
-                           p_disc_svc_incl_ind = (r_ble_gtl_gattc_disc_svc_incl_ind_t * )&p_msg[sizeof(r_ble_gtl_msg_hdr_t)];
-                           status = r_ble_gtl_gattc_handle_discovered_svc_incl(conn_hdl, p_disc_svc_incl_ind, p_disc_evts);
+                           p_disc_svc_incl_ind = (r_ble_gtl_gattc_disc_svc_incl_ind_t * )
+                                                  &p_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+                           status = r_ble_gtl_gattc_handle_discovered_svc_incl(conn_hdl, 
+                                                                               p_disc_svc_incl_ind, p_disc_evts);
                            r_ble_gtl_msg_buffer_free(p_msg);
                     }
                     else if (R_BLE_GTL_GATTC_CMP_EVT == msg_id)
@@ -6862,7 +7040,7 @@ static ble_status_t r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operatio
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle discovered service
  *
  * @param[in]  p_disc_svc_ind           Discovered service inidication
@@ -6870,8 +7048,10 @@ static ble_status_t r_ble_gtl_gattc_discover(uint16_t conn_hdl, uint8_t operatio
  *
  * @retval BLE_SUCCESS                  Service discovered and queued.
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Unable to queue discovered service.
- **********************************************************************************************************************/
-static ble_status_t r_ble_gtl_gattc_handle_discovered_svc(uint16_t conn_hdl, r_ble_gtl_gattc_disc_svc_ind_t * p_disc_svc_ind, r_ble_gtl_disc_events_t * p_disc_evts)
+ *********************************************************************************************************************/
+static ble_status_t r_ble_gtl_gattc_handle_discovered_svc(uint16_t conn_hdl, 
+                                                          r_ble_gtl_gattc_disc_svc_ind_t * p_disc_svc_ind, 
+                                                          r_ble_gtl_disc_events_t * p_disc_evts)
 {
     ble_status_t                  status;
     st_ble_gattc_serv_16_evt_t  * p_serv_16;
@@ -6922,7 +7102,7 @@ static ble_status_t r_ble_gtl_gattc_handle_discovered_svc(uint16_t conn_hdl, r_b
 }
 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle discovered characteristic descriptor
  *
  * @param[in]  p_disc_char_desc_ind     Discovered service inidication
@@ -6930,8 +7110,10 @@ static ble_status_t r_ble_gtl_gattc_handle_discovered_svc(uint16_t conn_hdl, r_b
  *
  * @retval BLE_SUCCESS                  Characteristic discovered and queued.
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Unable to queue discovered characteristic.
- **********************************************************************************************************************/
-static  ble_status_t r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_hdl, r_ble_gtl_gattc_disc_char_desc_ind_t * p_disc_char_desc_ind, r_ble_gtl_disc_events_t * p_disc_evts)
+ *********************************************************************************************************************/
+static  ble_status_t r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_hdl, 
+                                                        r_ble_gtl_gattc_disc_char_desc_ind_t * p_disc_char_desc_ind, 
+                                                        r_ble_gtl_disc_events_t * p_disc_evts)
 {
     ble_status_t                  status;
     st_ble_gattc_char_desc_16_evt_t  * p_char_16;
@@ -6940,7 +7122,8 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_h
 
     if (p_disc_char_desc_ind->uuid_len == BLE_GATT_16_BIT_UUID_SIZE)
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(p_disc_evts->evt_16, BLE_SUCCESS, sizeof(st_ble_gattc_char_desc_16_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(p_disc_evts->evt_16, BLE_SUCCESS, 
+                                             sizeof(st_ble_gattc_char_desc_16_evt_t));
         if (NULL != p_cb_evt)
         {
             p_cb_evt->data.gattc.conn_hdl = conn_hdl;
@@ -6956,7 +7139,8 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_h
     }
     else
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(p_disc_evts->evt_128, BLE_SUCCESS, sizeof(st_ble_gattc_char_desc_128_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(p_disc_evts->evt_128, BLE_SUCCESS, 
+                                             sizeof(st_ble_gattc_char_desc_128_evt_t));
         if (NULL != p_cb_evt)
         {
             p_cb_evt->data.gattc.conn_hdl = conn_hdl;
@@ -6974,7 +7158,7 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_h
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle discovered included service
  *
  * @param[in]  p_disc_char_desc_ind     Discovered service inidication
@@ -6982,9 +7166,11 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_char_desc(uint16_t conn_h
  *
  * @retval BLE_SUCCESS                  Characteristic discovered and queued.
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Unable to queue discovered characteristic.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-static  ble_status_t r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hdl, r_ble_gtl_gattc_disc_svc_incl_ind_t * p_disc_svc_incl_ind, r_ble_gtl_disc_events_t * p_disc_evts)
+static  ble_status_t r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hdl, 
+                                                            r_ble_gtl_gattc_disc_svc_incl_ind_t * p_disc_svc_incl_ind, 
+                                                            r_ble_gtl_disc_events_t * p_disc_evts)
 {
     ble_status_t                  status;
     st_ble_gattc_inc_serv_16_evt_t  * p_char_16;
@@ -7012,7 +7198,8 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hd
     }
     else
     {
-        p_cb_evt = r_ble_gtl_cb_evt_allocate(p_disc_evts->evt_128, BLE_SUCCESS, sizeof(st_ble_gattc_inc_serv_128_evt_t));
+        p_cb_evt = r_ble_gtl_cb_evt_allocate(p_disc_evts->evt_128, BLE_SUCCESS, 
+                                            sizeof(st_ble_gattc_inc_serv_128_evt_t));
         if (NULL != p_cb_evt)
         {
             p_cb_evt->data.gattc.conn_hdl = conn_hdl;
@@ -7032,7 +7219,7 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hd
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle discovered characteristic
  *
  * @param[in]  p_disc_svc_ind           Discovered service inidication
@@ -7040,8 +7227,10 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_svc_incl(uint16_t conn_hd
  *
  * @retval BLE_SUCCESS                  Characteristic discovered and queued.
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Unable to queue discovered characteristic.
- **********************************************************************************************************************/
-static  ble_status_t r_ble_gtl_gattc_handle_discovered_char(uint16_t conn_hdl, r_ble_gtl_gattc_disc_char_ind_t * p_disc_char_ind, r_ble_gtl_disc_events_t * p_disc_evts)
+ *********************************************************************************************************************/
+static  ble_status_t r_ble_gtl_gattc_handle_discovered_char(uint16_t conn_hdl, 
+                                                            r_ble_gtl_gattc_disc_char_ind_t * p_disc_char_ind, 
+                                                            r_ble_gtl_disc_events_t * p_disc_evts)
 {
     ble_status_t                  status;
     st_ble_gattc_char_16_evt_t  * p_char_16;
@@ -7088,7 +7277,7 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_char(uint16_t conn_hdl, r
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send write client attribute command to the DA14xxx.
  *
  * @param[in]  operation                Type of write operation
@@ -7100,7 +7289,7 @@ static  ble_status_t r_ble_gtl_gattc_handle_discovered_char(uint16_t conn_hdl, r
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_write_cmd(uint8_t operation, uint8_t auto_exec, uint16_t conn_hdl, 
                                                 uint16_t att_hdl, uint8_t * p_value, uint16_t length, uint16_t offset)
 {
@@ -7132,7 +7321,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_cmd(uint8_t operation, uint8_t au
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send read client attribute command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7141,7 +7330,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_cmd(uint8_t operation, uint8_t au
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_read_cmd(uint16_t conn_hdl, uint8_t operation, uint16_t att_hdl, 
                                                   uint16_t offset, uint16_t length)
 {
@@ -7171,7 +7360,7 @@ static ble_status_t r_ble_gtl_gattc_send_read_cmd(uint16_t conn_hdl, uint8_t ope
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send read client attribute command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7180,7 +7369,7 @@ static ble_status_t r_ble_gtl_gattc_send_read_cmd(uint16_t conn_hdl, uint8_t ope
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_read_by_uuid_cmd(uint16_t conn_hdl, uint16_t start_hdl, 
                                                           uint16_t end_hdl, r_ble_gtl_uuid_t * p_uuid)
 {
@@ -7211,7 +7400,7 @@ static ble_status_t r_ble_gtl_gattc_send_read_by_uuid_cmd(uint16_t conn_hdl, uin
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send read client multiple attributes command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7221,18 +7410,20 @@ static ble_status_t r_ble_gtl_gattc_send_read_by_uuid_cmd(uint16_t conn_hdl, uin
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
-static ble_status_t r_ble_gtl_gattc_send_read_multiple_cmd(uint16_t conn_hdl, uint8_t number, uint16_t * p_hdl_list, uint16_t * p_length_list)
+ *********************************************************************************************************************/
+static ble_status_t r_ble_gtl_gattc_send_read_multiple_cmd(uint16_t conn_hdl, uint8_t number, 
+                                                           uint16_t * p_hdl_list, uint16_t * p_length_list)
 {
     ble_status_t                       status;
     r_ble_gtl_gattc_read_multi_cmd_t * p_cmd;
     uint16_t                           hdl;
 
     p_cmd = (r_ble_gtl_gattc_read_multi_cmd_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GATTC_READ_CMD,
-                                                                       R_BLE_GTL_TASK_ID_GATTC + (uint16_t)(conn_hdl << 8),
-                                                                       R_BLE_GTL_TASK_ID_GTL,
-                                                                       (uint16_t)(sizeof(r_ble_gtl_gattc_read_multi_cmd_t) + 
-                                                                                 (sizeof (uint32_t) * number)));
+                                                                R_BLE_GTL_TASK_ID_GATTC + 
+                                                                (uint16_t)(conn_hdl << 8),
+                                                                R_BLE_GTL_TASK_ID_GTL,
+                                                                (uint16_t)(sizeof(r_ble_gtl_gattc_read_multi_cmd_t) + 
+                                                                (sizeof (uint32_t) * number)));
     if (NULL != p_cmd)
     {
         p_cmd->operation = R_BLE_GTL_GATTC_OP_READ_MULTIPLE;
@@ -7263,14 +7454,14 @@ static ble_status_t r_ble_gtl_gattc_send_read_multiple_cmd(uint16_t conn_hdl, ui
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send MTU exchange command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_exch_mtu_cmd(uint16_t conn_hdl)
 {
     ble_status_t                    status;
@@ -7296,7 +7487,8 @@ static ble_status_t r_ble_gtl_gattc_send_exch_mtu_cmd(uint16_t conn_hdl)
 }
 
 
-static ble_status_t r_ble_gtl_gattc_send_att_info_cfm(uint16_t conn_hdl, uint16_t att_hdl, uint16_t value_len, uint8_t cmd_status)
+static ble_status_t r_ble_gtl_gattc_send_att_info_cfm(uint16_t conn_hdl, uint16_t att_hdl, 
+                                                      uint16_t value_len, uint8_t cmd_status)
 {
     ble_status_t                 status;
     r_ble_gtl_gattc_att_info_cfm_t * p_cmd;
@@ -7320,7 +7512,7 @@ static ble_status_t r_ble_gtl_gattc_send_att_info_cfm(uint16_t conn_hdl, uint16_
 
     return status;
 }
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send client read confirm command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7331,7 +7523,7 @@ static ble_status_t r_ble_gtl_gattc_send_att_info_cfm(uint16_t conn_hdl, uint16_
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_read_cfm(uint16_t conn_hdl, uint8_t rd_status, uint16_t att_hdl, 
                                                   uint16_t value_len, uint8_t * p_value)
 {
@@ -7363,7 +7555,7 @@ static ble_status_t r_ble_gtl_gattc_send_read_cfm(uint16_t conn_hdl, uint8_t rd_
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send write confirm command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7372,7 +7564,7 @@ static ble_status_t r_ble_gtl_gattc_send_read_cfm(uint16_t conn_hdl, uint8_t rd_
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_write_cfm(uint16_t conn_hdl, uint8_t wr_status, uint16_t att_handle)
 {
     ble_status_t                      status;
@@ -7396,7 +7588,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_cfm(uint16_t conn_hdl, uint8_t wr
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send write event confirmation command to the DA14xxx (Indications Only)
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7405,7 +7597,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_cfm(uint16_t conn_hdl, uint8_t wr
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_event_cfm(uint16_t conn_hdl, uint16_t attr_hdl)
 {
     ble_status_t status;
@@ -7428,7 +7620,7 @@ static ble_status_t r_ble_gtl_gattc_send_event_cfm(uint16_t conn_hdl, uint16_t a
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send write confirm command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7441,7 +7633,7 @@ static ble_status_t r_ble_gtl_gattc_send_event_cfm(uint16_t conn_hdl, uint16_t a
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_disc_cmd(uint16_t conn_hdl, uint8_t operation, uint16_t seq_num, 
                                                   uint16_t start_hdl, uint16_t end_hdl, r_ble_gtl_uuid_t * p_uuid)
 {
@@ -7495,7 +7687,7 @@ static ble_status_t r_ble_gtl_gattc_send_disc_cmd(uint16_t conn_hdl, uint8_t ope
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send write confirm command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7506,7 +7698,7 @@ static ble_status_t r_ble_gtl_gattc_send_disc_cmd(uint16_t conn_hdl, uint8_t ope
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_evt_cmd(uint8_t operation, uint16_t conn_hdl, uint16_t attr_hdl, 
                                                  uint8_t * p_value, uint16_t length)
 {
@@ -7535,7 +7727,7 @@ static ble_status_t r_ble_gtl_gattc_send_evt_cmd(uint8_t operation, uint16_t con
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send execute write command to the DA14xxx
  *
  * @param[in]  conn_hdl                 Handle of connection on which request should be made (not used)
@@ -7543,7 +7735,7 @@ static ble_status_t r_ble_gtl_gattc_send_evt_cmd(uint8_t operation, uint16_t con
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gattc_send_write_execute_cmd(uint16_t conn_hdl, uint8_t execute)
 {
     ble_status_t                          status;
@@ -7569,7 +7761,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_execute_cmd(uint16_t conn_hdl, ui
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Stop advertising
  *
  * @param[in]  adv_hdl                  Advertising handle
@@ -7577,7 +7769,7 @@ static ble_status_t r_ble_gtl_gattc_send_write_execute_cmd(uint16_t conn_hdl, ui
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gap_stop_adv(uint8_t adv_hdl, uint8_t reason)
 {
     ble_status_t               status;
@@ -7612,7 +7804,7 @@ static ble_status_t r_ble_gtl_gap_stop_adv(uint8_t adv_hdl, uint8_t reason)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read characteristic value from attribute database by handle.
  *
  * @param[in]  handle           Attribute handle
@@ -7621,7 +7813,7 @@ static ble_status_t r_ble_gtl_gap_stop_adv(uint8_t adv_hdl, uint8_t reason)
  *
  * @retval BLE_SUCCESS          Attribute read successfully
  * @retval BLE_ERR_NOT_FOUND    Attribute not found
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gap_get_char_value_by_handle(uint16_t handle, uint8_t ** p_value, uint16_t * p_len)
 {
     ble_status_t status = BLE_ERR_NOT_FOUND;
@@ -7642,7 +7834,7 @@ static ble_status_t r_ble_gtl_gap_get_char_value_by_handle(uint16_t handle, uint
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read characteristic value from attribute database by UUID.
  *
  * @param[in]  uuid             UUID (16-bit) of attribute
@@ -7651,7 +7843,7 @@ static ble_status_t r_ble_gtl_gap_get_char_value_by_handle(uint16_t handle, uint
  *
  * @retval BLE_SUCCESS          Attribute read successfully
  * @retval BLE_ERR_NOT_FOUND    Attribute not found
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gap_get_char_value_by_uuid(uint16_t uuid, uint8_t * p_value, uint8_t len)
 {
     ble_status_t status = BLE_ERR_NOT_FOUND;
@@ -7699,14 +7891,14 @@ static ble_status_t r_ble_gtl_gap_get_char_value_by_uuid(uint16_t uuid, uint8_t 
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read transmit power level and convert into units of dBm.
  *
  * @param[in]  p_tx_pwr         Pointer into which power level value should be written
  *
  * @retval BLE_SUCCESS          Power level read successfully
  * @retval BLE_ERR_INVALID_DATA Invalid power level returned
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_aux_get_tx_power(int8_t * p_tx_pwr)
 {
     uint8_t      tx_power_level;
@@ -7741,14 +7933,14 @@ static ble_status_t r_ble_gtl_aux_get_tx_power(int8_t * p_tx_pwr)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Set transmit power level.
  *
  * @param[in] tx_pwr                   Power level value
  *
  * @retval BLE_SUCCESS                 Power level set successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS Busy with another command
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_aux_set_tx_power(uint8_t tx_pwr)
 {
     ble_status_t status = BLE_ERR_ALREADY_IN_PROGRESS;
@@ -7769,12 +7961,12 @@ static ble_status_t r_ble_gtl_aux_set_tx_power(uint8_t tx_pwr)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send get transmit power command to the DA14xxx
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_aux_send_get_tx_power_cmd(void)
 {
     ble_status_t   status;
@@ -7796,14 +7988,14 @@ static ble_status_t r_ble_gtl_aux_send_get_tx_power_cmd(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send set transmit power command to the DA14xxx
  *
  * @param[in] operation                 Power level value
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_aux_send_set_tx_power_cmd(uint8_t operation)
 {
     ble_status_t                  status;
@@ -7835,7 +8027,7 @@ static ble_status_t r_ble_gtl_aux_send_set_tx_power_cmd(uint8_t operation)
  *
  * @retval NULL         No message received
  * @retval uint8_t *    Pointer to buffer containing received message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint8_t * r_ble_gtl_msg_parse_rx_char(uint8_t rxd_byte)
 {
      uint8_t * p_rx_msg = NULL;
@@ -7922,7 +8114,7 @@ static uint8_t * r_ble_gtl_msg_parse_rx_char(uint8_t rxd_byte)
      return p_rx_msg;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Wait for a response following transmission of a GTL message
  *
  * @param[in]  rsp_msg_id       Message ID of expected response
@@ -7932,7 +8124,7 @@ static uint8_t * r_ble_gtl_msg_parse_rx_char(uint8_t rxd_byte)
  *
  * @retval BLE_SUCCESS          Expected response recevied
  * @retval BLE_ERR_NOT_FOUND    Expected response not recevied
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_msg_wait_for_response(uint16_t rsp_msg_id, uint8_t * p_rsp_param, 
                                                 uint32_t rsp_param_len, uint32_t timeout_ms)
 {
@@ -7966,7 +8158,7 @@ ble_status_t r_ble_gtl_msg_wait_for_response(uint16_t rsp_msg_id, uint8_t * p_rs
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Wait for a command complete response following transmission of a GTL message
  *
  * @param[in]  cmp_evt          Event ID of expected response
@@ -7976,7 +8168,7 @@ ble_status_t r_ble_gtl_msg_wait_for_response(uint16_t rsp_msg_id, uint8_t * p_rs
  *
  * @retval BLE_SUCCESS          Expected response recevied
  * @retval BLE_ERR_NOT_FOUND    Expected response not recevied
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_msg_wait_for_cmd_complete(uint16_t cmp_evt, uint8_t operation, 
                                                 uint8_t cmd_status, uint32_t timeout_ms)
 {
@@ -8022,39 +8214,33 @@ ble_status_t r_ble_gtl_msg_wait_for_cmd_complete(uint16_t cmp_evt, uint8_t opera
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Deassert the RTS signal. Development feature.
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #if (BLE_DA1453x_SLEEP_FLOW_CONTROL)
 void r_ble_gtl_rts_flow_off( void )
 {
 
-    R_BSP_PinAccessEnable ();
+    R_GPIO_PinWrite (BLE_CFG_RESET_GPIO, GPIO_LEVEL_HIGH);
 
-    R_BSP_PinWrite (BSP_IO_PORT_04_PIN_12, BSP_IO_LEVEL_HIGH);
-
-    R_BSP_PinAccessDisable ();
 }
 #endif
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Assert the RTS signal. Development feature.
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
  #if (BLE_DA1453x_SLEEP_FLOW_CONTROL)
 void r_ble_gtl_rts_flow_on( void )
 {
 
-    R_BSP_PinAccessEnable ();
+    R_GPIO_PinWrite (BLE_CFG_RESET_GPIO, GPIO_LEVEL_LOW);
 
-    R_BSP_PinWrite (BSP_IO_PORT_04_PIN_12, BSP_IO_LEVEL_LOW);
-
-    R_BSP_PinAccessDisable ();
 }
 #endif 
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Transmit a GTL message of the appropriate transport layer.
  *
  * @param[in]  p_msg                    Pointer to message to be transmitted
@@ -8062,7 +8248,7 @@ void r_ble_gtl_rts_flow_on( void )
  * @retval BLE_SUCCESS                  Message transmitted successfully
  * @retval BLE_ERR_ALREADY_IN_PROGRESS  Unable to obtain mutex as transmission already in progress
  * @retval BLE_ERR_UNSPECIFIED          Transport layer failed to transmit message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
  
 static ble_status_t r_ble_gtl_msg_transmit(uint8_t * p_msg)
 {
@@ -8081,7 +8267,7 @@ static ble_status_t r_ble_gtl_msg_transmit(uint8_t * p_msg)
         if (active_sleep_mode > 0)
         {
             r_ble_gtl_rts_flow_off();
-            vTaskDelay(pdMS_TO_TICKS(R_BLE_GTL_SLEEP_WAKEUP_TOGGLE_MS));
+            r_ble_gtl_delay(R_BLE_GTL_SLEEP_WAKEUP_TOGGLE_MS);
             r_ble_gtl_rts_flow_on();
         }
         #endif 
@@ -8100,7 +8286,7 @@ static ble_status_t r_ble_gtl_msg_transmit(uint8_t * p_msg)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Allocate memory for transmission of a GTL message and build the header with supplied parameters.
  *
  * @param[in]  id       Message ID (type)
@@ -8110,7 +8296,7 @@ static ble_status_t r_ble_gtl_msg_transmit(uint8_t * p_msg)
  *
  * @retval NULL         Unable to allocate memory for the message
  * @retval Address      Pointer to memory containing the message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint8_t * r_ble_gtl_msg_allocate(uint16_t id, uint16_t dest_id, uint16_t src_id, uint16_t len)
 {
     uint8_t             * p_msg;
@@ -8138,12 +8324,12 @@ static uint8_t * r_ble_gtl_msg_allocate(uint16_t id, uint16_t dest_id, uint16_t 
     return p_msg;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Execute callback assocaited with an callback event.
  *
  * @param[in]  p_evt    Pointer containing callback event data.
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_cb_evt_execute(r_ble_gtl_cb_evt_t * p_evt)
 {
     if (NULL != p_evt)
@@ -8204,7 +8390,7 @@ static void r_ble_gtl_cb_evt_execute(r_ble_gtl_cb_evt_t * p_evt)
     }
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Allocated memory for a callback event
  *
  * @param[in]  type             Type of callback event (helps determine amount of memory to allocate)
@@ -8213,7 +8399,7 @@ static void r_ble_gtl_cb_evt_execute(r_ble_gtl_cb_evt_t * p_evt)
  *
  * @retval NULL                 Unable to allocate required memory
  * @retval r_ble_gtl_cb_evt_t * Pointer to allocated memory
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_cb_evt_allocate(uint16_t type, ble_status_t result, uint16_t param_len)
 {
     r_ble_gtl_cb_evt_t * p_evt_cb = NULL;
@@ -8476,12 +8662,12 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_cb_evt_allocate(uint16_t type, ble_status_
     return p_evt_cb;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Free memory allocated for a callback event
  *
  * @param[in]  p_evt        Pointer to callback event memory to be freed
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_cb_evt_free(r_ble_gtl_cb_evt_t * p_evt)
 {
     if (NULL != p_evt)
@@ -8592,7 +8778,7 @@ static void r_ble_gtl_cb_evt_free(r_ble_gtl_cb_evt_t * p_evt)
     }
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Build an GTL attribute descriptor based on QE attribute descriptor
  *
  * @param[in]  p_att_desc   Pointer to GTL descriptor being built
@@ -8600,7 +8786,7 @@ static void r_ble_gtl_cb_evt_free(r_ble_gtl_cb_evt_t * p_evt)
  * @param[in]  nbr_atts     Number of attributes
  *
  * @retval BLE_SUCCESS      Descriptor built successfully
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_att_build_descriptor(r_ble_gtl_gattm_att_desc_t * p_att_desc, 
                                                    attribute_t * p_att, uint16_t nbr_atts)
 {
@@ -8709,9 +8895,9 @@ static ble_status_t r_ble_gtl_att_build_descriptor(r_ble_gtl_gattm_att_desc_t * 
     return BLE_SUCCESS;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Free any memory allocated by calling the R_BLE_GTL_Open function.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_cleanup_open(void)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -8784,12 +8970,12 @@ static void r_ble_gtl_cleanup_open(void)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Allocate a GTL message buffer - safe to call from within an ISR
  *
  * @param[in]  len          Length of buffer required
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static uint8_t * r_ble_gtl_msg_buffer_allocate_from_isr(uint16_t len)
 {
     uint8_t * p_buff = NULL;
@@ -8816,12 +9002,12 @@ static uint8_t * r_ble_gtl_msg_buffer_allocate_from_isr(uint16_t len)
     return p_buff;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Free previously allocated GTL message buffer
  *
  * @param[in]  p_msg        Pointer to message buffer to be freed
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_msg_buffer_free(uint8_t * p_msg)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -8833,12 +9019,12 @@ static void r_ble_gtl_msg_buffer_free(uint8_t * p_msg)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Free previously allocated GTL message buffer - safe to be called from an ISR
  *
  * @param[in]  p_msg        Pointer to message buffer to be freed
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_msg_buffer_free_from_isr(uint8_t * p_msg)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -8852,7 +9038,7 @@ static void r_ble_gtl_msg_buffer_free_from_isr(uint8_t * p_msg)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Receive GTL message by checking incoming messge queue
  *
  * @param[in]  p_msg            Pointer into which message buffer pointer is stored if message is received
@@ -8860,7 +9046,7 @@ static void r_ble_gtl_msg_buffer_free_from_isr(uint8_t * p_msg)
  *
  * @retval BLE_SUCCESS          Message received
  * @retval BLE_ERR_RSP_TIMEOUT  Timeout while waiting for message to be received
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_msg_receive(uint8_t ** p_msg, uint32_t timeout_ms)
 {
     ble_status_t status = BLE_ERR_NOT_FOUND;
@@ -8886,7 +9072,7 @@ static ble_status_t r_ble_gtl_msg_receive(uint8_t ** p_msg, uint32_t timeout_ms)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Receive GTL message by checking pending messge queue
  *
  * @param[in]  p_msg            Pointer into which message buffer pointer is stored if message is received
@@ -8894,7 +9080,7 @@ static ble_status_t r_ble_gtl_msg_receive(uint8_t ** p_msg, uint32_t timeout_ms)
  *
  * @retval BLE_SUCCESS          Message received
  * @retval BLE_ERR_RSP_TIMEOUT  Timeout while waiting for message to be received
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_msg_pend_receive(uint8_t ** p_msg, uint32_t timeout_ms)
 {
     ble_status_t status = BLE_ERR_NOT_FOUND;
@@ -8920,12 +9106,12 @@ static ble_status_t r_ble_gtl_msg_pend_receive(uint8_t ** p_msg, uint32_t timeou
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Initialize GTL messages queue(s)
  *
  * @retval true     Queue initialized successfully
  * @retval false    Queue initialized failed
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_msg_queue_init(void)
 {
     bool init = false;
@@ -9007,12 +9193,12 @@ static bool r_ble_gtl_msg_queue_init(void)
     return init;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Add GTL message to received queue
  *
  * @param[in]  p_rx_msg     Pointer to buffer containing received message
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_msg_queue_add(uint8_t ** p_rx_msg)
 {
     ble_status_t status = BLE_ERR_MEM_ALLOC_FAILED;
@@ -9041,12 +9227,12 @@ static ble_status_t r_ble_gtl_msg_queue_add(uint8_t ** p_rx_msg)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Check if the received message queue is empty.
  *
  * @retval true          Queue is empty
  * @retval false         Queue is not empty
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_msg_queue_empty(void)
 {
     bool result = false;
@@ -9087,12 +9273,12 @@ static bool r_ble_gtl_msg_queue_empty(void)
     return result;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Add a message to the pending queue.
  *
  * @param[in]  p_rx_msg     Pointer to buffer containing message.
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_msg_pend_queue_add(uint8_t ** p_rx_msg)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -9112,12 +9298,12 @@ static void r_ble_gtl_msg_pend_queue_add(uint8_t ** p_rx_msg)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Check if the pending message queue is empty.
  *
  * @retval true          Queue is empty
  * @retval false         Queue is not empty
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_msg_pend_queue_empty(void)
 {
     bool result = false;
@@ -9158,12 +9344,12 @@ static bool r_ble_gtl_msg_pend_queue_empty(void)
     return result;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Initialize the callback event queue.
  *
  * @retval true         Initialization successful.
  * @retval false        Initialization failed.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_cb_evt_queue_init(void)
 {
     bool init = true;
@@ -9190,13 +9376,13 @@ static bool r_ble_gtl_cb_evt_queue_init(void)
     return init;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Remove an item from the callback event queue.
  *
  * @param[in]  p_cb_evt     Pointer to callback event removed from queue
  * @retval true             Item removed from the queue
  * @retval false            No item removed from queue (because it is empty)
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_cb_evt_queue_get(r_ble_gtl_cb_evt_t ** p_cb_evt)
 {
     bool result = false;
@@ -9221,13 +9407,13 @@ static bool r_ble_gtl_cb_evt_queue_get(r_ble_gtl_cb_evt_t ** p_cb_evt)
     return result;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Add an entry to the callback event queue.
  *
  * @param[in]  p_evt                    Pointer to the event to be added
  * @retval BLE_SUCCESS                  Event successfully added to the queue.
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficent memory to add item to queue.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_cb_evt_queue_add(r_ble_gtl_cb_evt_t * p_evt)
 {
     ble_status_t status;
@@ -9272,12 +9458,12 @@ static ble_status_t r_ble_gtl_cb_evt_queue_add(r_ble_gtl_cb_evt_t * p_evt)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Check if callback event queue is emtpy
  *
  * @retval true          Queue is empty
  * @retval false         Queue is not empty
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_cb_evt_queue_empty(void)
 {
     bool result = false;
@@ -9318,11 +9504,11 @@ static bool r_ble_gtl_cb_evt_queue_empty(void)
     return result;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Generate a blocking delay.
  *
  * @param[in]  ms       Length of delay in milliseconds
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_delay(uint32_t ms)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -9334,13 +9520,13 @@ static void r_ble_gtl_delay(uint32_t ms)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Wrappper for memory allocate function.
  *
  * @param[in]  size     Size of memory to be allocated (in bytes)
  * @retval NULL         Memory not allocated
  * @retval Address      Address of memory allocated
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void * r_ble_gtl_malloc(uint32_t size)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -9364,11 +9550,11 @@ static void * r_ble_gtl_malloc(uint32_t size)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Wrapper for free memory allocation function.
  *
  * @param[in]  p_mem    Pointer to memory to be freed
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_free(void * p_mem)
 {
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
@@ -9380,11 +9566,11 @@ static void r_ble_gtl_free(void * p_mem)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Initialize mutexe(s)
  *
  * @param[in]  mutex     Bitmask respresenting mutex(es) to be initialized
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_mutex_init(void)
 {
     bool status = false;
@@ -9442,14 +9628,14 @@ static bool r_ble_gtl_mutex_init(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Take one of the previously created mutexes.
  *
  * @param[in]  mutex    Bitmask representing which mutex(es) to take.
  *
  * @retval true         Mutex(es) taken successfully
  * @retval false        Taking one (or more) mutex failed
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_mutex_take(uint32_t mutex)
 {
     bool status = false;
@@ -9542,14 +9728,14 @@ static bool r_ble_gtl_mutex_take(uint32_t mutex)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Give one of the previously created mutexes.
  *
  * @param[in]  mutex    Bitmask representing which mutex(es) to give.
  *
  * @retval true         Mutex(es) taken successfully
  * @retval false        Giving one (or more) mutex failed
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_mutex_give(uint32_t mutex)
 {
     bool status = false;
@@ -9621,12 +9807,12 @@ static bool r_ble_gtl_mutex_give(uint32_t mutex)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Perform hardware reset of DA1453x device
  *
  * @param[in]  reset_pin    GPIO to be used to reset external DA1453x device
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_hw_reset(void)
 {
 #if (0 == BLE_CFG_RESET_POLARITY)
@@ -9638,7 +9824,7 @@ static void r_ble_gtl_hw_reset(void)
     r_ble_gtl_delay(R_BLE_GTL_RESET_PULSE_MS);
     BLE_RESET_DR(BLE_CFG_RESET_PORT, BLE_CFG_RESET_PIN) = 1;
 #else
-	/* Generate an active high reset */
+    /* Generate an active high reset */
     BLE_SCK_DDR(BLE_CFG_SCK_PORT, BLE_CFG_SCK_PIN) = 1;
     BLE_SCK_DR(BLE_CFG_SCK_PORT, BLE_CFG_SCK_PIN) = 0;
     BLE_RESET_DDR(BLE_CFG_RESET_PORT, BLE_CFG_RESET_PIN) = 0;
@@ -9658,7 +9844,7 @@ static void r_ble_gtl_hw_reset(void)
 #endif
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Transmit a sequence of bytes via the appropriate transport layer.
  *
  * @param[in]  p_data                   Pointer to data to be transmitted
@@ -9666,7 +9852,7 @@ static void r_ble_gtl_hw_reset(void)
  *
  * @retval BLE_SUCCESS                  Message transmitted successfully
  * @retval BLE_ERR_UNSPECIFIED          Transport layer failed to transmit message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_transmit(uint8_t * p_data, uint32_t len)
 {
     ble_status_t status = BLE_ERR_UNSPECIFIED;
@@ -9684,12 +9870,12 @@ static ble_status_t r_ble_gtl_transmit(uint8_t * p_data, uint32_t len)
 }
 
 #if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Callback that is called when advertising timer expires
  *
  * @param[in]  xTimer       Timer handle
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_adv_timer_cb(TimerHandle_t xTimer)
 {
     FSP_PARAMETER_NOT_USED(xTimer);
@@ -9701,12 +9887,12 @@ static void r_ble_gtl_adv_timer_cb(TimerHandle_t xTimer)
     xEventGroupSetBits(g_ble_event_group_handle, BLE_EVENT_PATTERN);
 }
 #elif BSP_CFG_RTOS_USED == 5 /* ThreadX */
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Callback that is called when advertising timer expires
  *
  * @param[in]  context      Input to passed to function when timer expires.
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_adv_timer_cb(ULONG context)
 {
     FSP_PARAMETER_NOT_USED(context);
@@ -9716,7 +9902,7 @@ static void r_ble_gtl_adv_timer_cb(ULONG context)
 #endif
 
 #if (BSP_CFG_RTOS_USED == 5) || (BSP_CFG_RTOS_USED == 1) /* ThreadX or FreeRTOS */
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Start advertising timer, upon expiring advertising will be stopped
  *
  * @param[in]  duration                 Timer duration in milliseconds
@@ -9724,7 +9910,7 @@ static void r_ble_gtl_adv_timer_cb(ULONG context)
  * @retval BLE_SUCCESS                  Timer successfully started
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficent memory to add item to queue
  * @retval BLE_ERR_UNSPECIFIED          Unable to start timer
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_adv_timer_start(uint16_t duration)
 {
     ble_status_t status;
@@ -9773,13 +9959,13 @@ static ble_status_t r_ble_gtl_adv_timer_start(uint16_t duration)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Stop advertising timer
  *
  * @retval BLE_SUCCESS                  Timer successfully stopped
  * @retval BLE_ERR_INVALID_STATE        Timer invalid (not created or started)
  * @retval BLE_ERR_UNSPECIFIED          Unable to stop timer
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_adv_timer_stop(void)
 {
     ble_status_t status;
@@ -9830,12 +10016,12 @@ static ble_status_t r_ble_gtl_adv_timer_stop(void)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Check if advertising timer has expired
  *
  * @retval true             Expired.
  * @retval false            Not expired.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_adv_timer_expired(void)
 {
     bool expired = false;
@@ -9859,79 +10045,56 @@ static bool r_ble_gtl_adv_timer_expired(void)
 
     return expired;
 }
-/*******************************************************************************************************************//**
- *  Initialize event signalling mechanism
- *
- * @retval true             Initialization successful.
- * @retval false            Initialization failed.
- **********************************************************************************************************************/
-static bool r_ble_gtl_event_init(void)
-{
-    bool init = false;
 
-#if BSP_CFG_RTOS_USED == 1 /* FreeRTOS */
-    g_events = xEventGroupCreate();
-    if (NULL != g_events)
-    {
-        init = true;
-    }
-#elif BSP_CFG_RTOS_USED == 5 /* ThreadX */
-    if (TX_SUCCESS == tx_event_flags_create(&g_events, "EVENTS"))
-    {
-        init = true;
-    }
 #endif
 
-    return init;
-}
-#endif
 #if (BLE_CFG_HOST_BOOT_MODE > 0)
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Transmit image to DA1453x.
  *
  * @retval BLE_SUCCESS            Image transmitted successfully.
  * @retval BLE_ERR_INVALID_CHAN   The handle does not indicate a SCI channel
  * @retval BLE_ERR_UNSPECIFIED    Transport layer failed to transmit image
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_transmit_image(uint8_t * p_data, uint32_t len)
 {
-	ble_status_t status = BLE_SUCCESS;
-	uint32_t index = 0;
-	uint32_t send_length = 0;
+    ble_status_t status = BLE_SUCCESS;
+    uint32_t index = 0;
+    uint32_t send_length = 0;
 
-	while ((index < len) && (status == BLE_SUCCESS))
-	{
-		if ((len - index) > s_port_cfg->tx_size)
-		{
-			send_length = s_port_cfg->tx_size;
-		}
-		else
-		{
-			send_length = len - index;
-		}
+    while ((index < len) && (status == BLE_SUCCESS))
+    {
+        if ((len - index) > s_port_cfg->tx_size)
+        {
+            send_length = s_port_cfg->tx_size;
+        }
+        else
+        {
+            send_length = len - index;
+        }
 
-		if (BLE_SUCCESS != r_ble_gtl_transmit(&p_data[index], send_length))
-		{
-			status = BLE_ERR_UNSPECIFIED;
-			break;
-		}
-		index += send_length;
-	}
+        if (BLE_SUCCESS != r_ble_gtl_transmit(&p_data[index], send_length))
+        {
+            status = BLE_ERR_UNSPECIFIED;
+            break;
+        }
+        index += send_length;
+    }
 
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Load an image into the DA1453x. DA1453x will automatically start executing the image once loading is complete.
  *
  * @retval BLE_SUCCESS           Image loading successful.
  * @retval BLE_ERR_UNSPECIFIED   Image loading failed.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_boot_load_image(void)
 {
     ble_status_t      status  = BLE_ERR_UNSPECIFIED;
-    uint8_t           rx_crc  = 0;
     volatile uint32_t timeout = 1000;
+    uint8_t           nof_stx = 0;
 
     /* Inform UART ISR how to handle received data */
     g_booting = true;
@@ -9940,13 +10103,37 @@ static ble_status_t r_ble_gtl_boot_load_image(void)
     r_ble_gtl_hw_reset();
 
     /* Wait for DA1453x bootloader to transmit STX */
+    /* We wait for 2 STX in case that there is a 2ry BL in flash.
+     * In this case the 1st STX is sent by the boot-rom and the second one
+     * from the 2ry BL
+     */
+
+    g_rx_boot_byte = 0;
     while ((R_BLE_GTL_BOOT_STX != g_rx_boot_byte) && timeout)
     {
         r_ble_gtl_delay(10);
         timeout -= 10;
     }
 
-    if (R_BLE_GTL_BOOT_STX == g_rx_boot_byte)
+    if(timeout  > 0)
+    {
+        nof_stx = 1;
+    }
+    
+#if (R_BLE_GTL_SIGNED_IMAGE == 1)
+    timeout = 250;
+    g_rx_boot_byte = 0;
+    while ((R_BLE_GTL_BOOT_STX != g_rx_boot_byte) && timeout)
+    {
+        r_ble_gtl_delay(10);
+        timeout -= 10;
+    }
+    if(timeout  > 0)
+    {
+           nof_stx++;
+    }
+#endif
+    if (nof_stx > 0)
     {
         r_ble_gtl_boot_header_t header;
 
@@ -9965,11 +10152,25 @@ static ble_status_t r_ble_gtl_boot_load_image(void)
                                                     r_ble_gtl_image_get_len()))
                 {
                     /* Wait for CRC from DA1453x */
-                    r_ble_gtl_delay(10);
 
-                    /* Check CRC */
-                    rx_crc = g_rx_boot_byte;
-                    if (rx_crc == r_ble_gtl_image_get_crc())
+                    uint8_t image_crc = r_ble_gtl_image_get_crc();
+#if (R_BLE_GTL_SIGNED_IMAGE == 1)
+                     r_ble_gtl_delay (100);  
+
+                    /* Check CRC, in case of encrypted/signed image the CRC might take up to 2sec to be sent */
+                    g_rx_boot_byte_received = 0;
+
+                    timeout = 2500;
+                    while (timeout && (g_rx_boot_byte_received==0))
+                    {
+                        r_ble_gtl_delay (10);
+                        timeout -= 10;
+                    }
+#else
+                    r_ble_gtl_delay (10);
+#endif
+
+                    if(image_crc == g_rx_boot_byte)
                     {
                         uint8_t ack = R_BLE_GTL_BOOT_ACK;
                         if (BLE_SUCCESS == r_ble_gtl_transmit(&ack, sizeof(ack)))
@@ -9987,7 +10188,36 @@ static ble_status_t r_ble_gtl_boot_load_image(void)
     return status;
 }
 #endif
-#if BSP_CFG_RTOS_USED == 0 /* Baremetal */
+
+#if BSP_CFG_RTOS_USED == 1 || BSP_CFG_RTOS_USED == 5 /* ThreadX or FreeRTOS */
+/*******************************************************************************************************************//**
+ *  Initialize event signalling mechanism
+ *
+ * @retval true             Initialization successful.
+ * @retval false            Initialization failed.
+ **********************************************************************************************************************/
+static bool r_ble_gtl_event_init(void)
+{
+    bool init = false;
+
+#if (BSP_CFG_RTOS_USED == 1) /* FreeRTOS */
+    g_events = xEventGroupCreate();
+    if (NULL != g_events)
+    {
+        init = true;
+    }
+#elif (BSP_CFG_RTOS_USED == 5) /* ThreadX */
+    if (TX_SUCCESS == tx_event_flags_create(&g_events, "EVENTS"))
+    {
+        init = true;
+    }
+#endif
+
+    return init;
+}
+#endif
+
+#if (BSP_CFG_RTOS_USED == 0) /* Baremetal */
 /*******************************************************************************************************************//**
  *  Initialize FIFO
  *
@@ -9995,7 +10225,7 @@ static ble_status_t r_ble_gtl_boot_load_image(void)
  * @param[in]  p_buf    Pointer to buffer that FIFO can use as storage
  * @param[in]  size     Length of buffer storage
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_fifo_init(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_buf, uint32_t size)
 {
     p_fifo->p_buffer = p_buf;
@@ -10005,33 +10235,33 @@ static void r_ble_gtl_fifo_init(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_buf, uin
     p_fifo->items    = 0;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Check if FIFO is empty
  *
  * @param[in]  p_fifo   Pointer to FIFO to be checked
  *
  * @retval true         FIFO empty
  * @retval false        FIFO not empty
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_fifo_empty(r_ble_gtl_fifo_t * p_fifo)
 {
     return (p_fifo->items == 0);
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Check if FIFO is full
  *
  * @param[in]  p_fifo   Pointer to FIFO to be checked
  *
  * @retval true         FIFO full
  * @retval false        FIFO not full
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_fifo_full(r_ble_gtl_fifo_t * p_fifo)
 {
     return (p_fifo->items == p_fifo->size);
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Add item to the FIFO
  *
  * @param[in]  p_fifo   Pointer to FIFO
@@ -10039,7 +10269,7 @@ static bool r_ble_gtl_fifo_full(r_ble_gtl_fifo_t * p_fifo)
  *
  * @retval true         Added
  * @retval false        Not added
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_fifo_put(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data)
 {
     bool added = false;
@@ -10061,7 +10291,7 @@ static bool r_ble_gtl_fifo_put(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data)
     return added;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Remove item from the FIFO
  *
  * @param[in]  p_fifo   Pointer to FIFO
@@ -10069,7 +10299,7 @@ static bool r_ble_gtl_fifo_put(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data)
  *
  * @retval true         Removed
  * @retval false        Not removed
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static bool r_ble_gtl_fifo_get(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data, uint32_t timeout_ms)
 {
     bool removed = false;
@@ -10105,7 +10335,7 @@ static bool r_ble_gtl_fifo_get(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data, uin
 }
 #endif
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC_BOND_REQ_IND 0x0E13 indication message. Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -10113,7 +10343,7 @@ static bool r_ble_gtl_fifo_get(r_ble_gtl_fifo_t * p_fifo, uint8_t ** p_data, uin
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hdl, 
                                                                 r_ble_gtl_gapc_bond_req_ind_t *p_param)
 {
@@ -10158,11 +10388,13 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hd
         case R_BLE_GTL_GAPC_LTK_EXCH:
         {
             st_ble_gap_conn_hdl_evt_t *p_key_exch_param;
-            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_EX_KEY_REQ, BLE_SUCCESS, sizeof(st_ble_gap_conn_hdl_evt_t));
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_EX_KEY_REQ, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_conn_hdl_evt_t));
             if (NULL != p_cb_evt)
             {
                 p_key_exch_param = p_cb_evt->data.gap.p_param;
                 p_key_exch_param->conn_hdl = conn_hdl + (uint16_t)(R_BLE_GTL_GAPC_LTK_EXCH << 8);
+                r_ble_gtl_sec_ReplyExKeyInfoReq(p_key_exch_param->conn_hdl);
             }
             break;
         }
@@ -10170,11 +10402,13 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hd
         case R_BLE_GTL_GAPC_CSRK_EXCH:
         {
             st_ble_gap_conn_hdl_evt_t *p_key_exch_param;
-            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_EX_KEY_REQ, BLE_SUCCESS, sizeof(st_ble_gap_conn_hdl_evt_t));
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_EX_KEY_REQ, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_conn_hdl_evt_t));
             if (NULL != p_cb_evt)
             {
                 p_key_exch_param = p_cb_evt->data.gap.p_param;
                 p_key_exch_param->conn_hdl = conn_hdl + (uint16_t)(R_BLE_GTL_GAPC_CSRK_EXCH << 8);
+                r_ble_gtl_sec_ReplyExKeyInfoReq(p_key_exch_param->conn_hdl);
             }
             break;
         }
@@ -10192,7 +10426,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hd
             case GAP_TK_DISPLAY:
             {
                 st_ble_gap_passkey_display_evt_t *passkey_display_evt_param;
-                p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PASSKEY_DISPLAY_REQ, BLE_SUCCESS, sizeof(st_ble_gap_passkey_display_evt_t));
+                p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PASSKEY_DISPLAY_REQ, BLE_SUCCESS,
+                                                     sizeof(st_ble_gap_passkey_display_evt_t));
                 if (NULL != p_cb_evt)
                 {
                     passkey_display_evt_param = p_cb_evt->data.gap.p_param;
@@ -10204,7 +10439,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hd
             case GAP_TK_KEY_ENTRY:
             {
                 st_ble_gap_conn_hdl_evt_t *tk_key_entry_evt_param;
-                p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PASSKEY_ENTRY_REQ, BLE_SUCCESS, sizeof(st_ble_gap_conn_hdl_evt_t));
+                p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PASSKEY_ENTRY_REQ, BLE_SUCCESS,
+                                                     sizeof(st_ble_gap_conn_hdl_evt_t));
                 if (NULL != p_cb_evt)
                 {
                     tk_key_entry_evt_param = p_cb_evt->data.gap.p_param;
@@ -10217,7 +10453,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hd
             {
                 /* Secure Connections*/
                 st_ble_gap_num_comp_evt_t *num_comp_evt_param;
-                p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_NUM_COMP_REQ, BLE_SUCCESS, sizeof(st_ble_gap_num_comp_evt_t));
+                p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_NUM_COMP_REQ, BLE_SUCCESS,
+                                                     sizeof(st_ble_gap_num_comp_evt_t));
 
                 if (NULL != p_cb_evt)
                 {
@@ -10243,14 +10480,14 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_req_ind_handler(uint16_t conn_hd
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC_BOND_CFM confirmation message.
  *
  * @param[in]  conn_hdl         Connection Handle on which message will be send
  * @param[in]  bond             Bond event type
  * @param[in]  accept           Accert or reject pairing request
  * @retval     ble_status_t
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond_t bond, bool accept, uint32_t passkey)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
@@ -10283,6 +10520,7 @@ ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond
                 }
 
                 p_cmd->data.pairing_feat.iocap = ble_pairing_param_local.iocap;
+
                 /* OOB is not supported*/
                 p_cmd->data.pairing_feat.oob = BLE_GAP_OOB_DATA_NOT_PRESENT;
                 p_cmd->data.pairing_feat.auth = (uint8_t)((ble_pairing_param_local.bonding << 0)
@@ -10290,7 +10528,7 @@ ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond
                         | (ble_pairing_param_local.sec_conn_only <<3 ));
                 p_cmd->data.pairing_feat.key_size = ble_pairing_param_local.max_key_size;
 
-                // Need to distinguish these because GLT translates Initiator & Responder, Central & Peripheral
+                /* Need to distinguish these because GLT translates Initiator & Responder, Central & Peripheral */
                 p_cmd->data.pairing_feat.ikey_dist = ble_pairing_param_local.loc_key_dist;
                 p_cmd->data.pairing_feat.rkey_dist = ble_pairing_param_local.rem_key_dist;
                     
@@ -10335,7 +10573,8 @@ ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond
         {
             /* Place holder for future functionality. Add the csrk cntr */
             p_cmd = (r_ble_gtl_gapc_bond_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_BOND_CFM,
-                                                                        R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
+                                                                        R_BLE_GTL_TASK_ID_GAPC +
+                                                                        (uint16_t)(conn_hdl << 8),
                                                                         R_BLE_GTL_TASK_ID_GTL,
                                                                         sizeof(r_ble_gtl_gapc_bond_cfm_t));
             if (NULL != p_cmd)
@@ -10368,11 +10607,13 @@ ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond
                 
                 if (r_ble_gtl_sec_get_dev_role(conn_hdl) == R_BLE_GTL_PERIPHERAL_ROLE)
                 {
-                    //  This is needed when in Peripheral role only.Copy these to DB for future use
+                    /* This is needed when in Peripheral role only. Copy these to DB for future use. */
                     bond_info_loc_tmp->p_keys.p_keys_info.mid_info[0] = (uint8_t)(p_cmd->data.ltk.ediv >> 8);
                     bond_info_loc_tmp->p_keys.p_keys_info.mid_info[1] = (uint8_t)(p_cmd->data.ltk.ediv);
-                    memcpy(&bond_info_loc_tmp->p_keys.p_keys_info.mid_info[2], (const void *)r_ble_gtl_sec_get_rand_value(), BLE_GAP_RAND_64_BIT_SIZE);
-                    memcpy(bond_info_loc_tmp->p_keys.p_keys_info.enc_info, (const void *)r_ble_gtl_sec_get_ltk_value(), BLE_GAP_LTK_SIZE);                
+                    memcpy(&bond_info_loc_tmp->p_keys.p_keys_info.mid_info[2],
+                          (const void *)r_ble_gtl_sec_get_rand_value(), BLE_GAP_RAND_64_BIT_SIZE);
+                    memcpy(bond_info_loc_tmp->p_keys.p_keys_info.enc_info,
+                          (const void *)r_ble_gtl_sec_get_ltk_value(), BLE_GAP_LTK_SIZE);                
                 }
                 status = r_ble_gtl_msg_transmit((uint8_t *)p_cmd);
             }
@@ -10389,7 +10630,7 @@ ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC_BOND_IND indication message (0x0E15). Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -10397,7 +10638,7 @@ ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/ 
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r_ble_gtl_gapc_bond_ind_t * p_param)
 {
     r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
@@ -10409,7 +10650,8 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
             /* Secure connections, Central shares LTK */
             st_ble_gap_peer_key_info_evt_t *p_gapc_bond_ind_param;
 
-            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PEER_KEY_INFO, BLE_SUCCESS, sizeof(st_ble_gap_peer_key_info_evt_t));
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PEER_KEY_INFO, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_peer_key_info_evt_t));
             if (NULL != p_cb_evt)
             {
                 /* Save the LTK to a temp variable*/
@@ -10422,10 +10664,15 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
                 memcpy(&pair_key_dist_tmp.mid_info[2], p_param->data.ltk.nb, BLE_GAP_RAND_64_BIT_SIZE);
 
                 /* Distributed keys and negotiated LTK size */
-                p_gapc_bond_ind_param->key_ex_param.keys = (1 << 0); // Bit 0. Type of key, LTK is distributed in Secure Connections
+                /* Bit 0. Type of key, LTK is distributed in Secure Connections */
+                p_gapc_bond_ind_param->key_ex_param.keys = (1 << 0);
                 p_gapc_bond_ind_param->key_ex_param.ekey_size = BLE_GAP_LTK_SIZE;
 
                 p_gapc_bond_ind_param->key_ex_param.p_keys_info = &pair_key_dist_tmp;
+
+                /* Save key to RAM DB */
+                r_ble_gtl_sec_recvremkeys(p_gapc_bond_ind_param);
+
             }
             break;
         }
@@ -10446,11 +10693,16 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
             {
                 p_gapc_bond_ind_param = p_cb_evt->data.gap.p_param;
                 p_gapc_bond_ind_param->conn_hdl = conn_hdl;
-                p_gapc_bond_ind_param->key_ex_param.keys = (1 << 1); // Bit 1. Type of key, IRK and Identity Address Information
+                /* Bit 1. Type of key, IRK and Identity Address Information */
+                p_gapc_bond_ind_param->key_ex_param.keys = (1 << 1);
 
                 p_gapc_bond_ind_param->key_ex_param.p_keys_info = &pair_key_dist_tmp;
                 p_gapc_bond_ind_param->bd_addr.type = pair_key_dist_tmp.id_addr_info[0]; // Addr type
                 memcpy(p_gapc_bond_ind_param->bd_addr.addr, &pair_key_dist_tmp.id_addr_info[1], BLE_BD_ADDR_LEN);
+
+                /* Save key to RAM DB */
+                r_ble_gtl_sec_recvremkeys(p_gapc_bond_ind_param);
+
             }
             break;
         }
@@ -10462,13 +10714,18 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
 
             /* Notify application */
             st_ble_gap_peer_key_info_evt_t *p_gapc_bond_ind_param;
-            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PEER_KEY_INFO, BLE_SUCCESS, sizeof(st_ble_gap_peer_key_info_evt_t));
+            p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_PEER_KEY_INFO, BLE_SUCCESS,
+                                                 sizeof(st_ble_gap_peer_key_info_evt_t));
             if (NULL != p_cb_evt)
             {
                 p_gapc_bond_ind_param = p_cb_evt->data.gap.p_param;
                 p_gapc_bond_ind_param->conn_hdl = conn_hdl;
-                p_gapc_bond_ind_param->key_ex_param.keys = (1 << 2); // Bit 2. Type of key, IRK and Identity Address Information
+                p_gapc_bond_ind_param->key_ex_param.keys = (1 << 2); 
                 p_gapc_bond_ind_param->key_ex_param.p_keys_info = &pair_key_dist_tmp;
+
+                /* Save key to RAM DB */
+                r_ble_gtl_sec_recvremkeys(p_gapc_bond_ind_param);
+
             }
             break;
         }
@@ -10486,32 +10743,37 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
 
                 if(p_param->data.auth & 0x04) // Check Authentication param, MITM
                 {
-                	p_gapc_bond_ind_param->auth_info.security = 0x02;  // Authenticated pairing
+                    p_gapc_bond_ind_param->auth_info.security = 0x02;  // Authenticated pairing
                 }
                 else
                 {
-                	p_gapc_bond_ind_param->auth_info.security = 0x01;  // Unauthenticated pairing
+                    p_gapc_bond_ind_param->auth_info.security = 0x01;  // Unauthenticated pairing
                 }
 
                 if(p_param->data.auth & 0x08) // Check Secure Connections param
                 {
-                    p_gapc_bond_ind_param->auth_info.pair_mode = 0x02; // The remote device requests Secure Connections.
+                    /* The remote device requests Secure Connections. */
+                    p_gapc_bond_ind_param->auth_info.pair_mode = 0x02;
                 }
                 else
                 {
-                    p_gapc_bond_ind_param->auth_info.pair_mode = 0x01; // The remote device requests Legacy pairing..
+                    /* The remote device requests Legacy pairing. */
+                    p_gapc_bond_ind_param->auth_info.pair_mode = 0x01;
                 }
-
-                if(p_param->data.auth & 0x01) // Check Bonding param
+                /* Check Bonding param */
+                if (p_param->data.auth & 0x01)
                 {
-                    p_gapc_bond_ind_param->auth_info.bonding = 0x01;   // The remote device stores the Bonding information
+                    /* The remote device stores the Bonding information. */
+                    p_gapc_bond_ind_param->auth_info.bonding = 0x01;
                 }
-                else{
-                    p_gapc_bond_ind_param->auth_info.bonding = 0x00;   // The remote device does not store the Bonding information.
+                else
+                {
+                    /* The remote device does not store the Bonding information. */
+                    p_gapc_bond_ind_param->auth_info.bonding = 0x00;
                 }
 
                 p_gapc_bond_ind_param->auth_info.ekey_size = R_BLE_GTL_ATT_SEC_ENC_KEY_SIZE;
-                // This info is not provided by GTL here.
+                /* This info is not provided by GTL here. */
                 memset(p_gapc_bond_ind_param->bd_addr.addr, 0x00, BLE_BD_ADDR_LEN);
                 p_gapc_bond_ind_param->bd_addr.type = 0x00;
             }
@@ -10542,7 +10804,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle R_BLE_GTL_GAPC_ENCRYPT_REQ_IND indication message.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -10550,7 +10812,7 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_bond_ind_handler(uint16_t conn_hdl, r
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_req_ind_handler(uint16_t conn_hdl, 
                                                                    r_ble_gtl_gapc_encrypt_req_ind_t *p_param)
 {
@@ -10571,19 +10833,18 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_req_ind_handler(uint16_t conn
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle GAPC_ENCRYPT_CFM indication message.
  *
  * @param[in]   conn_hdl         Connection Handle on which message will be send
  * @param[in]   found            Indicate if ltk is found or not
  *
  * @retval      ble_status_t
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found)
 {
     ble_status_t status;
     r_ble_gtl_gapc_encrypt_cfm_t *p_enc_cfm;
-    r_ble_gtl_gapc_connection_cfm_t *p_conn_cfm;
 
     uint8_t bond_index =  r_ble_gtl_sec_lut_table_info(GET_ENTRY, NULL, conn_hdl, 0);
     sec_ble_gap_bond_info_t *bond_info_loc_tmp = {0};
@@ -10601,20 +10862,6 @@ ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found)
         memcpy(p_enc_cfm->ltk.key, bond_info_loc_tmp->p_keys.p_keys_info.enc_info, BLE_GAP_LTK_SIZE);
         p_enc_cfm->key_size = BLE_GAP_LTK_SIZE;
         status = r_ble_gtl_msg_transmit((uint8_t *)p_enc_cfm);
-
-        /* Security Establishment, only if LTK was found. Apply this step only in Legacy Pairing case. */
-        p_conn_cfm = (r_ble_gtl_gapc_connection_cfm_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPC_CONNECTION_CFM,
-                                                                    R_BLE_GTL_TASK_ID_GAPC + (uint16_t)(conn_hdl << 8),
-                                                                    R_BLE_GTL_TASK_ID_GTL,
-                                                                    sizeof(r_ble_gtl_gapc_connection_cfm_t));
-        if (NULL != p_conn_cfm)
-        {
-            /* Use initial pairing params to set this response */
-            p_conn_cfm->auth = (uint8_t)((ble_pairing_param_local.bonding << 0)
-                    | (ble_pairing_param_local.mitm << 2)
-                    | (ble_pairing_param_local.sec_conn_only << 3));
-            status = r_ble_gtl_msg_transmit((uint8_t *)p_conn_cfm);
-        }
     }
     else
     {
@@ -10629,7 +10876,7 @@ ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Notify that local device has replied to the LTK request from the remote device, BLE_GAP_EVENT_LTK_RSP_COMP
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -10637,7 +10884,7 @@ ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_gapc_ltk_rsp_comp(uint16_t conn_hdl, bool found)
 {
     ble_status_t status = BLE_SUCCESS;
@@ -10663,7 +10910,7 @@ ble_status_t r_ble_gtl_gapc_ltk_rsp_comp(uint16_t conn_hdl, bool found)
     return status;   
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle R_BLE_GTL_GAPC_ENCRYPT_IND indication message. Messages might generated a callback event.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
@@ -10671,7 +10918,7 @@ ble_status_t r_ble_gtl_gapc_ltk_rsp_comp(uint16_t conn_hdl, bool found)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_ind_handler(uint16_t conn_hdl, gapc_encrypt_ind_t *p_param)
 {
     r_ble_gtl_cb_evt_t *p_cb_evt = NULL;
@@ -10689,11 +10936,11 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapc_encrypt_ind_handler(uint16_t conn_hdl
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Request a random number using custom APP_GEN_RAND_REQ, 0xA001
  *
  * @param[in]  size             Size of the random number
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_app_get_rand_cust(uint8_t rand_size, r_ble_gtl_app_gen_rand_rsp_t *data)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
@@ -10732,12 +10979,12 @@ ble_status_t r_ble_gtl_app_get_rand_cust(uint8_t rand_size, r_ble_gtl_app_gen_ra
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Initiate a security request procedure
  * 
  * @param[in]  conn_hdl         Handle of connection on which message was received
  * @retval     ble_status_t
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_security_cmd(uint16_t conn_hdl)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
@@ -10759,14 +11006,14 @@ ble_status_t r_ble_gtl_security_cmd(uint16_t conn_hdl)
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handle R_BLE_GTL_GAPC_SECURITY_IND indication message (0x0E1B). Device can receive this as Central role.
  *
  * @param[in]  conn_hdl         Handle of connection on which message was received
  * @param[in]  p_param          Pointer to buffer containing received GAP client connection request message
  *
  * @retval NULL                 No callback event generated by message processing
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void r_ble_gtl_gapc_security_ind_handler(uint16_t conn_hdl, gapc_security_ind_t *p_param)
 {
     FSP_PARAMETER_NOT_USED(p_param);
@@ -10778,7 +11025,7 @@ static void r_ble_gtl_gapc_security_ind_handler(uint16_t conn_hdl, gapc_security
         bond_info_loc_tmp = r_ble_gtl_sec_get_rem_bond_data(bond_index);
         if (bond_info_loc_tmp->p_auth_info.bonding == 0x00)
         {
-            // No bonding available, initiate pairing.
+            /* No bonding available, initiate pairing.*/
             r_ble_gtl_send_bond_cmd(conn_hdl);
         }
         else
@@ -10788,28 +11035,28 @@ static void r_ble_gtl_gapc_security_ind_handler(uint16_t conn_hdl, gapc_security
     }
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send start connection command (R_BLE_GTL_GAPM_START_CONNECTION_CMD) to DA145xx device.
  *
  * @param[in]  p_param          Pointer to connection parameters
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapm_send_start_connection_cmd(st_ble_gap_create_conn_param_t * p_param)
 {
     ble_status_t  status;
     r_ble_gtl_gapm_start_connection_cmd_t * p_cmd;
 
     p_cmd = (r_ble_gtl_gapm_start_connection_cmd_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPM_START_CONNECTION_CMD,
-                                                                           R_BLE_GTL_TASK_ID_GAPM,
-                                                                           R_BLE_GTL_TASK_ID_GTL,
-                                                                           sizeof (r_ble_gtl_gapm_start_connection_cmd_t) +
-                                                                           sizeof(struct r_ble_gtl_gap_bdaddr) * 1);
+                                                                       R_BLE_GTL_TASK_ID_GAPM,
+                                                                       R_BLE_GTL_TASK_ID_GTL,
+                                                                       sizeof (r_ble_gtl_gapm_start_connection_cmd_t) +
+                                                                       sizeof(struct r_ble_gtl_gap_bdaddr) * 1);
     if (NULL != p_cmd)
     {
         p_cmd->op.code = R_BLE_GTL_GAPM_OP_CONNECTION_AUTO; // If used scannnig preceeds and this takes time.
-        // p_cmd->op.code = R_BLE_GTL_GAPM_OP_CONNECTION_DIRECT; // Shorter execution
+        /* p_cmd->op.code = R_BLE_GTL_GAPM_OP_CONNECTION_DIRECT; // Shorter execution */
         p_cmd->op.addr_src = R_BLE_GTL_GAPM_STATIC_ADDR;
         p_cmd->op.state = 0x00;
         p_cmd->scan_interval = p_param->p_conn_param_1M->scan_intv;
@@ -10835,7 +11082,7 @@ static ble_status_t r_ble_gtl_gapm_send_start_connection_cmd(st_ble_gap_create_c
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Send start scanning command (R_BLE_GTL_GAPM_START_SCAN_CMD) to DA145xx device.
  *
  * @param[in]  p_scan_param          Pointer to scan parameters
@@ -10843,8 +11090,9 @@ static ble_status_t r_ble_gtl_gapm_send_start_connection_cmd(st_ble_gap_create_c
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
-static ble_status_t r_ble_gtl_gapm_send_scan_start_cmd(st_ble_gap_scan_param_t * p_scan_param, st_ble_gap_scan_on_t * p_scan_enable)
+ *********************************************************************************************************************/
+static ble_status_t r_ble_gtl_gapm_send_scan_start_cmd(st_ble_gap_scan_param_t * p_scan_param,
+                                                       st_ble_gap_scan_on_t * p_scan_enable)
 {
     ble_status_t                      status;
     r_ble_gtl_gapm_start_scan_cmd_t * p_cmd;
@@ -10956,14 +11204,14 @@ ble_status_t R_BLE_GTL_GAP_StartScan(st_ble_gap_scan_param_t * p_scan_param, st_
     return status;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Handles the advertise report received by the DA145xx GTL host.
  *
  * @param[in]  p_param  Pointer to contents of the advertise report.
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapm_adv_report_ind_handler(r_ble_gtl_gapm_adv_report_ind_t * p_param)
 {
     r_ble_gtl_cb_evt_t          * p_cb_evt = NULL;
@@ -10986,8 +11234,10 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapm_adv_report_ind_handler(r_ble_gtl_gapm
 
             p_gapm_adv_report_ind_param->adv_rpt_type = 0x00;  /* Advertising  Report */
             p_gapm_adv_report_ind_param->param.p_adv_rpt->num = 1; /* Always 1 message received*/
-            p_gapm_adv_report_ind_param->param.p_adv_rpt->adv_type = p_param->report.evt_type; /* Connectable/Non-connectable, Directed/undirected */
-            p_gapm_adv_report_ind_param->param.p_adv_rpt->addr_type = p_param->report.adv_addr_type; /* Public or Random */
+             /* Connectable/Non-connectable, Directed/undirected */
+            p_gapm_adv_report_ind_param->param.p_adv_rpt->adv_type = p_param->report.evt_type;
+             /* Public or Random */
+            p_gapm_adv_report_ind_param->param.p_adv_rpt->addr_type = p_param->report.adv_addr_type;
             memcpy(p_adv_address, p_param->report.adv_addr.addr, BLE_BD_ADDR_LEN);
             p_gapm_adv_report_ind_param->param.p_adv_rpt->p_addr = p_adv_address;
             p_gapm_adv_report_ind_param->param.p_adv_rpt->len = p_param->report.data_len;
@@ -11010,14 +11260,14 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapm_adv_report_ind_handler(r_ble_gtl_gapm
     return p_cb_evt;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Handles the GAPM messages received by the DA145xx GTL host.
  *
  * @param[in]  p_gtl_msg        Pointer to buffer containing received GTL/GAP message (including header)
  *
  * @retval NULL                 No callback event generated by message processing
  * @retval r_ble_gtl_cb_evt_t * Pointer to callback event generated as a result of processing the message.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static r_ble_gtl_cb_evt_t * r_ble_gtl_gapm_handler(uint8_t * p_gtl_msg)
 {
     r_ble_gtl_cb_evt_t  * p_cb_evt      = NULL;
@@ -11027,14 +11277,17 @@ static r_ble_gtl_cb_evt_t * r_ble_gtl_gapm_handler(uint8_t * p_gtl_msg)
     {
         case R_BLE_GTL_GAPM_ADV_REPORT_IND:
         {
-            r_ble_gtl_gapm_adv_report_ind_t * p_adv_report_param = (r_ble_gtl_gapm_adv_report_ind_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            r_ble_gtl_gapm_adv_report_ind_t * p_adv_report_param = (r_ble_gtl_gapm_adv_report_ind_t *)
+            &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
             p_cb_evt = r_ble_gtl_gapm_adv_report_ind_handler(p_adv_report_param);
             break;
         }    
         case R_BLE_GTL_GAPM_CMP_EVT:
         {
-            r_ble_gtl_gapm_cmp_evt_t * p_cmp_evt_param = (r_ble_gtl_gapm_cmp_evt_t *)&p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
-            if ((p_cmp_evt_param->operation == R_BLE_GTL_GAPM_OP_SCAN_PASSIVE) && (p_cmp_evt_param->status == R_BLE_GTL_GAP_ERR_TIMEOUT))
+            r_ble_gtl_gapm_cmp_evt_t * p_cmp_evt_param = (r_ble_gtl_gapm_cmp_evt_t *)
+                                                         &p_gtl_msg[sizeof(r_ble_gtl_msg_hdr_t)];
+            if ((p_cmp_evt_param->operation == R_BLE_GTL_GAPM_OP_SCAN_PASSIVE) && 
+                (p_cmp_evt_param->status == R_BLE_GTL_GAP_ERR_TIMEOUT))
             {
                 p_cb_evt = r_ble_gtl_cb_evt_allocate(BLE_GAP_EVENT_SCAN_OFF, BLE_SUCCESS, 0);
             }
@@ -11080,12 +11333,12 @@ ble_status_t R_BLE_GTL_GAP_StopScan( void )
 
 
 // CENTRAL_ROLE
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  *  Initiate a pairing when device has the Central role request procedure
  * 
  * @param[in]  conn_hdl         Handle of connection
  * @retval BLE_SUCCESS          Command transmitted successfully
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_send_bond_cmd(uint16_t conn_hdl)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
@@ -11100,7 +11353,9 @@ ble_status_t r_ble_gtl_send_bond_cmd(uint16_t conn_hdl)
         p_bond_cmd->operation = GAPC_BOND_CMD;
         p_bond_cmd->pairing.iocap = ble_pairing_param_local.iocap;
         p_bond_cmd->pairing.oob = BLE_GAP_OOB_DATA_NOT_PRESENT;
-        p_bond_cmd->pairing.auth = (uint8_t)((ble_pairing_param_local.bonding << 0) | (ble_pairing_param_local.mitm << 2) | (ble_pairing_param_local.sec_conn_only <<3 ));
+        p_bond_cmd->pairing.auth = (uint8_t)((ble_pairing_param_local.bonding << 0)
+                                           | (ble_pairing_param_local.mitm << 2)
+                                           | (ble_pairing_param_local.sec_conn_only <<3 ));
         p_bond_cmd->pairing.key_size = ble_pairing_param_local.max_key_size;
 
         /* Since this is Central role these are set in normal order */
@@ -11108,18 +11363,18 @@ ble_status_t r_ble_gtl_send_bond_cmd(uint16_t conn_hdl)
         p_bond_cmd->pairing.rkey_dist = ble_pairing_param_local.rem_key_dist;
         p_bond_cmd->pairing.sec_req = r_ble_gtl_sec_get_security_req();
 
-		status = r_ble_gtl_msg_transmit((uint8_t *)p_bond_cmd);
+        status = r_ble_gtl_msg_transmit((uint8_t *)p_bond_cmd);
     }
 
     return status;
 }
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  *  Initiate a encryption when device has the Central role
  * 
  * @param[in]  conn_hdl         Handle of connection
  * @retval BLE_SUCCESS          Command transmitted successfully
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_send_enc_cmd(uint16_t conn_hdl)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
@@ -11137,12 +11392,17 @@ ble_status_t r_ble_gtl_send_enc_cmd(uint16_t conn_hdl)
     {
         p_enc_cmd->operation = GAPC_ENCRYPT;
         p_enc_cmd->ltk.key_size = BLE_GAP_LTK_SIZE;
-        /// EDIV
-        p_enc_cmd->ltk.ediv = (uint16_t)(bond_info_loc_tmp->p_keys.p_keys_info.mid_info[1]) + (uint16_t)(bond_info_loc_tmp->p_keys.p_keys_info.mid_info[0] << 8);
-        /// LTK
-        memcpy(&p_enc_cmd->ltk.ltkey, bond_info_loc_tmp->p_keys.p_keys_info.enc_info, BLE_GAP_LTK_SIZE);
-        /// RAND
-        memcpy(&p_enc_cmd->ltk.nb, &bond_info_loc_tmp->p_keys.p_keys_info.mid_info[2], BLE_GAP_RAND_64_BIT_SIZE);
+        /* EDIV */
+        p_enc_cmd->ltk.ediv = (uint16_t)(bond_info_loc_tmp->p_keys.p_keys_info.mid_info[1]) +
+                              (uint16_t)(bond_info_loc_tmp->p_keys.p_keys_info.mid_info[0] << 8);
+        /* LTK */
+        memcpy(&p_enc_cmd->ltk.ltkey,
+               bond_info_loc_tmp->p_keys.p_keys_info.enc_info,
+               BLE_GAP_LTK_SIZE);
+        /* RAND */
+        memcpy(&p_enc_cmd->ltk.nb,
+               &bond_info_loc_tmp->p_keys.p_keys_info.mid_info[2],
+               BLE_GAP_RAND_64_BIT_SIZE);
         status = r_ble_gtl_msg_transmit((uint8_t *)p_enc_cmd);
     }
     return status;
@@ -11159,7 +11419,7 @@ ble_status_t r_ble_gtl_send_enc_cmd(uint16_t conn_hdl)
  *
  * @retval BLE_SUCCESS                  Command transmitted successfully
  * @retval BLE_ERR_MEM_ALLOC_FAILED     Insufficient memory to create command message
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static ble_status_t r_ble_gtl_gapc_send_resolv_addr_cmd(uint16_t conn_hdl,
                                                         uint8_t *peer_addr,
                                                         uint8_t num_of_rec,
@@ -11172,7 +11432,8 @@ static ble_status_t r_ble_gtl_gapc_send_resolv_addr_cmd(uint16_t conn_hdl,
     p_cmd = (r_ble_gtl_gapm_resolv_addr_cmd_t *)r_ble_gtl_msg_allocate(R_BLE_GTL_GAPM_RESOLV_ADDR_CMD,
                                                                        R_BLE_GTL_TASK_ID_GAPM,
                                                                        R_BLE_GTL_TASK_ID_GTL,
-                                                                       sizeof(r_ble_gtl_gapm_resolv_addr_cmd_t) + (uint16_t)(num_of_rec* BLE_GAP_IRK_SIZE) );
+                                                                       sizeof(r_ble_gtl_gapm_resolv_addr_cmd_t) +
+                                                                       (uint16_t)(num_of_rec* BLE_GAP_IRK_SIZE) );
     if (NULL != p_cmd)
     {
         p_cmd->operation = 0x17; // operation = GAPM_RESOLV_ADDR
@@ -11195,7 +11456,7 @@ static ble_status_t r_ble_gtl_gapc_send_resolv_addr_cmd(uint16_t conn_hdl,
  * @param[in]  irks                     IRKs
  * @param[out] addr_solved_rsp          Address resolved response
  * @retval BLE_SUCCESS          Command transmitted successfully
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t r_ble_gtl_resolve_address_from_connected_evt_cmd(uint16_t conn_hdl,
                                                               uint8_t *peer_addr,
                                                               uint8_t num_of_rec,
@@ -11211,7 +11472,8 @@ ble_status_t r_ble_gtl_resolve_address_from_connected_evt_cmd(uint16_t conn_hdl,
         return status;
     }
 
-    /* Send the Command, ignore mutex use since we are already inside a receive routine from r_ble_gtl_gapc_connection_req_handler */
+    /* Send the Command, ignore mutex use since we are already inside a receive routine from 
+       r_ble_gtl_gapc_connection_req_handler */
 
     r_ble_gtl_mutex_take(R_BLE_GTL_MUTEX_RX);
     status = r_ble_gtl_gapc_send_resolv_addr_cmd(conn_hdl, peer_addr, num_of_rec, irks);
@@ -11244,7 +11506,7 @@ ble_status_t r_ble_gtl_resolve_address_from_connected_evt_cmd(uint16_t conn_hdl,
  * @param[in]  p_addr           Public type of BD address
  *
  * @retval BLE_SUCCESS          Command transmitted successfully
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
  ble_status_t r_ble_gtl_aux_set_bd_address_cmd(st_ble_dev_addr_t * p_addr)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
@@ -11252,7 +11514,7 @@ ble_status_t r_ble_gtl_resolve_address_from_connected_evt_cmd(uint16_t conn_hdl,
     r_ble_gtl_gapc_set_bd_address_cmp_t addr_rsp;
 
     p_set_addr_cmd = (r_ble_gtl_gapc_set_bd_address_cmd_t*) r_ble_gtl_msg_allocate (R_BLE_GTL_AUX_SET_BD_ADDRESS_CMD,
-    R_BLE_GTL_TASK_ID_AUX,
+                                                                          R_BLE_GTL_TASK_ID_AUX,
                                                                           R_BLE_GTL_TASK_ID_GTL,
                                                                           sizeof(r_ble_gtl_gapc_set_bd_address_cmd_t));
     if (NULL != p_set_addr_cmd)
@@ -11276,26 +11538,30 @@ ble_status_t r_ble_gtl_resolve_address_from_connected_evt_cmd(uint16_t conn_hdl,
 /**********************************************************************************************************************
  * Set DA1453x in any of the three sleep modes
  * @param[in] sleep_mode  set BLE_VS_SLEEP_OFF, BLE_VS_EXTENDED_SLEEP, BLE_VS_DEEP_SLEEP or BLE_VS_HIBERNATION
- * @param[in] ram_retention retain RAM during Deep Sleep or Hibernation. Set BLE_VS_RAM_POWER_ON or BLE_VS_RAM_POWER_OFF
+ * @param[in] ram_retention retain RAM during Deep Sleep or Hibernation. 
+ * Set BLE_VS_RAM_POWER_ON or BLE_VS_RAM_POWER_OFF
  * @param[in] pin_selection Set 0-11 for port 0(P00..P011). Used only for deep sleep/hibernation modes  
  *
  * @retval BLE_SUCCESS          Command transmitted successfully
  **********************************************************************************************************************/
-ble_status_t r_ble_gtl_aux_set_sleep_mode_cmd(uint8_t sleep_mode, uint8_t ram_retention, uint8_t pin_selection)
+ble_status_t r_ble_gtl_aux_set_sleep_mode_cmd(uint8_t sleep_mode, uint8_t ram_retention, 
+                                              uint16_t wkup_pin_mask, uint16_t wkup_pol_mask)
 {
     ble_status_t status = BLE_ERR_INVALID_ARG;
     r_ble_gtl_gapc_set_sleep_mode_cmd_t *p_set_sleep_mode_cmd;
     r_ble_gtl_gapc_set_sleep_mode_cmp_t sleep_rsp;
 
-    p_set_sleep_mode_cmd = (r_ble_gtl_gapc_set_sleep_mode_cmd_t *) r_ble_gtl_msg_allocate (R_BLE_GTL_AUX_SET_SLEEP_MODE_CMD,
-                                                                                R_BLE_GTL_TASK_ID_AUX,
-                                                                                R_BLE_GTL_TASK_ID_GTL,
-                                                                                sizeof(r_ble_gtl_gapc_set_sleep_mode_cmd_t));
+    p_set_sleep_mode_cmd = (r_ble_gtl_gapc_set_sleep_mode_cmd_t *) r_ble_gtl_msg_allocate 
+                                                                        (R_BLE_GTL_AUX_SET_SLEEP_MODE_CMD,
+                                                                        R_BLE_GTL_TASK_ID_AUX,
+                                                                        R_BLE_GTL_TASK_ID_GTL,
+                                                                        sizeof(r_ble_gtl_gapc_set_sleep_mode_cmd_t));
     if (NULL != p_set_sleep_mode_cmd)
     {
-        p_set_sleep_mode_cmd->pin_selection = pin_selection;
-        p_set_sleep_mode_cmd->ram_retention = ram_retention;
         p_set_sleep_mode_cmd->sleep_mode = sleep_mode;
+        p_set_sleep_mode_cmd->ram_retention = ram_retention;
+        p_set_sleep_mode_cmd->wkup_pin_mask = wkup_pin_mask;
+        p_set_sleep_mode_cmd->wkup_pol_mask = wkup_pol_mask;
 
         status = r_ble_gtl_msg_transmit ((uint8_t*) p_set_sleep_mode_cmd);
 

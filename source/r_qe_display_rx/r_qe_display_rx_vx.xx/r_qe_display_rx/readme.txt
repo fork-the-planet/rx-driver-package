@@ -5,12 +5,12 @@ r_qe_display_rx
 
 Document Number
 ---------------
-R01AN7283EJ0111 (English version)
-R01AN7283JJ0111 (Japanese version)
+R01AN7283EJ0112 (English version)
+R01AN7283JJ0112 (Japanese version)
 
 Version
 -------
-v1.11
+v1.12
 
 Overview
 --------
@@ -63,8 +63,8 @@ Required Packages
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX 8.3.0 202411
-* IAR C/C++ Compiler for Renesas RX version 5.10.1
+* GCC for Renesas RX 14.2.0 202511
+* IAR C/C++ Compiler for Renesas RX version 5.20.1
 
 File Structure
 --------------

@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_rsci_rx
-VERSION = 		2.72
+VERSION = 		2.73
 MDF = V2
 
 CONFIG_FOLDER = r_config

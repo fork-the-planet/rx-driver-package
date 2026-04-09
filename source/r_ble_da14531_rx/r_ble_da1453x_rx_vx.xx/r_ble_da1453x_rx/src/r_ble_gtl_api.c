@@ -4,31 +4,32 @@
 * SPDX-License-Identifier: BSD-3-Clause
 */
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Includes
- ***********************************************************************************************************************/
+ *********************************************************************************************************************/
 #include <rm_ble_abs.h>
 
 #include "qe_ble_profile.h"
 #include "r_ble_gtl.h"
 #include "r_ble_gtl_security.h"
+#include "rm_ble_abs_gtl_storage.h"
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Defines
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Extern variables
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 extern ble_abs_instance_ctrl_t * gp_instance_ctrl;
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Enumerations
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Static Private Variables
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 /* SCI configurations */
 static const st_sci_conf_t s_sci_cfg[] =
 {
@@ -76,9 +77,9 @@ static const st_sci_conf_t s_sci_cfg[] =
 
 static r_ble_gtl_transport_api_t g_transport_api;
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Local function prototypes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #if defined(BLE_CFG_TRANSPORT_INTERFACE_UART)
 /* Port configurations */
 static st_sci_conf_t * get_port_config (void);
@@ -92,9 +93,9 @@ static int r_ble_gtl_api_transport_write(void * p_context, uint8_t * p_data, uin
 static int r_ble_gtl_api_transport_read(void * p_context, uint8_t * p_data, uint32_t len);
 static int r_ble_gtl_api_transport_close(void * p_context);
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Public Functions Implementation
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 ble_status_t R_BLE_Open (void)
 {
 #if BLE_CFG_PARAM_CHECKING_ENABLE
@@ -514,7 +515,7 @@ ble_status_t R_BLE_GAP_StartEnc (uint16_t conn_hdl)
     }
     else
     {
-        status = BLE_ERR_UNSUPPORTED;
+        status = r_ble_gtl_security_cmd(conn_hdl);
     }
 
     return status;
@@ -651,35 +652,24 @@ ble_status_t R_BLE_GAP_ReplyLtkReq (uint16_t conn_hdl, uint16_t ediv, uint8_t * 
 
     FSP_PARAMETER_NOT_USED(response);
 
-    if (r_ble_gtl_sec_get_sec_conn_var() != BLE_GAP_SC_STRICT)
-    {
-        /* Handle LEGACY PAIRING */
-        bool comp_resp = r_ble_gtl_sec_encryption_req_resp(conn_hdl, ediv, p_peer_rand);
+    /* Handle LEGACY PAIRING */
+    bool comp_resp = r_ble_gtl_sec_encryption_req_resp(conn_hdl, ediv, p_peer_rand);
 
-        if (comp_resp)
-        {
-            /* Values found in db */
-            status = r_ble_gtl_send_gapc_encrypt_cfm(conn_hdl, BLE_GAP_LTK_REQ_ACCEPT);
-        }
-        else
-        {
-            /* Values NOT found in db */
-            status = r_ble_gtl_send_gapc_encrypt_cfm(conn_hdl, BLE_GAP_LTK_REQ_DENY);
-        }
-        /* Notify the application */
-        if (status == BLE_SUCCESS)
-        {
-            status = r_ble_gtl_gapc_ltk_rsp_comp(conn_hdl, comp_resp);
-        }
+    if (comp_resp)
+    {
+        /* Values found in db */
+        status = r_ble_gtl_send_gapc_encrypt_cfm(conn_hdl, BLE_GAP_LTK_REQ_ACCEPT);
     }
     else
     {
-        /* Handle SECURE CONNECTIONS */
-        status = r_ble_gtl_send_gapc_encrypt_cfm(conn_hdl, BLE_GAP_LTK_REQ_ACCEPT);
-        if (status == BLE_SUCCESS)
-        {
-            status = r_ble_gtl_gapc_ltk_rsp_comp(conn_hdl, true);
-        }
+        /* Values NOT found in db */
+        status = r_ble_gtl_send_gapc_encrypt_cfm(conn_hdl, BLE_GAP_LTK_REQ_DENY);
+    }
+
+    /* Notify the application */
+    if (status == BLE_SUCCESS)
+    {
+        status = r_ble_gtl_gapc_ltk_rsp_comp(conn_hdl, comp_resp);
     }
 
     return status;
@@ -864,7 +854,9 @@ ble_status_t R_BLE_GATTC_WriteChar (uint16_t conn_hdl, st_ble_gatt_hdl_value_pai
     return R_BLE_GTL_GATTC_WriteChar(conn_hdl, p_write_data);
 }
 
-ble_status_t R_BLE_GATTC_WriteLongChar (uint16_t conn_hdl, st_ble_gatt_hdl_value_pair_t * p_write_data, uint16_t offset)
+ble_status_t R_BLE_GATTC_WriteLongChar (uint16_t conn_hdl,
+                                        st_ble_gatt_hdl_value_pair_t * p_write_data,
+                                        uint16_t offset)
 {
     return R_BLE_GTL_GATTC_WriteLongChar(conn_hdl, p_write_data, offset);
 }
@@ -1014,7 +1006,14 @@ ble_status_t R_BLE_VS_SetBdAddr (uint8_t area, st_ble_dev_addr_t * p_addr)
     else if (BLE_VS_ADDR_AREA_DATA_FLASH == area)
     {
 #ifdef ENABLE_STORAGE
-        status = R_BLE_GTL_VS_SetBdAddr_dflash(p_addr);
+        if (rm_ble_abs_gtl_storage_set_addr(p_addr))
+        {
+            status = BLE_ERR_UNSPECIFIED;
+        }
+        else
+        {
+            status = BLE_SUCCESS;
+        }
 #endif
     }
     else
@@ -1211,12 +1210,12 @@ sci_err_t wrap_sci_close(st_sci_tbl_t * p_uart)
  *********************************************************************************************************************/
 #endif
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Open transport layer interface.
  *
  * @param[in]  p_context    Pointer to transport layer context
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static int r_ble_gtl_api_transport_open (void * p_context)
 {
     fsp_err_t       err = FSP_ERR_UNSUPPORTED;
@@ -1232,14 +1231,14 @@ static int r_ble_gtl_api_transport_open (void * p_context)
     return (int) err;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Write data to transport layer interface.
  *
  * @param[in]  p_context    Pointer to transport layer context
  * @param[in]  p_data       Pointer to data to be written
  * @param[in]  len          Number of bytes to write
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static int r_ble_gtl_api_transport_write (void * p_context, uint8_t * p_data, uint32_t len)
 {
     fsp_err_t       err = FSP_ERR_UNSUPPORTED;
@@ -1255,14 +1254,14 @@ static int r_ble_gtl_api_transport_write (void * p_context, uint8_t * p_data, ui
     return (int) err;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Read data to transport layer interface.
  *
  * @param[in]  p_context    Pointer to transport layer context
  * @param[in]  p_data       Pointer to data to be stored
  * @param[in]  len          Number of bytes to read
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static int r_ble_gtl_api_transport_read (void * p_context, uint8_t * p_data, uint32_t len)
 {
     fsp_err_t       err = FSP_ERR_UNSUPPORTED;
@@ -1278,12 +1277,12 @@ static int r_ble_gtl_api_transport_read (void * p_context, uint8_t * p_data, uin
     return (int) err;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  *  Close transport layer interface.
  *
  * @param[in]  p_context    Pointer to transport layer context
  *
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static int r_ble_gtl_api_transport_close (void * p_context)
 {
     fsp_err_t       err          = FSP_SUCCESS;

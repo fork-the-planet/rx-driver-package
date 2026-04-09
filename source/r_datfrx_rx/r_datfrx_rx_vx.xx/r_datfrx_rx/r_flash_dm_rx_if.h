@@ -1,11 +1,11 @@
 /*
-* Copyright (c) 2018(2025) Renesas Electronics Corporation and/or its affiliates
+* Copyright (c) 2018(2026) Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
 /************************************************************************************************
 * File Name    : r_flash_dm_rx_if.h
-* Version      : 2.31
+* Version      : 2.32
 * Description  : DATFRX interface header file
 *************************************************************************************************/
 /************************************************************************************************
@@ -17,6 +17,7 @@
 *              : 31.08.2023 2.20     Minor version change.
 *              : 14.03.2024 2.30     Minor version change.
 *              : 20.03.2025 2.31     Changed the disclaimer.
+*              : 20.03.2026 2.32     Minor version change.
 *************************************************************************************************/
 
 /************************************************************************************************
@@ -39,7 +40,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define FLASH_DM_VERSION_MAJOR           (2)
-#define FLASH_DM_VERSION_MINOR           (31)
+#define FLASH_DM_VERSION_MINOR           (32)
 
 /* Activity flag. */
 #define FLASH_DM_ACT_IDLE                   ((uint16_t)(0x00))

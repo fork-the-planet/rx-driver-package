@@ -5,12 +5,12 @@ r_s2_rx
 
 Document Number
 ---------------
-R20AN0037JJ0305_RX_S2
-R20AN0037EJ0305_RX_S2
+R20AN0037JJ0306_RX_S2
+R20AN0037EJ0306_RX_S2
 
 Version
 -------
-v3.05
+v3.06
 
 Overview
 --------
@@ -20,8 +20,6 @@ The sound playback needs D/A or PWM,  the sound record needs A/D. Please refer t
 the "R20AN0291JJxxxx_RX_S2/R20AN0291EJxxxx_RX_S2" too.
 
 These configuration options can be found in "r_config\r_s2_rx_config.h". 
-An original copy of the configuration file is stored in 
-"r_s2_rx\ref\r_s2_rx_config_reference.h".
 
 
 Features
@@ -62,8 +60,8 @@ None
 How to add to your project
 --------------------------
 Please refer to the Adding Firmware Integration Technology Modules to Projects.
-"r01an1723ju0111_rx.pdf/r01an1826jj0102_rx.pdf(R20AN0037JJ0305_RX_S2)"
-"r01an1723eu0111_rx.pdf/r01an1826eu0102_rx.pdf(R20AN0037EJ0305_RX_S2)".
+"r01an1723ju0111_rx.pdf/r01an1826jj0102_rx.pdf(R20AN0037JJ0306_RX_S2)"
+"r01an1723eu0111_rx.pdf/r01an1826eu0102_rx.pdf(R20AN0037EJ0306_RX_S2)".
 
 Toolchain(s) Used
 -----------------
@@ -78,11 +76,11 @@ r_s2_rx
 +---doc
 |   |
 |   +---ja
-|   |     r20an0037jj0305_rx_s2.pdf
+|   |     r20an0037jj0306_rx_s2.pdf
 |   |     r20uw0079jj0100_s2.pdf
 |   |     r21an0002jj0100_adpcm_tool.pdf
 |   +---en
-|         r20an0037ej0305_rx_s2.pdf
+|         r20an0037ej0306_rx_s2.pdf
 |         r20uw0079ej0100_s2.pdf
 |         r21an0002ej0100_adpcm_tool.pdf
 |
@@ -97,8 +95,6 @@ r_s2_rx
 +---make_lib
 |       make_lib.zip
 |
-+---ref
-|       r_s2_rx_config_reference.h
 |
 +---tool
     |

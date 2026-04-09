@@ -11,6 +11,7 @@
 /***********************************************************************************************************************
 * History : DD.MM.YYYY Version  Description
 *         : 12.09.2025 1.00     First Release
+*         : 04.03.2026 1.01     Fixed comment.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -119,7 +120,7 @@ R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 R_BSP_ATTRIB_SECTION_CHANGE_END
 #endif /* defined(__CCRX__), defined(__GNUC__) */
 
-#endif/* BSP_CFG_RTOS_USED */
+#endif /* BSP_CFG_RTOS_USED */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */
 

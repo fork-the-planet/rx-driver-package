@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+ * Copyright (c) 2026 Renesas Electronics Corporation and/or its affiliates
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 /**********************************************************************************************************************
  * File Name    : r_emwin_rx_if.h
- * Version      : 1.00
+ * Version      : 1.01
  * Description  : This module enables to use emWin, Graphic Library with Graphical User Interface.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
@@ -26,6 +26,7 @@
  *         : 30.08.2024 6.34.g.1.20    Update FIT module version.
  *         : 20.03.2025 6.34.g.1.21    Changed the disclaimer.
  *         : 09.12.2025 6.52.  1.00    Update emWin library to v6.52.
+ *         : 20.03.2026 6.52.  1.01    Update FIT module version.
  *********************************************************************************************************************/
 #ifndef EMWIN_RX_IF_H
 #define EMWIN_RX_IF_H
@@ -47,7 +48,7 @@
 #define EMWIN_VERSION_EMWIN_MINOR   (52)
 #define EMWIN_VERSION_EMWIN_CHAR    ('\0')
 #define EMWIN_VERSION_FIT_MAJOR     (1)
-#define EMWIN_VERSION_FIT_MINOR     (00)
+#define EMWIN_VERSION_FIT_MINOR     (01)
 
 /**********************************************************************************************************************
  Global Typedef definitions

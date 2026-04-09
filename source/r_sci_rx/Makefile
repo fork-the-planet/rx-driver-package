@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_sci_rx
-VERSION = 		5.60
+VERSION = 		5.61
 MDF = V1,V2
 
 CONFIG_FOLDER = r_config

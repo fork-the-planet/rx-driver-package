@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_sha_rx
-VERSION = 		1.06
+VERSION = 		1.07
 MDF = V2
 
 CONFIG_FOLDER = r_config

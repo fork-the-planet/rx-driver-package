@@ -26,6 +26,7 @@
 *         : 30.10.2025 2.12    Removed doc folder and updated .rcpc file in FITDemos.
 *                              Removed \e in Doxygen comment of API function.
 *         : 28.11.2025 2.20    Updated version to 2.20 for RX14T release.
+*         : 30.03.2026 2.21    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #ifndef BYTEQ_IF_H
@@ -41,7 +42,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define BYTEQ_VERSION_MAJOR (2)
-#define BYTEQ_VERSION_MINOR (20)
+#define BYTEQ_VERSION_MINOR (21)
 
 #if ((BYTEQ_CFG_CRITICAL_SECTION == 1)||(BYTEQ_CFG_PROTECT_QUEUE == 1))
 #if (BSP_CFG_RUN_IN_USER_MODE == 1)

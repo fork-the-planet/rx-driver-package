@@ -14,6 +14,7 @@
 *         : 21.11.2023 1.01     Deleted the BSP_CFG_ROM_CODE_PROTECT_VALUE.
 *                               Modified comment.
 *         : 26.02.2025 1.02     Changed the disclaimer.
+*         : 04.03.2026 1.03     Fixed comment.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -122,7 +123,7 @@ R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 R_BSP_ATTRIB_SECTION_CHANGE_END
 #endif /* defined(__CCRX__), defined(__GNUC__) */
 
-#endif/* BSP_CFG_RTOS_USED */
+#endif /* BSP_CFG_RTOS_USED */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */
 

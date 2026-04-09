@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_pdc_rx
-VERSION = 		2.07
+VERSION = 		2.08
 MDF = V1,V2
 
 CONFIG_FOLDER = r_config

@@ -29,6 +29,7 @@
 *                                - BSP_PRV_SPCC_SPE
 *                                - BSP_PRV_SPCC_VALUE
 *         : 26.02.2025 3.04      Changed the disclaimer.
+*         : 04.03.2026 3.05      Fixed comment.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -222,7 +223,7 @@ R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 R_BSP_ATTRIB_SECTION_CHANGE_END
 #endif /* defined(__CCRX__), defined(__GNUC__) */
 
-#endif/* BSP_CFG_RTOS_USED */
+#endif /* BSP_CFG_RTOS_USED */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */
 

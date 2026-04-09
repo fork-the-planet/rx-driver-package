@@ -26,6 +26,7 @@
 *                                - BSP_MCU_VOLTAGE_LEVEL_SETTING_RIIC
 *                                Added version check of smart configurator.
 *         : 26.02.2025 2.04      Changed the disclaimer.
+*         : 04.03.2026 2.05      Added compile switch of BSP_CFG_CONFIGURATOR_SELECT.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -40,7 +41,7 @@ Macro definitions
 /* Multiple inclusion prevention macro */
 #ifndef MCU_INFO
 #define MCU_INFO
-
+#if BSP_CFG_CONFIGURATOR_SELECT == 1
 #if BSP_CFG_CONFIGURATOR_VERSION < 2120
     /* The following macros are updated to invalid value by Smart configurator if you are using Smart Configurator for 
        RX V2.11.0 (equivalent to e2 studio 2021-10) or earlier version.
@@ -54,6 +55,7 @@ Macro definitions
      */
     #error "To use this version of BSP, you need to upgrade Smart configurator. Please upgrade Smart configurator. If you don't use Smart Configurator, please change value of BSP_CFG_CONFIGURATOR_VERSION in r_bsp_config.h."
 #endif
+#endif /* BSP_CFG_CONFIGURATOR_SELECT */
 
 /* MCU CPU Version */
 #define BSP_MCU_CPU_VERSION    (3)

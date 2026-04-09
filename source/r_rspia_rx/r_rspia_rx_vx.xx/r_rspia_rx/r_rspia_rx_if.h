@@ -21,6 +21,7 @@
 *         : 31.12.2024 1.60     Supported for Nested interrupt.
 *         : 15.03.2025 1.61     Updated disclaimer.
 *         : 23.06.2025 1.62     Removed doc folder and updated .rcpc file in FITDemos.
+*         : 30.03.2026 1.63     Included spdx file in the package
 ***********************************************************************************************************************/
 
 #ifndef RSPIA_API_HEADER_FILE
@@ -48,7 +49,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RSPIA_RX_VERSION_MAJOR           (1)
-#define RSPIA_RX_VERSION_MINOR           (62)
+#define RSPIA_RX_VERSION_MINOR           (63)
 
 /***********************************************************************************************************************
 Typedef definitions

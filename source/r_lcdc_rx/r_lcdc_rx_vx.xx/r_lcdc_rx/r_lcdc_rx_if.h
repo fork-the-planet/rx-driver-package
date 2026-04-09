@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+* Copyright (c) 2026 Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -12,6 +12,7 @@
 *              : 31.05.2023 2.00     Updated version to 2.00
 *                                    Add LCDC API error code (LCDC_ERR_ADJUST_PARAM)
 *              : 20.03.2025 2.01     Changed the disclaimer.
+*              : 20.03.2026 2.02     Updated version to 2.02
 *******************************************************************************/
 /*******************************************************************************
 * File Name    : r_lcdc_rx_if.h
@@ -35,7 +36,7 @@ Macro definitions
 *******************************************************************************/
 /* Version Number of API. */
 #define LCDC_VERSION_MAJOR  (2)
-#define LCDC_VERSION_MINOR  (01)
+#define LCDC_VERSION_MINOR  (02)
 
 
 /*******************************************************************************

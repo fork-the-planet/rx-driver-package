@@ -19,6 +19,7 @@
  *           31.05.2023 3.00    Added support for RX23E-B
  *           31.07.2024 4.00    Added support for RX260, RX261
  *           20.03.2025 4.01    Changed the disclaimer in program sources.
+ *           20.04.2026 4.02    Updated the minor version.
 ***********************************************************************************************************************/
 #ifndef R_ELC_RX_IF_H
     #define R_ELC_RX_IF_H
@@ -38,7 +39,7 @@
 
 /* Version Number of API. */
     #define ELC_RX_VERSION_MAJOR            (4)
-    #define ELC_RX_VERSION_MINOR            (01)
+    #define ELC_RX_VERSION_MINOR            (02)
 
 /***********************************************************************************************************************
  Typedef definitions

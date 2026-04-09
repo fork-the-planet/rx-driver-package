@@ -46,6 +46,7 @@
  *         : 23.06.2025 2.82     Removed doc folder and updated .rcpc file in FITDemos.
  *         : 30.10.2025 2.90     RX14T support added.
  *                               Updated MDF using Category.
+ *         : 30.03.2026 2.91     Included spdx file in the package.
  **********************************************************************************************************************/
 /* Guards against multiple inclusion */
 #ifndef SCI_IIC_IF_H
@@ -63,7 +64,7 @@ R_BSP_PRAGMA_UNPACK
 
 /* Version Number of API. */
     #define SCI_IIC_VERSION_MAJOR  (2)
-    #define SCI_IIC_VERSION_MINOR  (90)
+    #define SCI_IIC_VERSION_MINOR  (91)
 
 /*----------------------------------------------------------------------------*/
 /*   Define return values and values of channel state flag.                   */

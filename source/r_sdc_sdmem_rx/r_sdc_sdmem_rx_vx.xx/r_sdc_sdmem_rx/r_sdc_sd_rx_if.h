@@ -25,6 +25,7 @@
 *         : 30.11.2018 2.03    Corresponded to FIT guide function of Smart Configurator.
 *         : 10.02.2020 3.00    Updated RX_SDC_SD_VERSION.
 *         : 19.02.2025 3.01    Changed the disclaimer in program sources.
+*         : 20.04.2026 3.02    Updated the minor version.
 **********************************************************************************************************************/
 
 #ifndef SDC_SD_RX_H
@@ -44,7 +45,7 @@ Macro definitions
 /* #### SD Memory and common definitions #### */
 /* Version Number of API. */
 #define RX_SDC_SD_VERSION_MAJOR     (3)
-#define RX_SDC_SD_VERSION_MINOR     (01)
+#define RX_SDC_SD_VERSION_MINOR     (02)
 
 #define SDC_SD_CARD_NO0             (0)
 #define SDC_SD_CARD_NO1             (1)

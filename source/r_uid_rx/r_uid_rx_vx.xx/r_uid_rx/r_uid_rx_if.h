@@ -16,7 +16,8 @@
  *         : 31.07.2019 1.13    Added support for RX13T
  *         : 10.06.2020 1.14    Updated version to 1.14
  *         : 20.03.2025 1.15    Changed the disclaimer in program sources.
- ******************************************************************************/
+ *         ; 20.04.2026 1.16    Updated the minor version.
+  ******************************************************************************/
 
 #ifndef UID_INTERFACE_HEADER_FILE
 #define UID_INTERFACE_HEADER_FILE
@@ -26,7 +27,7 @@
  ******************************************************************************/
 /* Version Number of API. */
 #define UID_RX_VERSION_MAJOR           (1)
-#define UID_RX_VERSION_MINOR           (15)
+#define UID_RX_VERSION_MINOR           (16)
 
 /*******************************************************************************
  Typedef definitions

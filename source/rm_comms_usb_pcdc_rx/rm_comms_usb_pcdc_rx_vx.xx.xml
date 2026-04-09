@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+* Copyright (c) 2024 - 2026 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+-->
 <refinfo>
   <!-- multiple versions permitted -->
   <toolchain>
     <brand>Renesas</brand>
     <product>RXC</product>
     <version>3.05.00</version>
+    <version>3.07.00</version>
   </toolchain>
 
   <!-- only one target entry allowed; multiple sub tags permitted -->

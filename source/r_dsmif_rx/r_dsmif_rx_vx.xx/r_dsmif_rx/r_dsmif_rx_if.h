@@ -6,7 +6,7 @@
 /*******************************************************************************
 * System Name  : RX72M DSMIF sample program
 * File Name    : r_dsmif_rx_if.h
-* Version      : 1.02
+* Version      : 1.03
 * Abstract     : API for DSMIF function
 * Tool-Chain   : Renesas CCRX
 * OS           : not use
@@ -17,6 +17,7 @@
 * History      : DD.MM.YYYY Version  Description
 *              : 06.08.2019 1.00     First Release
 *              : 20.03.2025 1.02     Changed the disclaimer.
+*              : 20.03.2026 1.03     Updated the minor version.
 *******************************************************************************/
 
 #ifndef R_DSMIF_RX_IF_H

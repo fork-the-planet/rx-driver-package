@@ -54,6 +54,8 @@
 *                               Added the bsp_mcu_clock_reset_bootloader function.
 *                               Renamed local variable for subclock in the clock_source_select function.
 *         : 26.02.2025 3.03     Changed the disclaimer.
+*         : 04.03.2026 3.04     Fixed the initialization settings of sub-clock for Technical Update Information
+*                               (TN-RX*-A0237B).
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -660,18 +662,12 @@ static void clock_source_select (void)
             b3  RTCOE - RTCOUT Output Enable - RTCOUT output enabled.
             b2  ADJ30 - 30-Second Adjustment - 30-second adjustment is executed.
             b1  RESET - RTC Software Reset - The prescaler and the target registers for RTC software reset are initialized.
-            b0  START - start - Prescaler is stopped. */
-            RTC.RCR2.BYTE &= 0x7E;
+            b0  START - start - Prescaler is stopped.
+            NOTE: Please refer Tool News(TN-RX*-A0237B) for details. */
+            RTC.RCR2.BYTE = 0x00;
 
             /* WAIT_LOOP */
-            while (0 != RTC.RCR2.BIT.START)
-            {
-                /* Confirm that the written value can be read correctly. */
-                R_BSP_NOP();
-            }
-
-            /* WAIT_LOOP */
-            while (0 != RTC.RCR2.BIT.CNTMD)
+            while (0x00 != RTC.RCR2.BYTE)
             {
                 /* Confirm that the written value can be read correctly. */
                 R_BSP_NOP();
@@ -1031,7 +1027,7 @@ void bsp_mcu_clock_reset_bootloader (void)
             /* Wait for transition to finish. */
             R_BSP_NOP();
         }
-     }
+    }
 
     /* Protect on. */
     SYSTEM.PRCR.WORD = 0xA500;

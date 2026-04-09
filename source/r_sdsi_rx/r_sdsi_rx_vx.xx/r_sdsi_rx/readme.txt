@@ -5,12 +5,12 @@ r_sdsi_rx (SD Mode SDSI Driver)
 
 Document Number 
 ---------------
-R01AN3238EJ0206
-R01AN3238JJ0206
+R01AN3238EJ0207
+R01AN3238JJ0207
 
 Version
 -------
-v2.06
+v2.07
 
 Overview
 --------
@@ -75,7 +75,7 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX v14.02.00.202505
+* GCC for Renesas RX v14.02.00.202511
 * IAR C/C++ Compiler for Renesas RX v5.20.01
 
 File Structure
@@ -87,9 +87,9 @@ r_sdsi_rx
 +---doc
 |   |
 |   +---en
-|   |       r01an3238ej0206-rx-communication.pdf
+|   |       r01an3238ej0207-rx-communication.pdf
 |   +---ja
-|           r01an3238jj0206-rx-communication.pdf
+|           r01an3238jj0207-rx-communication.pdf
 |
 +---src
     |   r_sdsi_rx.c

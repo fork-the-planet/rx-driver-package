@@ -5,7 +5,7 @@
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name    : r_flash_spi_if.h
-* Version      : 3.60
+* Version      : 3.61
 * Description  : FLASH SPI driver interface header file
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -36,6 +36,7 @@
 *              : 15.03.2025 3.51    Updated disclaimer.
 *              : 30.10.2025 3.60    Removed doc folder and updated .rcpc file in FITDemos.
 *                                   Updated dependency module version.
+*              : 30.03.2026 3.61    Included spdx file in the package.
 ***********************************************************************************************************************/
 #ifndef FLASH_SPI_IF_H
 #define FLASH_SPI_IF_H
@@ -59,7 +60,7 @@ Macro definitions
 
 /* Driver version */
 #define FLASH_SPI_VERSION_MAJOR       (3)
-#define FLASH_SPI_VERSION_MINOR       (60)
+#define FLASH_SPI_VERSION_MINOR       (61)
 
 
 /*--------------- Define no. of slots ----------------*/

@@ -1,24 +1,8 @@
-/***********************************************************************************************************************
- * Copyright (C) 2024 Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+/*
+ * Copyright (C) 2024 - 2025 Renesas Electronics Corporation. All rights reserved.
  *
- * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
- * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
- * sold pursuant to Renesas terms and conditions of sale.  Purchasers are solely responsible for the selection and use
- * of Renesas products and Renesas assumes no liability.  No license, express or implied, to any intellectual property
- * right is granted by Renesas. This software is protected under all applicable laws, including copyright laws. Renesas
- * reserves the right to change or discontinue this software and/or this documentation. THE SOFTWARE AND DOCUMENTATION
- * IS DELIVERED TO YOU "AS IS," AND RENESAS MAKES NO REPRESENTATIONS OR WARRANTIES, AND TO THE FULLEST EXTENT
- * PERMISSIBLE UNDER APPLICABLE LAW, DISCLAIMS ALL WARRANTIES, WHETHER EXPLICITLY OR IMPLICITLY, INCLUDING WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT, WITH RESPECT TO THE SOFTWARE OR
- * DOCUMENTATION.  RENESAS SHALL HAVE NO LIABILITY ARISING OUT OF ANY SECURITY VULNERABILITY OR BREACH.  TO THE MAXIMUM
- * EXTENT PERMITTED BY LAW, IN NO EVENT WILL RENESAS BE LIABLE TO YOU IN CONNECTION WITH THE SOFTWARE OR DOCUMENTATION
- * (OR ANY PERSON OR ENTITY CLAIMING RIGHTS DERIVED FROM YOU) FOR ANY LOSS, DAMAGES, OR CLAIMS WHATSOEVER, INCLUDING,
- * WITHOUT LIMITATION, ANY DIRECT, CONSEQUENTIAL, SPECIAL, INDIRECT, PUNITIVE, OR INCIDENTAL DAMAGES; ANY LOST PROFITS,
- * OTHER ECONOMIC DAMAGE, PROPERTY DAMAGE, OR PERSONAL INJURY; AND EVEN IF RENESAS HAS BEEN ADVISED OF THE POSSIBILITY
- * OF SUCH LOSS, DAMAGES, CLAIMS OR COSTS.
- **********************************************************************************************************************/
-
-
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 /*******************************************************************************************************************//**
  * @addtogroup RM_COMMS_USB_PCDC
  * @{
@@ -58,6 +42,7 @@
 /* USB bus configuration */
 typedef struct st_rm_comms_usb_pcdc_extended_cfg
 {
+    uint8_t connect_detection_en;      ///< Detection mode for connection
 #if BSP_CFG_RTOS == 2
     void * const   p_tx_mutex;         ///< Lock device for writing.
     void * const   p_rx_mutex;         ///< Lock device for reading.
@@ -75,6 +60,9 @@ typedef struct st_rm_comms_usb_pcdc_extended_cfg
 typedef struct st_rm_comms_usb_pcdc_instance_ctrl
 {
     uint32_t                                 open;                      ///< Open flag.
+    usb_pcdc_linecoding_t                    line_coding;               ///< Line Coding to store COM port settings
+    usb_pcdc_ctrllinestate_t                 ctrl_line_state;           ///< Line State Control
+
     rm_comms_usb_pcdc_cfg_t const          * p_cfg;                     ///< Middleware configuration.
     rm_comms_usb_pcdc_extended_cfg_t const * p_extend;                  ///< Pointer to extended configuration structure
     usb_ctrl_t                             * p_usb_args;                ///< Pointer to usb callback args

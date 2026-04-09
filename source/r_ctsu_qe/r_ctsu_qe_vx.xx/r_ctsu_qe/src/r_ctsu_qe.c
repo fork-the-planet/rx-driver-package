@@ -3,10 +3,6 @@
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
-/***********************************************************************************************************************
-* File Name    : r_ctsu_qe.c
-* Description  : This file implements the QE CTSU API
-***********************************************************************************************************************/
 
 /***********************************************************************************************************************
  * Includes
@@ -55,9 +51,9 @@
 #define CTSU_TUNING_MIN                      (0x0000)
 #define CTSU_TUNING_VALUE_SELF               (15360)
 #define CTSU_TUNING_VALUE_MUTUAL             (10240)
-#define CTSU_TUNING_OT_COUNT                 (25)
 
 #define CTSU_CFG_DECIMAL_POINT               (16)
+#define CTSU_CFG_DECIMAL_POINT_MASK          (0x0000FFFF)
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #define CTSU_SST_RECOMMEND                  (0x1F) // The recommend value of SST
@@ -100,12 +96,6 @@
  #define CTSU_CORRECTION_BIT7                (0x0080)
  #define CTSU_CORRECTION_BIT6_0              (0x007F)
  #define CTSU_CORRECTION_DIV_PRECISION       (12)
-
- #if (CTSU_CFG_NUM_CFC != 0)
-  #define CTSU_CORRCFC_CENTER_POINT          ((CTSU_CORRCFC_POINT_NUM - 1) / 2) // number of center point
-  #define CTSU_CORRCFC_TS_MAX                (36)                               // Maximum number of TS terminal
-  #define CTSU_CORRCFC_SHIFT8                (8)                                // Definition of 8bit shift
- #endif
 
  #if (CTSU_CFG_CALIB_RTRIM_SUPPORT == 1)
   #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
@@ -159,70 +149,280 @@
 #if (BSP_FEATURE_CTSU_VERSION == 1)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
 
-  #define CTSU_DIAG_DAC_1UC             (0x10)  // 0x10 for so dac value
-  #define CTSU_DIAG_DAC_2UC             (0x20)  // 0x20 for so dac value
-  #define CTSU_DIAG_DAC_4UC             (0x40)  // 0x40 for so dac value
-  #define CTSU_DIAG_DAC_8UC             (0x80)  // 0x80 for so dac value
-  #define CTSU_DIAG_DAC_16UC            (0x100) // 0x100 for so dac value
+  #define CTSU_DIAG_DAC_1UC               (0x10)  // 0x10 for so dac value
+  #define CTSU_DIAG_DAC_2UC               (0x20)  // 0x20 for so dac value
+  #define CTSU_DIAG_DAC_4UC               (0x40)  // 0x40 for so dac value
+  #define CTSU_DIAG_DAC_8UC               (0x80)  // 0x80 for so dac value
+  #define CTSU_DIAG_DAC_16UC              (0x100) // 0x100 for so dac value
 
-  #define CTSU_DIAG_DAC_SO_MAX          (0x3FF) // so dac max
+  #define CTSU_DIAG_DAC_SO_MAX            (0x3FF) // so dac max
 
-  #define CTSU_DIAG_TSOC_BIT            (0x80)                     // TSOC bit 1
-  #define CTSU_DIAG_CLKSEL1_BIT         (0x40)                     // clksel bit 1
-  #define CTSU_DIAG_DAC_INIT_VALUE      (241)   // SO value of dac test
-  #define CTSU_DIAG_DAC_TARGET_VALUE    (15360) // 6UC value dac test target
-  #define CTSU_DIAG_DAC_START_VALUE     (0x100) // so value dac test tuning
-  #define CTSU_DAC_TEST_ATUNE1          (0x08)  // ATUNE1 bit 1
+  #define CTSU_DIAG_TSOC_BIT              (0x80)  // TSOC bit 1
+  #define CTSU_DIAG_CLKSEL1_BIT           (0x40)  // clksel bit 1
+  #define CTSU_DIAG_DAC_INIT_VALUE        (241)   // SO value of dac test
+  #define CTSU_DIAG_DAC_TARGET_VALUE      (15360) // 6UC value dac test target
+  #define CTSU_DIAG_DAC_START_VALUE       (0x100) // so value dac test tuning
+  #define CTSU_DAC_TEST_ATUNE1            (0x08)  // ATUNE1 bit 1
+
+  #if (CTSU_CFG_MCU_PROCESS_MF3 == 1)
+   #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+    #define CTSU_CFG_DIAG_CCO_HIGH_MAX    (54888)
+    #define CTSU_CFG_DIAG_CCO_HIGH_MIN    (29062)
+    #define CTSU_CFG_DIAG_CCO_LOW_MAX     (3269)
+    #define CTSU_CFG_DIAG_CCO_LOW_MIN     (705)
+    #define CTSU_CFG_DIAG_SSCG_MAX        (21813)
+    #define CTSU_CFG_DIAG_SSCG_MIN        (11782)
+    #define CTSU_CFG_DIAG_DAC1_MAX        (20422)
+    #define CTSU_CFG_DIAG_DAC2_MAX        (21532)
+    #define CTSU_CFG_DIAG_DAC3_MAX        (23015)
+    #define CTSU_CFG_DIAG_DAC4_MAX        (25923)
+    #define CTSU_CFG_DIAG_DAC5_MAX        (32016)
+    #define CTSU_CFG_DIAG_DAC6_MAX        (45795)
+    #define CTSU_CFG_DIAG_DAC1_MIN        (12492)
+    #define CTSU_CFG_DIAG_DAC2_MIN        (14053)
+    #define CTSU_CFG_DIAG_DAC3_MIN        (15322)
+    #define CTSU_CFG_DIAG_DAC4_MIN        (18070)
+    #define CTSU_CFG_DIAG_DAC5_MIN        (23262)
+    #define CTSU_CFG_DIAG_DAC6_MIN        (33446)
+
+   #else
+    #define CTSU_CFG_DIAG_CCO_HIGH_MAX    (43910)
+    #define CTSU_CFG_DIAG_CCO_HIGH_MIN    (23249)
+    #define CTSU_CFG_DIAG_CCO_LOW_MAX     (2615)
+    #define CTSU_CFG_DIAG_CCO_LOW_MIN     (564)
+    #define CTSU_CFG_DIAG_SSCG_MAX        (21813)
+    #define CTSU_CFG_DIAG_SSCG_MIN        (11782)
+    #define CTSU_CFG_DIAG_DAC1_MAX        (16599)
+    #define CTSU_CFG_DIAG_DAC2_MAX        (17226)
+    #define CTSU_CFG_DIAG_DAC3_MAX        (18412)
+    #define CTSU_CFG_DIAG_DAC4_MAX        (20738)
+    #define CTSU_CFG_DIAG_DAC5_MAX        (25613)
+    #define CTSU_CFG_DIAG_DAC6_MAX        (36636)
+    #define CTSU_CFG_DIAG_DAC1_MIN        (9994)
+    #define CTSU_CFG_DIAG_DAC2_MIN        (11242)
+    #define CTSU_CFG_DIAG_DAC3_MIN        (12258)
+    #define CTSU_CFG_DIAG_DAC4_MIN        (14456)
+    #define CTSU_CFG_DIAG_DAC5_MIN        (18610)
+    #define CTSU_CFG_DIAG_DAC6_MIN        (26757)
+   #endif
+  #endif
+  #if (CTSU_CFG_MCU_PROCESS_40N_PHASE2 == 1)
+   #define CTSU_CFG_DIAG_CCO_HIGH_MAX     (36873)
+   #define CTSU_CFG_DIAG_CCO_HIGH_MIN     (24433)
+   #define CTSU_CFG_DIAG_CCO_LOW_MAX      (1781)
+   #define CTSU_CFG_DIAG_CCO_LOW_MIN      (105)
+   #define CTSU_CFG_DIAG_SSCG_MAX         (17795)
+   #define CTSU_CFG_DIAG_SSCG_MIN         (9610)
+   #define CTSU_CFG_DIAG_DAC1_MAX         (20422)
+   #define CTSU_CFG_DIAG_DAC2_MAX         (21532)
+   #define CTSU_CFG_DIAG_DAC3_MAX         (23015)
+   #define CTSU_CFG_DIAG_DAC4_MAX         (25923)
+   #define CTSU_CFG_DIAG_DAC5_MAX         (32016)
+   #define CTSU_CFG_DIAG_DAC6_MAX         (45795)
+   #define CTSU_CFG_DIAG_DAC1_MIN         (12492)
+   #define CTSU_CFG_DIAG_DAC2_MIN         (14053)
+   #define CTSU_CFG_DIAG_DAC3_MIN         (15322)
+   #define CTSU_CFG_DIAG_DAC4_MIN         (18070)
+   #define CTSU_CFG_DIAG_DAC5_MIN         (23262)
+   #define CTSU_CFG_DIAG_DAC6_MIN         (33446)
+  #endif
  #endif
 #endif
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
-  #define CTSU_DIAG_ADSSTRL             (0xff)   // ADC scan ADSSTAL register
-  #define CTSU_DIAG_DAC_INIT_0          (0x0)    // so dac Lower current source0 init
-  #define CTSU_DIAG_DAC_INIT_1          (0x100)  // so dac Lower current source1 init
-  #define CTSU_DIAG_DAC_INIT_2          (0x200)  // so dac Lower current source2 init
-  #define CTSU_DIAG_DAC_INIT_3          (0x300)  // so dac Lower current source3 init
+  #define CTSU_DIAG_ADC_MEASUREMENT_ERROR                       (CTSU_DIAG_ADC_OFFSET_ERR_12B + \
+                                                                 CTSU_DIAG_ADC_ABS_ACC_ERR_12B)
+  #define CTSU_DIAG_ADC_UNIT_NUMBER                             (0)      /* Set 0 to unit number because this MCU has only 1 unit. (ADC API restriction) */
 
-  #define CTSU_DIAG_DAC_DATA_MAX_0      (0x0ff)  // so dac Lower current source0 max num
-  #define CTSU_DIAG_DAC_DATA_MAX_1      (0x1ff)  // so dac Lower current source1 max num
-  #define CTSU_DIAG_DAC_DATA_MAX_2      (0x2ff)  // so dac Lower current source2 max num
-  #define CTSU_DIAG_DAC_DATA_MAX_3      (0x3ff)  // so dac Lower current source3 max num
+  #define CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_SELECT           (0x0)    /* Select low  unit of DAC lower current source for diagnosis */
+  #define CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_SELECT          (0x100)  /* Select high unit of DAC lower current source for diagnosis */
+  #define CTSU_DIAG_DAC_UPPER_CURRENT_LOW_UNIT_SELECT           (0x200)  /* Select low  unit of DAC upper current source for diagnosis */
+  #define CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT          (0x300)  /* Select high unit of DAC upper current source for diagnosis */
 
-  #define CTSU_DIAG_CURRENT_CLIB_REG    (0x818)  // current test calib register
+  #define CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_DATA_MAX         (0x0FF)  /* Max value of low  unit of DAC lower current source for diagnosis */
+  #define CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_DATA_MAX        (0x003)  /* Max value of high unit of DAC lower current source for diagnosis */
 
-  #define CTSU_DIAG_DELAY_MS            (5)      // delay time (ms)
-  #define CTSU_DIAG_SUCLK0_REG1         (0xff00) // cco gain test SUCLK0
-  #define CTSU_DIAG_SUCLK0_REG2         (0x20)   // cco gain test SUCLK0
-  #define CTSU_DIAG_STCLK_FREQ          (500)    // stclk freqency (Hz)
-  #define CTSU_DIAG_LVM_MASK            (0x400)  // LVmode mask
-  #define CTSU_DIAG_CFC_SDPA_REG        (0x3F)   // cfc scan sdpa
-  #define CTSU_DIAG_CHACA_TSMAX         (32)     // ts max chaca byte
+  #define CTSU_DIAG_SUCLK_LOWER_CURRENT_SELECT                  (0x80)   /* Select lower current source for SUCLK gain diagnosis */
+  #define CTSU_DIAG_SUCLK_UPPER_CURRENT_SELECT                  (0x0)    /* Select upper current source for SUCLK gain diagnosis */
 
-  #define CTSU_DIAG_DAC_0BIT            (0x1)    // 0x1 for SO register
-  #define CTSU_DIAG_DAC_1BIT            (0x2)    // 0x2 for SO register
-  #define CTSU_DIAG_DAC_2BIT            (0x4)    // 0x4 for SO register
-  #define CTSU_DIAG_DAC_3BIT            (0x8)    // 0x8 for SO register
-  #define CTSU_DIAG_DAC_4BIT            (0x10)   // 0x10 for SO register
-  #define CTSU_DIAG_DAC_5BIT            (0x20)   // 0x20 for SO register
-  #define CTSU_DIAG_DAC_6BIT            (0x40)   // 0x40 for SO register
-  #define CTSU_DIAG_DAC_7BIT            (0x80)   // 0x80 for SO register
+  #define CTSU_DIAG_CLOCK_RECOVERY_SST_RECOMMEND                (0x3F)   /* Recommended setting value of SST for clock recovery diagnosis */
+
+  #define CTSU_DIAG_CCODAC_GAIN_1_UNIT                          (0x1F)   /* Turn on 1 unit of CCODAC current source */
+  #define CTSU_DIAG_CCODAC_GAIN_8_UNIT                          (0xFF)   /* Turn on 8 unit of CCODAC current source */
+
+  #define CTSU_DIAG_OUTPUT_VOLTAGE_TEST_NUM                     (8)      /* Number of diagnostic tests for output voltage */
+  #define CTSU_DIAG_OVER_VOLTAGE_TEST_NUM                       (2)      /* Number of diagnostic tests for over voltage */
+  #define CTSU_DIAG_OVER_CURRENT_TEST_NUM                       (2)      /* Number of diagnostic tests for over current */
+  #define CTSU_DIAG_LOAD_RESISTANCE_TEST_NUM                    (5)      /* Number of diagnostic tests for load resistance */
+  #define CTSU_DIAG_CURRENT_SOURCE_TEST_NUM                     (27)     /* Number of diagnostic tests for current source */
+  #define CTSU_DIAG_SENSCLK_TEST_NUM                            (12)     /* Number of diagnostic tests for sensclk */
+  #define CTSU_DIAG_SUCLK_TEST_NUM                              (24)     /* Number of diagnostic tests for suclk */
+
+  #if defined(BSP_MCU_RX140)
+   #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+   #define CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM                   (4)      /* Number of diagnostic tests for clock recovery (NM mode) */
+   #else
+   #define CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM                   (3)      /* Number of diagnostic tests for clock recovery (LV mode) */
+   #endif
+  #elif defined(BSP_MCU_RX260) || defined(BSP_MCU_RX261)
+   #define CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM                    (3)      /* Number of diagnostic tests for clock recovery */
+  #endif
+
+  #define CTSU_DIAG_AVERAGE_SHIFT_NUM                           (2)      /* Number of shifts required to achieve a 4-time average */
+  #define CTSU_DIAG_AVERAGE_NUM                                 (4)      /* Number of samples used for averaging in CTSU diagnosis */
+  #define CTSU_DIAG_PERCENT_BASE                                (100)    /* Reference value for percentage calculation */
+
+/* Over voltage diagnosis macro */
+  #define CTSU_DIAG_OFFSET_CURRENT_80UA                         (0x0200) /* SO[9:0] value for 80uA offset current */
+
+/* Over voltage and Over current diagnosis macro */
+  #define CTSU_DIAG_OFFSET_CURRENT_0UA                          (0x0000) /* SO[9:0] value for 0uA offset current */
+
+/* TSCAP output voltage diagnosis macro */
+  #define CTSU_DIAG_INTERNAL_VREF_TYP_MV                        (1480L)  /* Internal reference voltage theoretical value [mV] */
+
+  #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+   #define CTSU_DIAG_TSCAP_VREF_TYP_MV                          (1500L)  /* TSCAP voltage theoretical value [mV] (NM mode) */
+  #else
+   #define CTSU_DIAG_TSCAP_VREF_TYP_MV                          (1200L)  /* TSCAP voltage theoretical value [mV] (LV mode) */
+  #endif
+
+/* Load resistance diagnosis macro */
+  #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+   #define CTSU_DIAG_LOAD_RESISTANCE_THEORETICAL_COUNT_VALUE    (19200L) /* Theoretical count value of load resistance (NM mode)  */
+   #define CTSU_DIAG_IDLE_CURRENT_THEORETICAL_COUNT_VALUE       (1920L)  /* Theoretical count value of IDLE current (NM mode)  */
+  #else
+   #define CTSU_DIAG_LOAD_RESISTANCE_THEORETICAL_COUNT_VALUE    (15360L) /* Theoretical count value of load resistance (LV mode) */
+   #define CTSU_DIAG_IDLE_CURRENT_THEORETICAL_COUNT_VALUE       (1536L)  /* Theoretical count value of IDLE current (LV mode) */
+  #endif
+  #define CTSU_DIAG_LOAD_RESISTANCE_VARIATION_SCALE_SHIFT       (9)
+
+/* Current source diagnosis macro */
+  #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+   #define CTSU_DIAG_UPPER_CURRENT_SOURCE_DIFF_VALUE            (7680L)
+   #define CTSU_DIAG_LOWER_CURRENT_SOURCE_DIFF_VALUE            (960L)
+  #else
+   #define CTSU_DIAG_UPPER_CURRENT_SOURCE_DIFF_VALUE            (6144L)
+   #define CTSU_DIAG_LOWER_CURRENT_SOURCE_DIFF_VALUE            (768L)
+  #endif
+
+/* SENSCLK gain and SUCLK gain (DWA) macro */
+  #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+
+/* Minimum threshold for differential value (NM mode) */
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_2_1_MIN              (1048)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_3_2_MIN              (1004)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_4_3_MIN              (964)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_5_4_MIN              (928)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_6_5_MIN              (890)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_7_6_MIN              (854)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_8_7_MIN              (812)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_9_8_MIN              (770)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_10_9_MIN             (714)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_11_10_MIN            (656)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_12_11_MIN            (598)
+
+/* Maximum threshold for differential value (NM mode) */
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_2_1_MAX              (3218)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_3_2_MAX              (3018)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_4_3_MAX              (2922)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_5_4_MAX              (2788)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_6_5_MAX              (2696)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_7_6_MAX              (2600)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_8_7_MAX              (2530)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_9_8_MAX              (2436)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_10_9_MAX             (2350)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_11_10_MAX            (2262)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_12_11_MAX            (2180)
+
+  #else
+
+/* Minimum threshold for differential value (LV mode) */
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_2_1_MIN              (834)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_3_2_MIN              (815)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_4_3_MIN              (794)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_5_4_MIN              (772)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_6_5_MIN              (749)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_7_6_MIN              (724)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_8_7_MIN              (699)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_9_8_MIN              (671)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_10_9_MIN             (643)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_11_10_MIN            (613)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_12_11_MIN            (582)
+
+/* Maximum threshold for differential value (LV mode)*/
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_2_1_MAX              (2600)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_3_2_MAX              (2494)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_4_3_MAX              (2400)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_5_4_MAX              (2318)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_6_5_MAX              (2244)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_7_6_MAX              (2178)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_8_7_MAX              (2118)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_9_8_MAX              (2062)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_10_9_MAX             (2010)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_11_10_MAX            (1958)
+   #define CTSU_CFG_DIAG_CCO_GAIN_DIFF_12_11_MAX            (1905)
+  #endif
+
+/* SUCLK gain (NO_DWA) macro */
+  #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+   #define CTSU_DIAG_NO_DWA_SUCLK_GAIN_MAX_VALUE            (3709L) /* Maximum threshold without DWA */
+   #define CTSU_DIAG_NO_DWA_SUCLK_GAIN_MIN_VALUE            (763L)  /* Minimum threshold without DWA */
+  #else
+   #define CTSU_DIAG_NO_DWA_SUCLK_GAIN_MAX_VALUE            (3142L) /* Maximum threshold without DWA */
+   #define CTSU_DIAG_NO_DWA_SUCLK_GAIN_MIN_VALUE            (547L)  /* Minimum threshold without DWA */
+  #endif
+
+/* SUCLK clock recovery macro */
+  #define CTSU_DIAG_CLOCK_RECOVERY_FREQUENCY_32MHZ_SHIFT    (5)     /* Number of shifts required to calculate the frequency ratio for 32 MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST1_FREQUENCY_MHZ      (16)    /* Clock recovery TEST1 frequency: 16MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST2_FREQUENCY_MHZ      (24)    /* Clock recovery TEST2 frequency: 24MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST1_FREQUENCY          (31)    /* Clock recovery TEST1 with SUCLK frequency set to 16MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST2_FREQUENCY          (47)    /* Clock recovery TEST2 with SUCLK frequency set to 24MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST1_MIN_VALUE          (4092)  /* Minimum threshold for clock recovery TEST1 at 16MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST1_MAX_VALUE          (4100)  /* Maximum threshold for clock recovery TEST1 at 16MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST2_MIN_VALUE          (6140)  /* Minimum threshold for clock recovery TEST2 at 24MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST2_MAX_VALUE          (6148)  /* Maximum threshold for clock recovery TEST2 at 24MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST3_FREQUENCY_MHZ      (32)    /* Clock recovery TEST3 frequency: 32MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST3_FREQUENCY          (63)    /* Clock recovery TEST3 with SUCLK frequency set to 32MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST3_MIN_VALUE          (8188)  /* Minimum threshold for clock recovery TEST3 at 32MHz */
+  #define CTSU_DIAG_CLOCK_RECOVERY_TEST3_MAX_VALUE          (8196)  /* Maximum threshold for clock recovery TEST3 at 32MHz */
+
+  #if defined(BSP_MCU_RX140)
+   #if (CTSU_CFG_LOW_VOLTAGE_MODE == 0)
+    #define CTSU_DIAG_CLOCK_RECOVERY_TEST4_FREQUENCY_MHZ    (40)    /* Clock recovery TEST4 frequency: 40MHz */
+    #define CTSU_DIAG_CLOCK_RECOVERY_TEST4_FREQUENCY        (79)    /* Clock recovery TEST4 with SUCLK frequency set to 40MHz */
+    #define CTSU_DIAG_CLOCK_RECOVERY_TEST4_MIN_VALUE        (10234) /* Minimum threshold for clock recovery TEST4 at 40MHz */
+    #define CTSU_DIAG_CLOCK_RECOVERY_TEST4_MAX_VALUE        (10246) /* Maximum threshold for clock recovery TEST4 at 40MHz */
+   #endif
+  #endif
 
  #endif
 #endif
 
+
+#if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
+ #define CTSU_SERIAL_TUNING_ELEMENT              (1) // To avoid reading outside the array in the case of mutual 1 x N configuration
+#else
+ #define CTSU_SERIAL_TUNING_ELEMENT              (0) // No additional buffer is required
+#endif
+
 #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
- #define CTSU_AUTO_JUDGE_ELEMENT_NUM    (CTSU_CFG_NUM_AUTOJUDGE_SELF_ELEMENTS + CTSU_CFG_NUM_AUTOJUDGE_MUTUAL_ELEMENTS)
- #define CTSU_AUTO_JUDGE_BLOCK_SIZE     (5)  // Block size of automatic judgement register to be transferred by DTC
- #define CTSU_AUTO_CTSUSO_BLOCK_SIZE    (1)  // Block size of CTSUSO register to be transferred by DTC for automatic judgement(same for CTSUSCNT register)
- #define CTSU_AUTO_FINAL_JUDGE_BIT      (4)  // Definition for bit-shifting the final judgement bit of the automatic judgement result register
+ #define CTSU_AUTO_JUDGE_ELEMENT_NUM             (CTSU_CFG_NUM_AUTOJUDGE_SELF_ELEMENTS + \
+                                                  CTSU_CFG_NUM_AUTOJUDGE_MUTUAL_ELEMENTS)
+ #define CTSU_AUTO_FINAL_JUDGE_BIT               (4)          // Definition for bit-shifting the final judgement bit of the automatic judgement result register
+ #define CTSU_AUTO_MINUS_BIT_MASK                (0x0000FFFF) // Mask to assign to the CTSUAJTHR register
+
+ #define CTSU_AUTO_JUDGE_BLOCK_SIZE              (5)          // Block size of automatic judgement register to be transferred by DTC
+ #define CTSU_AUTO_CTSUSO_BLOCK_SIZE             (1)          // Block size of CTSUSO register to be transferred by DTC for automatic judgement(same for CTSUSCNT register)
  #if (CTSU_CFG_AUTO_MULTI_CLOCK_CORRECTION_ENABLE == 1)
- #define CTSU_AUTO_MCACT_BLOCK_SIZE     (1)  // Block size of CTSUMCACT register to be transferred by DTC
+  #define CTSU_AUTO_MCACT_BLOCK_SIZE             (1)          // Block size of CTSUMCACT register to be transferred by DTC
  #endif
 #endif
 
 #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
- #define CTSU_AUTO_DECIMAL_POINT_NUM    (12)     // Number of bits after the decimal point of the sensor counter auto correction table register
+ #define CTSU_AUTO_DECIMAL_POINT_NUM             (12)         // Number of bits after the decimal point of the sensor counter auto correction table register
 #endif
 
 #if (CTSU_CFG_AUTO_MULTI_CLOCK_CORRECTION_ENABLE == 1)
@@ -239,12 +439,6 @@
  #define CTSU_AUTO_INT32_OVERFLOW_VALUE          (2147483648)
  #define CTSU_AUTO_INT16_OVERFLOW_VALUE          (32767)
  #define CTSU_AUTO_INT16_UNDERFLOW_VALUE         (-32768)
-#endif
-
-#if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
- #define CTSU_SERIAL_TUNING_ELEMENT     (1)  // To avoid reading outside the array in the case of mutual 1 x N configuration
-#else
- #define CTSU_SERIAL_TUNING_ELEMENT     (0)  // No additional buffer required
 #endif
 
 /***********************************************************************************************************************
@@ -285,14 +479,9 @@ typedef struct st_ctsu_diag_save_reg
 {
     uint32_t ctsucra;
     uint32_t ctsucrb;
-    uint32_t ctsuchaca;
-    uint32_t ctsuchacb;
-    uint32_t ctsuchtrca;
-    uint32_t ctsuchtrcb;
-    uint32_t ctsumch;
     uint32_t ctsucalib;
     uint32_t ctsusuclka;
-    uint32_t ctsusuclkb;
+    uint32_t ctsuopt;
 } ctsu_diag_save_reg_t;
  #endif
 #endif
@@ -312,31 +501,33 @@ typedef BSP_CMSE_NONSECURE_CALL void (*volatile ctsu_prv_ns_callback)(ctsu_callb
  **********************************************************************************************************************/
 #if (CTSU_CFG_DTC_SUPPORT_ENABLE == 1)
 static fsp_err_t ctsu_transfer_open(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static fsp_err_t ctsu_transfer_close(ctsu_instance_ctrl_t * const p_instance_ctrl);
 static fsp_err_t ctsu_transfer_configure(ctsu_instance_ctrl_t * const p_instance_ctrl);
+
  #if (BSP_FEATURE_CTSU_VERSION == 2)
-static dtc_err_t ctsu_transfer_normal (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static dtc_err_t ctsu_transfer_normal_ctsuwr (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static dtc_err_t ctsu_transfer_normal_ctsurd (ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_normal(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_normal_ctsuwr(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_normal_ctsurd(ctsu_instance_ctrl_t * const p_instance_ctrl);
+
   #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
-static dtc_err_t ctsu_transfer_autojudge (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static dtc_err_t ctsu_transfer_autojudge_ctsurd (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static void ctsu_transfer_autojudge_value_set (uint8_t array_number, dtc_repeat_block_side_t set_repeat_block_side, uint32_t set_transfer_count);
-static void ctsu_transfer_autojudge_repeat_set (uint8_t array_number, dtc_chain_transfer_t set_chain_transfer_enable, dtc_repeat_block_side_t set_repeat_block_side);
+static dtc_err_t ctsu_transfer_autojudge(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_autojudge_ctsuwr(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_autojudge_ctsurd(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_transfer_autojudge_value_set(uint8_t array_number, dtc_repeat_block_side_t set_repeat_block_side, uint32_t set_transfer_count);
+static void ctsu_transfer_autojudge_repeat_set(uint8_t array_number, dtc_chain_transfer_t set_chain_transfer_enable, dtc_repeat_block_side_t set_repeat_block_side);
   #endif
   #if (CTSU_CFG_AUTO_MULTI_CLOCK_CORRECTION_ENABLE == 1)
-static void ctsu_transfer_mcact_set (uint8_t array_number, uint32_t set_transfer_count);
+static void ctsu_transfer_mcact_set(uint8_t array_number, uint32_t set_transfer_count);
   #endif
  #endif
  #if (BSP_FEATURE_CTSU_VERSION == 1)
-static dtc_err_t ctsu_transfer_ctsu1 (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static dtc_err_t ctsu_transfer_ctsu1_ctsuwr (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static dtc_err_t ctsu_transfer_ctsu1_ctsurd (ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_ctsu1(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_ctsu1_ctsuwr(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static dtc_err_t ctsu_transfer_ctsu1_ctsurd(ctsu_instance_ctrl_t * const p_instance_ctrl);
  #endif
-static void ctsu_transfer_ctsuso_set (uint8_t array_number, dtc_chain_transfer_t set_chain_transfer_enable, dtc_chain_transfer_mode_t set_chain_transfer_mode, uint32_t set_transfer_count);
-static void ctsu_transfer_ctsuscnt_set (uint8_t array_number, dtc_chain_transfer_t set_chain_transfer_enable, dtc_chain_transfer_mode_t set_chain_transfer_mode, uint32_t set_transfer_count);
-static void ctsu_transfer_address_set (uint8_t array_number, uint32_t * p_set_source_addr, uint32_t * p_set_dest_addr);
-static fsp_err_t ctsu_transfer_close(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_transfer_ctsuso_set(uint8_t array_number, dtc_chain_transfer_t set_chain_transfer_enable, dtc_chain_transfer_mode_t set_chain_transfer_mode, uint32_t set_transfer_count);
+static void ctsu_transfer_ctsuscnt_set(uint8_t array_number, dtc_chain_transfer_t set_chain_transfer_enable, dtc_chain_transfer_mode_t set_chain_transfer_mode, uint32_t set_transfer_count);
+static void ctsu_transfer_address_set(uint8_t array_number, uint32_t * p_set_source_addr, uint32_t * p_set_dest_addr);
 #endif
 static void ctsu_initial_offset_tuning(ctsu_instance_ctrl_t * const p_instance_ctrl);
 static void ctsu_moving_average(ctsu_data_t * p_average, uint16_t new_data, uint16_t average_num);
@@ -346,7 +537,7 @@ static void ctsu_correction_measurement(ctsu_instance_ctrl_t * const p_instance_
 
 static void ctsu_correction_exec(ctsu_instance_ctrl_t * const p_instance_ctrl);
 
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 0)
+#if ((CTSU_CFG_AUTO_CORRECTION_ENABLE == 0) || (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1))
 static void ctsu_correction_calc(uint16_t * correction_data, uint16_t raw_data, ctsu_correction_calc_t * p_calc);
 
 #endif
@@ -377,11 +568,6 @@ static fsp_err_t ctsu_correction_calib_rtrim(ctsu_instance_ctrl_t * const p_inst
 
   #endif
  #endif
- #if (CTSU_CFG_NUM_CFC != 0)
-static void ctsu_corrcfc_process(ctsu_instance_ctrl_t * const p_instance_ctrl);
-static void ctsu_corrcfc_measurement(ctsu_instance_ctrl_t * const p_instance_ctrl, uint16_t * data, uint8_t point_num);
-
- #endif
 
  #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
 static void ctsu_auto_correction_register_set(ctsu_instance_ctrl_t * const p_instance_ctrl);
@@ -401,8 +587,6 @@ static int16_t ctsu_multiclock_auto_correction_calc(ctsu_instance_ctrl_t * const
 
  #endif
 #endif
-
-
 
 #if (BSP_FEATURE_CTSU_VERSION == 1)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
@@ -435,43 +619,41 @@ static fsp_err_t ctsu_diag_data_get1(void);
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
 
-static void ctsu_diag_regi_store2(void);
+static void ctsu_diag_regi_store2(ctsu_instance_ctrl_t * const p_instance_ctrl);
 static void ctsu_diag_regi_restore2(void);
 
-static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl);
-static fsp_err_t ctsu_diag_output_voltage_result(void);
+static void      ctsu_diag_output_voltage_scan_start(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static fsp_err_t ctsu_diag_adc_measure_average(adc_ch_cfg_t * ctrl_cfg,
+                                               adc_reg_t      channel,
+                                               uint16_t     * adc_measured_value);
+static uint16_t ctsu_diag_calc_threshold_output_voltage(bool threshold_type, uint16_t internal_vref_value);
 
-static void      ctsu_diag_over_voltage_scan_start(void);
-static fsp_err_t ctsu_diag_over_voltage_result(void);
+static void ctsu_diag_over_voltage_scan_start(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_diag_over_voltage_data_get(void);
 
-static void      ctsu_diag_over_current_scan_start(void);
-static fsp_err_t ctsu_diag_over_current_result(void);
+static void ctsu_diag_over_current_scan_start(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_diag_over_current_data_get(void);
 
-static void      ctsu_diag_load_resistance_scan_start(void);
-static void      ctsu_diag_load_resistance_data_get(void);
-static fsp_err_t ctsu_diag_load_resistance_result(void);
+static void ctsu_diag_load_resistance_scan_start(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_diag_load_resistance_data_get(ctsu_instance_ctrl_t * const p_instance_ctrl);
 
-static void      ctsu_diag_current_source_scan_start(void);
-static void      ctsu_diag_current_source_data_get(void);
-static fsp_err_t ctsu_diag_current_source_result(void);
+static void ctsu_diag_current_source_scan_start(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_diag_current_source_data_get(ctsu_instance_ctrl_t * const p_instance_ctrl);
 
-static void      ctsu_diag_cco_gain_scan_start(void);
-static void      ctsu_diag_cco_gain_data_get(void);
-static fsp_err_t ctsu_diag_cco_gain_result(void);
+static void ctsu_diag_sensclk_gain_scan_start(void);
+static void ctsu_diag_sensclk_gain_data_get(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_diag_cco_gain_config_test(void);
 
-static void      ctsu_diag_clock_recovery_scan_start(void);
-static void      ctsu_diag_clock_recovery_data_get(void);
-static fsp_err_t ctsu_diag_clock_recovery_result(void);
+static void ctsu_diag_suclk_gain_scan_start(void);
+static void ctsu_diag_suclk_gain_data_get(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static void ctsu_diag_suclk_gain_config_test(void);
 
-  #if (CTSU_CFG_NUM_CFC != 0)
-static fsp_err_t ctsu_diag_cfc_gain_result(void);
-static void      ctsu_diag_cfc_gain_scan_start(void);
-static void      ctsu_diag_cfc_gain_data_get(void);
+static void ctsu_diag_clock_recovery_scan_start(void);
+static void ctsu_diag_clock_recovery_data_get(ctsu_instance_ctrl_t * const p_instance_ctrl);
 
-  #endif
-
-static fsp_err_t ctsu_diag_scan_start2(ctsu_instance_ctrl_t * const p_instance_ctrl);
-static fsp_err_t ctsu_diag_data_get2(uint16_t * p_data);
+static void      ctsu_diag_scan_start2(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static fsp_err_t ctsu_diag_data_get2(ctsu_instance_ctrl_t * const p_instance_ctrl);
+static fsp_err_t ctsu_diag_adc_open_check(void);
 
  #endif
 #endif
@@ -480,10 +662,10 @@ static fsp_err_t ctsu_diag_data_get2(uint16_t * p_data);
  * Private global variables
  **********************************************************************************************************************/
 
-static uint16_t      g_ctsu_element_index = 0;
-static uint8_t       g_ctsu_element_complete_flag[CTSU_CFG_NUM_SELF_ELEMENTS + CTSU_CFG_NUM_MUTUAL_ELEMENTS];
+static uint16_t g_ctsu_element_index = 0;
+static uint8_t  g_ctsu_element_complete_flag[CTSU_CFG_NUM_SELF_ELEMENTS + CTSU_CFG_NUM_MUTUAL_ELEMENTS];
 #if (BSP_FEATURE_CTSU_VERSION == 2)
-static uint8_t       g_ctsu_frequency_complete_flag[CTSU_CFG_NUM_SELF_ELEMENTS + CTSU_CFG_NUM_MUTUAL_ELEMENTS];
+static uint8_t g_ctsu_frequency_complete_flag[CTSU_CFG_NUM_SELF_ELEMENTS + CTSU_CFG_NUM_MUTUAL_ELEMENTS];
 #endif
 static int32_t       g_ctsu_tuning_diff[CTSU_CFG_NUM_SELF_ELEMENTS + CTSU_CFG_NUM_MUTUAL_ELEMENTS];
 static ctsu_ctsuwr_t g_ctsu_ctsuwr[(CTSU_CFG_NUM_SELF_ELEMENTS + CTSU_CFG_NUM_MUTUAL_ELEMENTS +
@@ -538,10 +720,6 @@ static ctsu_diag_save_reg_t g_ctsu_diag_reg;
 #endif
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
- #if (CTSU_CFG_NUM_CFC != 0)
-static ctsu_corrcfc_info_t g_ctsu_corrcfc_info;
- #endif
-
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
 static ctsu_diag_info_t     g_ctsu_diag_info;
 static ctsu_diag_save_reg_t g_ctsu_diag_reg;
@@ -563,7 +741,6 @@ uint8_t g_ctsu_selected_freq_self[CTSU_CFG_NUM_SELF_ELEMENTS];
  #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
 uint8_t g_ctsu_selected_freq_mutual[CTSU_CFG_NUM_MUTUAL_ELEMENTS];
  #endif
-
 #endif
 
 
@@ -583,35 +760,30 @@ static const uint16_t dac_oscil_table[6][2] =
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
-static const uint16_t cco_gain_table[12][2] =
+
+static const uint16_t cco_gain_threshold_diff_table[11][2] =
 {
-    {CTSU_CFG_DIAG_DAC1_MIN,  CTSU_CFG_DIAG_DAC1_MAX    },
-    {CTSU_CFG_DIAG_DAC2_MIN,  CTSU_CFG_DIAG_DAC2_MAX    },
-    {CTSU_CFG_DIAG_DAC3_MIN,  CTSU_CFG_DIAG_DAC3_MAX    },
-    {CTSU_CFG_DIAG_DAC4_MIN,  CTSU_CFG_DIAG_DAC4_MAX    },
-    {CTSU_CFG_DIAG_DAC5_MIN,  CTSU_CFG_DIAG_DAC5_MAX    },
-    {CTSU_CFG_DIAG_DAC6_MIN,  CTSU_CFG_DIAG_DAC6_MAX    },
-    {CTSU_CFG_DIAG_DAC7_MIN,  CTSU_CFG_DIAG_DAC7_MAX    },
-    {CTSU_CFG_DIAG_DAC8_MIN,  CTSU_CFG_DIAG_DAC8_MAX    },
-    {CTSU_CFG_DIAG_DAC9_MIN,  CTSU_CFG_DIAG_DAC9_MAX    },
-    {CTSU_CFG_DIAG_DAC10_MIN, CTSU_CFG_DIAG_DAC10_MAX   },
-    {CTSU_CFG_DIAG_DAC11_MIN, CTSU_CFG_DIAG_DAC11_MAX   },
-    {CTSU_CFG_DIAG_DAC12_MIN, CTSU_CFG_DIAG_DAC12_MAX   },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_2_1_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_2_1_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_3_2_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_3_2_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_4_3_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_4_3_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_5_4_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_5_4_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_6_5_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_6_5_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_7_6_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_7_6_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_8_7_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_8_7_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_9_8_MIN,   CTSU_CFG_DIAG_CCO_GAIN_DIFF_9_8_MAX        },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_10_9_MIN,  CTSU_CFG_DIAG_CCO_GAIN_DIFF_10_9_MAX       },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_11_10_MIN, CTSU_CFG_DIAG_CCO_GAIN_DIFF_11_10_MAX      },
+    {CTSU_CFG_DIAG_CCO_GAIN_DIFF_12_11_MIN, CTSU_CFG_DIAG_CCO_GAIN_DIFF_12_11_MAX      },
 };
 
-static const uint16_t cco_gain_diff_table[11][2] =
+static const uint16_t clock_recovery_threshold_table[CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM][2] =
 {
-    {CTSU_CFG_DIAG_DAC1_2_DIFF_MIN,   CTSU_CFG_DIAG_DAC1_2_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC2_3_DIFF_MIN,   CTSU_CFG_DIAG_DAC2_3_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC3_4_DIFF_MIN,   CTSU_CFG_DIAG_DAC3_4_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC4_5_DIFF_MIN,   CTSU_CFG_DIAG_DAC4_5_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC5_6_DIFF_MIN,   CTSU_CFG_DIAG_DAC5_6_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC6_7_DIFF_MIN,   CTSU_CFG_DIAG_DAC6_7_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC7_8_DIFF_MIN,   CTSU_CFG_DIAG_DAC7_8_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC8_9_DIFF_MIN,   CTSU_CFG_DIAG_DAC8_9_DIFF_MAX        },
-    {CTSU_CFG_DIAG_DAC9_10_DIFF_MIN,  CTSU_CFG_DIAG_DAC9_10_DIFF_MAX       },
-    {CTSU_CFG_DIAG_DAC10_11_DIFF_MIN, CTSU_CFG_DIAG_DAC10_11_DIFF_MAX      },
-    {CTSU_CFG_DIAG_DAC11_12_DIFF_MIN, CTSU_CFG_DIAG_DAC11_12_DIFF_MAX      },
+    {CTSU_DIAG_CLOCK_RECOVERY_TEST1_MIN_VALUE, CTSU_DIAG_CLOCK_RECOVERY_TEST1_MAX_VALUE},
+    {CTSU_DIAG_CLOCK_RECOVERY_TEST2_MIN_VALUE, CTSU_DIAG_CLOCK_RECOVERY_TEST2_MAX_VALUE},
+    {CTSU_DIAG_CLOCK_RECOVERY_TEST3_MIN_VALUE, CTSU_DIAG_CLOCK_RECOVERY_TEST3_MAX_VALUE},
+  #if (CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM == 4)
+    {CTSU_DIAG_CLOCK_RECOVERY_TEST4_MIN_VALUE, CTSU_DIAG_CLOCK_RECOVERY_TEST4_MAX_VALUE},
+  #endif
 };
  #endif
 #endif
@@ -621,16 +793,16 @@ static const uint16_t cco_gain_diff_table[11][2] =
  **********************************************************************************************************************/
 const ctsu_api_t g_ctsu_on_ctsu =
 {
-    .open            = R_CTSU_Open,
-    .scanStart       = R_CTSU_ScanStart,
-    .dataGet         = R_CTSU_DataGet,
-    .scanStop        = R_CTSU_ScanStop,
-    .diagnosis       = R_CTSU_Diagnosis,
-    .close           = R_CTSU_Close,
-    .callbackSet     = R_CTSU_CallbackSet,
-    .specificDataGet = R_CTSU_SpecificDataGet,
-    .dataInsert      = R_CTSU_DataInsert,
-    .offsetTuning    = R_CTSU_OffsetTuning,
+    .open                 = R_CTSU_Open,
+    .scanStart            = R_CTSU_ScanStart,
+    .dataGet              = R_CTSU_DataGet,
+    .scanStop             = R_CTSU_ScanStop,
+    .diagnosis            = R_CTSU_Diagnosis,
+    .close                = R_CTSU_Close,
+    .callbackSet          = R_CTSU_CallbackSet,
+    .specificDataGet      = R_CTSU_SpecificDataGet,
+    .dataInsert           = R_CTSU_DataInsert,
+    .offsetTuning         = R_CTSU_OffsetTuning,
 };
 
 ctsu_instance_ctrl_t * gp_ctsu_isr_context;
@@ -666,7 +838,7 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
 #if (BSP_FEATURE_CTSU_VERSION == 2)
     uint16_t i;
     uint32_t pclkb_mhz;
-    uint16_t suadj[3];
+    uint16_t suadj[CTSU_CFG_NUM_SUMULTI];
 #endif
 
 #if (CTSU_CFG_PARAM_CHECKING_ENABLE == 1)
@@ -694,7 +866,7 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
 #endif
     p_instance_ctrl->state = CTSU_STATE_INIT;
 
-    /* Save configurations. */
+    /* Save configurations */
     p_instance_ctrl->p_ctsu_cfg = p_cfg;
 
     /* Initialize driver control structure (address setting) */
@@ -766,20 +938,21 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
 
     /* Secure DTC transfer area for automatic judgement, store start address and transfer count */
     p_instance_ctrl->p_auto_judge             = &g_ctsu_auto_judge[g_ctsu_element_index * CTSU_MAJORITY_MODE_ELEMENTS];
-    p_instance_ctrl->adress_auto_judge        = (uint32_t)p_instance_ctrl->p_auto_judge;
-    p_instance_ctrl->adress_ctsuwr            = (uint32_t)p_instance_ctrl->p_ctsuwr;
-    p_instance_ctrl->adress_self_raw          = (uint32_t)p_instance_ctrl->p_self_raw;
+    p_instance_ctrl->address_auto_judge       = (uint32_t)p_instance_ctrl->p_auto_judge;
+    p_instance_ctrl->address_ctsuwr           = (uint32_t)p_instance_ctrl->p_ctsuwr;
+    p_instance_ctrl->address_self_raw         = (uint32_t)p_instance_ctrl->p_self_raw;
+
  #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
-    p_instance_ctrl->adress_mutual_raw        = (uint32_t)p_instance_ctrl->p_mutual_raw;
+    p_instance_ctrl->address_mutual_raw       = (uint32_t)p_instance_ctrl->p_mutual_raw;
  #endif
  #if (CTSU_CFG_AUTO_MULTI_CLOCK_CORRECTION_ENABLE == 1)
     if (1 == p_instance_ctrl->p_ctsu_cfg->majirimd)
     {
         p_instance_ctrl->count_auto_judge         = (uint32_t)((CTSU_AUTO_JUDGE_BLOCK_SIZE << 24) | (CTSU_AUTO_JUDGE_BLOCK_SIZE << 16) | (p_instance_ctrl->num_elements));
         p_instance_ctrl->count_ctsuwr_self_mutual = (uint32_t)((CTSU_AUTO_CTSUSO_BLOCK_SIZE << 24) | (CTSU_AUTO_CTSUSO_BLOCK_SIZE << 16) | (p_instance_ctrl->num_elements));
-        p_instance_ctrl->adress_mcact1            = (uint32_t)p_instance_ctrl->p_mcact1;
+        p_instance_ctrl->address_mcact1           = (uint32_t)p_instance_ctrl->p_mcact1;
         p_instance_ctrl->count_mcact1             = (uint32_t)((CTSU_AUTO_MCACT_BLOCK_SIZE << 24) | (CTSU_AUTO_MCACT_BLOCK_SIZE << 16) | (p_instance_ctrl->num_elements));
-        p_instance_ctrl->adress_mcact2            = (uint32_t)p_instance_ctrl->p_mcact2;
+        p_instance_ctrl->address_mcact2           = (uint32_t)p_instance_ctrl->p_mcact2;
         p_instance_ctrl->count_mcact2             = (uint32_t)((CTSU_AUTO_MCACT_BLOCK_SIZE << 24) | (CTSU_AUTO_MCACT_BLOCK_SIZE << 16) | (p_instance_ctrl->num_elements));
     }
     else
@@ -816,13 +989,6 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
     }
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
- #if (CTSU_CFG_NUM_CFC != 0)
-    if (CTSU_MODE_MUTUAL_CFC_SCAN == p_cfg->md)
-    {
-        p_instance_ctrl->tuning = CTSU_TUNING_COMPLETE;
-    }
- #endif
-
     if (CTSU_MODE_CURRENT_SCAN == p_cfg->md)
     {
         p_instance_ctrl->tuning = CTSU_TUNING_COMPLETE;
@@ -880,9 +1046,10 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
     }
 
  #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
+
     /* Copy the variables used for the MEC function to the ctrl instance */
-    p_instance_ctrl->tsod = p_instance_ctrl->p_ctsu_cfg->tsod;
-    p_instance_ctrl->mec_ts = p_instance_ctrl->p_ctsu_cfg->mec_ts;
+    p_instance_ctrl->tsod          = p_instance_ctrl->p_ctsu_cfg->tsod;
+    p_instance_ctrl->mec_ts        = p_instance_ctrl->p_ctsu_cfg->mec_ts;
     p_instance_ctrl->mec_shield_ts = p_instance_ctrl->p_ctsu_cfg->mec_shield_ts;
  #endif
 #endif
@@ -910,17 +1077,6 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
                     (uint32_t) (((uint32_t) element_cfgs->sdpa << (uint32_t) 24) |
                                 ((uint32_t) element_cfgs->snum << (uint32_t) 10) | element_cfgs->so);
             }
-
- #if (CTSU_CFG_NUM_CFC != 0)
-            else
-            {
-                /* CFC scan does not use CTSUSO */
-                p_instance_ctrl->p_ctsuwr[element_id * CTSU_CFG_NUM_SUMULTI].ctsuso =
-                    (uint32_t) (((uint32_t) element_cfgs->sdpa << (uint32_t) 24) |
-                                ((uint32_t) element_cfgs->snum << (uint32_t) 10));
-            }
- #endif
-
             for (i = 1; i < CTSU_CFG_NUM_SUMULTI; i++)
             {
                 p_instance_ctrl->p_ctsuwr[(element_id * CTSU_CFG_NUM_SUMULTI) + i].ctsuso =
@@ -948,7 +1104,7 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
     R_BSP_InterruptRequestEnable(VECT(CTSU,CTSUFN));
 
     gp_ctsu_isr_context = p_instance_ctrl;
-    
+
     p_instance_ctrl->interrupt_reverse_flag = 0;
 
     if (p_instance_ctrl->num_elements == g_ctsu_element_index)
@@ -1026,21 +1182,11 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
         R_BSP_SoftwareDelay(30, BSP_DELAY_MICROSECS);
     }
 
- #if (CTSU_CFG_NUM_CFC != 0)
-    else
-    {
-        R_CTSU->CTSUCALIB_b.CFCRDMD = 1;
-        R_CTSU->CTSUCRA_b.CFCON     = 1;
-        R_BSP_SoftwareDelay(30, BSP_DELAY_UNITS_MICROSECONDS);
-    }
- #endif
-
     /* High resolution pulse mode  */
     CTSU.CTSUCRA.BIT.SDPSEL    = 1;
     CTSU.CTSUCRA.BIT.PCSEL     = 1;
     CTSU.CTSUCRB.BIT.SST       = CTSU_SST_RECOMMEND;
     CTSU.CTSUCALIB.BIT.CCOCLK  = 0;
-    CTSU.CTSUCALIB.BIT.SUCLKEN = 0;
 
     if (CTSU_MODE_MUTUAL_CFC_SCAN != p_cfg->md)
     {
@@ -1056,44 +1202,45 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
         }
     }
 
- #if (CTSU_CFG_NUM_CFC != 0)
-    else
-    {
-        ctsu_corrcfc_process(p_instance_ctrl);
-    }
-    p_instance_ctrl->p_corrcfc_info = &g_ctsu_corrcfc_info;
- #endif
-
     CTSU.CTSUCRA.BIT.LOAD      = 1;
     CTSU.CTSUCRB.BIT.SSCNT      = 1;
     CTSU.CTSUCALIB.BIT.SUCARRY  = 0;
     CTSU.CTSUCALIB.BIT.CCOCALIB = 0;
     CTSU.CTSUCALIB.BIT.CCOCLK   = 1;
     CTSU.CTSUCALIB.BIT.TSOC     = 0;
-    CTSU.CTSUCALIB.BIT.SUCLKEN  = 1;
 
     /* Read SUADJD byte */
     suadj[0] = (uint16_t) ((CTSU.CTSUTRIMA.BIT.SUADJD * (CTSU_CFG_SUMULTI0 + 1)) / (CTSU_SUMULTI_BASE + 1));
+ #if (CTSU_CFG_NUM_SUMULTI >= 2)
 
     /* Adjust multi freq */
     suadj[1] = (uint16_t) ((suadj[0] * (CTSU_CFG_SUMULTI1 + 1)) / (CTSU_CFG_SUMULTI0 + 1));
+ #endif
+ #if (CTSU_CFG_NUM_SUMULTI >= 3)
     suadj[2] = (uint16_t) ((suadj[0] * (CTSU_CFG_SUMULTI2 + 1)) / (CTSU_CFG_SUMULTI0 + 1));
+ #endif
 
     /* Adjust SSCNT setting */
     suadj[0] = (uint16_t) (suadj[0] - (CTSU_SUADJ_SSCNT_ADJ * CTSU.CTSUCRB.BIT.SSCNT));
+ #if (CTSU_CFG_NUM_SUMULTI >= 2)
     suadj[1] = (uint16_t) (suadj[1] - (CTSU_SUADJ_SSCNT_ADJ * CTSU.CTSUCRB.BIT.SSCNT));
+ #endif
+ #if (CTSU_CFG_NUM_SUMULTI >= 3)
     suadj[2] = (uint16_t) (suadj[2] - (CTSU_SUADJ_SSCNT_ADJ * CTSU.CTSUCRB.BIT.SSCNT));
+ #endif
 
     /* Set CTSUSUCLK register */
     CTSU.CTSUCRA.BIT.SDPSEL = 0;
     CTSU.CTSUSUCLKA.BIT.SUADJ0   = (uint8_t) suadj[0];
     CTSU.CTSUSUCLKA.BIT.SUMULTI0 = CTSU_CFG_SUMULTI0;
-
+ #if (CTSU_CFG_NUM_SUMULTI >= 2)
     CTSU.CTSUSUCLKA.BIT.SUADJ1   = (uint8_t) suadj[1];
     CTSU.CTSUSUCLKA.BIT.SUMULTI1 = CTSU_CFG_SUMULTI1;
-
+ #endif
+ #if (CTSU_CFG_NUM_SUMULTI >= 3)
     CTSU.CTSUSUCLKB.BIT.SUADJ2   = (uint8_t) suadj[2];
     CTSU.CTSUSUCLKB.BIT.SUMULTI2 = CTSU_CFG_SUMULTI2;
+ #endif
 
     CTSU.CTSUCRA.BIT.SDPSEL = 1;
 
@@ -1143,57 +1290,26 @@ fsp_err_t R_CTSU_Open (ctsu_ctrl_t * const p_ctrl, ctsu_cfg_t const * const p_cf
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+    p_instance_ctrl->p_diag_info = &g_ctsu_diag_info;
+  #endif
     if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 0)
         p_instance_ctrl->p_diag_info = &g_ctsu_diag_info;
-        g_ctsu_diag_info.lvmode      = CTSU_CFG_LOW_VOLTAGE_MODE;
-        g_ctsu_diag_info.state       = CTSU_DIAG_INIT;
-    }
-    else
-    {
-        /* Once chac is set, it will not be set after that */
-        if ((0 == g_ctsu_diag_info.chaca) && (0 == g_ctsu_diag_info.chacb))
-        {
-            /* From the CHAC information configured in the normal measurement,                                  */
-            /* find the minimum TS pin on the CTSU peripheral for the OverCuurent test and clock recovery test. */
-
-            /* Get CHACA register info */
-            ((uint8_t *) &(g_ctsu_diag_info.chaca))[0] = p_instance_ctrl->p_ctsu_cfg->ctsuchac0;
-            ((uint8_t *) &(g_ctsu_diag_info.chaca))[1] = p_instance_ctrl->p_ctsu_cfg->ctsuchac1;
-            ((uint8_t *) &(g_ctsu_diag_info.chaca))[2] = p_instance_ctrl->p_ctsu_cfg->ctsuchac2;
-            ((uint8_t *) &(g_ctsu_diag_info.chaca))[3] = p_instance_ctrl->p_ctsu_cfg->ctsuchac3;
-
-            /* Get CHACB register info */
-            g_ctsu_diag_info.chacb = (uint32_t) (p_instance_ctrl->p_ctsu_cfg->ctsuchac4);
-
-            /* Get the number of measurable elements from enabled CHACA */
-            if (0 != g_ctsu_diag_info.chaca)
-            {
-                /* Get the number of measurable elements from enabled CHACA */
-                for (i = 0; i < CTSU_DIAG_CHACA_TSMAX; i++)
-                {
-                    if ((g_ctsu_diag_info.chaca >> i) & (uint32_t) 0x00000001)
-                    {
-                        g_ctsu_diag_info.chaca = (uint32_t) (0x00000001 << i);
-                        g_ctsu_diag_info.chacb = 0;
-                        break;
-                    }
-                }
-            }
-            else                       /* Check the measurable elements from enabled CHACB. */
-            {
-                for (i = 0; i < 8; i++)
-                {
-                    /* Get the number of measurable elements from enabled CHACB */
-                    if ((g_ctsu_diag_info.chacb >> i) & (uint32_t) 0x00000001)
-                    {
-                        g_ctsu_diag_info.chaca = 0;
-                        g_ctsu_diag_info.chacb = (uint32_t) (0x00000001 << i);
-                        break;
-                    }
-                }
-            }
-        }
+  #endif
+        g_ctsu_diag_info.state             = CTSU_DIAG_INIT;
+        g_ctsu_diag_info.test_result       = FSP_SUCCESS;
+        g_ctsu_diag_info.test_count        = 0;
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+        g_ctsu_diag_info.load_resistance   = 0;
+        g_ctsu_diag_info.average_data_pre  = 0;
+        g_ctsu_diag_info.onetime_exec_flag = 0;
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_id     = 0;
+        g_ctsu_diag_info.buffer_index = CTSU_DIAG_DEBUG_DATA_START_INDEX;
+  #endif
     }
  #endif
 #endif
@@ -1247,6 +1363,7 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
 #if (BSP_FEATURE_CTSU_VERSION == 1)
     uint8_t                temp;
 #endif
+
 #if (CTSU_CFG_PARAM_CHECKING_ENABLE == 1)
     FSP_ASSERT(p_instance_ctrl);
     FSP_ERROR_RETURN(CTSU_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
@@ -1275,7 +1392,6 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
 
 #if (BSP_FEATURE_CTSU_VERSION == 2)
  #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
-
     ctsu_auto_correction_register_set(p_instance_ctrl);
 
     /* Sensor counter auto correction enabled */
@@ -1320,7 +1436,6 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
     FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
 #endif
 
-
 #if (BSP_FEATURE_CTSU_VERSION == 2)
 
     if (CTSU_CAP_SOFTWARE == p_instance_ctrl->cap)
@@ -1334,13 +1449,11 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
         /* specify external trigger usage and enable power saving */
         CTSU.CTSUCRA.BIT.CAP = 1;
         CTSU.CTSUCRA.BIT.SNZ = 1;
-        CTSU.CTSUCRA.BIT.STRT = 0; // To write CTSUCR1
+        CTSU.CTSUCRA.BIT.STRT = 0; /* To write CTSUCR1 */
     }
 
     /* Write CTSU Control Register 1 and save mode */
-
-    if ((CTSU_MODE_CORRECTION_SCAN != p_instance_ctrl->md) &&
-        (CTSU_MODE_DIAGNOSIS_SCAN != p_instance_ctrl->md))
+    if (CTSU_MODE_CORRECTION_SCAN != p_instance_ctrl->md)
     {
         CTSU.CTSUCRA.BIT.TXVSEL = (p_instance_ctrl->p_ctsu_cfg->txvsel << 1 ) | p_instance_ctrl->p_ctsu_cfg->txvsel2;
 
@@ -1391,7 +1504,7 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
     if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
-        err = (fsp_err_t)ctsu_diag_scan_start2(p_instance_ctrl);
+        ctsu_diag_scan_start2(p_instance_ctrl);
     }
  #endif
  #if (CTSU_CFG_TEMP_CORRECTION_SUPPORT == 1)
@@ -1400,6 +1513,7 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
         CTSU.CTSUCRB.BIT.SST = CTSU_SST_RECOMMEND;
         ctsu_correction_scan_start();
   #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
+
         /* Disable automatic correction during temperature correction */
         CTSU.CTSUOPT.BIT.CCOCFEN = 0;
   #endif
@@ -1439,6 +1553,7 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
  #endif
 
  #if (CTSU_CFG_MULTIPLE_ELECTRODE_CONNECTION_ENABLE == 1)
+
     /* Parameter setting for multiple electrode connection */
     CTSU.CTSUCALIB.BIT.TSOD   = p_instance_ctrl->tsod;
     CTSU.CTSUCALIB.BIT.IOCSEL = 0;
@@ -1449,11 +1564,11 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
         CTSU.CTSUMCH.BIT.MCH0 = p_instance_ctrl->mec_ts;
 
         /* Set MCH1 when using both MEC and Active Shield.*/
-        if((0 != p_instance_ctrl->ctsuchtrc0)
-                || (0 != p_instance_ctrl->ctsuchtrc1)
-                || (0 != p_instance_ctrl->ctsuchtrc2)
-                || (0 != p_instance_ctrl->ctsuchtrc3)
-                || (0 != p_instance_ctrl->ctsuchtrc4))
+        if ((0 != p_instance_ctrl->ctsuchtrc0) ||
+            (0 != p_instance_ctrl->ctsuchtrc1) ||
+            (0 != p_instance_ctrl->ctsuchtrc2) ||
+            (0 != p_instance_ctrl->ctsuchtrc3) ||
+            (0 != p_instance_ctrl->ctsuchtrc4))
         {
             CTSU.CTSUMCH.BIT.MCH1 = p_instance_ctrl->mec_shield_ts;
         }
@@ -1464,6 +1579,7 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
 
     /* Set CTSU_STRT bit to start scan */
     CTSU.CTSUCRA.BIT.STRT = 1;
+
 #endif
 #if (BSP_FEATURE_CTSU_VERSION == 1)
 
@@ -1531,9 +1647,6 @@ fsp_err_t R_CTSU_ScanStart (ctsu_ctrl_t * const p_ctrl)
     /* Set CTSU_STRT bit to start scan */
     CTSU.CTSUCR0.BIT.CTSUSTRT = 1;
 #endif
-
-
-
     return err;
 }
 
@@ -1588,20 +1701,9 @@ fsp_err_t R_CTSU_DataGet (ctsu_ctrl_t * const p_ctrl, uint16_t * p_data)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
     if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
-        err = ctsu_diag_data_get2(p_data);
+        err = ctsu_diag_data_get2(p_instance_ctrl);
         p_instance_ctrl->state = CTSU_STATE_IDLE;
-        if (FSP_ERR_CTSU_DIAG_NOT_YET == err)
-        {
-            err = FSP_ERR_CTSU_DIAG_NOT_YET;
-        }
-        else if (FSP_ERR_ABORTED == err)
-        {
-            err = FSP_ERR_ABORTED;
-        }
-        else
-        {
-            err = FSP_SUCCESS;
-        }
+        *p_data                = CTSU_COUNT_MAX;
 
         return err;
     }
@@ -1779,7 +1881,9 @@ fsp_err_t R_CTSU_AutoJudgementDataGet (ctsu_ctrl_t * const p_ctrl, uint64_t * p_
                 /* Reflect the final result bit of automatic judgement in buttun_status */
                 /* Since the final result of the automatic judgement is output to the FJR bit of the final multi-clock, */
                 /* the result of the final multi-clock is taken out.                                                   */
-                if (1 == (((p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + (CTSU_MAJORITY_MODE_ELEMENTS - 1)].ajrr) >> CTSU_AUTO_FINAL_JUDGE_BIT) & 0x1))
+                if (1 ==
+                    (((p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                     (CTSU_MAJORITY_MODE_ELEMENTS - 1)].ajrr) >> CTSU_AUTO_FINAL_JUDGE_BIT) & 0x1))
                 {
                     *p_button_status |= ((uint64_t) 1 << element_id);
                 }
@@ -1792,6 +1896,9 @@ fsp_err_t R_CTSU_AutoJudgementDataGet (ctsu_ctrl_t * const p_ctrl, uint64_t * p_
 
         p_instance_ctrl->state = CTSU_STATE_IDLE;
     }
+
+#else
+    FSP_PARAMETER_NOT_USED(p_button_status);
 #endif
 
     return err;
@@ -1888,7 +1995,7 @@ fsp_err_t R_CTSU_OffsetTuning (ctsu_ctrl_t * const p_ctrl)
                     p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].ajblact = 0;
                     p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].ajblar  = 0;
                     p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].ajrr    = 0;
- #endif
+  #endif
                 }
 
   #if ((CTSU_CFG_MAJORITY_MODE & CTSU_JUDGEMENT_MAJORITY_MODE) == 0)
@@ -1897,7 +2004,7 @@ fsp_err_t R_CTSU_OffsetTuning (ctsu_ctrl_t * const p_ctrl)
                 p_instance_ctrl->p_auto_judge[element_id].ajblact = 0;
                 p_instance_ctrl->p_auto_judge[element_id].ajblar  = 0;
                 p_instance_ctrl->p_auto_judge[element_id].ajrr    = 0;
- #endif
+  #endif
             }
         }
  #endif
@@ -2436,6 +2543,7 @@ fsp_err_t R_CTSU_DataInsert (ctsu_ctrl_t * const p_ctrl, uint16_t * p_insert_dat
  **********************************************************************************************************************/
 
 #if (CTSU_CFG_DTC_SUPPORT_ENABLE == 1)
+
 /***********************************************************************************************************************
  * ctsu_transfer_open
  ***********************************************************************************************************************/
@@ -2466,10 +2574,12 @@ fsp_err_t ctsu_transfer_configure (ctsu_instance_ctrl_t * const p_instance_ctrl)
     dtc_err_t dtc_err;
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)
+
     /* After the initial offset tuning is completed, set the DTC for automatic judgement.                              */
     /* In addition, the method for which automatic judgement is disabled does not set the DTC for automatic judgement. */
     /* Alternatively, DTC for automatic judgment will not be set during correction measurement.                        */
-    if ((0 == p_instance_ctrl->p_ctsu_cfg->ajfen) || (CTSU_CORRECTION_RUN == g_ctsu_correction_info.status) || (CTSU_TUNING_INCOMPLETE == p_instance_ctrl->tuning))
+    if ((0 == p_instance_ctrl->p_ctsu_cfg->ajfen) || (CTSU_CORRECTION_RUN == g_ctsu_correction_info.status) ||
+        (CTSU_TUNING_INCOMPLETE == p_instance_ctrl->tuning))
     {
         dtc_err = ctsu_transfer_normal(p_instance_ctrl);
         if (dtc_err != DTC_SUCCESS)
@@ -2477,6 +2587,7 @@ fsp_err_t ctsu_transfer_configure (ctsu_instance_ctrl_t * const p_instance_ctrl)
             return FSP_ERR_ASSERTION;
         }
     }
+
   #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
     else    /* DTC setting for automatic judgement */
     {
@@ -2501,6 +2612,7 @@ fsp_err_t ctsu_transfer_configure (ctsu_instance_ctrl_t * const p_instance_ctrl)
 }
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)
+
 /***********************************************************************************************************************
  * ctsu_transfer_normal
  ***********************************************************************************************************************/
@@ -2542,18 +2654,7 @@ dtc_err_t ctsu_transfer_normal_ctsuwr (ctsu_instance_ctrl_t * const p_instance_c
   #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
     else if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
-        if (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
-        {
-            g_ctsu_dtc_info[0].src_addr_mode      = DTC_SRC_ADDR_FIXED;
-            g_ctsu_dtc_info[0].transfer_count     = 3;
-        }
-        else
-        {
-            g_ctsu_dtc_info[0].src_addr_mode      = DTC_SRC_ADDR_INCR;
-            g_ctsu_dtc_info[0].transfer_count     = 1;
-        }
-
-        g_ctsu_dtc_info[0].source_addr            = (uint32_t)&(g_ctsu_diag_info.ctsuwr);
+        g_ctsu_dtc_info[0].transfer_count = 1;
     }
   #endif
     else if (CTSU_MODE_CURRENT_SCAN == p_instance_ctrl->md)
@@ -2624,20 +2725,13 @@ dtc_err_t ctsu_transfer_normal_ctsurd (ctsu_instance_ctrl_t * const p_instance_c
   #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
     else if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
-        g_ctsu_dtc_info[0].data_size        = DTC_DATA_SIZE_LWORD;
-        g_ctsu_dtc_info[0].block_size       = 1;
-        if (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
-        {
-            g_ctsu_dtc_info[0].dest_addr_mode    = DTC_DES_ADDR_INCR;
-            g_ctsu_dtc_info[0].transfer_count    = 3;
-        }
-        else
-        {
-            g_ctsu_dtc_info[0].transfer_count    = 1;
-        }
+        g_ctsu_dtc_info[0].transfer_count = 1;
 
-        g_ctsu_dtc_info[0].dest_addr        = (uint32_t)&(g_ctsu_diag_info.ctsuscnt[0]);
-        g_ctsu_dtc_info[0].source_addr      = (uint32_t)&(CTSU.CTSUSCNT.LONG);
+        if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state || CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
+        {
+            /* Read UC value */
+            g_ctsu_dtc_info[0].source_addr      = (uint32_t)&(CTSU.CTSUSCNT.WORD.H);
+        }
     }
   #endif
     else
@@ -2668,6 +2762,7 @@ dtc_err_t ctsu_transfer_normal_ctsurd (ctsu_instance_ctrl_t * const p_instance_c
 }
 
   #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
+
 /***********************************************************************************************************************
  * ctsu_transfer_autojudge
  ***********************************************************************************************************************/
@@ -2718,7 +2813,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instanc
 
         /* For transfer of the start address of variables for automatic judgement */
         ctsu_transfer_autojudge_repeat_set(4, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
-        ctsu_transfer_address_set(4, (uint32_t *)&p_instance_ctrl->adress_auto_judge, (uint32_t *)&g_transfer_data_tx[0].lw2);
+        ctsu_transfer_address_set(4, (uint32_t *)&p_instance_ctrl->address_auto_judge, (uint32_t *)&g_transfer_data_tx[0].lw2);
 
         /* Number of transfers in the automatic judgement register For forwarding */
         ctsu_transfer_autojudge_repeat_set(5, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
@@ -2726,7 +2821,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instanc
 
         /* For transfer of the start address of variables for CTSUMCACT1 */
         ctsu_transfer_autojudge_repeat_set(6, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
-        ctsu_transfer_address_set(6, (uint32_t *)&p_instance_ctrl->adress_mcact1, (uint32_t *)&g_transfer_data_tx[1].lw2);
+        ctsu_transfer_address_set(6, (uint32_t *)&p_instance_ctrl->address_mcact1, (uint32_t *)&g_transfer_data_tx[1].lw2);
 
         /* Number of transfers of CTSUMCACT1 register For forwarding */
         ctsu_transfer_autojudge_repeat_set(7, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
@@ -2734,7 +2829,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instanc
 
         /* For transfer of the start address of variables for CTSUMCACT2 */
         ctsu_transfer_autojudge_repeat_set(8, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
-        ctsu_transfer_address_set(8, (uint32_t *)&p_instance_ctrl->adress_mcact2, (uint32_t *)&g_transfer_data_tx[2].lw2);
+        ctsu_transfer_address_set(8, (uint32_t *)&p_instance_ctrl->address_mcact2, (uint32_t *)&g_transfer_data_tx[2].lw2);
 
         /* Number of transfers of CTSUMCACT2 register For forwarding */
         ctsu_transfer_autojudge_repeat_set(9, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
@@ -2742,7 +2837,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instanc
 
         /* For transfer of the start address of variables for CTSUSO */
         ctsu_transfer_autojudge_repeat_set(10, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
-        ctsu_transfer_address_set(10, (uint32_t *)&p_instance_ctrl->adress_ctsuwr, (uint32_t *)&g_transfer_data_tx[3].lw2);
+        ctsu_transfer_address_set(10, (uint32_t *)&p_instance_ctrl->address_ctsuwr, (uint32_t *)&g_transfer_data_tx[3].lw2);
 
         /* Number of transfers of CTSUSO register For forwarding */
         ctsu_transfer_autojudge_repeat_set(11, DTC_CHAIN_TRANSFER_DISABLE, DTC_REPEAT_BLOCK_DESTINATION);
@@ -2768,7 +2863,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instanc
 
         /* For transfer of the start address of variables for automatic judgement */
         ctsu_transfer_autojudge_repeat_set(2, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
-        ctsu_transfer_address_set(2, (uint32_t *)&p_instance_ctrl->adress_auto_judge, (uint32_t *)&g_transfer_data_tx[0].lw2);
+        ctsu_transfer_address_set(2, (uint32_t *)&p_instance_ctrl->address_auto_judge, (uint32_t *)&g_transfer_data_tx[0].lw2);
 
         /* Number of transfers in the automatic judgement register For forwarding */
         ctsu_transfer_autojudge_repeat_set(3, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
@@ -2776,7 +2871,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsuwr (ctsu_instance_ctrl_t * const p_instanc
 
         /* For transfer of the start address of variables for CTSUSO */
         ctsu_transfer_autojudge_repeat_set(4, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_DESTINATION);
-        ctsu_transfer_address_set(4, (uint32_t *)&p_instance_ctrl->adress_ctsuwr, (uint32_t *)&g_transfer_data_tx[1].lw2);
+        ctsu_transfer_address_set(4, (uint32_t *)&p_instance_ctrl->address_ctsuwr, (uint32_t *)&g_transfer_data_tx[1].lw2);
 
         /* Number of transfers of CTSUSO register For forwarding */
         ctsu_transfer_autojudge_repeat_set(5, DTC_CHAIN_TRANSFER_DISABLE, DTC_REPEAT_BLOCK_DESTINATION);
@@ -2835,7 +2930,7 @@ dtc_err_t ctsu_transfer_autojudge_ctsurd (ctsu_instance_ctrl_t * const p_instanc
 
     /* For transfer of the start address of variables for automatic judgement */
     ctsu_transfer_autojudge_repeat_set(2, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_SOURCE);
-    ctsu_transfer_address_set(2, (uint32_t *)&p_instance_ctrl->adress_auto_judge, (uint32_t *)&g_transfer_data_rx[0].lw3);
+    ctsu_transfer_address_set(2, (uint32_t *)&p_instance_ctrl->address_auto_judge, (uint32_t *)&g_transfer_data_rx[0].lw3);
 
     /* Number of transfers in the automatic judgement register For forwarding */
     ctsu_transfer_autojudge_repeat_set(3, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_SOURCE);
@@ -2843,11 +2938,11 @@ dtc_err_t ctsu_transfer_autojudge_ctsurd (ctsu_instance_ctrl_t * const p_instanc
 
     /* For transfer of the start address of variables for CTSUSCNT */
     ctsu_transfer_autojudge_repeat_set(4, DTC_CHAIN_TRANSFER_ENABLE, DTC_REPEAT_BLOCK_SOURCE);
-    ctsu_transfer_address_set(4, (uint32_t *)&p_instance_ctrl->adress_self_raw, (uint32_t *)&g_transfer_data_rx[1].lw3);
+    ctsu_transfer_address_set(4, (uint32_t *)&p_instance_ctrl->address_self_raw, (uint32_t *)&g_transfer_data_rx[1].lw3);
    #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
     if (CTSU_MODE_MUTUAL_FULL_SCAN == (CTSU_MODE_MUTUAL_FULL_SCAN & p_instance_ctrl->md))
     {
-        g_ctsu_dtc_info[4].source_addr        = (uint32_t)&p_instance_ctrl->adress_mutual_raw;
+        g_ctsu_dtc_info[4].source_addr        = (uint32_t)&p_instance_ctrl->address_mutual_raw;
     }
    #endif
 
@@ -3148,7 +3243,7 @@ void ctsu_initial_offset_tuning (ctsu_instance_ctrl_t * const p_instance_ctrl)
     int32_t  diff          = 0;
     uint32_t complete_flag = 0;
     uint32_t num_complete  = 0;
-    uint16_t target_val;
+    uint32_t target_val;
 #if (BSP_FEATURE_CTSU_VERSION == 1)
     uint16_t               ctsuso;
     ctsu_correction_calc_t calc;
@@ -3179,19 +3274,23 @@ void ctsu_initial_offset_tuning (ctsu_instance_ctrl_t * const p_instance_ctrl)
 
             calc.snum  = (p_instance_ctrl->p_ctsuwr[element_id].ctsuso0 >> 10) & CTSU_SNUM_MAX;
             calc.sdpa  = (p_instance_ctrl->p_ctsuwr[element_id].ctsuso1 >> 8) & CTSU_SDPA_MAX;
-            target_val = (uint16_t) (target_val *
-                                     (uint32_t) ((calc.snum + 1) * (calc.sdpa + 1)) /
+            target_val = (uint32_t) (target_val * (uint32_t) ((calc.snum + 1) * (calc.sdpa + 1)) /
                                      g_ctsu_correction_info.ctsu_clock);
+            if (CTSU_COUNT_MAX < target_val)
+            {
+                target_val = CTSU_COUNT_MAX;
+            }
+
  #if (CTSU_CFG_NUM_SELF_ELEMENTS != 0)
             if (CTSU_MODE_SELF_MULTI_SCAN == p_instance_ctrl->md)
             {
-                diff = (int32_t)(p_instance_ctrl->p_self_data + element_id)->int_data - (int32_t)target_val;
+                diff = (int32_t) ((p_instance_ctrl->p_self_data + element_id)->int_data - target_val);
             }
  #endif
  #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
             if (CTSU_MODE_MUTUAL_FULL_SCAN == p_instance_ctrl->md)
             {
-                diff = (int32_t)(p_instance_ctrl->p_mutual_pri_data + element_id)->int_data - (int32_t)target_val;
+                diff = (int32_t) ((p_instance_ctrl->p_mutual_pri_data + element_id)->int_data - target_val);
             }
  #endif
             ctsuso = (p_instance_ctrl->p_ctsuwr[element_id].ctsuso0 & CTSU_TUNING_MAX);
@@ -3278,7 +3377,12 @@ void ctsu_initial_offset_tuning (ctsu_instance_ctrl_t * const p_instance_ctrl)
 
                     snum = (p_instance_ctrl->p_ctsuwr[(element_id * CTSU_CFG_NUM_SUMULTI)].ctsuso >> 10) &
                            CTSU_SNUM_MAX;
-                    target_val  = (uint16_t) (((uint32_t) target_val * (snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
+                    target_val = (uint32_t) ((target_val * (snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
+                    if (CTSU_COUNT_MAX < target_val)
+                    {
+                        target_val = CTSU_COUNT_MAX;
+                    }
+
                     offset_unit = (int32_t) ((CTSU_CORRECTION_OFFSET_UNIT * (snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
 
                     /* Calculate CTSUSO equivalent difference between current value and target value */
@@ -3345,12 +3449,12 @@ void ctsu_moving_average (ctsu_data_t * p_average, uint16_t new_data, uint16_t a
 {
     uint32_t work;
 
-    work  = (uint32_t)(((uint32_t) p_average->int_data << CTSU_CFG_DECIMAL_POINT) + p_average->decimal_point_data);
-    work -= (uint32_t)(work / average_num);
-    work += (uint32_t)(((uint32_t) new_data << CTSU_CFG_DECIMAL_POINT) / average_num);
+    work  = (uint32_t) (((uint32_t) p_average->int_data << CTSU_CFG_DECIMAL_POINT) + p_average->decimal_point_data);
+    work -= (uint32_t) (work / average_num);
+    work += (uint32_t) (((uint32_t) new_data << CTSU_CFG_DECIMAL_POINT) / average_num);
 
-    p_average->int_data           = (uint16_t)(work >> CTSU_CFG_DECIMAL_POINT);
-    p_average->decimal_point_data = (uint16_t)(work & 0x0000FFFF);
+    p_average->int_data           = (uint16_t) (work >> CTSU_CFG_DECIMAL_POINT);
+    p_average->decimal_point_data = (uint16_t) (work & CTSU_CFG_DECIMAL_POINT_MASK);
 }
 
 /***********************************************************************************************************************
@@ -3375,31 +3479,16 @@ R_BSP_ATTRIB_INTERRUPT void ctsu_ctsuwr_isr(void)
         CTSU.CTSUSO1.WORD = g_ctsu_correction_info.ctsuwr.ctsuso1;
  #endif
     }
-
- #if (BSP_FEATURE_CTSU_VERSION == 2)
-  #if (CTSU_CFG_NUM_CFC != 0)
-    else if ((CTSU_CORRECTION_RUN == g_ctsu_corrcfc_info.status))
-    {
-        R_CTSU->CTSUSO = g_ctsu_corrcfc_info.ctsuwr.ctsuso;
-    }
-  #endif
- #endif
+ #if (BSP_FEATURE_CTSU_VERSION == 1)
     else if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
- #if (BSP_FEATURE_CTSU_VERSION == 2)
-  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
-        CTSU.CTSUSO.LONG = g_ctsu_diag_info.ctsuwr.ctsuso;
-        p_instance_ctrl->wr_index++;
-  #endif
- #endif
- #if (BSP_FEATURE_CTSU_VERSION == 1)
   #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
         CTSU.CTSUSSC.WORD = g_ctsu_diag_info.ctsuwr.ctsussc;
         CTSU.CTSUSO0.WORD = g_ctsu_diag_info.ctsuwr.ctsuso0;
         CTSU.CTSUSO1.WORD = g_ctsu_diag_info.ctsuwr.ctsuso1;
   #endif
- #endif
     }
+ #endif
     else
     {
  #if (BSP_FEATURE_CTSU_VERSION == 2)
@@ -3495,36 +3584,19 @@ R_BSP_ATTRIB_INTERRUPT void ctsu_ctsurd_isr(void)
  #endif
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)
-  #if (CTSU_CFG_NUM_CFC != 0)
-    uint16_t i;
-  #endif
     if (CTSU_CORRECTION_RUN == g_ctsu_correction_info.status)
     {
         g_ctsu_correction_info.scanbuf = CTSU.CTSUSCNT.BIT.SC;
     }
 
-  #if (CTSU_CFG_NUM_CFC != 0)
-    else if (CTSU_CORRECTION_RUN == g_ctsu_corrcfc_info.status)
-    {
-        for (i = 0; i < g_ctsu_corrcfc_info.num_ts; i++)
-        {
-            g_ctsu_corrcfc_info.scanbuf[i] = R_CTSU->CTSUCFCCNT_b.CFCCNT;
-        }
-    }
-  #endif
   #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
-    else if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
+    else if ((CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md) &&
+             ((CTSU_DIAG_SUCLK == g_ctsu_diag_info.state) ||
+              (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
+             ))
     {
-        if (CTSU_DIAG_CFC == g_ctsu_diag_info.state)
-        {
-/*            g_ctsu_diag_info.ctsuscnt[p_instance_ctrl->rd_index] = R_CTSU->CTSUCFCCNT; */
-            p_instance_ctrl->rd_index++;
-        }
-        else
-        {
-            g_ctsu_diag_info.ctsuscnt[p_instance_ctrl->rd_index] = CTSU.CTSUSCNT.LONG;
-            p_instance_ctrl->rd_index++;
-        }
+        p_instance_ctrl->p_self_raw[p_instance_ctrl->rd_index] = CTSU.CTSUSCNT.BIT.UC;
+        p_instance_ctrl->rd_index++;
     }
   #endif
     else
@@ -3534,12 +3606,6 @@ R_BSP_ATTRIB_INTERRUPT void ctsu_ctsurd_isr(void)
         {
             p_instance_ctrl->p_self_raw[p_instance_ctrl->rd_index] = CTSU.CTSUSCNT.BIT.SC;
             p_instance_ctrl->rd_index++;
-
-            /* Interim */
-            if (0 == p_instance_ctrl->rd_index % 3)
-            {
-                CTSU.CTSUSR.BIT.MFC = 0;
-            }
         }
   #endif
   #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
@@ -3548,17 +3614,6 @@ R_BSP_ATTRIB_INTERRUPT void ctsu_ctsurd_isr(void)
             p_instance_ctrl->p_mutual_raw[p_instance_ctrl->rd_index] = CTSU.CTSUSCNT.BIT.SC;
             p_instance_ctrl->rd_index++;
         }
-
-   #if (CTSU_CFG_NUM_CFC != 0)
-        if (CTSU_MODE_MUTUAL_CFC_SCAN == p_instance_ctrl->md)
-        {
-            for (i = 0; i < p_instance_ctrl->p_ctsu_cfg->num_rx; i++)
-            {
-                p_instance_ctrl->p_mutual_raw[p_instance_ctrl->rd_index] = R_CTSU->CTSUCFCCNT_b.CFCCNT;
-                p_instance_ctrl->rd_index++;
-            }
-        }
-   #endif
   #endif
     }
  #endif
@@ -3593,7 +3648,7 @@ R_BSP_ATTRIB_INTERRUPT void ctsu_ctsuend_isr(void)
         {
             if (0 == ((p_instance_ctrl->ctsucr1 >> 7) & 0x01))
             {
-                rd_index = (uint16_t) (p_instance_ctrl->serial_tuning_mutual_cnt);
+                rd_index = p_instance_ctrl->serial_tuning_mutual_cnt;
             }
         }
     }
@@ -3620,28 +3675,6 @@ R_BSP_ATTRIB_INTERRUPT void ctsu_ctsuend_isr(void)
             rd_index = p_instance_ctrl->rd_index / 2;
         }
     }
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-    if (CTSU_MODE_MUTUAL_CFC_SCAN == p_instance_ctrl->md)
-    {
-        if (true == p_instance_ctrl->serial_tuning_enable)
-        {
-            if (0 == ((p_instance_ctrl->ctsucr1 >> 7) & 0x01))
-            {
-                rd_index = p_instance_ctrl->rd_index;
-            }
-            else
-            {
-                rd_index = (uint16_t) (p_instance_ctrl->rd_index / (p_instance_ctrl->p_ctsu_cfg->num_rx * 2));
-            }
-        }
-        else
-        {
-            /* In the CFC mutual capacity of CTSU2, rd_index is twice the number of RX terminals in each wr_index. */
-            rd_index = (uint16_t) (p_instance_ctrl->rd_index / (p_instance_ctrl->p_ctsu_cfg->num_rx * 2));
-        }
-    }
-  #endif
  #endif
 #endif
 
@@ -3690,12 +3723,83 @@ void ctsu_end_interrupt (ctsu_instance_ctrl_t * const p_instance_ctrl)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
     if (CTSU_MODE_DIAGNOSIS_SCAN == p_instance_ctrl->md)
     {
-        if (CTSU_DIAG_OVER_CURRENT == g_ctsu_diag_info.state)
+        if (CTSU_DIAG_OVER_VOLTAGE == g_ctsu_diag_info.state)
         {
-            if (CTSU.CTSUSR.BIT.ICOMP1 == 1)
+            if (0 == g_ctsu_diag_info.test_count)
             {
-                g_ctsu_diag_info.icomp1_value = CTSU.CTSUSR.BIT.ICOMP1;
+                /* TEST1: Check ICOMP0 in normal voltage condition */
+                if (1 == CTSU.CTSUSR.BIT.ICOMP0)
+                {
+                    /* FAIL: Set diagnostic error */
+                    g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OVER_VOLTAGE;
+                }
+
+                /* PASS: Check is skipped because ICOMP0 value is expected.
+                 * Condition: 0 == CTSU.CTSUSR.BIT.ICOMP0 */
             }
+            else
+            {
+                /* TEST2: Check ICOMP0 in over voltage condition */
+                if (0 == CTSU.CTSUSR.BIT.ICOMP0)
+                {
+                    /* FAIL: Set diagnostic error */
+                    g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OVER_VOLTAGE;
+                }
+                else
+                {
+                    /* PASS: Reset ICOMP0 */
+                    CTSU.CTSUSR.BIT.ICOMPRST = 1;
+                    if (1 == CTSU.CTSUSR.BIT.ICOMP0)
+                    {
+                        /* FAIL: Set diagnostic error */
+                        g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OVER_VOLTAGE;
+                    }
+
+                    /* PASS: Check is skipped because ICOMP0 value is expected.
+                     * Condition: 0 == CTSU.CTSUSR.BIT.ICOMP0 */
+                }
+            }
+        }
+        else if (CTSU_DIAG_OVER_CURRENT == g_ctsu_diag_info.state)
+        {
+            if (0 == g_ctsu_diag_info.test_count)
+            {
+                /* TEST1: Check ICOMP1 in normal current condition */
+                if (1 == CTSU.CTSUSR.BIT.ICOMP1)
+                {
+                    /* FAIL: Set error result. */
+                    g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OVER_CURRENT;
+                }
+
+                /* PASS: Check is skipped because ICOMP1 value is expected.
+                 * Condition: 0 == CTSU.CTSUSR.BIT.ICOMP1 */
+            }
+            else
+            {
+                /* TEST2: Check ICOMP1 in over current condition */
+                if (0 == CTSU.CTSUSR.BIT.ICOMP1)
+                {
+                    /* FAIL: Set error result. */
+                    g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OVER_CURRENT;
+                }
+                else
+                {
+                    /* PASS: Reset ICOMP1 */
+                    CTSU.CTSUSR.BIT.ICOMPRST = 1;
+                    if (1 == CTSU.CTSUSR.BIT.ICOMP1)
+                    {
+                        /* FAIL: Set error result. */
+                        g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OVER_CURRENT;
+                    }
+
+                    /* PASS: Check is skipped because ICOMP1 value is expected.
+                     * Condition: 0 == CTSU.CTSUSR.BIT.ICOMP1 */
+                }
+            }
+        }
+        else
+        {
+            /* Do nothing */
         }
     }
  #endif
@@ -3768,11 +3872,11 @@ void ctsu_end_interrupt (ctsu_instance_ctrl_t * const p_instance_ctrl)
         CTSU.CTSUMCH.BIT.MCH0 = p_instance_ctrl->mec_ts;
 
         /* Set MCH1 when using both MEC and Active Shield.*/
-        if((0 != p_instance_ctrl->ctsuchtrc0)
-                || (0 != p_instance_ctrl->ctsuchtrc1)
-                || (0 != p_instance_ctrl->ctsuchtrc2)
-                || (0 != p_instance_ctrl->ctsuchtrc3)
-                || (0 != p_instance_ctrl->ctsuchtrc4))
+        if ((0 != p_instance_ctrl->ctsuchtrc0) ||
+            (0 != p_instance_ctrl->ctsuchtrc1) ||
+            (0 != p_instance_ctrl->ctsuchtrc2) ||
+            (0 != p_instance_ctrl->ctsuchtrc3) ||
+            (0 != p_instance_ctrl->ctsuchtrc4))
         {
             CTSU.CTSUMCH.BIT.MCH1 = p_instance_ctrl->mec_shield_ts;
         }
@@ -3970,12 +4074,6 @@ void ctsu_correction_process (ctsu_instance_ctrl_t * const p_instance_ctrl)
 
         g_ctsu_correction_info.error_rate[i] = x1 + (trimb_byte & CTSU_CORRECTION_BIT6_0);
 
- #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
-
-        /* Store error rate (6bit left shift) for diagnosis feature */
-        g_ctsu_diag_info.error_registance[i] = (uint32_t) (g_ctsu_correction_info.error_rate[i] << 6);
- #endif
-
         // searching for upper index of CCODAC path value containing VDC path value
         // Possibility of base_value > g_ctsu_correction_info.dac_value[][CTSU_CORRECTION_POINT_NUM - 1]
 
@@ -4014,7 +4112,8 @@ void ctsu_correction_process (ctsu_instance_ctrl_t * const p_instance_ctrl)
         x0 = g_ctsu_correction_info.dac_value[i][0];
         x1 = g_ctsu_correction_info.dac_value[i][1];
 
-        g_ctsu_correction_info.coef[i][0]      = (uint16_t) (c1 - ((uint32_t) (c1 - c0) * x1) / (x1 - x0));
+        g_ctsu_correction_info.coef[i][0] =
+            (uint16_t) ((int32_t) c1 - (((int32_t) c1 - (int32_t) c0) * x1) / (x1 - x0));
         g_ctsu_correction_info.dac_value[i][0] = 0;
 
         c0 = g_ctsu_correction_info.coef[i][10];
@@ -4023,7 +4122,7 @@ void ctsu_correction_process (ctsu_instance_ctrl_t * const p_instance_ctrl)
         x1 = g_ctsu_correction_info.dac_value[i][11];
 
         g_ctsu_correction_info.coef[i][11] =
-            (uint16_t) (c1 + ((uint32_t) (c1 - c0) * (CTSU_COUNT_MAX - x1)) / (x1 - x0));
+            (uint16_t) (c1 + (((int32_t) c1 - (int32_t) c0) * (CTSU_COUNT_MAX - x1)) / (x1 - x0));
         g_ctsu_correction_info.dac_value[i][11] = CTSU_COUNT_MAX;
     }
 
@@ -4095,8 +4194,8 @@ void ctsu_correction_process (ctsu_instance_ctrl_t * const p_instance_ctrl)
     /*    second_std_val  =  ------------------- * 40960 =  ------------------------------------ + 64 */
     /*                               528                                   33 * 128                   */
 
-    work           = (ctsutrimr_def + 273) * 9930 + 64;
-    second_std_val = (uint16_t) (work >> 7);
+    work           = (uint32_t) (((uint32_t) ctsutrimr_def + 273) * 9930 + 64);
+    second_std_val = (uint16_t) (work >> 7UL);
 
     /* 0xFF set in the current trimming register */
     CTSU.CTSUTRMR = 0xFF;
@@ -4322,7 +4421,7 @@ fsp_err_t ctsu_correction_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl
         for (j = 0; j < CTSU_CORRECTION_POINT_NUM; j++)
         {
             dac_value =
-                (uint16_t) ((uint32_t) (g_ctsu_correction_info.dac_value[CTSU_RANGE_160UA][j] * dac2vdc) >>
+                (uint16_t) (((uint32_t) g_ctsu_correction_info.dac_value[CTSU_RANGE_160UA][j] * dac2vdc) >>
                             CTSU_CORRECTION_DIV_PRECISION);
             ref_value = (CTSU_CORRECTION_STD_UNIT * (j + 1));
 
@@ -4338,7 +4437,7 @@ fsp_err_t ctsu_correction_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl
         x1 = g_ctsu_correction_info.dac_value[CTSU_RANGE_160UA][1];
 
         g_ctsu_correction_info.coef[CTSU_RANGE_160UA][0] =
-            (uint16_t) (c1 - ((uint32_t) (c1 - c0) * x1) / (x1 - x0));
+            (uint16_t) ((int32_t) c1 - (((int32_t) c1 - (int32_t) c0) * x1) / (x1 - x0));
         g_ctsu_correction_info.dac_value[CTSU_RANGE_160UA][0] = 0;
 
         c0 = g_ctsu_correction_info.coef[CTSU_RANGE_160UA][10];
@@ -4347,7 +4446,7 @@ fsp_err_t ctsu_correction_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl
         x1 = g_ctsu_correction_info.dac_value[CTSU_RANGE_160UA][11];
 
         g_ctsu_correction_info.coef[CTSU_RANGE_160UA][11] =
-            (uint16_t) (c1 + ((uint32_t) (c1 - c0) * (CTSU_COUNT_MAX - x1)) / (x1 - x0));
+            (uint16_t) (c1 + (((int32_t) c1 - (int32_t) c0) * (CTSU_COUNT_MAX - x1)) / (x1 - x0));
         g_ctsu_correction_info.dac_value[CTSU_RANGE_160UA][11] = CTSU_COUNT_MAX;
 
         for (j = 1; j < (CTSU_CORRECTION_POINT_NUM - 1); j++)
@@ -4410,23 +4509,23 @@ fsp_err_t ctsu_correction_calib_rtrim (ctsu_instance_ctrl_t * const p_instance_c
     int16_t                diff;
     int16_t                dir  = 0;
     uint16_t               comp = 0;
-    adc_cfg_t              open_cfg;
-    adc_ch_cfg_t           ctrl_cfg;
     fsp_err_t              err = FSP_SUCCESS;
     adc_err_t              poll;
+    adc_cfg_t              open_cfg;
+    adc_ch_cfg_t           ctrl_cfg;
 
     /* TSCAP AD/C AN008 Setting */
     CTSU.CTSUADCC.LONG = 1;
 
     /* Setting for A/D convert mode */
-    open_cfg.conv_speed = ADC_CONVERT_SPEED_DEFAULT;
-    open_cfg.alignment = ADC_ALIGN_RIGHT;
-    open_cfg.add_cnt = ADC_ADD_OFF;                 /* addition is turned off for chans/sensors */
+    open_cfg.conv_speed = ADC_CONVERT_SPEED_DEFAULT; /*Selects the default speed setting*/
+    open_cfg.alignment = ADC_ALIGN_RIGHT;            /*A/D conversion results are stored in right-justified format*/
+    open_cfg.add_cnt = ADC_ADD_OFF;                  /* addition is turned off for chans/sensors */
     open_cfg.clearing = ADC_CLEAR_AFTER_READ_OFF;
-    open_cfg.trigger = ADC_TRIG_SOFTWARE;           /* Software trigger */
-    open_cfg.trigger_groupb = ADC_TRIG_NONE;        /* Trigger none when without group mode */
-    open_cfg.priority = 0;                          /* S12ADIO no interrupt(polling) */
-    open_cfg.priority_groupb = 0;                   /* S12GBADI no interrupt */
+    open_cfg.trigger = ADC_TRIG_SOFTWARE;            /* Software trigger */
+    open_cfg.trigger_groupb = ADC_TRIG_NONE;         /* Trigger none when without group mode */
+    open_cfg.priority = 0;                           /* S12ADIO no interrupt(polling) */
+    open_cfg.priority_groupb = 0;                    /* S12GBADI no interrupt */
     err = (fsp_err_t) R_ADC_Open (0, ADC_MODE_SS_ONE_CH, &open_cfg, FIT_NO_FUNC);
     if (ADC_ERR_AD_NOT_CLOSED == (adc_err_t) err)
     {
@@ -4541,7 +4640,7 @@ fsp_err_t ctsu_correction_calib_rtrim (ctsu_instance_ctrl_t * const p_instance_c
  #endif
 #endif
 
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 0)
+#if ((CTSU_CFG_AUTO_CORRECTION_ENABLE == 0) || (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1))
 
 /***********************************************************************************************************************
  * ctsu_correction_calc
@@ -4570,19 +4669,10 @@ void ctsu_correction_calc (uint16_t * correction_data, uint16_t raw_data, ctsu_c
  #endif
 
  #if (BSP_FEATURE_CTSU_VERSION == 2)
-  #if (CTSU_CFG_NUM_CFC != 0)
-    if ((CTSU_CORRECTION_COMPLETE == g_ctsu_correction_info.status) ||
-        (CTSU_CORRECTION_COMPLETE == g_ctsu_corrcfc_info.status))
-    {
-        calc_flag = 1;
-    }
-
-  #else
     if (CTSU_CORRECTION_COMPLETE == g_ctsu_correction_info.status)
     {
         calc_flag = 1;
     }
-  #endif
  #endif
  #if (BSP_FEATURE_CTSU_VERSION == 1)
     if (CTSU_CORRECTION_COMPLETE == g_ctsu_correction_info.status)
@@ -4681,45 +4771,6 @@ void ctsu_correction_calc (uint16_t * correction_data, uint16_t raw_data, ctsu_c
                 }
             }
         }
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-        else
-        {
-            i = 0;
-            while (1)
-            {
-                if ((cmp_data < g_ctsu_corrcfc_info.dac_value[p_calc->cfc][i]) || ((CTSU_CORRCFC_POINT_NUM - 1) == i))
-                {
-                    y0 = g_ctsu_corrcfc_info.ref_value[p_calc->cfc][i];
-                    x0 = g_ctsu_corrcfc_info.dac_value[p_calc->cfc][i];
-                    if (0 == i)
-                    {
-                        x1 = 0;
-                        y1 = 0;
-                    }
-                    else
-                    {
-                        x1 = g_ctsu_corrcfc_info.dac_value[p_calc->cfc][i - 1];
-                        y1 = g_ctsu_corrcfc_info.ref_value[p_calc->cfc][i - 1];
-                    }
-
-                    break;
-                }
-
-                i++;
-            }
-
-            if (CTSU_SNUM_RECOMMEND != p_calc->snum)
-            {
-                x0 = ((x0 * (p_calc->snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
-                y0 = ((y0 * (p_calc->snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
-                x1 = ((x1 * (p_calc->snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
-                y1 = ((y1 * (p_calc->snum + 1)) / (CTSU_SNUM_RECOMMEND + 1));
-            }
-
-            answer = (uint32_t) (y0 - (((y0 - y1) * (x0 - raw_data)) / (x0 - x1)));
-        }
-  #endif
  #endif
 
         /* Value Overflow Check */
@@ -4849,36 +4900,6 @@ void ctsu_correction_ctsu2_exec (ctsu_instance_ctrl_t * const p_instance_ctrl)
     ctsu_data_t * p_snd_data;
     ctsu_data_t   average_pri;
     ctsu_data_t   average_snd;
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-    uint8_t  ts_id;
-    uint8_t  table_id;
-    uint8_t  cfc_ts_table[CTSU_CFG_NUM_CFC];
-    uint16_t offset = 0;
-    uint16_t cfc_id = 0;
-    uint16_t num_rx = 0;
-
-    /* By inspection, calc.cfc is only used when calc.md == CTSU_MODE_MUTUAL_CFC_SCAN. It is initialized in this case.
-     * However, GCC expects calc.cfc to be initialized before calling ctsu_correction_calc regardless of calc.md to
-     * avoid the warning -Werror=maybe-uninitialized. */
-    calc.cfc = 0;
-
-    /* Create CFC-Rx table in ascending order at this instance */
-    for (ts_id = 0; ts_id < CTSU_CORRCFC_TS_MAX; ts_id++)
-    {
-        if (1 == ((p_instance_ctrl->cfc_rx_bitmap >> ts_id) & 1))
-        {
-            for (table_id = 0; table_id < CTSU_CFG_NUM_CFC; table_id++)
-            {
-                if (g_ctsu_corrcfc_info.ts_table[table_id] == ts_id)
-                {
-                    cfc_ts_table[cfc_id] = table_id;
-                    cfc_id++;
-                }
-            }
-        }
-    }
-  #endif
  #endif
  #if (CTSU_CFG_MAJORITY_MODE & CTSU_JUDGEMENT_MAJORITY_MODE)
     if (1 == p_instance_ctrl->p_ctsu_cfg->majority_mode)
@@ -5090,69 +5111,6 @@ void ctsu_correction_ctsu2_exec (ctsu_instance_ctrl_t * const p_instance_ctrl)
             }
  #endif
         }
-        else if (CTSU_MODE_MUTUAL_CFC_SCAN == p_instance_ctrl->md)
-        {
- #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
-  #if (CTSU_CFG_NUM_CFC != 0)
-            if (CTSU_MODE_MUTUAL_CFC_SCAN == p_instance_ctrl->md)
-            {
-                num_rx = p_instance_ctrl->p_ctsu_cfg->num_rx;
-                cfc_id = (uint16_t) (element_id % num_rx);
-                if (0 == cfc_id)
-                {
-                    if (0 == element_id)
-                    {
-                        offset = 0;
-                    }
-                    else
-                    {
-                        offset = (uint16_t) (offset + (num_rx * CTSU_MUTUAL_BUF_SIZE));
-                    }
-                }
-            }
-
-            calc.cfc = cfc_ts_table[cfc_id];
-
-            p_pri_corr = p_instance_ctrl->p_mutual_pri_corr + (element_id * CTSU_CFG_NUM_SUMULTI);
-            p_snd_corr = p_instance_ctrl->p_mutual_snd_corr + (element_id * CTSU_CFG_NUM_SUMULTI);
-
-            for (i = 0; i < CTSU_CFG_NUM_SUMULTI; i++)
-            {
-                ctsu_correction_calc(&p_pri_corr[i],
-                                     p_instance_ctrl->p_mutual_raw[offset + cfc_id + (num_rx * i * 2)],
-                                     &calc);
-
-                ctsu_correction_calc(&p_snd_corr[i],
-                                     p_instance_ctrl->p_mutual_raw[offset + cfc_id + (num_rx * i * 2) + num_rx], &calc);
-            }
-
-            if (0 != p_instance_ctrl->average)
-            {
-                p_pri_data = (p_instance_ctrl->p_mutual_pri_data + element_id);
-                p_snd_data = (p_instance_ctrl->p_mutual_snd_data + element_id);
-
-                /* Store last moving averaged data */
-                average_pri = *p_pri_data;
-                average_snd = *p_snd_data;
-
-                p_pri_mfc = (p_instance_ctrl->p_mutual_pri_mfc + (element_id * CTSU_CFG_NUM_SUMULTI));
-                p_snd_mfc = (p_instance_ctrl->p_mutual_snd_mfc + (element_id * CTSU_CFG_NUM_SUMULTI));
-
-                /* Matching values */
-                ctsu_correction_freq(p_pri_corr, so_value, p_pri_mfc);
-                ctsu_correction_freq(p_snd_corr, so_value, p_snd_mfc);
-                *(p_instance_ctrl->p_selected_freq_mutual + element_id) =
-                    ctsu_correction_multi(p_pri_mfc, p_snd_mfc, &(p_pri_data->int_data), &(p_snd_data->int_data));
-
-                /* Update moving averaged data */
-                ctsu_moving_average(&average_pri, p_pri_data->int_data, p_instance_ctrl->average);
-                *p_pri_data = average_pri;
-                ctsu_moving_average(&average_snd, p_snd_data->int_data, p_instance_ctrl->average);
-                *p_snd_data = average_snd;
-            }
-  #endif
- #endif
-        }
         else
         {
         }
@@ -5185,7 +5143,7 @@ void ctsu_correction_freq (uint16_t * p_corr, uint32_t * p_so_value, uint16_t * 
 
     for (i = 1; i < CTSU_CFG_NUM_SUMULTI; i++)
     {
-        total = ((p_corr[i] * (CTSU_SNUM_RECOMMEND + 1) + p_so_value[i]) * sumulti[0]) / sumulti[i];
+        total = (((uint32_t) p_corr[i] * (CTSU_SNUM_RECOMMEND + 1) + p_so_value[i]) * sumulti[0]) / sumulti[i];
 
         if (total > p_so_value[0])
         {
@@ -5318,179 +5276,6 @@ uint8_t ctsu_correction_multi (uint16_t * p_pri_mfc, uint16_t * p_snd_mfc, uint1
 
     return selected_freq;
 }
-
- #if (CTSU_CFG_NUM_CFC != 0)
-
-/***********************************************************************************************************************
- * ctsu_corrcfc_process
- ***********************************************************************************************************************/
-void ctsu_corrcfc_process (ctsu_instance_ctrl_t * const p_instance_ctrl)
-{
-    uint8_t            i;
-    uint8_t            j;
-    uint8_t            ts_id;
-    uint8_t            index;
-    uint64_t           new_bitmap;
-    ctsu_cfg_t const * p_cfg;
-    uint16_t           base_value;
-    uint16_t           base_conv_dac;
-    int32_t            x0;
-    int32_t            x1;
-    int32_t            y0;
-
-    g_ctsu_corrcfc_info.status = CTSU_CORRECTION_RUN;
-
-    p_cfg = p_instance_ctrl->p_ctsu_cfg;
-    index = g_ctsu_corrcfc_info.index;
-
-    /* Get CFC-Rx bitmap at this instance. */
-    p_instance_ctrl->cfc_rx_bitmap =
-        ((uint64_t) (p_cfg->ctsuchac0 & (~p_cfg->ctsuchtrc0)) |
-         ((uint64_t) (p_cfg->ctsuchac1 & (~p_cfg->ctsuchtrc1)) << (CTSU_CORRCFC_SHIFT8)) |
-         ((uint64_t) (p_cfg->ctsuchac2 & (~p_cfg->ctsuchtrc2)) << (CTSU_CORRCFC_SHIFT8 * 2)) |
-         ((uint64_t) (p_cfg->ctsuchac3 & (~p_cfg->ctsuchtrc3)) << (CTSU_CORRCFC_SHIFT8 * 3)) |
-         ((uint64_t) (p_cfg->ctsuchac4 & (~p_cfg->ctsuchtrc4)) << (CTSU_CORRCFC_SHIFT8 * 4)));
-
-    /* Get RX bitmap at this correction. */
-    new_bitmap = p_instance_ctrl->cfc_rx_bitmap & (~g_ctsu_corrcfc_info.stored_rx_bitmap);
-
-    /* Get TS id and number of TS in this instance. */
-    g_ctsu_corrcfc_info.num_ts = 0;
-    for (ts_id = 0; ts_id < CTSU_CORRCFC_TS_MAX; ts_id++)
-    {
-        if (1 == ((new_bitmap >> ts_id) & 1))
-        {
-            g_ctsu_corrcfc_info.ts_table[index + g_ctsu_corrcfc_info.num_ts] = ts_id;
-            g_ctsu_corrcfc_info.num_ts++;
-        }
-    }
-
-    /* Add the bitmap of this instance to the entire CFC correction information. */
-    g_ctsu_corrcfc_info.stored_rx_bitmap |= p_instance_ctrl->cfc_rx_bitmap;
-
-    /* Write Channel setting */
-    R_CTSU->CTSUCHAC0 = (uint8_t) (new_bitmap);
-    R_CTSU->CTSUCHAC1 = (uint8_t) (new_bitmap >> (CTSU_CORRCFC_SHIFT8));
-    R_CTSU->CTSUCHAC2 = (uint8_t) (new_bitmap >> (CTSU_CORRCFC_SHIFT8 * 2));
-    R_CTSU->CTSUCHAC3 = (uint8_t) (new_bitmap >> (CTSU_CORRCFC_SHIFT8 * 3));
-    R_CTSU->CTSUCHAC4 = (uint8_t) (new_bitmap >> (CTSU_CORRCFC_SHIFT8 * 4));
-
-    /* Set register of CFC self mode */
-    R_CTSU->CTSUCRA_b.MD0  = 1;
-    R_CTSU->CTSUCRA_b.MD1  = 0;
-    R_CTSU->CTSUCRA_b.MD2  = 1;
-    R_CTSU->CTSUMCH_b.MCA0 = 1;
-    R_CTSU->CTSUMCH_b.MCA1 = 0;
-    R_CTSU->CTSUMCH_b.MCA2 = 0;
-    R_CTSU->CTSUMCH_b.MCA3 = 0;
-
-    /* Set time of measurement */
-    g_ctsu_corrcfc_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10);
-
-    /* Step1 : Measure the current input to the CFC-ICO by passing bias current. */
-    /*         The theoretical value of the current is 6uA. */
-    ctsu_corrcfc_measurement(p_instance_ctrl, &g_ctsu_corrcfc_info.base_value[index], 1);
-
-    /* Step2 : Measure by inputting each constant current from internal DAC to CFC-ICO. */
-    R_CTSU->CTSUCRB_b.SSCNT     = 0;
-    R_CTSU->CTSUCRA_b.LOAD      = 1;
-    R_CTSU->CTSUCALIB_b.CCOCLK  = 0;
-    R_CTSU->CTSUCALIB_b.CFCMODE = 1;
-
-    for (j = 0; j < CTSU_CORRCFC_POINT_NUM; j++)
-    {
-        R_CTSU->CTSUCRA_b.SDPSEL = 0;
-        R_CTSU->CTSUSUCLK0       = (uint16_t) (((j + CTSU_CORRCFC_CENTER_POINT) * CTSU_CORRECTION_SUMULTI) - 1);
-        R_CTSU->CTSUCRA_b.SDPSEL = 1;
-
-        ctsu_corrcfc_measurement(p_instance_ctrl, &g_ctsu_corrcfc_info.dac_value[index][j], CTSU_CORRCFC_POINT_NUM);
-    }
-
-    /* Reset register */
-    R_CTSU->CTSUCALIB_b.CFCMODE = 0;
-    R_CTSU->CTSUCALIB_b.CCOCLK  = 1;
-
-    /* Step3 : Calculate the error between step1 and step2. */
-    for (i = index; i < (index + g_ctsu_corrcfc_info.num_ts); i++)
-    {
-        /* Linear interpolation calculation */
-        base_value = g_ctsu_corrcfc_info.base_value[i];
-        j          = 1;
-        while (1)
-        {
-            if ((base_value < g_ctsu_corrcfc_info.dac_value[index][j]) || ((CTSU_CORRCFC_POINT_NUM - 1) == j))
-            {
-                y0 = (uint16_t) (CTSU_CORRECTION_STD_UNIT * (j + CTSU_CORRCFC_CENTER_POINT));
-                x0 = g_ctsu_corrcfc_info.dac_value[index][j];
-                x1 = g_ctsu_corrcfc_info.dac_value[index][j - 1];
-                break;
-            }
-
-            j++;
-        }
-
-        base_conv_dac = (uint16_t) (y0 - ((CTSU_CORRECTION_STD_UNIT * (x0 - base_value)) / (x0 - x1)));
-
-        /* Error rate calculation */
-        g_ctsu_corrcfc_info.error_rate[i] =
-            (uint16_t) (((CTSU_CORRECTION_STD_UNIT * 4) << CTSU_SHIFT_AMOUNT) / base_conv_dac);
-
-        for (j = 0; j < CTSU_CORRCFC_POINT_NUM; j++)
-        {
-            g_ctsu_corrcfc_info.ref_value[i][j] =
-                (uint16_t) ((CTSU_CORRECTION_STD_UNIT * (j + CTSU_CORRCFC_CENTER_POINT) *
-                             g_ctsu_corrcfc_info.error_rate[i]) >> CTSU_SHIFT_AMOUNT);
-        }
-    }
-
-    g_ctsu_corrcfc_info.index = (uint8_t) (index + g_ctsu_corrcfc_info.num_ts);
-
-    g_ctsu_corrcfc_info.status = CTSU_CORRECTION_COMPLETE;
-}
-
-/***********************************************************************************************************************
- * ctsu_corrcfc_measurement
- ***********************************************************************************************************************/
-void ctsu_corrcfc_measurement (ctsu_instance_ctrl_t * const p_instance_ctrl, uint16_t * data, uint8_t point_num)
-{
-    uint16_t i;
-    uint8_t  cfc_id;
-    uint32_t sum[CTSU_CFG_NUM_CFC];
-
-    /* initialize sum array */
-    for (cfc_id = 0; cfc_id < CTSU_CFG_NUM_CFC; cfc_id++)
-    {
-        sum[cfc_id] = 0;
-    }
-
-    for (i = 0; i < CTSU_CORRECTION_AVERAGE; i++)
-    {
-  #if (CTSU_CFG_DTC_SUPPORT_ENABLE == 1)
-        ctsu_transfer_configure(p_instance_ctrl);
-  #else
-        FSP_PARAMETER_NOT_USED(p_instance_ctrl);
-  #endif
-        p_instance_ctrl->state = CTSU_STATE_SCANNING;
-        R_CTSU->CTSUCR0       |= 0x01;
-        while (p_instance_ctrl->state != CTSU_STATE_SCANNED)
-        {
-        }
-
-        /* Get sum */
-        for (cfc_id = 0; cfc_id < CTSU_CFG_NUM_CFC; cfc_id++)
-        {
-            sum[cfc_id] += g_ctsu_corrcfc_info.scanbuf[cfc_id];
-        }
-    }
-
-    /* Average sum data */
-    for (cfc_id = 0; cfc_id < g_ctsu_corrcfc_info.num_ts; cfc_id++)
-    {
-        *(data + (cfc_id * point_num)) = (uint16_t) (sum[cfc_id] / CTSU_CORRECTION_AVERAGE);
-    }
-}
-
- #endif
 
  #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
 
@@ -5640,6 +5425,7 @@ int16_t ctsu_multiclock_auto_correction_calc (ctsu_instance_ctrl_t * const p_ins
     }
     else
     {
+        /* calculate offset coefficient with int32 */
         offsetcoeff_tmp = (numerator_1 * numerator_2 * numerator_3 / denominator);
 
         /* overflow check int16 */
@@ -5665,16 +5451,17 @@ int16_t ctsu_multiclock_auto_correction_calc (ctsu_instance_ctrl_t * const p_ins
  #endif
 
  #if (CTSU_CFG_AUTO_JUDGE_ENABLE == 1)
+
 /***********************************************************************************************************************
  * ctsu_auto_judge_threshold_calc
  ***********************************************************************************************************************/
 void ctsu_auto_judge_threshold_calc (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
-    uint8_t  element_id;
-    uint8_t  i;
+    uint8_t element_id;
+    uint8_t i;
   #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
-    int16_t  ajthr_h;
-    int16_t  ajthr_l;
+    int16_t ajthr_h;
+    int16_t ajthr_l;
   #endif
 
     for (element_id = 0; element_id < p_instance_ctrl->num_elements; element_id++)
@@ -5683,18 +5470,23 @@ void ctsu_auto_judge_threshold_calc (ctsu_instance_ctrl_t * const p_instance_ctr
         if (1 == p_instance_ctrl->p_ctsu_cfg->majirimd)
         {
    #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
-            if(CTSU_MODE_SELF_MULTI_SCAN == p_instance_ctrl->p_ctsu_cfg->md)
+            if (CTSU_MODE_SELF_MULTI_SCAN == p_instance_ctrl->p_ctsu_cfg->md)
             {
    #endif
-                p_instance_ctrl->p_auto_judge[element_id].ajthr = ((uint32_t)p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold << 16) |
-                        (p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold - p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].hysteresis);
+                p_instance_ctrl->p_auto_judge[element_id].ajthr =
+                    ((uint32_t) p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold << 16) |
+                    (p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].
+                     threshold - p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].hysteresis);
    #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
             }
             else
             {
-                ajthr_h = -(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold) + p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].hysteresis;
-                ajthr_l = -(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold);
-                p_instance_ctrl->p_auto_judge[element_id].ajthr = ((uint32_t)ajthr_h << 16) | (ajthr_l & 0x0000FFFF);
+                ajthr_h =
+                    (int16_t) (-(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold) +
+                               p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].hysteresis);
+                ajthr_l = (int16_t) (-(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[element_id].threshold));
+                p_instance_ctrl->p_auto_judge[element_id].ajthr = ((uint32_t) ajthr_h << 16) |
+                                                       (ajthr_l & CTSU_AUTO_MINUS_BIT_MASK);
             }
    #endif
         }
@@ -5704,22 +5496,34 @@ void ctsu_auto_judge_threshold_calc (ctsu_instance_ctrl_t * const p_instance_ctr
             for (i = 0; i < CTSU_CFG_NUM_SUMULTI; i++)
             {
   #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
-                if(CTSU_MODE_SELF_MULTI_SCAN == p_instance_ctrl->p_ctsu_cfg->md)
+                if (CTSU_MODE_SELF_MULTI_SCAN == p_instance_ctrl->p_ctsu_cfg->md)
                 {
   #endif
                     p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].ajthr =
-                        ((uint32_t)p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].threshold << 16) |
-                        (p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].threshold -
-                        p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].hysteresis);
+                        ((uint32_t) p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id *
+                                                                                      CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                                                     i].threshold << 16) |
+                        (p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                                          i].threshold -
+                         p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                                          i].hysteresis);
   #if (CTSU_CFG_NUM_MUTUAL_ELEMENTS != 0)
                 }
                 else
                 {
-                    ajthr_h = -(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].threshold) +
-                            p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].hysteresis;
-                    ajthr_l = -(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].threshold);
+                    ajthr_h =
+                        (int16_t) (-(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id *
+                                                                                       CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                                                      i].threshold) +
+                                   p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id *
+                                                                                     CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                                                    i].hysteresis);
+                    ajthr_l =
+                        (int16_t) (-(p_instance_ctrl->p_ctsu_cfg->p_ctsu_auto_buttons[(element_id *
+                                                                                       CTSU_MAJORITY_MODE_ELEMENTS) +
+                                                                                      i].threshold));
                     p_instance_ctrl->p_auto_judge[(element_id * CTSU_MAJORITY_MODE_ELEMENTS) + i].ajthr =
-                              ((uint32_t)ajthr_h << 16) | (ajthr_l & 0x0000FFFF);
+                        ((uint32_t) ajthr_h << 16) | (ajthr_l & CTSU_AUTO_MINUS_BIT_MASK);
                 }
   #endif
             }
@@ -5824,102 +5628,35 @@ fsp_err_t R_CTSU_Diagnosis (ctsu_ctrl_t * const p_ctrl)
  #if (CTSU_CFG_DIAG_SUPPORT_ENABLE == 1)
     if (CTSU_DIAG_COMPLETE == g_ctsu_diag_info.state)
     {
-        ctsu_diag_regi_store2();
+        diag_err = g_ctsu_diag_info.test_result;
+        g_ctsu_diag_info.test_result = FSP_SUCCESS;
+        g_ctsu_diag_info.test_count  = 0;
+        g_ctsu_diag_info.state       = CTSU_DIAG_INIT;
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.buffer_index = CTSU_DIAG_DEBUG_DATA_START_INDEX;
 
-        g_ctsu_diag_info.state = CTSU_DIAG_OUTPUT_VOLTAGE;
-        diag_err               = ctsu_diag_output_voltage_result();
-        if (FSP_SUCCESS != diag_err)
+        if (g_ctsu_diag_info.debug_state == CTSU_DIAG_DEBUG_PROGRESS)
         {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
+            g_ctsu_diag_info.debug_state = CTSU_DIAG_DEBUG_COMPLETE;
+            g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_HEADER_INDEX]  = CTSU_DIAG_DEBUG_HEADER_VALUE;
+            g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_COMMAND_INDEX] = CTSU_DIAG_DEBUG_COMMAND_DATA_SEND;
 
-            return FSP_ERR_CTSU_DIAG_OUTPUT_VOLTAGE;
-        }
+            if (FSP_SUCCESS == diag_err)
+            {
+                g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_RESULT_INDEX] = FSP_SUCCESS;
+            }
+            else
+            {
+                g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_RESULT_INDEX] = CTSU_DIAG_DEBUG_ERROR_VALUE;
+            }
 
-        g_ctsu_diag_info.state = CTSU_DIAG_OVER_VOLTAGE;
-        diag_err               = ctsu_diag_over_voltage_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_OVER_VOLTAGE;
-        }
-
-        g_ctsu_diag_info.state = CTSU_DIAG_OVER_CURRENT;
-        diag_err               = ctsu_diag_over_current_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_OVER_CURRENT;
-        }
-
-        g_ctsu_diag_info.state = CTSU_DIAG_LOAD_RESISTANCE;
-        diag_err               = ctsu_diag_load_resistance_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_LOAD_RESISTANCE;
-        }
-
-        g_ctsu_diag_info.state = CTSU_DIAG_CURRENT_SOURCE;
-        diag_err               = ctsu_diag_current_source_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_CURRENT_SOURCE;
-        }
-
-        g_ctsu_diag_info.state = CTSU_DIAG_SENSCLK;
-        diag_err               = ctsu_diag_cco_gain_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_SENSCLK_GAIN;
-        }
-
-        g_ctsu_diag_info.state = CTSU_DIAG_SUCLK;
-        diag_err               = ctsu_diag_cco_gain_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_SUCLK_GAIN;
-        }
-
-        g_ctsu_diag_info.state = CTSU_DIAG_CLOCK_RECOVERY;
-        diag_err               = ctsu_diag_clock_recovery_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_CLOCK_RECOVERY;
-        }
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-        g_ctsu_diag_info.state = CTSU_DIAG_CFC;
-        diag_err               = ctsu_diag_cfc_gain_result();
-        if (FSP_SUCCESS != diag_err)
-        {
-            ctsu_diag_regi_restore2();
-            g_ctsu_diag_info.state = CTSU_DIAG_INIT;
-
-            return FSP_ERR_CTSU_DIAG_CFC_GAIN;
+            g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_FIRST_ID_INDEX]    = g_ctsu_diag_info.debug_id;
+            g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_LAST_ID_INDEX]     = g_ctsu_diag_info.debug_id;
+            g_ctsu_diag_info.debug_buffer[CTSU_DIAG_DEBUG_DATA_FOOTER_INDEX] = CTSU_DIAG_DEBUG_FOOTER_VALUE;
         }
   #endif
 
-        ctsu_diag_regi_restore2();
-        g_ctsu_diag_info.state = CTSU_DIAG_INIT;
+        return diag_err;
     }
  #endif
 #endif
@@ -6093,17 +5830,17 @@ static void ctsu_diag_ldo_over_voltage_scan_start (void)
     if (CTSU_PCLKB_FREQ_RANGE1 >= pclkb_mhz)
     {
         CTSU.CTSUCR1.BYTE |= (0 << 4);
-        ctsu_sdpa          = pclkb_mhz - 1;
+        ctsu_sdpa        = pclkb_mhz - 1;
     }
     else if ((CTSU_PCLKB_FREQ_RANGE1 < pclkb_mhz) && (CTSU_PCLKB_FREQ_RANGE2 >= pclkb_mhz))
     {
         CTSU.CTSUCR1.BYTE |= (1 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 2) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 2) - 1;
     }
     else
     {
         CTSU.CTSUCR1.BYTE |= (2 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 4) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 4) - 1;
     }
 
     CTSU.CTSUCR1.BYTE   |= (CTSU_MODE_SELF_MULTI_SCAN << 6);
@@ -6179,17 +5916,17 @@ static void ctsu_diag_oscillator_high_scan_start (void)
     if (CTSU_PCLKB_FREQ_RANGE1 >= pclkb_mhz)
     {
         CTSU.CTSUCR1.BYTE |= (0 << 4);
-        ctsu_sdpa          = pclkb_mhz - 1;
+        ctsu_sdpa        = pclkb_mhz - 1;
     }
     else if ((CTSU_PCLKB_FREQ_RANGE1 < pclkb_mhz) && (CTSU_PCLKB_FREQ_RANGE2 >= pclkb_mhz))
     {
         CTSU.CTSUCR1.BYTE |= (1 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 2) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 2) - 1;
     }
     else
     {
         CTSU.CTSUCR1.BYTE |= (2 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 4) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 4) - 1;
     }
 
     CTSU.CTSUCR1.BYTE   |= (CTSU_MODE_SELF_MULTI_SCAN << 6);
@@ -6272,17 +6009,17 @@ static void ctsu_diag_oscillator_low_scan_start (void)
     if (CTSU_PCLKB_FREQ_RANGE1 >= pclkb_mhz)
     {
         CTSU.CTSUCR1.BYTE |= (0 << 4);
-        ctsu_sdpa          = pclkb_mhz - 1;
+        ctsu_sdpa        = pclkb_mhz - 1;
     }
     else if ((CTSU_PCLKB_FREQ_RANGE1 < pclkb_mhz) && (CTSU_PCLKB_FREQ_RANGE2 >= pclkb_mhz))
     {
         CTSU.CTSUCR1.BYTE |= (1 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 2) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 2) - 1;
     }
     else
     {
         CTSU.CTSUCR1.BYTE |= (2 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 4) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 4) - 1;
     }
 
     CTSU.CTSUCR1.BYTE   |= (CTSU_MODE_SELF_MULTI_SCAN << 6);
@@ -6365,17 +6102,17 @@ static void ctsu_diag_sscg_scan_start (void)
     if (CTSU_PCLKB_FREQ_RANGE1 >= pclkb_mhz)
     {
         CTSU.CTSUCR1.BYTE |= (0 << 4);
-        ctsu_sdpa          = pclkb_mhz - 1;
+        ctsu_sdpa        = pclkb_mhz - 1;
     }
     else if ((CTSU_PCLKB_FREQ_RANGE1 < pclkb_mhz) && (CTSU_PCLKB_FREQ_RANGE2 >= pclkb_mhz))
     {
         CTSU.CTSUCR1.BYTE |= (1 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 2) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 2) - 1;
     }
     else
     {
         CTSU.CTSUCR1.BYTE |= (2 << 4);
-        ctsu_sdpa          = (pclkb_mhz / 4) - 1;
+        ctsu_sdpa        = (pclkb_mhz / 4) - 1;
     }
 
     CTSU.CTSUCR1.BYTE |= (CTSU_MODE_SELF_MULTI_SCAN << 6);
@@ -6438,7 +6175,7 @@ static void ctsu_diag_dac_initial_tuning (void)
     uint32_t complete_flag = 0;
     uint16_t ctsuso;
 
-    diff = g_ctsu_diag_info.correct_data - CTSU_DIAG_DAC_TARGET_VALUE;
+    diff = (int32_t) g_ctsu_diag_info.correct_data - (int32_t) CTSU_DIAG_DAC_TARGET_VALUE;
 
     ctsuso = g_ctsu_diag_info.ctsuwr.ctsuso0 & CTSU_TUNING_MAX;
     if (0 < diff)
@@ -6672,206 +6409,196 @@ static fsp_err_t ctsu_diag_dac_result (void)
 /***********************************************************************************************************************
  * ctsu_diag_scan_start2
  ***********************************************************************************************************************/
-static fsp_err_t ctsu_diag_scan_start2 (ctsu_instance_ctrl_t * const p_instance_ctrl)
+static void ctsu_diag_scan_start2 (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
-    fsp_err_t   err = FSP_SUCCESS;
+    fsp_err_t adc_err = FSP_SUCCESS;
 
-    /* initial state change*/
-    if (CTSU_DIAG_INIT == g_ctsu_diag_info.state)
+    if ((CTSU_DIAG_INIT == g_ctsu_diag_info.state) || (CTSU_DIAG_ADC_ERROR == g_ctsu_diag_info.state))
     {
-        g_ctsu_diag_info.state = CTSU_DIAG_OUTPUT_VOLTAGE;
+        adc_err = ctsu_diag_adc_open_check();
+        if (FSP_SUCCESS == adc_err)
+        {
+            g_ctsu_diag_info.state = CTSU_DIAG_OUTPUT_VOLTAGE;
+        }
+        else
+        {
+            g_ctsu_diag_info.state = CTSU_DIAG_ADC_ERROR;
+        }
     }
 
     /* ctsu normal scan register save */
-    ctsu_diag_regi_store2();
+    ctsu_diag_regi_store2(p_instance_ctrl);
 
     /* scan register setting */
     if (CTSU_DIAG_OUTPUT_VOLTAGE == g_ctsu_diag_info.state)
     {
-        err = ctsu_diag_output_voltage_scan_start(p_instance_ctrl);
-        if (FSP_SUCCESS == err)
+        ctsu_diag_output_voltage_scan_start(p_instance_ctrl);
+        if (FSP_SUCCESS == g_ctsu_diag_info.test_result)
         {
-            g_ctsu_diag_info.state = CTSU_DIAG_OVER_VOLTAGE;
-            err = FSP_SUCCESS;
+            if (0 == g_ctsu_diag_info.onetime_exec_flag)
+            {
+                g_ctsu_diag_info.state = CTSU_DIAG_OVER_VOLTAGE;
+            }
+            else
+            {
+                g_ctsu_diag_info.state = CTSU_DIAG_LOAD_RESISTANCE;
+            }
         }
         else
         {
-            /* if ADC is already opened */
-            if (FSP_ERR_ALREADY_OPEN != err)
-            {
-                R_ADC_Close(0);
-            }
-            err = FSP_SUCCESS;
-
-            g_ctsu_diag_info.state = CTSU_DIAG_OUTPUT_VOLTAGE;
-            CTSU.CTSUCRA.BIT.ATUNE1 = 0;
-            CTSU.CTSUCRA.BIT.ATUNE2 = 0;
-            CTSU.CTSUCRA.BIT.LOAD   = 0;
-            CTSU.CTSUMCH.BIT.MCA0   = 1;
-            CTSU.CTSUMCH.BIT.MCA1   = 0;
-            CTSU.CTSUMCH.BIT.MCA2   = 0;
-            CTSU.CTSUMCH.BIT.MCA3   = 0;
-            CTSU.CTSUCHACA.LONG     = g_ctsu_diag_info.chaca;
-            CTSU.CTSUCHACB.LONG     = g_ctsu_diag_info.chacb;
-            CTSU.CTSUCHTRCA.LONG    = 0;
-            CTSU.CTSUCHTRCB.LONG    = 0;
+            g_ctsu_diag_info.state = CTSU_DIAG_COMPLETE;
+            ctsu_diag_regi_restore2();
         }
     }
 
     if (CTSU_DIAG_OVER_VOLTAGE == g_ctsu_diag_info.state)
     {
-        ctsu_diag_over_voltage_scan_start();
-        g_ctsu_diag_info.state = CTSU_DIAG_OVER_CURRENT;
+        ctsu_diag_over_voltage_scan_start(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_OVER_CURRENT == g_ctsu_diag_info.state)
     {
-        ctsu_diag_over_current_scan_start();
+        ctsu_diag_over_current_scan_start(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_LOAD_RESISTANCE == g_ctsu_diag_info.state)
     {
-        ctsu_diag_load_resistance_scan_start();
+        ctsu_diag_load_resistance_scan_start(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_CURRENT_SOURCE == g_ctsu_diag_info.state)
     {
-        ctsu_diag_current_source_scan_start();
+        ctsu_diag_current_source_scan_start(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
     {
-        ctsu_diag_cco_gain_scan_start();
+        ctsu_diag_sensclk_gain_scan_start();
     }
 
     if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
     {
-        ctsu_diag_cco_gain_scan_start();
+        ctsu_diag_suclk_gain_scan_start();
     }
 
     if (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
     {
         ctsu_diag_clock_recovery_scan_start();
     }
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-    if (CTSU_DIAG_CFC == g_ctsu_diag_info.state)
-    {
-        ctsu_diag_cfc_gain_scan_start();
-    }
-  #endif
-
-    return err;
 }
 
 /***********************************************************************************************************************
  * ctsu_diag_data_get2
  ***********************************************************************************************************************/
-static fsp_err_t ctsu_diag_data_get2 (uint16_t * p_data)
+static fsp_err_t ctsu_diag_data_get2 (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
     fsp_err_t err;
 
+    if (CTSU_DIAG_OVER_VOLTAGE == g_ctsu_diag_info.state)
+    {
+        ctsu_diag_over_voltage_data_get();
+    }
+
+    if (CTSU_DIAG_OVER_CURRENT == g_ctsu_diag_info.state)
+    {
+        ctsu_diag_over_current_data_get();
+    }
+
     if (CTSU_DIAG_LOAD_RESISTANCE == g_ctsu_diag_info.state)
     {
-        ctsu_diag_load_resistance_data_get();
+        ctsu_diag_load_resistance_data_get(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_CURRENT_SOURCE == g_ctsu_diag_info.state)
     {
-        ctsu_diag_current_source_data_get();
+        ctsu_diag_current_source_data_get(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
     {
-        ctsu_diag_cco_gain_data_get();
+        ctsu_diag_sensclk_gain_data_get(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
     {
-        ctsu_diag_cco_gain_data_get();
+        ctsu_diag_suclk_gain_data_get(p_instance_ctrl);
     }
 
     if (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
     {
-        ctsu_diag_clock_recovery_data_get();
-    }
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-    if (CTSU_DIAG_CFC == g_ctsu_diag_info.state)
-    {
-        ctsu_diag_cfc_gain_data_get();
-    }
-  #endif
-
-    /* DIagnosis state transition */
-    if (CTSU_DIAG_OVER_CURRENT == g_ctsu_diag_info.state)
-    {
-        g_ctsu_diag_info.loop_count = 0;
-        g_ctsu_diag_info.state      = CTSU_DIAG_LOAD_RESISTANCE;
-    }
-    else if ((CTSU_DIAG_LOAD_RESISTANCE == g_ctsu_diag_info.state) && (CTSU_RANGE_NUM <= g_ctsu_diag_info.loop_count))
-    {
-        g_ctsu_diag_info.loop_count = 0;
-        g_ctsu_diag_info.state      = CTSU_DIAG_CURRENT_SOURCE;
-    }
-    else if ((CTSU_DIAG_CURRENT_SOURCE == g_ctsu_diag_info.state) &&
-             ((CTSU_DIAG_HIGH_CURRENT_SOURCE + CTSU_DIAG_LOW_CURRENT_SOURCE) <= g_ctsu_diag_info.loop_count))
-    {
-        g_ctsu_diag_info.loop_count = 0;
-        g_ctsu_diag_info.state      = CTSU_DIAG_SENSCLK;
-    }
-    else if ((CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state) &&
-             (CTSU_CORRECTION_POINT_NUM <= g_ctsu_diag_info.loop_count))
-    {
-        g_ctsu_diag_info.loop_count = 0;
-        g_ctsu_diag_info.state      = CTSU_DIAG_SUCLK;
-    }
-    else if ((CTSU_DIAG_SUCLK == g_ctsu_diag_info.state) && (CTSU_CORRECTION_POINT_NUM <= g_ctsu_diag_info.loop_count))
-    {
-        g_ctsu_diag_info.loop_count = 0;
-        g_ctsu_diag_info.state      = CTSU_DIAG_CLOCK_RECOVERY;
-    }
-    else if (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
-    {
-  #if (CTSU_CFG_NUM_CFC != 0)
-        g_ctsu_diag_info.state = CTSU_DIAG_CFC;
-  #else
-        g_ctsu_diag_info.state = CTSU_DIAG_COMPLETE;
-  #endif
-    }
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-    else if ((CTSU_DIAG_CFC == g_ctsu_diag_info.state) && (CTSU_CORRCFC_POINT_NUM <= g_ctsu_diag_info.loop_count))
-    {
-        g_ctsu_diag_info.loop_count = 0;
-        g_ctsu_diag_info.state      = CTSU_DIAG_COMPLETE;
-    }
-  #endif
-    else
-    {
-    }
-
-    if ((CTSU_DIAG_OUTPUT_VOLTAGE <= g_ctsu_diag_info.state) && (CTSU_DIAG_OVER_CURRENT >= g_ctsu_diag_info.state))
-    {
-        *p_data = g_ctsu_diag_info.output_voltage_cnt[0];
-    }
-    else
-    {
-        /* Indicates that ADC measurement was not performed. */
-        *p_data = CTSU_COUNT_MAX;
+        ctsu_diag_clock_recovery_data_get(p_instance_ctrl);
     }
 
     /* register restore */
     ctsu_diag_regi_restore2();
 
+    /* Diagnosis state transition */
+    if ((CTSU_DIAG_OVER_VOLTAGE == g_ctsu_diag_info.state) &&
+        (CTSU_DIAG_OVER_VOLTAGE_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count = 0;
+        g_ctsu_diag_info.state      = CTSU_DIAG_OVER_CURRENT;
+    }
+    else if ((CTSU_DIAG_OVER_CURRENT == g_ctsu_diag_info.state) &&
+             (CTSU_DIAG_OVER_CURRENT_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count = 0;
+        g_ctsu_diag_info.state      = CTSU_DIAG_LOAD_RESISTANCE;
+    }
+    else if ((CTSU_DIAG_LOAD_RESISTANCE == g_ctsu_diag_info.state) &&
+             (CTSU_DIAG_LOAD_RESISTANCE_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count = 0;
+        if (0 == g_ctsu_diag_info.onetime_exec_flag)
+        {
+            g_ctsu_diag_info.state = CTSU_DIAG_CURRENT_SOURCE;
+        }
+        else
+        {
+            g_ctsu_diag_info.state = CTSU_DIAG_SENSCLK;
+        }
+    }
+    else if ((CTSU_DIAG_CURRENT_SOURCE == g_ctsu_diag_info.state) &&
+             (CTSU_DIAG_CURRENT_SOURCE_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count        = 0;
+        g_ctsu_diag_info.state             = CTSU_DIAG_SENSCLK;
+        g_ctsu_diag_info.onetime_exec_flag = 1;
+    }
+    else if ((CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state) &&
+             (CTSU_DIAG_SENSCLK_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count = 0;
+        g_ctsu_diag_info.state      = CTSU_DIAG_SUCLK;
+    }
+    else if ((CTSU_DIAG_SUCLK == g_ctsu_diag_info.state) && (CTSU_DIAG_SUCLK_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count = 0;
+        g_ctsu_diag_info.state      = CTSU_DIAG_CLOCK_RECOVERY;
+    }
+    else if ((CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state) &&
+             (CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM <= g_ctsu_diag_info.test_count))
+    {
+        g_ctsu_diag_info.test_count = 0;
+        g_ctsu_diag_info.state = CTSU_DIAG_COMPLETE;
+    }
+    else
+    {
+        /* No processing */
+    }
+
+    if (FSP_SUCCESS != g_ctsu_diag_info.test_result)
+    {
+        g_ctsu_diag_info.state = CTSU_DIAG_COMPLETE;
+    }
+
     if (CTSU_DIAG_COMPLETE == g_ctsu_diag_info.state)
     {
         err = FSP_SUCCESS;
     }
-    else if (CTSU_DIAG_OUTPUT_VOLTAGE == g_ctsu_diag_info.state)
+    else if (CTSU_DIAG_ADC_ERROR == g_ctsu_diag_info.state)
     {
         err = FSP_ERR_ABORTED;
-        g_ctsu_diag_info.state = CTSU_DIAG_INIT;
     }
     else
     {
@@ -6881,99 +6608,146 @@ static fsp_err_t ctsu_diag_data_get2 (uint16_t * p_data)
     return err;
 }
 
-static void ctsu_diag_regi_store2 (void)
+static void ctsu_diag_regi_store2 (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
-    g_ctsu_diag_reg.ctsucra    = CTSU.CTSUCRA.LONG;
-    g_ctsu_diag_reg.ctsucrb    = CTSU.CTSUCRB.LONG;
-    g_ctsu_diag_reg.ctsuchaca  = CTSU.CTSUCHACA.LONG;
-    g_ctsu_diag_reg.ctsuchacb  = CTSU.CTSUCHACB.LONG;
-    g_ctsu_diag_reg.ctsuchtrca = CTSU.CTSUCHTRCA.LONG;
-    g_ctsu_diag_reg.ctsuchtrcb = CTSU.CTSUCHTRCB.LONG;
-    g_ctsu_diag_reg.ctsumch    = CTSU.CTSUMCH.LONG;
+    /* Store registers settings */
+    g_ctsu_diag_reg.ctsucra = CTSU.CTSUCRA.LONG;
+    if ((CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state) ||
+        (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state) ||
+        (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
+        )
+    {
+        g_ctsu_diag_reg.ctsucrb = CTSU.CTSUCRB.LONG;
+    }
     g_ctsu_diag_reg.ctsucalib  = CTSU.CTSUCALIB.LONG;
     g_ctsu_diag_reg.ctsusuclka = CTSU.CTSUSUCLKA.LONG;
-    g_ctsu_diag_reg.ctsusuclkb = CTSU.CTSUSUCLKB.LONG;
+  #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
+    g_ctsu_diag_reg.ctsuopt    = CTSU.CTSUOPT.LONG;
+  #endif
+
+    /* Preconfigure registers */
+    if ((CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state) ||
+        (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state) ||
+        (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
+        )
+    {
+        CTSU.CTSUCRA.BIT.LOAD = 0x01;
+    }
+
+    CTSU.CTSUMCH.BIT.MCA0 = 1;
+    CTSU.CTSUMCH.BIT.MCA1 = 0;
+    CTSU.CTSUMCH.BIT.MCA2 = 0;
+    CTSU.CTSUMCH.BIT.MCA3 = 0;
+
+    CTSU.CTSUCALIB.LONG   = 0;
+
+    if (CTSU_DIAG_OVER_CURRENT != g_ctsu_diag_info.state)
+    {
+        CTSU.CTSUCALIB.BIT.TSOC = 1;
+    }
+
+  #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
+    CTSU.CTSUOPT.BIT.CCOCFEN = 0;
+  #endif
+    if ((CTSU_DIAG_OVER_VOLTAGE != g_ctsu_diag_info.state) &&
+        (CTSU_DIAG_OVER_CURRENT != g_ctsu_diag_info.state) &&
+        (CTSU_DIAG_CURRENT_SOURCE != g_ctsu_diag_info.state))
+    {
+        p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso = (uint32_t) (CTSU_SNUM_RECOMMEND << 10);
+    }
 }
 
+/* This function must be called when the state is the same as that of ctsu_diag_regi_store2(). */
 static void ctsu_diag_regi_restore2 (void)
 {
     /* register restore */
-    CTSU.CTSUCRA.LONG    = g_ctsu_diag_reg.ctsucra;
-    CTSU.CTSUCRB.LONG    = g_ctsu_diag_reg.ctsucrb;
-    CTSU.CTSUCHACA.LONG  = g_ctsu_diag_reg.ctsuchaca;
-    CTSU.CTSUCHACB.LONG  = g_ctsu_diag_reg.ctsuchacb;
-    CTSU.CTSUCHTRCA.LONG = g_ctsu_diag_reg.ctsuchtrca;
-    CTSU.CTSUCHTRCB.LONG = g_ctsu_diag_reg.ctsuchtrcb;
-    CTSU.CTSUMCH.LONG    = g_ctsu_diag_reg.ctsumch;
-    CTSU.CTSUCALIB.LONG  = g_ctsu_diag_reg.ctsucalib;
-    CTSU.CTSUSUCLKA.LONG = g_ctsu_diag_reg.ctsusuclka;
-    CTSU.CTSUSUCLKB.LONG = g_ctsu_diag_reg.ctsusuclkb;
+    CTSU.CTSUCRA.LONG = g_ctsu_diag_reg.ctsucra;
+    if ((CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state) ||
+        (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state) ||
+        (CTSU_DIAG_CLOCK_RECOVERY == g_ctsu_diag_info.state)
+        )
+    {
+        CTSU.CTSUCRB.LONG = g_ctsu_diag_reg.ctsucrb;
+    }
+
+    CTSU.CTSUCALIB.LONG     = g_ctsu_diag_reg.ctsucalib;
+    CTSU.CTSUCRA.BIT.SDPSEL = 0;
+    CTSU.CTSUSUCLKA.LONG    = g_ctsu_diag_reg.ctsusuclka;
+    CTSU.CTSUCRA.BIT.SDPSEL = 1;
+  #if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
+    CTSU.CTSUOPT.LONG       = g_ctsu_diag_reg.ctsuopt;
+  #endif
 }
 
-static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl)
+static fsp_err_t ctsu_diag_adc_open_check (void)
 {
-    uint8_t                k;
-    adc_cfg_t              open_cfg;
-    adc_ch_cfg_t           ctrl_cfg;
     fsp_err_t              err;
-    adc_err_t              poll;
+    adc_cfg_t              open_cfg;
 
-    /* TSCAP AD/C AN008 Setting */
-    CTSU.CTSUADCC.LONG = 1;
+    open_cfg.conv_speed = ADC_CONVERT_SPEED_DEFAULT; /* Selects the default speed setting */
+    open_cfg.alignment = ADC_ALIGN_RIGHT;            /* A/D conversion results are stored in right-justified format */
+    open_cfg.add_cnt = ADC_ADD_AVG_4_SAMPLES;        /* Average of four measurements */
+    open_cfg.clearing = ADC_CLEAR_AFTER_READ_OFF;    /* A/D data registers are not cleared automatically */
+    open_cfg.trigger = ADC_TRIG_SOFTWARE;            /* Software trigger */
+    open_cfg.trigger_groupb = ADC_TRIG_NONE;         /* Trigger none when without group mode */
+    open_cfg.priority = 0;                           /* S12ADIO no interrupt(polling) */
+    open_cfg.priority_groupb = 0;                    /* S12GBADI no interrupt */
 
-    /* Setting for A/D convert mode */
-    open_cfg.conv_speed = ADC_CONVERT_SPEED_DEFAULT;
-    open_cfg.alignment = ADC_ALIGN_RIGHT;
-    open_cfg.add_cnt = ADC_ADD_OFF;                 /* addition is turned off for chans/sensors */
-    open_cfg.clearing = ADC_CLEAR_AFTER_READ_OFF;
-    open_cfg.trigger = ADC_TRIG_SOFTWARE;           /* Software trigger */
-    open_cfg.trigger_groupb = ADC_TRIG_NONE;        /* Trigger none when without group mode */
-    open_cfg.priority = 0;                          /* S12ADIO no interrupt(polling) */
-    open_cfg.priority_groupb = 0;                   /* S12GBADI no interrupt */
-    err = (fsp_err_t) R_ADC_Open (0, ADC_MODE_SS_ONE_CH, &open_cfg, FIT_NO_FUNC);
-    if (ADC_ERR_AD_NOT_CLOSED == (adc_err_t) err)
+    /* Initialize ADC for CTSU TSCAP */
+    err = (fsp_err_t) R_ADC_Open(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_MODE_SS_ONE_CH, &open_cfg, FIT_NO_FUNC);
+
+    /* Close ADC module once due to ADC architecture */
+    if (ADC_SUCCESS == (adc_err_t) err)
     {
-        return FSP_ERR_ALREADY_OPEN;
+        /* Close ADC for CTSU TSCAP */
+        err = (fsp_err_t) R_ADC_Close(CTSU_DIAG_ADC_UNIT_NUMBER);
+
+        return FSP_SUCCESS;
     }
-    FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
 
-    /* choice A/D port(allow A/D convert) */
-    ctrl_cfg.chan_mask = ADC_MASK_CH8;
-    ctrl_cfg.chan_mask_groupb = ADC_MASK_GROUPB_OFF;
-    ctrl_cfg.priority_groupa = ADC_GRPA_PRIORITY_OFF;
-    ctrl_cfg.diag_method = ADC_DIAG_OFF;
-    ctrl_cfg.add_mask = ADC_MASK_ADD_OFF;
-    ctrl_cfg.signal_elc = ADC_ELC_ALL_SCANS_DONE;
-    err = (fsp_err_t) R_ADC_Control (0, ADC_CMD_ENABLE_CHANS, &ctrl_cfg);
-    FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+    return err;
+}
 
-    /* CTSU setting */
-    CTSU.CTSUCRA.BIT.PUMPON = 1;
-    CTSU.CTSUCRA.BIT.CSW    = 1;
-    CTSU.CTSUCRA.BIT.PON    = 1;
-    CTSU.CTSUCALIB.LONG     = 0;
+static void ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    /* Initialize local variable */
+    fsp_err_t err_ivref             = FSP_SUCCESS;
+    fsp_err_t err_tscap             = FSP_SUCCESS;
+    uint16_t  internal_vref_value   = 0;
+    uint16_t  output_voltage_value  = 0;
+    uint16_t  upper_threshold_value = 0;
+    uint16_t  lower_threshold_value = 0;
 
-    /* Self single scan mode */
-    CTSU.CTSUCRA.BIT.MD0 = 0;
-    CTSU.CTSUCRA.BIT.MD1 = 0;
-    CTSU.CTSUSO.LONG     = CTSU_DIAG_DAC_INIT_0;
-    CTSU.CTSUSO.LONG     = CTSU_DIAG_DAC_INIT_1;
-    CTSU.CTSUSO.LONG     = CTSU_DIAG_DAC_INIT_2;
-    CTSU.CTSUSO.LONG     = CTSU_DIAG_DAC_INIT_3;
+    adc_ch_cfg_t           ctrl_cfg;
 
-    /* LDO setting */
-    CTSU.CTSUCALIB.BIT.DRV = 0;
+    /* SO must be set to 0 */
+    CTSU.CTSUSO.BIT.SO = 0;
 
-    for (k = 0; k < 8; k++)
+    /* 1. Measure Internal Reference Voltage (VREF) */
+    /* Use ADC to measure VREF as a basis for threshold calculation */
+    err_ivref = ctsu_diag_adc_measure_average(&ctrl_cfg, ADC_REG_VOLT, &internal_vref_value);
+
+    /* Terminate test due to ADC error */
+    if (FSP_SUCCESS != err_ivref)
     {
-        switch (k)
+        R_ADC_Close(CTSU_DIAG_ADC_UNIT_NUMBER);
+    }
+
+    /* 2. Calculate the upper and lower threshold values */
+    upper_threshold_value = ctsu_diag_calc_threshold_output_voltage(true, internal_vref_value);
+    lower_threshold_value = ctsu_diag_calc_threshold_output_voltage(false, internal_vref_value);
+
+    /* 3. Test case configuration */
+    for (g_ctsu_diag_info.test_count = 0;
+         g_ctsu_diag_info.test_count < CTSU_DIAG_OUTPUT_VOLTAGE_TEST_NUM;
+         g_ctsu_diag_info.test_count++)
+    {
+        switch (g_ctsu_diag_info.test_count)
         {
             case 0:
             {
-                /*select normal mode */
-                CTSU.CTSUCRA.BIT.LOAD = 0;
-
-                /* LDO Setting (20uA)*/
+                /* TEST1: IDLE current (NM/LV = 2.5uA/2uA), Current range = 20uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 0;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 0;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 1;
                 break;
@@ -6981,10 +6755,8 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 1:
             {
-                /*select normal mode */
-                CTSU.CTSUCRA.BIT.LOAD = 0;
-
-                /* LDO Setting (40uA) */
+                /* TEST2: IDLE current (NM/LV = 2.5uA/2uA), Current range = 40uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 0;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 1;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 0;
                 break;
@@ -6992,10 +6764,8 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 2:
             {
-                /*select normal mode */
-                CTSU.CTSUCRA.BIT.LOAD = 0;
-
-                /* LDO Setting (80uA) */
+                /* TEST3: IDLE current (NM/LV = 2.5uA/2uA), Current range = 80uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 0;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 0;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 0;
                 break;
@@ -7003,10 +6773,8 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 3:
             {
-                /*select normal mode */
-                CTSU.CTSUCRA.BIT.LOAD = 0;
-
-                /* LDO Setting (160uA) */
+                /* TEST4: IDLE current (NM/LV = 2.5uA/2uA), Current range = 160uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 0;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 1;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 1;
                 break;
@@ -7014,11 +6782,9 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 4:
             {
-                /*select normal mode */
-                CTSU.CTSUCRA.BIT.LOAD = 1;
-                CTSU.CTSUCRA.BIT.LOAD = 3;
-
-                /* LDO Setting (20uA) */
+                /* TEST5: Resistance Load Mode, Load Resistance = 60kOhm, Current range = 20uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 1;
+                CTSU.CTSUCRA.BIT.LOAD   = 3;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 0;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 1;
                 break;
@@ -7026,11 +6792,9 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 5:
             {
-                /* select Resistive load mode */
-                CTSU.CTSUCRA.BIT.LOAD = 1;
-                CTSU.CTSUCRA.BIT.LOAD = 3;
-
-                /* LDO Setting (40uA) */
+                /* TEST6: Resistance Load Mode, Load Resistance = 30kOhm, Current range = 40uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 1;
+                CTSU.CTSUCRA.BIT.LOAD   = 3;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 1;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 0;
                 break;
@@ -7038,11 +6802,9 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 6:
             {
-                /* select Resistive load mode */
-                CTSU.CTSUCRA.BIT.LOAD = 1;
-                CTSU.CTSUCRA.BIT.LOAD = 3;
-
-                /* LDO Setting (80uA) */
+                /* TEST7: Resistance Load Mode, Load Resistance = 15kOhm, Current range = 80uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 1;
+                CTSU.CTSUCRA.BIT.LOAD   = 3;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 0;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 0;
                 break;
@@ -7050,260 +6812,890 @@ static fsp_err_t ctsu_diag_output_voltage_scan_start (ctsu_instance_ctrl_t * con
 
             case 7:
             {
-                /* select Resistive load mode */
-                CTSU.CTSUCRA.BIT.LOAD = 1;
-                CTSU.CTSUCRA.BIT.LOAD = 3;
-
-                /* LDO Setting (160uA) */
+                /* TEST8: Resistance Load Mode, Load Resistance = 7.5kOhm, Current range = 160uA */
+                CTSU.CTSUCRA.BIT.LOAD   = 1;
+                CTSU.CTSUCRA.BIT.LOAD   = 3;
                 CTSU.CTSUCRA.BIT.ATUNE1 = 1;
                 CTSU.CTSUCRA.BIT.ATUNE2 = 1;
                 break;
             }
 
+            /* All tests are complete. */
             default:
             {
                 break;
             }
         }
 
+        /* Select power supply calibration mode */
         CTSU.CTSUCALIB.BIT.DRV = 1;
 
-        /* Software trigger start scan */
-        err = (fsp_err_t) R_ADC_Control (0, ADC_CMD_SCAN_NOW, FIT_NO_PTR);
-        FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+        /* 4. Measure TSCAP Voltage */
+        err_tscap = ctsu_diag_adc_measure_average(&ctrl_cfg, ADC_REG_CH8, &output_voltage_value);
 
-        /* Polling for scan complete */
-        do
+        /* Terminate test due to ADC error */
+        if (FSP_SUCCESS != err_tscap)
         {
-            poll = R_ADC_Control (0, ADC_CMD_CHECK_SCAN_DONE, FIT_NO_PTR);
-        } while (ADC_ERR_SCAN_NOT_DONE == poll);
+            R_ADC_Close(CTSU_DIAG_ADC_UNIT_NUMBER);
+        }
 
-        /* Read A/D data then scan normal end */
-        err = (fsp_err_t) R_ADC_Read (0, ADC_REG_CH8, &g_ctsu_diag_info.output_voltage_cnt[k]);
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) (output_voltage_value & CTSU_DIAG_DEBUG_8BIT_MASK);
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) ((output_voltage_value >> CTSU_DIAG_DEBUG_HIGH_8BIT_SHIFT) & CTSU_DIAG_DEBUG_8BIT_MASK);
+  #endif
+
+        /* 5. Compare and process result */
+        if ((output_voltage_value <= lower_threshold_value) || (output_voltage_value >= upper_threshold_value) ||
+            (FSP_SUCCESS != err_ivref) || (FSP_SUCCESS != err_tscap))
+        {
+            /* FAIL: Set diagnostic error */
+            g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_OUTPUT_VOLTAGE;
+        }
+
+        /* PASS: Check is skipped because the measured value is within the expected range.
+         * Condition: (output_voltage_value < upper_threshold_value) && (output_voltage_value > lower_threshold_value) */
+
+        /* Reset for the next measurement */
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+    }
+
+    /* Reset test count */
+    g_ctsu_diag_info.test_count = 0;
+}
+
+/* A single averaged ADC measurement (for R_ADC module) and calculates the final average value */
+static fsp_err_t ctsu_diag_adc_measure_average (adc_ch_cfg_t *ctrl_cfg,
+                                                adc_reg_t     channel,
+                                                uint16_t      *adc_measured_value)
+{
+    /* Initialize local variable */
+    fsp_err_t    err = FSP_SUCCESS;
+    adc_cfg_t    open_cfg;
+    adc_ch_cfg_t adc_ctrl_cfg;
+    adc_err_t    poll;
+
+    /* Setting for A/D convert mode */
+    open_cfg.conv_speed = ADC_CONVERT_SPEED_DEFAULT; /* Selects the default speed setting */
+    open_cfg.alignment = ADC_ALIGN_RIGHT;            /* A/D conversion results are stored in right-justified format */
+    open_cfg.add_cnt = ADC_ADD_AVG_4_SAMPLES;        /* Average of four measurements */
+    open_cfg.clearing = ADC_CLEAR_AFTER_READ_OFF;    /* A/D data registers are not cleared automatically */
+    open_cfg.trigger = ADC_TRIG_SOFTWARE;            /* Software trigger */
+    open_cfg.trigger_groupb = ADC_TRIG_NONE;         /* Trigger none when without group mode */
+    open_cfg.priority = 0;                           /* S12ADIO no interrupt(polling) */
+    open_cfg.priority_groupb = 0;                    /* S12GBADI no interrupt */
+
+    if(ADC_REG_VOLT == channel)
+    {
+        /* ADC initialization for VREF */
+        err = (fsp_err_t) R_ADC_Open(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_MODE_SS_INT_REF_VOLT, &open_cfg, FIT_NO_FUNC);
         FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
     }
-    R_ADC_Close(0);
+    else
+    {
+        /* ADC initialization for TSACAP */
+        err = (fsp_err_t) R_ADC_Open(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_MODE_SS_ONE_CH, &open_cfg, FIT_NO_FUNC);
+        FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+    }
+
+    /* choice A/D port(allow A/D convert) */
+    adc_ctrl_cfg.chan_mask_groupb = ADC_MASK_GROUPB_OFF;
+    adc_ctrl_cfg.priority_groupa = ADC_GRPA_PRIORITY_OFF;
+    adc_ctrl_cfg.diag_method = ADC_DIAG_OFF;
+    adc_ctrl_cfg.add_mask = ADC_MASK_ADD_OFF;
+    adc_ctrl_cfg.signal_elc = ADC_ELC_ALL_SCANS_DONE;
+
+    if(ADC_REG_VOLT == channel)
+    {
+        adc_ctrl_cfg.chan_mask = ADC_MASK_VOLT;
+        /* Scanning configuration */
+        err = (fsp_err_t) R_ADC_Control(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_CMD_ENABLE_VOLT_SENSOR, &adc_ctrl_cfg);
+        FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+    }
+    else
+    {
+        adc_ctrl_cfg.chan_mask = ADC_MASK_CH8;
+        CTSU.CTSUADCC.BIT.CTADCS = 0x01;
+        /* Scanning configuration */
+          err = (fsp_err_t) R_ADC_Control(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_CMD_ENABLE_CHANS, &adc_ctrl_cfg);
+          FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+    }
+
+    /* Start scan */
+    err = (fsp_err_t) R_ADC_Control(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_CMD_SCAN_NOW, FIT_NO_PTR);
+    FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+
+    /* Polling for scan complete */
+    do
+    {
+        poll = R_ADC_Control(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_CMD_CHECK_SCAN_DONE, FIT_NO_PTR);
+    } while (ADC_ERR_SCAN_NOT_DONE == poll);
+
+    if(ADC_REG_VOLT == channel)
+    {
+        /* Read A/D data then scan normal end */
+        err = (fsp_err_t) R_ADC_Read(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_REG_VOLT, adc_measured_value);
+    }
+    else
+    {
+        /* Read A/D data then scan normal end */
+        err = (fsp_err_t) R_ADC_Read(CTSU_DIAG_ADC_UNIT_NUMBER, ADC_REG_CH8, adc_measured_value);
+        CTSU.CTSUADCC.BIT.CTADCS = 0x00;
+    }
+
+    FSP_ERROR_RETURN(FSP_SUCCESS == err, err);
+
+    /* Close ADC module */
+    R_ADC_Close(CTSU_DIAG_ADC_UNIT_NUMBER);
 
     return err;
 }
 
-static fsp_err_t ctsu_diag_output_voltage_result (void)
+/**
+ * Description: Calculates the TSCAP output voltage threshold (upper or lower)
+ *              based on the measured ADC value of the Internal VREF.
+ *              This function computes either the upper or lower threshold value.
+ *
+ * Parameter: threshold_type : Specify which threshold to calculate
+ *                  - true  : upper threshold
+ *                  - false : lower threshold
+ * Parameter: internal_vref_value : The measured internal reference voltage in ADC counts
+ *
+ * Return: The calculated threshold value (upper or lower threshold).
+ *
+ * Example usage:
+ *   uint16_t upper_threshold_value = ctsu_diag_calc_threshold_output_voltage(true, internal_vref_value);
+ *   uint16_t lower_threshold_value = ctsu_diag_calc_threshold_output_voltage(false, internal_vref_value);
+ */
+static uint16_t ctsu_diag_calc_threshold_output_voltage (bool threshold_type, uint16_t internal_vref_value)
 {
-    uint8_t k;
+    /* Initialize local variable */
+    uint32_t threshold;
 
-    for (k = 0; k < 8; k++)
+    /* Threshold calculation */
+    if (threshold_type)
     {
-        if ((g_ctsu_diag_info.output_voltage_cnt[k] <= CTSU_DIAG_TSCAP_RANGE_LOW) ||
-            (g_ctsu_diag_info.output_voltage_cnt[k] >= CTSU_DIAG_TSCAP_RANGE_HIGH))
-        {
-            return FSP_ERR_CTSU_DIAG_OUTPUT_VOLTAGE;
-        }
+        /* Upper threshold value = (((V_tscaptyp * (1 + Err_tscap) * (AD_measured + Err_adc)) /
+         * (V_base * (1 - Err_base))) + Err_adc) * (1 + margin) */
+        threshold = (uint32_t)
+                    (((CTSU_DIAG_TSCAP_VREF_TYP_MV *
+                       (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_TSCAP_VOLT_TOL_MAX_PCT) *
+                       (internal_vref_value + CTSU_DIAG_ADC_MEASUREMENT_ERROR))
+                      /
+                      (CTSU_DIAG_INTERNAL_VREF_TYP_MV *
+                       (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_INTERNAL_VOLT_TOL_PCT)) +
+                      CTSU_DIAG_ADC_MEASUREMENT_ERROR) *
+                     (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_OUTPUT_VOLTAGE_SELF_TEST_MARGIN_PCT)) /
+                    CTSU_DIAG_PERCENT_BASE;
+    }
+    else
+    {
+        /* Lower threshold value = (((V_tscaptyp * (1 - Err_tscap) * (AD_measured - Err_adc)) /
+         * (V_base * (1 + Err_base))) - Err_adc) * (1 - margin) */
+        threshold = (uint32_t)
+                    (((CTSU_DIAG_TSCAP_VREF_TYP_MV *
+                       (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_TSCAP_VOLT_TOL_MIN_PCT) *
+                       (internal_vref_value - CTSU_DIAG_ADC_MEASUREMENT_ERROR))
+                      /
+                      (CTSU_DIAG_INTERNAL_VREF_TYP_MV *
+                       (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_INTERNAL_VOLT_TOL_PCT)) -
+                      CTSU_DIAG_ADC_MEASUREMENT_ERROR) *
+                     (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_OUTPUT_VOLTAGE_SELF_TEST_MARGIN_PCT)) /
+                    CTSU_DIAG_PERCENT_BASE;
     }
 
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
+    return (uint16_t) (threshold);
 }
 
-static void ctsu_diag_over_voltage_scan_start (void)
+static void ctsu_diag_over_voltage_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
-    g_ctsu_diag_info.icomp0_value = 1;
+    /* Initialize local variable */
+    uint32_t offset_current_value = 0;
 
-    CTSU.CTSUCRA.BIT.PUMPON  = 1;
-    CTSU.CTSUCRA.BIT.CSW     = 1;
-    CTSU.CTSUCRA.BIT.PON     = 1;
-    CTSU.CTSUCALIB.LONG      = 0;
-    CTSU.CTSUCALIB.BIT.DRV   = 1;
-    CTSU.CTSUCALIB.BIT.DCOFF = 1;
-
+    /* Pre-configuration for diagnosis */
     CTSU.CTSUCRA.BIT.LOAD   = 1;
+    CTSU.CTSUCRA.BIT.LOAD   = 3;
     CTSU.CTSUCRA.BIT.ATUNE1 = 1;
     CTSU.CTSUCRA.BIT.ATUNE2 = 0;
-    CTSU.CTSUCRA.BIT.LOAD   = 3;
 
-    CTSU.CTSUSR.BIT.ICOMPRST = 1;
-    CTSU.CTSUCALIB.LONG      = CTSU_DIAG_CURRENT_CLIB_REG;
-    CTSU.CTSUSO.LONG         = 0;
-    CTSU.CTSUSO.LONG         = 0;
-
-    R_BSP_SoftwareDelay(1, BSP_DELAY_MILLISECS);
-
-    if (CTSU.CTSUSR.BIT.ICOMP0 != 0)
+    /* Test case configuration */
+    if (0 == g_ctsu_diag_info.test_count)
     {
-        g_ctsu_diag_info.icomp0_value = 0;
+        /* TEST1: Normal voltage setting. Set Offset current = 0uA (SO = 0x0000).*/
+        offset_current_value = CTSU_DIAG_OFFSET_CURRENT_0UA;
+    }
+    else
+    {
+        /* TEST2: Over voltage setting. Set Offset current = 80uA (SO = 0x0200). */
+        offset_current_value = CTSU_DIAG_OFFSET_CURRENT_80UA;
     }
 
-    CTSU.CTSUCRA.BIT.LOAD   = 1;
-    CTSU.CTSUCRA.BIT.ATUNE1 = 1;
-    CTSU.CTSUCRA.BIT.ATUNE2 = 1;
-    CTSU.CTSUCRA.BIT.LOAD   = 3;
-
-    CTSU.CTSUCALIB.LONG = CTSU_DIAG_CURRENT_CLIB_REG;
-
-    CTSU.CTSUCRA.BIT.LOAD = 2;
-    CTSU.CTSUSO.LONG      = CTSU_DIAG_DAC_DATA_MAX_2;
-    CTSU.CTSUSO.LONG      = CTSU_DIAG_DAC_DATA_MAX_3;
-
-    R_BSP_SoftwareDelay(1, BSP_DELAY_MILLISECS);
-
-    if (CTSU.CTSUSR.BIT.ICOMP0 != 1)
-    {
-        g_ctsu_diag_info.icomp0_value = 0;
-    }
-
-    CTSU.CTSUSR.BIT.ICOMPRST = 1;
-
-    R_BSP_SoftwareDelay(1, BSP_DELAY_MILLISECS);
-
-    if (CTSU.CTSUSR.BIT.ICOMP0 != 1)
-    {
-        g_ctsu_diag_info.icomp0_value = 0;
-    }
-
-    /* 30kohm setting */
-    CTSU.CTSUCRA.BIT.ATUNE1 = 1;
-    CTSU.CTSUCRA.BIT.ATUNE2 = 0;
-    CTSU.CTSUCRA.BIT.LOAD   = 1;
-    CTSU.CTSUCALIB.LONG     = CTSU_DIAG_CURRENT_CLIB_REG;
-
-    /* 0uA setting */
-    CTSU.CTSUSO.LONG = 0x00000000;
-    CTSU.CTSUSO.LONG = 0x00000000;
-
-    R_BSP_SoftwareDelay(1, BSP_DELAY_MILLISECS);
-
-    if (CTSU.CTSUSR.BIT.ICOMP0 != 1)
-    {
-        g_ctsu_diag_info.icomp0_value = 0;
-    }
-
-    CTSU.CTSUSR.BIT.ICOMPRST = 1;
-
-    R_BSP_SoftwareDelay(1, BSP_DELAY_MILLISECS);
-
-    if (CTSU.CTSUSR.BIT.ICOMP0 != 0)
-    {
-        g_ctsu_diag_info.icomp0_value = 0;
-    }
+    /* Set CTSUSO value: Combine SO and SNUM. */
+    p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso =
+        offset_current_value | (CTSU_SNUM_RECOMMEND << 10);
 }
 
-static fsp_err_t ctsu_diag_over_voltage_result (void)
+static void ctsu_diag_over_voltage_data_get (void)
 {
-    if (0 == g_ctsu_diag_info.icomp0_value)
+    /* Increment test count */
+    g_ctsu_diag_info.test_count++;
+}
+
+static void ctsu_diag_over_current_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    /* Initialize local variable */
+    uint8_t sdpa_value = 0;
+
+    /* Pre-configuration for diagnosis */
+    CTSU.CTSUCALIB.LONG = 0;
+
+    /* Test case configuration */
+    if (0 == g_ctsu_diag_info.test_count)
     {
-        return FSP_ERR_CTSU_DIAG_OVER_VOLTAGE;
+        /* TEST1: Normal voltage setting */
+        CTSU.CTSUCRA.BIT.ATUNE1 = 1;                  /* Current range = 160uA */
+        CTSU.CTSUCRA.BIT.ATUNE2 = 1;
+        sdpa_value               = CTSU_CFG_SUMULTI0; /* Configure SDPA based on SUCLK multiplier */
+    }
+    else
+    {
+        /* TEST2: Over voltage setting */
+        CTSU.CTSUCRA.BIT.ATUNE1 = 0;                                              /* Current range = 20uA */
+        CTSU.CTSUCRA.BIT.ATUNE2 = 1;
+        sdpa_value               = p_instance_ctrl->p_ctsu_cfg->p_elements->sdpa; /* Use SDPA from QE configuration structure */
     }
 
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
+    /* Set CTSUSO value: Combine SO, SNUM, and SDPA (SUCLK Divider) */
+    p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso =
+        (CTSU_DIAG_OFFSET_CURRENT_0UA | (CTSU_SNUM_RECOMMEND << 10) | ((uint32_t) sdpa_value << 24));
 }
 
-static void ctsu_diag_over_current_scan_start (void)
+static void ctsu_diag_over_current_data_get (void)
 {
-    CTSU.CTSUCALIB.LONG      = 0;
-    CTSU.CTSUCALIB.BIT.DRV   = 0;
-    CTSU.CTSUCALIB.BIT.DCOFF = 0;
-    CTSU.CTSUCRA.BIT.ATUNE1  = 0;
-    CTSU.CTSUCRA.BIT.ATUNE2  = 0;
-    CTSU.CTSUCRA.BIT.LOAD    = 0;
-    CTSU.CTSUSR.BIT.ICOMPRST = 1;
-
-    CTSU.CTSUMCH.BIT.MCA0 = 1;
-    CTSU.CTSUMCH.BIT.MCA1 = 0;
-    CTSU.CTSUMCH.BIT.MCA2 = 0;
-    CTSU.CTSUMCH.BIT.MCA3 = 0;
-
-    CTSU.CTSUCRA.BIT.MD0 = 1;
-    CTSU.CTSUCRA.BIT.MD1 = 0;
-
-
-    CTSU.CTSUCHACA.LONG  = g_ctsu_diag_info.chaca;
-    CTSU.CTSUCHACB.LONG  = g_ctsu_diag_info.chacb;
-    CTSU.CTSUCHTRCA.LONG = 0;
-    CTSU.CTSUCHTRCB.LONG = 0;
-
-    CTSU.CTSUCRA.BIT.CSW = 0;
-    CTSU.CTSUCRA.BIT.PON = 0;
-
-    /* TSCAP discharge process */
-    R_Set_CTSU_TSCAP_Discharge();
-    R_BSP_SoftwareDelay(10,BSP_DELAY_MICROSECS);
-    R_Set_CTSU_TSCAP_Charge();
-
-    CTSU.CTSUCRA.BIT.CSW = 1;
-    CTSU.CTSUCRA.BIT.PON = 1;
+    /* Increment test count */
+    g_ctsu_diag_info.test_count++;
 }
 
-static fsp_err_t ctsu_diag_over_current_result (void)
+static void ctsu_diag_load_resistance_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
-    if (g_ctsu_diag_info.icomp1_value == 0)
+    /* Test case configuration */
+
+    if (g_ctsu_diag_info.test_count <= 3)
     {
-        return FSP_ERR_CTSU_DIAG_OVER_CURRENT;
+        /* Load resistance ON for TEST1 through TEST4 */
+        CTSU.CTSUCRA.BIT.LOAD = 1;
+        CTSU.CTSUCRA.BIT.LOAD = 3;
     }
 
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
-}
-
-static void ctsu_diag_load_resistance_scan_start (void)
-{
-    /* CTSU setting */
-    CTSU.CTSUCRA.BIT.PUMPON = 1;
-    CTSU.CTSUCRA.BIT.CSW    = 1;
-    CTSU.CTSUCRA.BIT.PON    = 1;
-
-    CTSU.CTSUCRA.BIT.SDPSEL    = 1;
-    CTSU.CTSUCRA.BIT.PCSEL     = 1;
-    CTSU.CTSUCRB.BIT.SST       = CTSU_SST_RECOMMEND;
-    CTSU.CTSUCALIB.BIT.CCOCLK  = 0;
-    CTSU.CTSUCALIB.BIT.SUCLKEN = 0;
-
-    CTSU.CTSUCRA.BIT.MD0  = 1;
-    CTSU.CTSUCRA.BIT.MD1  = 0;
-    CTSU.CTSUMCH.BIT.MCA0 = 1;
-    CTSU.CTSUMCH.BIT.MCA1 = 0;
-    CTSU.CTSUMCH.BIT.MCA2 = 0;
-    CTSU.CTSUMCH.BIT.MCA3 = 0;
-    CTSU.CTSUCRA.BIT.LOAD = 1;
-
-    /* Setting time of measurement */
-    g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10);
-
-    CTSU.CTSUCHACA.LONG  = 1;
-    CTSU.CTSUCHACB.LONG  = 0;
-    CTSU.CTSUCHTRCA.LONG = 0;
-    CTSU.CTSUCHTRCB.LONG = 0;
-
-    CTSU.CTSUCALIB.BIT.TSOC = 1;
-
-    switch (g_ctsu_diag_info.loop_count)
+    switch (g_ctsu_diag_info.test_count)
     {
         case 0:
         {
-            CTSU.CTSUCRA.BIT.ATUNE1 = 1;
-            CTSU.CTSUCRA.BIT.ATUNE2 = 1; // 7.5Kohm 160uA
+            /* TEST1: Load resistance = 60kOhm, Current range = 20uA */
+            CTSU.CTSUCRA.BIT.ATUNE1 = 0;
+            CTSU.CTSUCRA.BIT.ATUNE2 = 1;
+            p_instance_ctrl->range   = CTSU_RANGE_20UA;
             break;
         }
 
         case 1:
         {
-            CTSU.CTSUCRA.BIT.ATUNE1 = 0;
-            CTSU.CTSUCRA.BIT.ATUNE2 = 0; // 15Kohm 80uA
+            /* TEST2: Load resistance = 30kOhm, Current range = 40uA */
+            CTSU.CTSUCRA.BIT.ATUNE1 = 1;
+            CTSU.CTSUCRA.BIT.ATUNE2 = 0;
+            p_instance_ctrl->range   = CTSU_RANGE_40UA;
             break;
         }
 
         case 2:
         {
-            CTSU.CTSUCRA.BIT.ATUNE1 = 1;
-            CTSU.CTSUCRA.BIT.ATUNE2 = 0; // 30Kohm 40uA
+            /* TEST3: Load resistance = 15kOhm, Current range = 80uA */
+            CTSU.CTSUCRA.BIT.ATUNE1 = 0;
+            CTSU.CTSUCRA.BIT.ATUNE2 = 0;
+            p_instance_ctrl->range   = CTSU_RANGE_80UA;
             break;
         }
 
         case 3:
         {
-            CTSU.CTSUCRA.BIT.ATUNE1 = 0;
-            CTSU.CTSUCRA.BIT.ATUNE2 = 1; // 60Kohm 20uA
+            /* TEST4: Load resistance = 7.5kOhm, Current range = 160uA */
+            CTSU.CTSUCRA.BIT.ATUNE1 = 1;
+            CTSU.CTSUCRA.BIT.ATUNE2 = 1;
+            p_instance_ctrl->range   = CTSU_RANGE_160UA;
             break;
         }
+
+        case 4:
+        {
+            /* TEST5: IDLE current, Current range = 20uA */
+            CTSU.CTSUCRA.BIT.LOAD = 0;
+
+            CTSU.CTSUCRA.BIT.ATUNE1 = 0;
+            CTSU.CTSUCRA.BIT.ATUNE2 = 1;
+            p_instance_ctrl->range   = CTSU_RANGE_20UA;
+            break;
+        }
+
+        /* All tests are complete. */
+        default:
+        {
+            break;
+        }
+    }
+}
+
+static void ctsu_diag_load_resistance_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    /* Initialize local variable */
+    uint16_t load_resistance_value       = 0;
+    uint16_t upper_threshold_value       = 0;
+    uint16_t lower_threshold_value       = 0;
+    uint32_t theoretical_value_variation = 0;
+
+    /* Get raw count value and apply correction */
+    ctsu_correction_calc_t calc;
+    calc.snum  = CTSU_SNUM_RECOMMEND;
+    calc.range = p_instance_ctrl->range;
+    calc.md    = CTSU_MODE_DIAGNOSIS_SCAN;
+    ctsu_correction_calc(&load_resistance_value, (uint16_t) (*(p_instance_ctrl->p_self_raw)), &calc);
+
+    /* Accumulate sum and count */
+    g_ctsu_diag_info.measurement_sum += load_resistance_value;
+    g_ctsu_diag_info.measurement_count++;
+
+    /* Check if enough samples have been collected for averaging */
+    if (g_ctsu_diag_info.measurement_count >= CTSU_DIAG_AVERAGE_NUM)
+    {
+        /* 1. Calculate the average value */
+        load_resistance_value = (uint16_t) (g_ctsu_diag_info.measurement_sum >> CTSU_DIAG_AVERAGE_SHIFT_NUM);
+
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) (load_resistance_value & CTSU_DIAG_DEBUG_8BIT_MASK);
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) ((load_resistance_value >> CTSU_DIAG_DEBUG_HIGH_8BIT_SHIFT) & CTSU_DIAG_DEBUG_8BIT_MASK);
+  #endif
+
+        /* 2. Store the first measurement value */
+        if (0 == g_ctsu_diag_info.test_count)
+        {
+            g_ctsu_diag_info.load_resistance = load_resistance_value;
+        }
+
+        /* 3. Calculate thresholds */
+        if (4 == g_ctsu_diag_info.test_count) /* TEST5: For IDLE current test */
+        {
+            upper_threshold_value = (uint16_t) ((CTSU_DIAG_IDLE_CURRENT_THEORETICAL_COUNT_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_IDLE_CURRENT_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_IDLE_CURRENT_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+
+            lower_threshold_value = (uint16_t) ((CTSU_DIAG_IDLE_CURRENT_THEORETICAL_COUNT_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_IDLE_CURRENT_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_IDLE_CURRENT_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+        }
+        else                           /* TEST1 through TEST4: For load resistance test */
+        {
+            theoretical_value_variation =
+                (uint32_t) ((CTSU_DIAG_LOAD_RESISTANCE_THEORETICAL_COUNT_VALUE <<
+                             CTSU_DIAG_LOAD_RESISTANCE_VARIATION_SCALE_SHIFT) /
+                            g_ctsu_correction_info.error_rate[g_ctsu_diag_info.test_count]);
+
+            upper_threshold_value = (uint16_t) ((theoretical_value_variation *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_LOAD_RESISTANCE_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_LOAD_RESISTANCE_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+
+            lower_threshold_value = (uint16_t) ((theoretical_value_variation *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_LOAD_RESISTANCE_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_LOAD_RESISTANCE_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+        }
+
+        /* 4. Compare and process result */
+        if ((load_resistance_value <= lower_threshold_value) || (load_resistance_value >= upper_threshold_value))
+        {
+            /* FAIL: Set diagnostic error */
+            g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_LOAD_RESISTANCE;
+        }
+
+        /* PASS: Check is skipped because the measured value is within the expected range.
+         * Condition: (load_resistance_value < upper_threshold_value) && (load_resistance_value > lower_threshold_value) */
+
+        /* Increment test cycle count and Reset for the next measurement */
+        g_ctsu_diag_info.test_count++;
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+    }
+
+    /* Wait for enough samples, exit function */
+}
+
+static void ctsu_diag_current_source_scan_start (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    /* DAC initial setting */
+    CTSU.CTSUCALIB.BIT.DACMSEL  = 1;
+    CTSU.CTSUCALIB.BIT.DACCARRY = 1;
+
+    /* LDO Nch setting (20uAmode) */
+    CTSU.CTSUCRA.BIT.LOAD   = 1;
+    CTSU.CTSUCRA.BIT.LOAD   = 3;
+    CTSU.CTSUCRA.BIT.ATUNE1 = 0;
+    CTSU.CTSUCRA.BIT.ATUNE2 = 1;
+
+    /* TEST1 through TEST8 */
+    if (g_ctsu_diag_info.test_count <= 7)
+    {
+        /* Upper Current source setting (10uA) */
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_LOW_UNIT_SELECT | (1 << g_ctsu_diag_info.test_count);
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+
+        /* Setting time of measurement */
+        p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
+                                                                      CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+    }
+    /* TEST9 through TEST16 */
+    else if (g_ctsu_diag_info.test_count <= 15)
+    {
+        /* Upper Current source setting (10uA) */
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_LOW_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT | (1 << (g_ctsu_diag_info.test_count - 8));
+
+        p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
+                                                                      (CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT |
+                                                                       (1 << (g_ctsu_diag_info.test_count - 8)));
+    }
+    /* TEST17 */
+    else if (16 == g_ctsu_diag_info.test_count)
+    {
+        /* Lower Current source setting (1.25uA) */
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_SELECT | CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_DATA_MAX;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_SELECT | CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_DATA_MAX;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_LOW_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+
+        p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
+                                                                      CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+    }
+    /* TEST18 through TEST25 */
+    else if (g_ctsu_diag_info.test_count <= 24)
+    {
+        /* Lower Current source setting (1.25uA) */
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_SELECT |
+                         (CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_DATA_MAX & ~(1 << (g_ctsu_diag_info.test_count - 17)));
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_SELECT | CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_DATA_MAX;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_LOW_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+
+        p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
+                                                                      CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+    }
+    /* TEST26 through TEST27 */
+    else
+    {
+        /* Lower Current source setting (1.25uA) */
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_SELECT | CTSU_DIAG_DAC_LOWER_CURRENT_LOW_UNIT_DATA_MAX;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_SELECT |
+                         (CTSU_DIAG_DAC_LOWER_CURRENT_HIGH_UNIT_DATA_MAX & ~(1 << (g_ctsu_diag_info.test_count - 25)));
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_LOW_UNIT_SELECT;
+        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+
+        p_instance_ctrl->p_ctsuwr[p_instance_ctrl->wr_index].ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
+                                                                      CTSU_DIAG_DAC_UPPER_CURRENT_HIGH_UNIT_SELECT;
+    }
+}
+
+static void ctsu_diag_current_source_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    uint16_t current_source_value;
+    uint16_t average_data;
+    uint16_t current_source_diff_value = 0;
+    uint16_t upper_threshold_value;
+    uint16_t lower_threshold_value;
+
+    ctsu_correction_calc_t calc;
+    calc.snum  = CTSU_SNUM_RECOMMEND;
+    calc.range = CTSU_RANGE_20UA;
+    calc.md    = CTSU_MODE_DIAGNOSIS_SCAN;
+    ctsu_correction_calc(&current_source_value, *(p_instance_ctrl->p_self_raw), &calc);
+
+    g_ctsu_diag_info.measurement_sum   += current_source_value;
+    g_ctsu_diag_info.measurement_count += 1;
+
+    if (CTSU_DIAG_AVERAGE_NUM <= g_ctsu_diag_info.measurement_count)
+    {
+        average_data = (uint16_t) (g_ctsu_diag_info.measurement_sum >> CTSU_DIAG_AVERAGE_SHIFT_NUM);
+
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) (average_data & CTSU_DIAG_DEBUG_8BIT_MASK);
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) ((average_data >> CTSU_DIAG_DEBUG_HIGH_8BIT_SHIFT) & CTSU_DIAG_DEBUG_8BIT_MASK);
+  #endif
+
+        /* Upper current source test */
+        if (15 >= g_ctsu_diag_info.test_count)
+        {
+            if (g_ctsu_diag_info.load_resistance > average_data)
+            {
+                current_source_diff_value = g_ctsu_diag_info.load_resistance - average_data;
+            }
+
+            upper_threshold_value = (uint16_t) ((CTSU_DIAG_UPPER_CURRENT_SOURCE_DIFF_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_UPPER_CURRENT_SOURCE_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_UPPER_CURRENT_SOURCE_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+            lower_threshold_value = (uint16_t) ((CTSU_DIAG_UPPER_CURRENT_SOURCE_DIFF_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_UPPER_CURRENT_SOURCE_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_UPPER_CURRENT_SOURCE_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+        }
+        else if (16 == g_ctsu_diag_info.test_count)
+        {
+            g_ctsu_diag_info.average_data_pre = average_data;
+        }
+        /* Lower current source test */
+        else
+        {
+            if (average_data > g_ctsu_diag_info.average_data_pre)
+            {
+                current_source_diff_value = average_data - g_ctsu_diag_info.average_data_pre;
+            }
+
+            upper_threshold_value = (uint16_t) ((CTSU_DIAG_LOWER_CURRENT_SOURCE_DIFF_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_LOWER_CURRENT_SOURCE_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE +
+                                                  CTSU_DIAG_LOWER_CURRENT_SOURCE_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+            lower_threshold_value = (uint16_t) ((CTSU_DIAG_LOWER_CURRENT_SOURCE_DIFF_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_LOWER_CURRENT_SOURCE_SELF_TEST_MARGIN_PCT) *
+                                                 (CTSU_DIAG_PERCENT_BASE -
+                                                  CTSU_DIAG_LOWER_CURRENT_SOURCE_SPEC_MARGIN_PCT)) /
+                                                (CTSU_DIAG_PERCENT_BASE * CTSU_DIAG_PERCENT_BASE));
+        }
+
+        if (16 != g_ctsu_diag_info.test_count)
+        {
+            if ((current_source_diff_value <= lower_threshold_value) ||
+                (current_source_diff_value >= upper_threshold_value))
+            {
+                g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_CURRENT_SOURCE;
+            }
+        }
+
+        g_ctsu_diag_info.test_count       += 1;
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+    }
+}
+
+static void ctsu_diag_sensclk_gain_scan_start (void)
+{
+    /* Pre-configuration for diagnosis */
+    CTSU.CTSUCALIB.BIT.CCOCALIB = 1;
+
+    /* Test case configuration */
+    ctsu_diag_cco_gain_config_test();
+}
+
+static void ctsu_diag_sensclk_gain_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    /* Initialize local variable */
+    uint16_t average_data;
+    uint16_t sensclk_gain_diff_value = 0;
+    uint16_t upper_threshold_value;
+    uint16_t lower_threshold_value;
+
+    /* Get raw count value, accumulate sum and count */
+    g_ctsu_diag_info.measurement_sum += (uint16_t) (*(p_instance_ctrl->p_self_raw));
+    g_ctsu_diag_info.measurement_count++;
+
+    /* Check if enough samples have been collected for averaging */
+    if (g_ctsu_diag_info.measurement_count >= CTSU_DIAG_AVERAGE_NUM)
+    {
+        /* 1. Calculate the average value */
+        average_data = (uint16_t) (g_ctsu_diag_info.measurement_sum >> CTSU_DIAG_AVERAGE_SHIFT_NUM);
+
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) (average_data & CTSU_DIAG_DEBUG_8BIT_MASK);
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) ((average_data >> CTSU_DIAG_DEBUG_HIGH_8BIT_SHIFT) & CTSU_DIAG_DEBUG_8BIT_MASK);
+  #endif
+
+        if (0 != g_ctsu_diag_info.test_count)
+        {
+            /* 2. Calculate thresholds difference value */
+            if (average_data > g_ctsu_diag_info.average_data_pre)
+            {
+                sensclk_gain_diff_value = average_data - g_ctsu_diag_info.average_data_pre;
+            }
+
+            /* 3. Calculate thresholds */
+            upper_threshold_value = (uint16_t) (
+                ((uint32_t) cco_gain_threshold_diff_table[(g_ctsu_diag_info.test_count - 1)][1] *
+                 (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_SENSCLK_GAIN_SELF_TEST_MARGIN_PCT)) /
+                CTSU_DIAG_PERCENT_BASE);
+
+            lower_threshold_value = (uint16_t) (
+                ((uint32_t) cco_gain_threshold_diff_table[(g_ctsu_diag_info.test_count - 1)][0] *
+                 (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_SENSCLK_GAIN_SELF_TEST_MARGIN_PCT)) /
+                CTSU_DIAG_PERCENT_BASE);
+
+            /* 4. Compare and process result */
+            if ((sensclk_gain_diff_value >= upper_threshold_value) ||
+                (sensclk_gain_diff_value <= lower_threshold_value))
+            {
+                /* FAIL: Set diagnostic error */
+                g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_SENSCLK_GAIN;
+            }
+
+            /* PASS: Check is skipped because the threshold difference value is within the expected range.
+             * Condition: (sensclk_gain_diff_value < upper_threshold_value) && (sensclk_gain_diff_value > lower_threshold_value) */
+        }
+
+        /* Store the measurement value */
+        g_ctsu_diag_info.average_data_pre = average_data;
+
+        /* Increment test cycle count and Reset for the next measurement */
+        g_ctsu_diag_info.test_count++;
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+    }
+
+    /* Wait for enough samples, exit function */
+}
+
+static void ctsu_diag_cco_gain_config_test (void)
+{
+    /* Test case configuration */
+    CTSU.CTSUCRB.BIT.SSCNT = 0;
+    CTSU.CTSUCRA.BIT.SDPSEL = 0;
+
+    if (g_ctsu_diag_info.test_count < 8)
+    {
+        /* TEST1 through TEST8: Configure CCODAC Gain from 1 unit (0x1F) up to 8 units (0xFF)
+         * Value = 0x1F | (count << 5) (Value = 0x1F + count * 0x20) */
+        CTSU.CTSUSUCLKA.BIT.SUADJ0 =
+            (uint8_t) (CTSU_DIAG_CCODAC_GAIN_1_UNIT | (g_ctsu_diag_info.test_count << 5));
+    }
+    else
+    {
+        /* Apply CCODAC Gain 8 units (0xFF) for all remaining TEST9 ~ TEST12.
+         * The switch only handles auxiliary register configurations (SSCNT|SUCARRY) */
+        CTSU.CTSUSUCLKA.BIT.SUADJ0 = CTSU_DIAG_CCODAC_GAIN_8_UNIT;
+
+        switch (g_ctsu_diag_info.test_count)
+        {
+            case 8:
+            {
+                /* TEST9: CCODAC Gain 8 units. Add 0x20 to SUADJD by setting SSCNT = 1. */
+                CTSU.CTSUCRB.BIT.SSCNT = 1;
+                break;
+            }
+
+            case 9:
+            {
+                /* TEST10: CCODAC Gain 8 units. Add 0x40 to SUADJD by setting SSCNT = 2. */
+                CTSU.CTSUCRB.BIT.SSCNT = 2;
+                break;
+            }
+
+            case 10:
+            {
+                /* TEST11: CCODAC Gain 8 units. Add 0x60 to SUADJD by setting SSCNT = 3. */
+                CTSU.CTSUCRB.BIT.SSCNT = 3;
+                break;
+            }
+
+            case 11:
+            {
+                /* TEST12: CCODAC Gain 8 units. Add 0x80 to SUADJD (SSCNT=3 for 0x60 + SUCARRY=1 for 0x20). */
+                CTSU.CTSUCRB.BIT.SSCNT = 3;
+                CTSU.CTSUCALIB.BIT.SUCARRY = 1;
+                break;
+            }
+
+            /* All tests are complete. */
+            default:
+            {
+                break;
+            }
+        }
+    }
+
+    CTSU.CTSUCRA.BIT.SDPSEL = 1;
+}
+
+static void ctsu_diag_suclk_gain_scan_start (void)
+{
+    if (11 >= g_ctsu_diag_info.test_count)
+    {
+        CTSU.CTSUCALIB.BIT.SUMSEL = 0;
+        ctsu_diag_cco_gain_config_test();
+    }
+    else
+    {
+        CTSU.CTSUCALIB.BIT.SUCARRY = 1;
+        CTSU.CTSUCALIB.BIT.SUMSEL  = 1;
+        ctsu_diag_suclk_gain_config_test();
+    }
+}
+
+static void ctsu_diag_suclk_gain_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl)
+{
+    uint16_t average_data;
+    uint16_t suclk_gain_diff_value = 0;
+    uint16_t upper_threshold_value;
+    uint16_t lower_threshold_value;
+
+    g_ctsu_diag_info.measurement_sum   += *(p_instance_ctrl->p_self_raw);
+    g_ctsu_diag_info.measurement_count += 1;
+
+    if (CTSU_DIAG_AVERAGE_NUM <= g_ctsu_diag_info.measurement_count)
+    {
+        average_data = (uint16_t) (g_ctsu_diag_info.measurement_sum >> CTSU_DIAG_AVERAGE_SHIFT_NUM);
+
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) (average_data & CTSU_DIAG_DEBUG_8BIT_MASK);
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) ((average_data >> CTSU_DIAG_DEBUG_HIGH_8BIT_SHIFT) & CTSU_DIAG_DEBUG_8BIT_MASK);
+  #endif
+
+        if (0 == g_ctsu_diag_info.test_count)
+        {
+            g_ctsu_diag_info.average_data_pre = average_data;
+        }
+        else if (g_ctsu_diag_info.test_count <= 11)
+        {
+            if (average_data > g_ctsu_diag_info.average_data_pre)
+            {
+                suclk_gain_diff_value = average_data - g_ctsu_diag_info.average_data_pre;
+            }
+
+            g_ctsu_diag_info.average_data_pre = average_data;
+
+            upper_threshold_value = (uint16_t) (
+                ((uint32_t) cco_gain_threshold_diff_table[(g_ctsu_diag_info.test_count - 1)][1] *
+                 (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_SUCLK_GAIN_SELF_TEST_MARGIN_PCT)) /
+                CTSU_DIAG_PERCENT_BASE);
+            lower_threshold_value = (uint16_t) (
+                ((uint32_t) cco_gain_threshold_diff_table[(g_ctsu_diag_info.test_count - 1)][0] *
+                 (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_SUCLK_GAIN_SELF_TEST_MARGIN_PCT)) /
+                CTSU_DIAG_PERCENT_BASE);
+
+            if ((suclk_gain_diff_value <= lower_threshold_value) ||
+                (suclk_gain_diff_value >= upper_threshold_value))
+            {
+                g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_SUCLK_GAIN;
+            }
+        }
+        else
+        {
+            upper_threshold_value = (uint16_t) ((CTSU_DIAG_NO_DWA_SUCLK_GAIN_MAX_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_SUCLK_GAIN_SELF_TEST_MARGIN_PCT)) /
+                                                CTSU_DIAG_PERCENT_BASE);
+            lower_threshold_value = (uint16_t) ((CTSU_DIAG_NO_DWA_SUCLK_GAIN_MIN_VALUE *
+                                                 (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_SUCLK_GAIN_SELF_TEST_MARGIN_PCT)) /
+                                                CTSU_DIAG_PERCENT_BASE);
+
+            if ((average_data <= lower_threshold_value) ||
+                (average_data >= upper_threshold_value))
+            {
+                g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_SUCLK_GAIN;
+            }
+        }
+
+        g_ctsu_diag_info.test_count       += 1;
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+    }
+}
+
+static void ctsu_diag_suclk_gain_config_test (void)
+{
+    /* TEST13 through TEST18 */
+    if (g_ctsu_diag_info.test_count <= 17)
+    {
+        CTSU.CTSUSUCLKA.BIT.SUADJ0 = CTSU_DIAG_SUCLK_LOWER_CURRENT_SELECT |
+                                      (1 << (g_ctsu_diag_info.test_count - 12));
+        CTSU.CTSUSUCLKA.BIT.SUADJ0 = CTSU_DIAG_SUCLK_UPPER_CURRENT_SELECT;
+    }
+    /* TEST19 through TEST24 */
+    else
+    {
+        CTSU.CTSUSUCLKA.BIT.SUADJ0 = CTSU_DIAG_SUCLK_LOWER_CURRENT_SELECT;
+        CTSU.CTSUSUCLKA.BIT.SUADJ0 = CTSU_DIAG_SUCLK_UPPER_CURRENT_SELECT |
+                                      (1 << (g_ctsu_diag_info.test_count - 18));
+    }
+}
+
+static void ctsu_diag_clock_recovery_scan_start (void)
+{
+    uint8_t sumulti  = 0;
+    uint8_t freq_mhz = 0;
+
+    CTSU.CTSUCALIB.BIT.CCOCLK   = 1;
+    CTSU.CTSUCRB.BIT.SST        = CTSU_DIAG_CLOCK_RECOVERY_SST_RECOMMEND;
+    CTSU.CTSUCRA.BIT.SDPSEL     = 0;
+
+    switch (g_ctsu_diag_info.test_count)
+    {
+        case 0:
+        {
+            CTSU.CTSUCRB.BIT.SSCNT  = 0;
+            sumulti                 = CTSU_DIAG_CLOCK_RECOVERY_TEST1_FREQUENCY;
+            freq_mhz                = CTSU_DIAG_CLOCK_RECOVERY_TEST1_FREQUENCY_MHZ;
+            break;
+        }
+
+        case 1:
+        {
+            CTSU.CTSUCRB.BIT.SSCNT  = 0;
+            sumulti                 = CTSU_DIAG_CLOCK_RECOVERY_TEST2_FREQUENCY;
+            freq_mhz                = CTSU_DIAG_CLOCK_RECOVERY_TEST2_FREQUENCY_MHZ;
+            break;
+        }
+
+        case 2:
+        {
+            CTSU.CTSUCRB.BIT.SSCNT  = 0;
+            sumulti                 = CTSU_DIAG_CLOCK_RECOVERY_TEST3_FREQUENCY;
+            freq_mhz                = CTSU_DIAG_CLOCK_RECOVERY_TEST3_FREQUENCY_MHZ;
+            break;
+        }
+
+  #if (CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM == 4)
+        case 3:
+        {
+            CTSU.CTSUCRB.BIT.SSCNT  = 1;
+            sumulti                 = CTSU_DIAG_CLOCK_RECOVERY_TEST4_FREQUENCY;
+            freq_mhz                = CTSU_DIAG_CLOCK_RECOVERY_TEST4_FREQUENCY_MHZ;
+            break;
+        }
+  #endif
 
         default:
         {
@@ -7311,763 +7703,61 @@ static void ctsu_diag_load_resistance_scan_start (void)
         }
     }
 
-    CTSU.CTSUCRA.BIT.LOAD = 3;
-}
+    CTSU.CTSUSUCLKA.BIT.SUMULTI0 = sumulti;
+    CTSU.CTSUSUCLKA.BIT.SUADJ0 = (uint8_t) (((CTSU.CTSUTRIMA.BIT.SUADJD * freq_mhz) >>
+                                             CTSU_DIAG_CLOCK_RECOVERY_FREQUENCY_32MHZ_SHIFT) -
+                                            (CTSU_SUADJ_SSCNT_ADJ * CTSU.CTSUCRB.BIT.SSCNT));
 
-static void ctsu_diag_load_resistance_data_get (void)
-{
-    g_ctsu_diag_info.load_resistance[g_ctsu_diag_info.loop_count] = (uint16_t) g_ctsu_diag_info.ctsuscnt[0];
-
-    g_ctsu_diag_info.load_resistance[g_ctsu_diag_info.loop_count] =
-        (uint16_t) ((((uint32_t) g_ctsu_diag_info.load_resistance[g_ctsu_diag_info.loop_count]) *
-                     g_ctsu_diag_info.error_registance[3 - g_ctsu_diag_info.loop_count]) >> (CTSU_SHIFT_AMOUNT));
-
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 0)
-    ctsu_correction_calc_t calc;
-    calc.snum  = CTSU_SNUM_RECOMMEND;
-    calc.range = CTSU_RANGE_40UA;
-    calc.md    = CTSU_MODE_DIAGNOSIS_SCAN;
-    ctsu_correction_calc(&g_ctsu_diag_info.load_resistance[g_ctsu_diag_info.loop_count],
-                         g_ctsu_diag_info.load_resistance[g_ctsu_diag_info.loop_count],
-                         &calc);
-#endif
-    g_ctsu_diag_info.loop_count++;
-}
-
-static fsp_err_t ctsu_diag_load_resistance_result (void)
-{
-    uint8_t k;
-
-    for (k = 0; k < 4; k++)
-    {
-        if ((g_ctsu_diag_info.load_resistance[k] > CTSU_CFG_DIAG_LOAD_REISTER_MIN) &&
-            (g_ctsu_diag_info.load_resistance[k] < CTSU_CFG_DIAG_LOAD_REISTER_MAX))
-        {
-        }
-        else
-        {
-            return FSP_ERR_CTSU_DIAG_LOAD_RESISTANCE;
-        }
-    }
-
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
-}
-
-static void ctsu_diag_current_source_scan_start (void)
-{
-    /* CTSU setting */
-    CTSU.CTSUCRA.BIT.PUMPON = 1;
-    CTSU.CTSUCRA.BIT.CSW    = 1;
-    CTSU.CTSUCRA.BIT.PON    = 1;
-
-    CTSU.CTSUCRA.BIT.SDPSEL    = 1;
-    CTSU.CTSUCRA.BIT.PCSEL     = 1;
-    CTSU.CTSUCRB.BIT.SST       = CTSU_SST_RECOMMEND;
-    CTSU.CTSUCALIB.BIT.CCOCLK  = 0;
-    CTSU.CTSUCALIB.BIT.SUCLKEN = 0;
-
-    CTSU.CTSUCRA.BIT.MD0  = 1;
-    CTSU.CTSUCRA.BIT.MD1  = 0;
-    CTSU.CTSUMCH.BIT.MCA0 = 1;
-    CTSU.CTSUMCH.BIT.MCA1 = 0;
-    CTSU.CTSUMCH.BIT.MCA2 = 0;
-    CTSU.CTSUMCH.BIT.MCA3 = 0;
-
-    CTSU.CTSUCHACA.LONG  = 1;
-    CTSU.CTSUCHACB.LONG  = 0;
-    CTSU.CTSUCHTRCA.LONG = 0;
-    CTSU.CTSUCHTRCB.LONG = 0;
-
-    CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_0;
-    CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1;
-    CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_2;
-    CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_3;
-
-    /* LDO Nch setting (40uAmode) */
-    CTSU.CTSUCRA.BIT.LOAD   = 1;
-    CTSU.CTSUCALIB.BIT.TSOC = 1;
-    CTSU.CTSUCRA.BIT.ATUNE1 = 1;
-    CTSU.CTSUCRA.BIT.ATUNE2 = 0;
-    CTSU.CTSUCRA.BIT.LOAD   = 3;
-
-    /* DAC initial setting */
-    CTSU.CTSUCALIB.BIT.DACMSEL  = 1;
-    CTSU.CTSUCALIB.BIT.DACCARRY = 1;
-
-    if (15 >= g_ctsu_diag_info.loop_count)
-    {
-        /* Upper Current source setting (10uA) */
-        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_0;
-        CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1;
-
-        switch (g_ctsu_diag_info.loop_count)
-        {
-            case 0:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_0BIT;
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_3;
-
-                /* Setting time of measurement */
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 1:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_1BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 2:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_2BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 3:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_3BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 4:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_4BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 5:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_5BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 6:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_6BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 7:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2 + CTSU_DIAG_DAC_7BIT;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-                break;
-            }
-
-            case 8:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_0BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_0BIT);
-                break;
-            }
-
-            case 9:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_1BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 10:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_2BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_2BIT);
-                break;
-            }
-
-            case 11:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_3BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_3BIT);
-                break;
-            }
-
-            case 12:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_4BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_4BIT);
-                break;
-            }
-
-            case 13:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_5BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_5BIT);
-                break;
-            }
-
-            case 14:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_6BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_6BIT);
-                break;
-            }
-
-            case 15:
-            {
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-                CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_7BIT;
-                g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) |
-                                                 (CTSU_DIAG_DAC_INIT_3 + CTSU_DIAG_DAC_7BIT);
-                break;
-            }
-        }
-    }
-
-    if (16 <= g_ctsu_diag_info.loop_count)
-    {
-        /* Lower Current source setting (10uA) */
-        switch (g_ctsu_diag_info.loop_count)
-        {
-            case 16:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0;
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1;
-                break;
-            }
-
-            case 17:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - CTSU_DIAG_DAC_0BIT;
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + CTSU_DIAG_DAC_0BIT;
-                break;
-            }
-
-            case 18:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 19:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_1BIT + CTSU_DIAG_DAC_2BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 20:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_2BIT + CTSU_DIAG_DAC_3BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 21:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_3BIT + CTSU_DIAG_DAC_4BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 22:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_4BIT + CTSU_DIAG_DAC_5BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 23:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_5BIT + CTSU_DIAG_DAC_6BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 24:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - (CTSU_DIAG_DAC_6BIT + CTSU_DIAG_DAC_7BIT);
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + (CTSU_DIAG_DAC_0BIT + CTSU_DIAG_DAC_1BIT);
-                break;
-            }
-
-            case 25:
-            {
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_DATA_MAX_0 - CTSU_DIAG_DAC_7BIT;
-                CTSU.CTSUSO.LONG = CTSU_DIAG_DAC_INIT_1 + CTSU_DIAG_DAC_1BIT;
-                break;
-            }
-        }
-
-        CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_2;
-        CTSU.CTSUSO.LONG                 = CTSU_DIAG_DAC_INIT_3;
-        g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10) | CTSU_DIAG_DAC_INIT_3;
-    }
-}
-
-static void ctsu_diag_current_source_data_get (void)
-{
-    g_ctsu_diag_info.current_source[g_ctsu_diag_info.loop_count] = (uint16_t) g_ctsu_diag_info.ctsuscnt[0];
-
-    g_ctsu_diag_info.current_source[g_ctsu_diag_info.loop_count] =
-        (uint16_t) ((((uint32_t) g_ctsu_diag_info.current_source[g_ctsu_diag_info.loop_count]) *
-                     g_ctsu_diag_info.error_registance[2]) >> (CTSU_SHIFT_AMOUNT));
-
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 0)
-    ctsu_correction_calc_t calc;
-    calc.snum  = CTSU_SNUM_RECOMMEND;
-    calc.range = CTSU_RANGE_40UA;
-    calc.md    = CTSU_MODE_DIAGNOSIS_SCAN;
-    ctsu_correction_calc(&g_ctsu_diag_info.current_source[g_ctsu_diag_info.loop_count],
-                         g_ctsu_diag_info.current_source[g_ctsu_diag_info.loop_count],
-                         &calc);
-#endif
-
-    g_ctsu_diag_info.loop_count++;
-}
-
-static fsp_err_t ctsu_diag_current_source_result (void)
-{
-    uint8_t  k;
-    uint16_t current_source_diff;
-
-    for (k = 0; k < (CTSU_DIAG_HIGH_CURRENT_SOURCE + CTSU_DIAG_LOW_CURRENT_SOURCE); k++)
-    {
-        current_source_diff = (uint16_t) (g_ctsu_diag_info.load_resistance[2] - g_ctsu_diag_info.current_source[k]);
-        if ((current_source_diff < CTSU_CFG_DIAG_CURRENT_SOURCE_DIFF_MAX) &&
-            (current_source_diff > CTSU_CFG_DIAG_CURRENT_SOURCE_DIFF_MIN))
-        {
-        }
-        else
-        {
-            return FSP_ERR_CTSU_DIAG_CURRENT_SOURCE;
-        }
-    }
-
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
-}
-
-static void ctsu_diag_cco_gain_scan_start (void)
-{
-    /* CTSU Setting */
-    CTSU.CTSUCRA.BIT.MD0    = 0;
-    CTSU.CTSUCRA.BIT.MD1    = 0;
-    CTSU.CTSUCRA.BIT.LOAD   = 1;
-    CTSU.CTSUCRA.BIT.PON    = 1;
-    CTSU.CTSUCRA.BIT.CSW    = 1;
-    CTSU.CTSUCRA.BIT.PUMPON = 1;
-
-    CTSU.CTSUMCH.BIT.MCA0 = 1;
-    CTSU.CTSUMCH.BIT.MCA1 = 0;
-    CTSU.CTSUMCH.BIT.MCA2 = 0;
-    CTSU.CTSUMCH.BIT.MCA3 = 0;
-
-    CTSU.CTSUCRB.BIT.SSMOD = 4;
-    CTSU.CTSUCRB.BIT.SSCNT = 0;
-    CTSU.CTSUCRB.BIT.SST   = CTSU_SST_RECOMMEND;
-
-    CTSU.CTSUCRA.BIT.PCSEL  = 1;
     CTSU.CTSUCRA.BIT.SDPSEL = 1;
-
-    CTSU.CTSUCALIB.LONG        = 0;
-    CTSU.CTSUCALIB.BIT.SUCARRY = 0;
-
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
-   /* Sensor counter auto correction enabled */
-   CTSU.CTSUOPT.BIT.CCOCFEN = 0;
-#endif
-
-    if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
-    {
-        CTSU.CTSUCALIB.BIT.CCOCALIB = 1;
-    }
-
-    if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-    {
-        CTSU.CTSUCALIB.BIT.CCOCALIB = 0;
-    }
-
-    CTSU.CTSUCALIB.BIT.CCOCLK = 0;
-
-    CTSU.CTSUCHACA.LONG  = 1;
-    CTSU.CTSUCHACB.LONG  = 0;
-    CTSU.CTSUCHTRCA.LONG = 0;
-    CTSU.CTSUCHTRCB.LONG = 0;
-
-    /* Setting time of measurement */
-    g_ctsu_diag_info.ctsuwr.ctsuso = (CTSU_SNUM_RECOMMEND << 10);
-
-    CTSU.CTSUMCH.BIT.MCH0 = 0;
-
-    if (g_ctsu_diag_info.loop_count < 8)
-    {
-        CTSU.CTSUSUCLKA.BIT.SUADJ0   = (0x1f + (g_ctsu_diag_info.loop_count * CTSU_DIAG_SUCLK0_REG2));
-    }
-    else if ((8 <= g_ctsu_diag_info.loop_count) && (g_ctsu_diag_info.loop_count < 11))
-    {
-        CTSU.CTSUSUCLKA.BIT.SUADJ0   = (0x1f + (7 * CTSU_DIAG_SUCLK0_REG2));
-        if (8 == g_ctsu_diag_info.loop_count)
-        {
-            CTSU.CTSUCRB.BIT.SSCNT = 0;
-        }
-        else if (9 == g_ctsu_diag_info.loop_count)
-        {
-            CTSU.CTSUCRB.BIT.SSCNT = 1;
-        }
-        else if (10 == g_ctsu_diag_info.loop_count)
-        {
-            CTSU.CTSUCRB.BIT.SSCNT = 2;
-        }
-        else
-        {
-        }
-
-        CTSU.CTSUCALIB.BIT.SUCARRY = 0;
-        if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
-        {
-            CTSU.CTSUCALIB.BIT.CCOCALIB = 1;
-        }
-
-        if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-        {
-            CTSU.CTSUCALIB.BIT.CCOCALIB = 0;
-        }
-
-        CTSU.CTSUCALIB.BIT.CCOCLK = 0;
-        CTSU.CTSUCRB.BIT.SSMOD    = 1;
-        CTSU.CTSUCRB.BIT.SST      = CTSU_SST_RECOMMEND_CURRENT;
-        if (8 == g_ctsu_diag_info.loop_count)
-        {
-            CTSU.CTSUCRB.BIT.SSCNT = 1;
-        }
-        else if (9 == g_ctsu_diag_info.loop_count)
-        {
-            CTSU.CTSUCRB.BIT.SSCNT = 2;
-        }
-        else if (10 == g_ctsu_diag_info.loop_count)
-        {
-            CTSU.CTSUCRB.BIT.SSCNT = 3;
-        }
-        else
-        {
-        }
-    }
-    else if (11 == g_ctsu_diag_info.loop_count)
-    {
-        CTSU.CTSUSUCLKA.BIT.SUADJ0   = (0x1f + (7 * CTSU_DIAG_SUCLK0_REG2));
-
-        CTSU.CTSUCRB.BIT.SSCNT     = 2;
-        CTSU.CTSUCALIB.BIT.SUCARRY = 1;
-        if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
-        {
-            CTSU.CTSUCALIB.BIT.CCOCALIB = 1;
-        }
-
-        if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-        {
-            CTSU.CTSUCALIB.BIT.CCOCALIB = 0;
-        }
-
-        CTSU.CTSUCALIB.BIT.CCOCLK = 0;
-        CTSU.CTSUCRB.BIT.SSMOD    = 1;
-        CTSU.CTSUCRB.BIT.SST      = CTSU_SST_RECOMMEND_CURRENT;
-        CTSU.CTSUCRB.BIT.SSCNT    = 3;
-    }
-    else
-    {
-    }
 }
 
-static void ctsu_diag_cco_gain_data_get (void)
+static void ctsu_diag_clock_recovery_data_get (ctsu_instance_ctrl_t * const p_instance_ctrl)
 {
-    if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
+    uint16_t average_data;
+    uint16_t upper_threshold_value;
+    uint16_t lower_threshold_value;
+
+    g_ctsu_diag_info.measurement_sum   += *(p_instance_ctrl->p_self_raw);
+    g_ctsu_diag_info.measurement_count += 1;
+
+    if (CTSU_DIAG_AVERAGE_NUM <= g_ctsu_diag_info.measurement_count)
     {
-        g_ctsu_diag_info.sensclk_cnt[g_ctsu_diag_info.loop_count] = (uint16_t) g_ctsu_diag_info.ctsuscnt[0];
-    }
+        average_data = (uint16_t) (g_ctsu_diag_info.measurement_sum >> CTSU_DIAG_AVERAGE_SHIFT_NUM);
 
-    if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-    {
-        g_ctsu_diag_info.suclk_cnt[g_ctsu_diag_info.loop_count] = (uint16_t) (g_ctsu_diag_info.ctsuscnt[0] >> 16);
-    }
+  #if (CTSU_DIAGNOSIS_DEBUG_ENABLE == 1)
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) (average_data & CTSU_DIAG_DEBUG_8BIT_MASK);
+        g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] =
+            (uint8_t) ((average_data >> CTSU_DIAG_DEBUG_HIGH_8BIT_SHIFT) & CTSU_DIAG_DEBUG_8BIT_MASK);
 
-    g_ctsu_diag_info.loop_count++;
+   #if (CTSU_DIAG_CLOCK_RECOVERY_TEST_NUM == 3)
 
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
-   /* Sensor counter auto correction enabled */
-   CTSU.CTSUOPT.BIT.CCOCFEN = 1;
-#endif
-
-}
-
-static fsp_err_t ctsu_diag_cco_gain_result (void)
-{
-    uint32_t          k;
-    volatile uint16_t cco_gain_data;
-    uint16_t          cco_gain_data_pre;
-    uint16_t          cco_gain_diff;
-    uint16_t          cco_gain_max;
-    uint16_t          cco_gain_min;
-    uint16_t          cco_gain_diff_max;
-    uint16_t          cco_gain_diff_min;
-
-    /* read counter data */
-    for (k = 0; k < CTSU_CORRECTION_POINT_NUM; k++)
-    {
-        if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
+        /* For MCU with 3 tests, fill the 4th data with zero. */
+        if (2 == g_ctsu_diag_info.test_count)
         {
-            cco_gain_data = g_ctsu_diag_info.sensclk_cnt[k];
+            g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] = 0x00;
+            g_ctsu_diag_info.debug_buffer[g_ctsu_diag_info.buffer_index++] = 0x00;
         }
-
-        if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-        {
-            cco_gain_data = g_ctsu_diag_info.suclk_cnt[k];
-        }
-
-        cco_gain_max = cco_gain_table[k][1];
-        cco_gain_min = cco_gain_table[k][0];
-
-        /* check measurement result */
-        if ((cco_gain_data <= cco_gain_max) && (cco_gain_data >= cco_gain_min))
-        {
-        }
-        else
-        {
-            if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
-            {
-                return FSP_ERR_CTSU_DIAG_SENSCLK_GAIN;
-            }
-
-            if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-            {
-                return FSP_ERR_CTSU_DIAG_SUCLK_GAIN;
-            }
-        }
-
-        if (0 < k)
-        {
-            cco_gain_diff_max = cco_gain_diff_table[k - 1][1];
-            cco_gain_diff_min = cco_gain_diff_table[k - 1][0];
-
-            if (cco_gain_data > cco_gain_data_pre)
-            {
-                cco_gain_diff = (uint16_t) (cco_gain_data - cco_gain_data_pre);
-            }
-            else
-            {
-                cco_gain_diff = (uint16_t) (cco_gain_data_pre - cco_gain_data);
-            }
-
-            /* check measurement result */
-            if ((cco_gain_diff > cco_gain_diff_max) || (cco_gain_diff < cco_gain_diff_min))
-            {
-                if (CTSU_DIAG_SENSCLK == g_ctsu_diag_info.state)
-                {
-                    return FSP_ERR_CTSU_DIAG_SENSCLK_GAIN;
-                }
-
-                if (CTSU_DIAG_SUCLK == g_ctsu_diag_info.state)
-                {
-                    return FSP_ERR_CTSU_DIAG_SUCLK_GAIN;
-                }
-            }
-        }
-
-        cco_gain_data_pre = cco_gain_data;
-    }
-
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
-}
-
-static void ctsu_diag_clock_recovery_scan_start (void)
-{
-    CTSU.CTSUCRA.LONG           = g_ctsu_diag_reg.ctsucra;
-    CTSU.CTSUCRA.BIT.MD0        = 1;
-    CTSU.CTSUCRA.BIT.MD1        = 0;
-    CTSU.CTSUMCH.LONG           = g_ctsu_diag_reg.ctsumch;
-    CTSU.CTSUCRB.LONG           = g_ctsu_diag_reg.ctsucrb;
-    CTSU.CTSUCRA.BIT.LOAD       = 1;
-    CTSU.CTSUCRB.BIT.SSCNT      = 1;
-    CTSU.CTSUCALIB.BIT.SUCARRY  = 0;
-    CTSU.CTSUCALIB.BIT.CCOCALIB = 0;
-    CTSU.CTSUCALIB.BIT.CCOCLK   = 1;
-    CTSU.CTSUCALIB.BIT.TSOC     = 0;
-    CTSU.CTSUCALIB.BIT.SUCLKEN  = 1;
-
-    CTSU.CTSUCRA.BIT.SDPSEL = 0;
-    CTSU.CTSUSUCLKA.LONG    = g_ctsu_diag_reg.ctsusuclka;
-    CTSU.CTSUSUCLKB.LONG    = g_ctsu_diag_reg.ctsusuclkb;
-    CTSU.CTSUCRA.BIT.SDPSEL = 1;
-
-    CTSU.CTSUMCH.BIT.MCA0 = 1;
-    CTSU.CTSUMCH.BIT.MCA1 = 1;
-    CTSU.CTSUMCH.BIT.MCA2 = 1;
-    CTSU.CTSUMCH.BIT.MCA3 = 0;
-
-    CTSU.CTSUCHACA.LONG  = g_ctsu_diag_info.chaca;
-    CTSU.CTSUCHACB.LONG  = g_ctsu_diag_info.chacb;
-    CTSU.CTSUCHTRCA.LONG = 0;
-    CTSU.CTSUCHTRCB.LONG = 0;
-
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
-   /* Sensor counter auto correction enabled */
-   CTSU.CTSUOPT.BIT.CCOCFEN = 0;
-#endif
-
-    /* Setting time of measurement */
-
-    g_ctsu_diag_info.ctsuwr.ctsuso = (uint32_t) ((0xf << 24) | (CTSU_SNUM_RECOMMEND << 10));
-}
-
-static void ctsu_diag_clock_recovery_data_get (void)
-{
-    uint8_t i;
-    for (i = 0; i < 3; i++)
-    {
-        g_ctsu_diag_info.suclk_count_clk_recv[i] = (uint16_t) (g_ctsu_diag_info.ctsuscnt[i] >> 16);
-    }
-
-#if (CTSU_CFG_AUTO_CORRECTION_ENABLE == 1)
-   /* Sensor counter auto correction enabled */
-   CTSU.CTSUOPT.BIT.CCOCFEN = 1;
-#endif
-}
-
-static fsp_err_t ctsu_diag_clock_recovery_result (void)
-{
-    uint8_t         i;
-    uint32_t        suclk[3];
-    static uint32_t suclk_cnt[3];
-
-    suclk[0] = (CTSU_DIAG_STCLK_FREQ * (CTSU_CFG_SUMULTI0 + 1));
-    suclk[1] = (CTSU_DIAG_STCLK_FREQ * (CTSU_CFG_SUMULTI1 + 1));
-    suclk[2] = (CTSU_DIAG_STCLK_FREQ * (CTSU_CFG_SUMULTI2 + 1));
-
-    for (i = 0; i < 3; i++)
-    {
-        suclk_cnt[i % 3] = ((suclk[i % 3] * (CTSU_SNUM_RECOMMEND + 1)) / CTSU_DIAG_STCLK_FREQ) * 8 * 2;
-
-        /* suclk check */
-        if ((suclk_cnt[i % 3] + CTSU_CFG_DIAG_CLOCK_RECOV_RANGE) < g_ctsu_diag_info.suclk_count_clk_recv[i])
-        {
-            return FSP_ERR_CTSU_DIAG_CLOCK_RECOVERY;
-        }
-
-        if ((suclk_cnt[i % 3] - CTSU_CFG_DIAG_CLOCK_RECOV_RANGE) > g_ctsu_diag_info.suclk_count_clk_recv[i])
-        {
-            return FSP_ERR_CTSU_DIAG_CLOCK_RECOVERY;
-        }
-    }
-
-    /* if all checks passed to this point, return success */
-    return FSP_SUCCESS;
-}
-
-  #if (CTSU_CFG_NUM_CFC != 0)
-static void ctsu_diag_cfc_gain_scan_start (void)
-{
-    /* CTSU Setting */
-    CTSU.CTSUCRA.BIT.MD0    = 1;
-    CTSU.CTSUCRA.BIT.MD1    = 0;
-    CTSU.CTSUMCH.BIT.MCA0   = 1;
-    CTSU.CTSUMCH.BIT.MCA1   = 0;
-    CTSU.CTSUMCH.BIT.MCA2   = 0;
-    CTSU.CTSUMCH.BIT.MCA3   = 0;
-    CTSU.CTSUCRA.BIT.LOAD   = 1;
-    CTSU.CTSUCRA.BIT.CFCON  = 1;
-    CTSU.CTSUCRA.BIT.PUMPON = 1;
-    CTSU.CTSUCRA.BIT.TXVSEL = 1;
-
-    CTSU.CTSUCRB.BIT.SSMOD = 0;
-    CTSU.CTSUCRB.BIT.SSCNT = 0;
-    CTSU.CTSUCRB.BIT.SST   = 0x1F;
-
-    CTSU.CTSUCRA.BIT.PCSEL  = 1;
-    CTSU.CTSUCRA.BIT.SDPSEL = 1;
-
-    CTSU.CTSUCALIB            = 0;
-    CTSU.CTSUCALIB.BIT.SUCARRY  = 0;
-    CTSU.CTSUCALIB.BIT.CCOCALIB = 0;
-    CTSU.CTSUCALIB.BIT.CCOCLK   = 0;
-    CTSU.CTSUCALIB.BIT.CFCMODE  = 1;
-    CTSU.CTSUCALIB.BIT.CFCRDMD  = 1;
-
-    if (CTSU_DIAG_CHACA_TSMAX > g_ctsu_corrcfc_info.ts_table[0])
-    {
-        CTSU.CTSUCHACA.LONG = (uint32_t) (1 << g_ctsu_corrcfc_info.ts_table[0]);
-        CTSU.CTSUCHACB.LONG = 0;
-    }
-    else
-    {
-        CTSU.CTSUCHACA.LONG = 0;
-        CTSU.CTSUCHACB.LONG = (uint32_t) (1 << (g_ctsu_corrcfc_info.ts_table[0] - CTSU_DIAG_CHACA_TSMAX));
-    }
-
-    CTSU.CTSUCHTRC0 = 0;
-    CTSU.CTSUCHTRC1 = 0;
-    CTSU.CTSUCHTRC2 = 0;
-    CTSU.CTSUCHTRC3 = 0;
-    CTSU.CTSUCHTRC4 = 0;
-
-    CTSU.CTSUMCH.BIT.MCH0 = 0;
-
-    CTSU.CTSUCRA.BIT.SDPSEL = 0;
-    CTSU.CTSUSUCLK0       =
-        (uint16_t) (((g_ctsu_diag_info.loop_count + CTSU_CORRCFC_CENTER_POINT) * CTSU_CORRECTION_SUMULTI) - 1);
-    CTSU.CTSUCRA.BIT.SDPSEL = 1;
-
-    g_ctsu_diag_info.ctsuwr.ctsuso = (uint32_t) (CTSU_SNUM_RECOMMEND << 10);
-}
-
-static void ctsu_diag_cfc_gain_data_get (void)
-{
-    g_ctsu_diag_info.cfc_cnt[g_ctsu_diag_info.loop_count] = (uint16_t) g_ctsu_diag_info.ctsuscnt[0];
-
-    g_ctsu_diag_info.loop_count++;
-}
-
-static fsp_err_t ctsu_diag_cfc_gain_result (void)
-{
-    uint8_t k;
-
-    for (k = 0; k < (CTSU_CORRCFC_POINT_NUM - 1); k++)
-    {
-        if (g_ctsu_diag_info.cfc_cnt[k + 1] > g_ctsu_diag_info.cfc_cnt[k])
-        {
-            /* PASS */
-        }
-        else
-        {
-
-            /* FAIL */
-            return FSP_ERR_CTSU_DIAG_CFC_GAIN;
-        }
-    }
-
-    return FSP_SUCCESS;
-}
-
+   #endif
   #endif
+
+        upper_threshold_value = (uint16_t) (((uint32_t) clock_recovery_threshold_table[g_ctsu_diag_info.test_count][1] *
+                                             (CTSU_DIAG_PERCENT_BASE + CTSU_DIAG_CLOCK_RECOVERY_SELF_TEST_MARGIN_PCT)) /
+                                            CTSU_DIAG_PERCENT_BASE);
+        lower_threshold_value = (uint16_t) (((uint32_t) clock_recovery_threshold_table[g_ctsu_diag_info.test_count][0] *
+                                             (CTSU_DIAG_PERCENT_BASE - CTSU_DIAG_CLOCK_RECOVERY_SELF_TEST_MARGIN_PCT)) /
+                                            CTSU_DIAG_PERCENT_BASE);
+
+        if ((average_data <= lower_threshold_value) ||
+            (average_data >= upper_threshold_value))
+        {
+            g_ctsu_diag_info.test_result = FSP_ERR_CTSU_DIAG_CLOCK_RECOVERY;
+        }
+
+        g_ctsu_diag_info.test_count       += 1;
+        g_ctsu_diag_info.measurement_count = 0;
+        g_ctsu_diag_info.measurement_sum   = 0;
+    }
+}
  #endif
 #endif

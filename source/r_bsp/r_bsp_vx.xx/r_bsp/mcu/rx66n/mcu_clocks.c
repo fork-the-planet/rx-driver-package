@@ -50,6 +50,9 @@
 *                               Added process to switch system clock to main clock when initializing RTC with the main 
 *                               clock.
 *         : 26.02.2025 2.04     Changed the disclaimer.
+*         : 04.03.2026 2.05     Fixed the initialization settings of sub-clock for Technical Update Information
+*                               (TN-RX*-A0236B).
+*                               Fixed the warning of clock_source_select function for GCC.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -557,6 +560,9 @@ static void clock_source_select (void)
     #endif
     volatile uint16_t tmp_packcr;
 #endif /* BSP_CFG_BOOTLOADER_PROJECT == 0 */
+#if defined(__GNUC__)
+    INTERNAL_NOT_USED(&dummy);
+#endif
 
 #if BSP_CFG_HOCO_OSCILLATE_ENABLE == 1
     /* HOCO is chosen. Start it operating if it is not already operating. */
@@ -885,18 +891,12 @@ static void clock_source_select (void)
         b3  RTCOE - RTCOUT Output Enable - RTCOUT output enabled.
         b2  ADJ30 - 30-Second Adjustment - 30-second adjustment is executed.
         b1  RESET - RTC Software Reset - The prescaler and the target registers for RTC software reset are initialized.
-        b0  START - start - Prescaler is stopped. */
-        RTC.RCR2.BYTE &= 0x7E;
+        b0  START - start - Prescaler is stopped.
+        NOTE: Please refer Tool News(TN-RX*-A0236B) for details. */
+        RTC.RCR2.BYTE = 0x00;
 
         /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.START)
-        {
-            /* Confirm that the written value can be read correctly. */
-             R_BSP_NOP();
-        }
-
-        /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.CNTMD)
+        while (0x00 != RTC.RCR2.BYTE)
         {
             /* Confirm that the written value can be read correctly. */
             R_BSP_NOP();

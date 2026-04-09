@@ -7,19 +7,21 @@
 #ifndef R_BLE_GTL_H
 #define R_BLE_GTL_H
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Includes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include "r_ble_api.h"
 #include "r_ble_gtl_typedef.h"
 #include "r_ble_gtl_security.h"
 #include "r_ble_da1453x_config.h"
+#include "rm_ble_abs_gtl_storage.h"
+#include "r_gpio_rx_if.h"
 
 /**********************************************************************************************************************
  * Macro definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /* SCK port pin macros.  */
 #define BLE_SCK_DDR(x, y)           (BLE_SCK_DDR_PREPROC(x, y))
@@ -39,7 +41,7 @@
 #define R_BLE_GTL_SRC_ID_MASK                   0x00FF
 /**********************************************************************************************************************
  * Typedef definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 typedef struct r_ble_gtl_transport_api
 {
     /* To be called before any write or reads are executed */
@@ -53,7 +55,7 @@ typedef struct r_ble_gtl_transport_api
 
 /**********************************************************************************************************************
  * Public Function Prototypes
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #if defined(BLE_CFG_TRANSPORT_INTERFACE_UART)
 void R_BLE_GTL_UartCallback (void * pArgs);
 #endif
@@ -134,18 +136,22 @@ ble_status_t R_BLE_GTL_VS_Init(ble_vs_app_cb_t vs_cb);
 ble_status_t R_BLE_GTL_VS_GetBdAddr(uint8_t addr_type);
 ble_status_t R_BLE_GTL_VS_GetBdAddr_dflash(uint8_t addr_type, st_ble_dev_addr_t * p_addr);
 ble_status_t R_BLE_GTL_VS_SetBdAddr(st_ble_dev_addr_t * p_addr);
-ble_status_t R_BLE_GTL_VS_SetBdAddr_dflash(st_ble_dev_addr_t * p_addr);
 ble_status_t R_BLE_GTL_VS_GetRand(uint8_t rand_size);
 ble_status_t R_BLE_GTL_VS_GetTxPower(uint16_t conn_hdl);
 ble_status_t R_BLE_GTL_VS_SetTxPower (uint16_t conn_hdl, uint8_t tx_power);
 ble_status_t R_BLE_GTL_VS_SetSleepMode(uint8_t sleep_mode, uint8_t ram_retention, uint8_t pin_selection);
+ble_status_t R_BLE_GTL_VS_SetSleepModeExt(uint8_t sleep_mode, uint8_t ram_retention, 
+                                            uint16_t wkup_pin_mask, uint16_t wkup_pol_mask);
+ble_status_t R_BLE_GTL_VS_GetEncKey(uint8_t rand_size, r_ble_gtl_app_gen_enc_key_rsp_t *data);
 
 ble_status_t R_BLE_GTL_GAP_SetPairingParams (st_ble_gap_pairing_param_t * p_pair_param);
+ble_status_t R_BLE_GTL_ReplyLtkReq(uint16_t conn_hdl, uint16_t ediv, uint8_t * p_peer_rand, uint8_t response);
 ble_status_t r_ble_gtl_send_gapc_bond_cfm(uint16_t conn_hdl, r_ble_gtl_gapc_bond_t bond, bool accept, uint32_t passkey);
 ble_status_t r_ble_gtl_send_gapc_encrypt_cfm(uint16_t conn_hdl, bool found);
 ble_status_t r_ble_gtl_gapc_ltk_rsp_comp(uint16_t conn_hdl, bool found);
 ble_status_t r_ble_gtl_app_get_rand_cust(uint8_t rand_size, r_ble_gtl_app_gen_rand_rsp_t *data);
 ble_status_t r_ble_gtl_security_cmd(uint16_t conn_hdl);
+
 
 // CENTRAL_ROLE
 ble_status_t r_ble_gtl_send_bond_cmd(uint16_t conn_hdl);

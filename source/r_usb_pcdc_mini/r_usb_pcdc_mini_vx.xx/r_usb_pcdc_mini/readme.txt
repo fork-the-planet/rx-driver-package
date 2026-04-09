@@ -10,7 +10,7 @@ R01AN2170JJ
 
 Version
 -------
-v1.31
+v1.32
 
 
 Overview
@@ -68,9 +68,9 @@ r_usb_pcdc_mini
 |
 +---doc
 |     \en
-|     |   r01an2170ej0131_usb.pdf
+|     |   r01an2170ej0132_usb.pdf
 |     \jp
-|         r01an2170jj0131_usb.pdf
+|         r01an2170jj0132_usb.pdf
 |
 +---ref
 |       r_usb_pcdc_mini_config_reference.h

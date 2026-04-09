@@ -4,9 +4,9 @@
 * SPDX-License-Identifier: BSD-3-Clause
 */
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Includes   <System Includes> , "Project Includes"
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 #include <rm_ble_abs.h>
 #include <rm_ble_abs_api.h>
 #include <string.h>
@@ -15,9 +15,14 @@
 #include "r_ble_gtl.h"
 #include "r_ble_gtl_security.h"
 
-/***********************************************************************************************************************
+#ifdef ENABLE_STORAGE
+ #include "rm_ble_abs_gtl_storage.h"
+ #include "r_ble_api.h"
+#endif
+
+/**********************************************************************************************************************
  * Macro definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
 /* "BLE_ABS" in ASCII, used to determine if module is open. */
 #define BLE_ABS_OPEN    (0X00424C45ULL)
@@ -35,12 +40,14 @@
 /** scan window for connection request with 1M & 2M PHY */
 #define BLE_ABS_CONN_SC_WINDOW_FAST                  (0x0030)
 
+
 /* Advertising handles */
 typedef enum e_ble_abs_handle_type
 {
     BLE_ABS_LEGACY_HDL   = 0x00,       // Advertising Handle for Legacy Advertising
     BLE_ABS_NON_CONN_HDL = 0x02,       // Advertising Handle for Non-Connectable Advertising
 } ble_abs_handle_type_t;
+
 
 /* Advertising status */
 typedef enum e_ble_abs_adv_status
@@ -83,17 +90,17 @@ typedef enum e_ble_abs_pv_status
 /* The invalid timer handle. */
 #define BLE_TIMER_INVALID_HDL          (0xFF)
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Extern variables
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Local Typedef definitions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Private global variables and functions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static fsp_err_t ble_abs_convert_legacy_advertising_parameter(
     ble_abs_legacy_advertising_parameter_t * p_legacy_advertising_parameter,
     st_ble_gap_adv_param_t                 * p_gap_advertising_parameter);
@@ -161,11 +168,11 @@ const ble_abs_api_t g_ble_abs_on_ble =
 
 ble_abs_instance_ctrl_t * gp_instance_ctrl;
 
-/***********************************************************************************************************************
+/**********************************************************************************************************************
  * Exported global functions
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Host stack is initialized with this function. Before using All the R_BLE APIs,
  * it's necessary to call this function. A callback functions are registered with this function.
  * In order to receive the GAP, GATT, Vendor specific event,
@@ -181,7 +188,7 @@ ble_abs_instance_ctrl_t * gp_instance_ctrl;
  * @retval FSP_ERR_ALREADY_OPEN                        Requested channel is already open in a different configuration.
  * @retval FSP_ERR_INVALID_ARGUMENT                    Invalid input parameter.
  * @retval FSP_ERR_INVALID_MODE                        Invalid mode during open call
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_Open (ble_abs_ctrl_t * const p_ctrl, ble_abs_cfg_t const * const p_cfg)
 {
     int32_t      i;
@@ -292,7 +299,7 @@ fsp_err_t RM_BLE_ABS_Open (ble_abs_ctrl_t * const p_ctrl, ble_abs_cfg_t const * 
     return FSP_SUCCESS;
 }                                      /* End of function RM_BLE_ABS_Open() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * @brief Close the BLE channel.
  * Implements @ref ble_abs_api_t::close.
  *
@@ -302,7 +309,7 @@ fsp_err_t RM_BLE_ABS_Open (ble_abs_ctrl_t * const p_ctrl, ble_abs_cfg_t const * 
  * @retval  FSP_SUCCESS              Channel closed successfully.
  * @retval  FSP_ERR_ASSERTION        Null pointer presented.
  * @retval  FSP_ERR_NOT_OPEN         Control block not open.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_Close (ble_abs_ctrl_t * const p_ctrl)
 {
     ble_abs_instance_ctrl_t * p_ble_abs_ctrl = (ble_abs_instance_ctrl_t *) p_ctrl;
@@ -319,12 +326,12 @@ fsp_err_t RM_BLE_ABS_Close (ble_abs_ctrl_t * const p_ctrl)
     return FSP_SUCCESS;
 }                                      /* End of function RM_BLE_ABS_Close() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * This function is not implemented. To perform this function call R_BLE_Close followed by R_BLE_Open.
  * Implements @ref ble_abs_api_t::reset.
  *
  * @retval  FSP_ERR_UNSUPPORTED     Function is not supported
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_Reset (ble_abs_ctrl_t * const p_ctrl, ble_event_cb_t init_callback)
 {
     FSP_PARAMETER_NOT_USED(p_ctrl);
@@ -333,7 +340,7 @@ fsp_err_t RM_BLE_ABS_Reset (ble_abs_ctrl_t * const p_ctrl, ble_event_cb_t init_c
     return FSP_ERR_UNSUPPORTED;
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start Legacy Advertising after setting advertising parameters, advertising data and scan response data.
  * The legacy advertising uses the advertising set whose advertising handle is 0.
  * The advertising type is connectable and scannable(ADV_IND).
@@ -351,7 +358,7 @@ fsp_err_t RM_BLE_ABS_Reset (ble_abs_ctrl_t * const p_ctrl, ble_event_cb_t init_c
  * @retval FSP_ERR_INVALID_STATE                       Host stack hasn't been initialized.
  * @retval FSP_ERR_INVALID_POINTER                     p_advertising_parameter is specified as NULL.
  * @retval FSP_ERR_INVALID_ARGUMENT                    The advertising parameter is out of range.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_StartLegacyAdvertising (ble_abs_ctrl_t * const                               p_ctrl,
                                         ble_abs_legacy_advertising_parameter_t const * const p_advertising_parameter)
 {
@@ -415,7 +422,8 @@ fsp_err_t RM_BLE_ABS_StartLegacyAdvertising (ble_abs_ctrl_t * const             
 
     FSP_ERROR_RETURN(BLE_SUCCESS == R_BLE_GAP_SetAdvParam(&advertising_parameter), FSP_ERR_INVALID_ARGUMENT);
 
-    if ((NULL != p_advertising_parameter->p_advertising_data) && (0 < p_advertising_parameter->advertising_data_length))
+    if ((NULL != p_advertising_parameter->p_advertising_data) &&
+        (0 < p_advertising_parameter->advertising_data_length))
     {
         /* Configure the GAP Advertisment Payload. */
         st_ble_gap_adv_data_t advertising_data = {0};
@@ -441,14 +449,14 @@ fsp_err_t RM_BLE_ABS_StartLegacyAdvertising (ble_abs_ctrl_t * const             
 
     /* Set the internal status flags to indicate the advertisment mode. */
     uint32_t status =
-	 p_advertising_parameter->fast_advertising_period 
+     p_advertising_parameter->fast_advertising_period 
                                                 ? BLE_ABS_ADV_STATUS_PARAM_FAST : BLE_ABS_ADV_STATUS_PARAM_SLOW;
     ble_abs_set_advertising_status(p_instance_ctrl, advertising_handle, status, 0);
 
     return FSP_SUCCESS;
 }                                      /* End of function RM_BLE_ABS_StartLegacyAdvertising() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start Extended Advertising after setting advertising parameters, advertising data.
  * The extended advertising uses the advertising set whose advertising handle is 1.
  * The advertising type is connectable and non-scannable.
@@ -461,9 +469,9 @@ fsp_err_t RM_BLE_ABS_StartLegacyAdvertising (ble_abs_ctrl_t * const             
  * @retval FSP_ERR_NOT_OPEN                            Control block not open.
  * @retval FSP_ERR_INVALID_POINTER                     p_advertising_parameter is specified as NULL.
  * @retval FSP_ERR_UNSUPPORTED                         Subordinate modules do not support this feature.
- **********************************************************************************************************************/
-fsp_err_t RM_BLE_ABS_StartExtendedAdvertising (ble_abs_ctrl_t * const                               p_ctrl,
-                                               ble_abs_extend_advertising_parameter_t const * const p_advertising_parameter)
+ *********************************************************************************************************************/
+fsp_err_t RM_BLE_ABS_StartExtendedAdvertising (ble_abs_ctrl_t * const p_ctrl,
+                                        ble_abs_extend_advertising_parameter_t const * const p_advertising_parameter)
 {
     ble_abs_instance_ctrl_t * p_instance_ctrl = (ble_abs_instance_ctrl_t *) p_ctrl;
 
@@ -482,7 +490,7 @@ fsp_err_t RM_BLE_ABS_StartExtendedAdvertising (ble_abs_ctrl_t * const           
     return FSP_ERR_UNSUPPORTED;
 }                                      /* End of function RM_BLE_ABS_StartExtendedAdvertising() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start Non-Connectable Advertising after setting advertising parameters, advertising data.
  * The non-connectable advertising uses the advertising set whose advertising handle is 2.
  * The advertising type is non-connectable and non-scannable.
@@ -496,7 +504,7 @@ fsp_err_t RM_BLE_ABS_StartExtendedAdvertising (ble_abs_ctrl_t * const           
  * @retval FSP_ERR_NOT_OPEN                            Control block not open.
  * @retval FSP_ERR_INVALID_POINTER                     p_advertising_parameter is specified as NULL.
  * @retval FSP_ERR_UNSUPPORTED                         Feature not yet supported.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_StartNonConnectableAdvertising (
     ble_abs_ctrl_t * const                                        p_ctrl,
     ble_abs_non_connectable_advertising_parameter_t const * const p_advertising_parameter)
@@ -518,7 +526,7 @@ fsp_err_t RM_BLE_ABS_StartNonConnectableAdvertising (
     return FSP_ERR_UNSUPPORTED;
 }                                      /* End of function RM_BLE_ABS_StartNonConnectableAdvertising() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start Periodic Advertising after setting advertising parameters, periodic advertising parameters,
  * advertising data and periodic advertising data.
  * The periodic advertising uses the advertising set whose advertising handle is 3.
@@ -533,9 +541,9 @@ fsp_err_t RM_BLE_ABS_StartNonConnectableAdvertising (
  * @retval FSP_ERR_NOT_OPEN                            Control block not open.
  * @retval FSP_ERR_INVALID_POINTER                     p_advertising_parameter is specified as NULL.
  * @retval FSP_ERR_UNSUPPORTED                         Subordinate modules do not support this feature.
- **********************************************************************************************************************/
-fsp_err_t RM_BLE_ABS_StartPeriodicAdvertising (ble_abs_ctrl_t * const                                 p_ctrl,
-                                               ble_abs_periodic_advertising_parameter_t const * const p_advertising_parameter)
+ *********************************************************************************************************************/
+fsp_err_t RM_BLE_ABS_StartPeriodicAdvertising (ble_abs_ctrl_t * const p_ctrl,
+                                        ble_abs_periodic_advertising_parameter_t const * const p_advertising_parameter)
 {
     ble_abs_instance_ctrl_t * p_instance_ctrl = (ble_abs_instance_ctrl_t *) p_ctrl;
 
@@ -553,7 +561,7 @@ fsp_err_t RM_BLE_ABS_StartPeriodicAdvertising (ble_abs_ctrl_t * const           
     return FSP_ERR_UNSUPPORTED;
 }                                      /* End of function RM_BLE_ABS_StartPeriodicAdvertising() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start scanning after setting scan parameters.
  * The scanner address type is Public Identity Address.
  * Fast scan is followed by slow scan.
@@ -569,7 +577,7 @@ fsp_err_t RM_BLE_ABS_StartPeriodicAdvertising (ble_abs_ctrl_t * const           
  * @retval FSP_ERR_NOT_OPEN                            Control block not open.
  * @retval FSP_ERR_INVALID_POINTER                     p_scan_parameter is specified as NULL.
  * @retval FSP_ERR_UNSUPPORTED                         Function is not supported
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_StartScanning (ble_abs_ctrl_t * const                 p_ctrl,
                                     ble_abs_scan_parameter_t const * const p_scan_parameter)
 {
@@ -631,7 +639,7 @@ fsp_err_t RM_BLE_ABS_StartScanning (ble_abs_ctrl_t * const                 p_ctr
     return ret_val;
 }                                      /* End of function RM_BLE_ABS_StartScanning() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Generate a IRK, add it to the resolving list, set privacy mode and enable RPA function.
  * Register vendor specific callback function, if IRK is generated by this function.
  * After configuring local device privacy,
@@ -643,7 +651,7 @@ fsp_err_t RM_BLE_ABS_StartScanning (ble_abs_ctrl_t * const                 p_ctr
  * @retval FSP_ERR_NOT_OPEN                            Control block not open.
  * @retval FSP_ERR_INVALID_ARGUMENT                    The privacy_mode parameter is out of range.
  * @retval FSP_ERR_UNSUPPORTED                         Function is not supported
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_SetLocalPrivacy (ble_abs_ctrl_t * const p_ctrl,
                                       uint8_t const * const  p_lc_irk,
                                       uint8_t                privacy_mode)
@@ -666,7 +674,7 @@ fsp_err_t RM_BLE_ABS_SetLocalPrivacy (ble_abs_ctrl_t * const p_ctrl,
     return FSP_ERR_UNSUPPORTED;
 }                                      /* End of function RM_BLE_ABS_SetLocalPrivacy() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Request create connection.
  * The initiator address type is Public Identity Address.
  * The scan interval is 60ms and the scan window is 30ms in case of 1M PHY or 2M PHY.
@@ -685,7 +693,7 @@ fsp_err_t RM_BLE_ABS_SetLocalPrivacy (ble_abs_ctrl_t * const p_ctrl,
  * @retval FSP_ERR_INVALID_POINTER                     p_connection_parameter is specified as NULL.
  * @retval FSP_ERR_INVALID_ARGUMENT                    The create connection parameter is out of range.
  * @retval FSP_ERR_UNSUPPORTED                         Function is not supported
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_CreateConnection (ble_abs_ctrl_t * const                       p_ctrl,
                                        ble_abs_connection_parameter_t const * const p_connection_parameter)
 {
@@ -747,7 +755,7 @@ fsp_err_t RM_BLE_ABS_CreateConnection (ble_abs_ctrl_t * const                   
     return ble_retval;
 }                                      /* End of function RM_BLE_ABS_CreateConnection() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start pairing or encryption. If pairing has been done, start encryption.
  * The pairing parameters are configured by RM_BLE_ABS_Open() or R_BLE_GAP_SetPairingParams().
  * If the pairing parameters are configure by RM_BLE_ABS_Open(),
@@ -761,7 +769,7 @@ fsp_err_t RM_BLE_ABS_CreateConnection (ble_abs_ctrl_t * const                   
  * @retval FSP_ERR_ASSERTION                           p_instance_ctrl or connection_handle are specified as NULL.
  * @retval FSP_ERR_NOT_OPEN                            Control block not open.
  * @retval FSP_ERR_UNSUPPORTED                         Function is not supported
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 fsp_err_t RM_BLE_ABS_StartAuthentication (ble_abs_ctrl_t * const p_ctrl, uint16_t connection_handle)
 {
     FSP_PARAMETER_NOT_USED(connection_handle);
@@ -782,17 +790,17 @@ fsp_err_t RM_BLE_ABS_StartAuthentication (ble_abs_ctrl_t * const p_ctrl, uint16_
     retval = R_BLE_GAP_GetDevSecInfo(connection_handle, &security_information); ///< check security information
     if (BLE_SUCCESS == retval)
     {
-        retval = R_BLE_GAP_StartEnc(connection_handle);
+        retval = R_BLE_GAP_StartEnc(connection_handle);                         // Bonding information is stored
     }
     else
     {
-        retval = R_BLE_GAP_StartPairing(connection_handle);
+        retval = R_BLE_GAP_StartPairing(connection_handle);                     // Bonding information is not stored
     }
 
     return (fsp_err_t) retval;
 }                                      /* End of function RM_BLE_ABS_StartAuthentication() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Delete bonding information from BLE stack and storage.
  * Implements @ref ble_abs_api_t::deleteBondInformation.
  *
@@ -803,12 +811,13 @@ fsp_err_t RM_BLE_ABS_StartAuthentication (ble_abs_ctrl_t * const p_ctrl, uint16_
  * @retval FSP_ERR_ASSERTION       The parameter p_instance_ctrl is NULL.
  * @retval FSP_ERR_INVALID_POINTER The parameter p_bond_information_parameter is NULL.
  * @retval FSP_ERR_NOT_OPEN        Control block not open.
- **********************************************************************************************************************/
-fsp_err_t RM_BLE_ABS_DeleteBondInformation (ble_abs_ctrl_t * const                             p_ctrl,
-                                            ble_abs_bond_information_parameter_t const * const p_bond_information_parameter)
+ *********************************************************************************************************************/
+fsp_err_t RM_BLE_ABS_DeleteBondInformation (ble_abs_ctrl_t * const p_ctrl,
+                                    ble_abs_bond_information_parameter_t const * const p_bond_information_parameter)
 {
     fsp_err_t                 err             = FSP_SUCCESS;
     ble_abs_instance_ctrl_t * p_instance_ctrl = (ble_abs_instance_ctrl_t *) p_ctrl;
+    uint8_t bond_index = 0;
 
 #if BLE_CFG_PARAM_CHECKING_ENABLE
 
@@ -819,34 +828,69 @@ fsp_err_t RM_BLE_ABS_DeleteBondInformation (ble_abs_ctrl_t * const              
 #else
     FSP_PARAMETER_NOT_USED(p_instance_ctrl);
 #endif
-#ifdef ENABLE_STORAGE
+
     if (BLE_ABS_REMOTE_BOND_INFORMATION_ALL == p_bond_information_parameter->remote_bond_information)
     {
-        // Delete all remote keys
-        err = r_ble_gtl_sec_rem_all_bond_data();
+        // Delete all remote keys from RAM
+        r_ble_gtl_sec_rem_all_bond_data();
+ #ifdef ENABLE_STORAGE
+        // Delete all remote keys from FLASH
+        err = rm_ble_abs_gtl_storage_rem_all_bond_data();
+ #endif
 
         return err;
     }
 
     if (BLE_ABS_REMOTE_BOND_INFORMATION_SPECIFIED == p_bond_information_parameter->remote_bond_information)
     {
-        // Delete a specific remote address
-        err = r_ble_gtl_sec_rem_specific_bond_data(p_bond_information_parameter->p_address);
+        // Delete a specific bond data from RAM using address & perform defragmentation
+        err = r_ble_gtl_sec_rem_specific_bond_data(p_bond_information_parameter->p_address, &bond_index);
+        if (FSP_SUCCESS != err)
+        {
+            return err;
+        }
+
+        uint8_t avail_data = r_ble_gtl_sec_get_active_bond_entries();
+
+ #ifdef ENABLE_STORAGE
+
+        // Delete a specific remote address from FLASH
+        if (FSP_SUCCESS == err)
+        {
+            for (uint8_t idx = 0; idx < avail_data; idx++)
+            {
+                err = rm_ble_abs_gtl_storage_write_bond_data(idx + 1, (uint8_t *)r_ble_gtl_sec_get_rem_bond_data(idx),
+                                                           sizeof(sec_ble_gap_bond_info_t));
+                if (FSP_SUCCESS != err)
+                {
+                    return err;
+                }
+            }
+
+            // Update the bond num in FLASH storage
+            err = rm_ble_abs_gtl_storage_update_bond_num(avail_data);
+            if (FSP_SUCCESS != err)
+            {
+                return err;
+            }
+        }
+ #endif                                // ENABLE_STORAGE
 
         return err;
     }
-#endif
+    FSP_PARAMETER_NOT_USED(bond_index);
 
     return err;
 }
+
 
 /************************************************
  *   Static function definitions                *
  ***********************************************/
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Configure scan response data and start legacy advertising.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_set_legacy_scan_response_data (ble_abs_instance_ctrl_t * const p_instance_ctrl)
 {
     ble_abs_legacy_advertising_parameter_t * p_legacy_parameter =
@@ -869,9 +913,9 @@ static void ble_abs_set_legacy_scan_response_data (ble_abs_instance_ctrl_t * con
     }
 }                                      /* End of function ble_abs_set_legacy_scan_response_data() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Handler for GAP BLE_GAP_EVENT_ADV_PARAM_SET_COMP event.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_advertising_parameter_set_handler (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                                        st_ble_evt_data_t             * p_event_data)
 {
@@ -938,11 +982,11 @@ static void ble_abs_advertising_parameter_set_handler (ble_abs_instance_ctrl_t *
     }
 }                                      /* End of function ble_abs_advertising_parameter_set_handler() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Start advertising.
  *
  * @retval FSP_SUCCESS                                 Operation succeeded.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_advertising_start (ble_abs_instance_ctrl_t * const p_instance_ctrl, uint8_t advertising_handle)
 {
     ble_status_t retval = BLE_SUCCESS;
@@ -979,11 +1023,11 @@ static void ble_abs_advertising_start (ble_abs_instance_ctrl_t * const p_instanc
     }
 }                                      /* End of function ble_abs_advertising_start() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Configure advertising data or scan response data or periodic advertising data.
  *
  * @retval FSP_SUCCESS                                 Operation succeeded.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_advertising_set_data (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                           uint8_t                         advertising_handle,
                                           uint8_t                         data_type)
@@ -1048,9 +1092,9 @@ static void ble_abs_advertising_set_data (ble_abs_instance_ctrl_t * const p_inst
     }
 }                                      /* End of function ble_abs_advertising_set_data() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Handler for GAP BLE_GAP_EVENT_ADV_DATA_UPD_COMP event.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_advertising_data_set_handler (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                                   st_ble_evt_data_t             * p_event_data)
 {
@@ -1087,12 +1131,12 @@ static void ble_abs_advertising_data_set_handler (ble_abs_instance_ctrl_t * cons
     }
 }                                      /* End of function ble_abs_advertising_data_set_handler() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Handler for GAP BLE_GAP_EVENT_ADV_REPT_IND event.
  *
  * @retval FSP_SUCCESS                                 Operation succeeded.
  * @retval FSP_ERR_BLE_ABS_NOT_FOUND                   Filtering data is not included in the advertising data.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static fsp_err_t ble_abs_advertising_report_handler (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                                      st_ble_evt_data_t             * p_event_data)
 {
@@ -1148,7 +1192,7 @@ static fsp_err_t ble_abs_advertising_report_handler (ble_abs_instance_ctrl_t * c
             while (pos < len)
             {
                 /* Each advertising structure have following constructs.
-                 * - Lenght: 1 byte (The length of AD type + AD data)
+                 * - Length: 1 byte (The length of AD type + AD data)
                  * - AD type: 1 byte
                  * - AD data: variable
                  */
@@ -1180,7 +1224,7 @@ static fsp_err_t ble_abs_advertising_report_handler (ble_abs_instance_ctrl_t * c
 
 /**********************************************************************************************************************
  * Set gap callback and vendor specific callback function.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_set_abs_callback (ble_abs_instance_ctrl_t * const            p_instance_ctrl,
                                       ble_gap_application_callback_t             gap_callback,
                                       ble_vendor_specific_application_callback_t vendor_specific_callback)
@@ -1191,7 +1235,7 @@ static void ble_abs_set_abs_callback (ble_abs_instance_ctrl_t * const           
 
 /**********************************************************************************************************************
  * Set advertising interval.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_set_connection_advertising_interval (st_ble_gap_adv_param_t * p_advertising_parameter,
                                                          uint32_t                 fast_advertising_interval,
                                                          uint32_t                 slow_advertising_interval,
@@ -1210,9 +1254,9 @@ static void ble_abs_set_connection_advertising_interval (st_ble_gap_adv_param_t 
     }
 }                                      /* End of function ble_abs_set_connection_advertising_interval() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Set Abstraction API connection parameters to GAP connection parameters.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_set_connection_parameter (ble_abs_connection_phy_parameter_t * p_abs_connection_parameter,
                                               ble_gap_connection_phy_parameter_t * p_connection_phy_parameter,
                                               ble_gap_connection_parameter_t     * p_connection_parameter)
@@ -1231,9 +1275,9 @@ static void ble_abs_set_connection_parameter (ble_abs_connection_phy_parameter_t
     }
 }
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Update advertising data status.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_update_data_status (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                         uint32_t                        advertising_status,
                                         uint8_t                       * p_advertising_data,
@@ -1249,12 +1293,12 @@ static void ble_abs_update_data_status (ble_abs_instance_ctrl_t * const p_instan
     }
 }                                      /* End of function ble_abs_update_data_status() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Convert the legacy advertising parameters to GAP advertising parameters.
  *
  * @retval FSP_SUCCESS                                 Operation succeeded.
  * @retval FSP_ERR_INVALID_ARGUMENT                    The advertising parameter is out of range.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static fsp_err_t ble_abs_convert_legacy_advertising_parameter (
     ble_abs_legacy_advertising_parameter_t * p_legacy_advertising_parameter,
     st_ble_gap_adv_param_t                 * p_gap_advertising_parameter)
@@ -1294,9 +1338,9 @@ static fsp_err_t ble_abs_convert_legacy_advertising_parameter (
     return FSP_SUCCESS;
 }                                      /* End of function ble_abs_convert_legacy_advertising_parameter() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Set advertising status.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_set_advertising_status (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                             uint8_t                         advertising_handle,
                                             uint32_t                        set,
@@ -1306,9 +1350,9 @@ static void ble_abs_set_advertising_status (ble_abs_instance_ctrl_t * const p_in
     p_instance_ctrl->advertising_sets[advertising_handle].advertising_status &= ~clear;
 }                                      /* End of function ble_abs_set_advertising_status() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * Store advertising configuration.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_set_advertising_parameter (ble_abs_instance_ctrl_t * const p_instance_ctrl,
                                                void                          * p_advertising_parameter,
                                                uint8_t                         advertising_handle)
@@ -1329,8 +1373,9 @@ static void ble_abs_set_advertising_parameter (ble_abs_instance_ctrl_t * const p
                 memcpy(&p_instance_ctrl->advertising_sets[advertising_handle].remote_device_address,
                        p_abs_legacy->p_peer_address,
                        sizeof(ble_device_address_t));
-                p_instance_ctrl->advertising_sets[advertising_handle].advertising_parameter.legacy_advertising_parameter
-                        .p_peer_address = &p_instance_ctrl->advertising_sets[advertising_handle].remote_device_address;
+                       p_instance_ctrl->advertising_sets[advertising_handle]
+                       .advertising_parameter.legacy_advertising_parameter
+                       .p_peer_address = &p_instance_ctrl->advertising_sets[advertising_handle].remote_device_address;
             }
 
             break;
@@ -1365,31 +1410,72 @@ static void ble_abs_set_advertising_parameter (ble_abs_instance_ctrl_t * const p
     }
 }                                      /* End of function ble_abs_set_advertising_parameter() */
 
-/*******************************************************************************************************************//**
+/******************************************************************************************************************//**
  * GAP Event handler.
  *
  * @retval FSP_SUCCESS                                 Operation succeeded.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_gap_callback (uint16_t event_type, ble_status_t event_result, st_ble_evt_data_t * p_event_data)
 {
     switch (event_type)
     {
         case BLE_GAP_EVENT_STACK_ON:
         {
+            uint8_t   num_of_entries = 0;
+            uint8_t * bond_addr      = NULL;
+            uint16_t  bond_addr_len  = 0;
+            fsp_err_t err            = FSP_SUCCESS;
+
             R_BLE_VS_GetBdAddr(BLE_VS_ADDR_AREA_REG, BLE_GAP_ADDR_RAND);
+
+#ifdef ENABLE_STORAGE
+            r_ble_gtl_app_gen_enc_key_rsp_t p_enc_key_rsp;
+
+            /* Get the Crypto key from attach */
+            R_BLE_GTL_VS_GetEncKey(ENC_KEY_SIZE, &p_enc_key_rsp);
+
+            if (p_enc_key_rsp.status == BLE_SUCCESS)
+            {
+                /* Update the encryption key */
+                rm_ble_abs_gtl_storage_upd_crypto_key(p_enc_key_rsp.rand, p_enc_key_rsp.rand_size);
+            }
+#endif
 
             /* Clear the local DB */
             r_ble_gtl_sec_clear_ram_db();
+
 #ifdef ENABLE_STORAGE
 
             /* Read flash for bond info */
-            r_ble_gtl_storage_read_bond_data();
+            if (rm_ble_abs_gtl_storage_init(&num_of_entries) == FSP_SUCCESS)
+            {
+                // Read data from FLASH
+                err = rm_ble_abs_gtl_read_bond_data(num_of_entries, &bond_addr, &bond_addr_len);
+                if (err == FSP_SUCCESS)
+                {
+                    /* Push the bond data to RAM */
+                    r_ble_gtl_sec_push_bond_data_to_ram(bond_addr, bond_addr_len);
+                }
+
+                err = rm_ble_abs_gtl_storage_rel_buf(bond_addr); // Release malloc
+                if (err != FSP_SUCCESS)
+                {
+                    /* Handle the error */
+                }
+            }
 #endif
 
-            uint8_t              irk[BLE_GAP_IRK_SIZE];
-            ble_device_address_t identity_address;
-            R_BLE_GAP_SetLocIdInfo((st_ble_dev_addr_t *) (&identity_address), irk);
-
+/*
+ * uint8_t irk[BLE_GAP_IRK_SIZE];
+ * ble_device_address_t identity_address;
+ * R_BLE_GAP_SetLocIdInfo((st_ble_dev_addr_t *)(&identity_address), irk);
+ */
+#ifndef ENABLE_STORAGE
+            FSP_PARAMETER_NOT_USED(num_of_entries);
+            FSP_PARAMETER_NOT_USED(bond_addr_len);
+            FSP_PARAMETER_NOT_USED(bond_addr);
+            FSP_PARAMETER_NOT_USED(err);
+#endif
             break;
         }
 
@@ -1423,262 +1509,97 @@ static void ble_abs_gap_callback (uint16_t event_type, ble_status_t event_result
 
         case BLE_GAP_EVENT_CONN_IND:
         {
-            sec_ble_gap_bond_info_t        * bond_info_loc_tmp    = {0};
-            st_ble_gap_conn_evt_t          * p_gap_conn_evt_param = (st_ble_gap_conn_evt_t *) p_event_data->p_param;
-            r_ble_gtl_gapm_addr_solved_ind_t addr_solved_rsp;
-            uint8_t db_index = INVALID_IDX;
-            uint8_t auth_val = 0;
             ble_abs_set_advertising_status(gp_instance_ctrl, BLE_ABS_LEGACY_HDL, 0,
                                            (BLE_ABS_ADV_STATUS_ADV_FAST_START | BLE_ABS_ADV_STATUS_ADV_SLOW_START));
 
-            R_BLE_GAP_StopAdv(0);
+            // R_BLE_GAP_StopAdv(0);
 
-            if (p_gap_conn_evt_param->remote_addr_type == BLE_GAP_ADDR_RAND) // RANDOM ADDRESS
-            {
-                // Look for available IRKs in DB & send resolve cmd
-                db_index = r_ble_gtl_sec_resolve_rand_addr(p_gap_conn_evt_param->remote_addr, &addr_solved_rsp);
-                if (db_index != INVALID_IDX)
-                {
-                    auth_val = r_ble_gtl_sec_get_db_auth(db_index);
-
-                    /* Send the GAPC_CONNECTION_CFM cmd*/
-                    r_ble_gtl_connection_cfm_cmd(p_gap_conn_evt_param->conn_hdl, auth_val);
-
-                    // Update LUT using the resolved address, maybe moved to different conn handle.
-                    bond_info_loc_tmp = r_ble_gtl_sec_get_rem_bond_data(db_index);
-                    r_ble_gtl_sec_lut_table_info(UPDATE_ENTRY,
-                                                 &bond_info_loc_tmp->p_keys.p_keys_info.id_addr_info[1],
-                                                 p_gap_conn_evt_param->conn_hdl,
-                                                 p_gap_conn_evt_param->role);
-
-                    /* Update conn info in bond_info_loc*/
-                    memcpy(bond_info_loc_tmp->p_addr.addr, p_gap_conn_evt_param->remote_addr, BLE_BD_ADDR_LEN);
-                    bond_info_loc_tmp->p_addr.type = p_gap_conn_evt_param->remote_addr_type;
-
-                    /* Automaticaly try encryption */
-                    RM_BLE_ABS_StartAuthentication(NULL, p_gap_conn_evt_param->conn_hdl);
-                }
-                else
-                {
-                    /* Send the GAPC_CONNECTION_CFM cmd*/
-                    r_ble_gtl_connection_cfm_cmd(p_gap_conn_evt_param->conn_hdl, auth_val);
-
-                    /* Generate and register keys */
-                    r_ble_gtl_sec_gen_pairing_keys();
-
-                    /* New record, new LUT */
-                    r_ble_gtl_sec_lut_table_info(ADD_ENTRY,
-                                                 p_gap_conn_evt_param->remote_addr,
-                                                 p_gap_conn_evt_param->conn_hdl,
-                                                 p_gap_conn_evt_param->role);
-                    uint8_t bond_index =
-                        r_ble_gtl_sec_lut_table_info(GET_ENTRY, NULL, p_gap_conn_evt_param->conn_hdl, 0);
-                    bond_info_loc_tmp = r_ble_gtl_sec_get_rem_bond_data(bond_index);
-
-                    /* Add conn info in bond_info_loc*/
-                    memcpy(bond_info_loc_tmp->p_addr.addr, p_gap_conn_evt_param->remote_addr, BLE_BD_ADDR_LEN);
-                    bond_info_loc_tmp->p_addr.type = p_gap_conn_evt_param->remote_addr_type;
-                }
-            }
-            else                       // STATIC ADDRESS
-            {
-                db_index = r_ble_gtl_sec_find_static_addr(p_gap_conn_evt_param->remote_addr);
-                if (INVALID_IDX != db_index)
-                {
-                    auth_val = r_ble_gtl_sec_get_db_auth(db_index);
-
-                    /* Send the GAPC_CONNECTION_CFM cmd*/
-                    r_ble_gtl_connection_cfm_cmd(p_gap_conn_evt_param->conn_hdl, auth_val);
-
-                    /* UPDATE conn handle if changed */
-                    r_ble_gtl_sec_lut_table_info(UPDATE_ENTRY,
-                                                 p_gap_conn_evt_param->remote_addr,
-                                                 p_gap_conn_evt_param->conn_hdl,
-                                                 p_gap_conn_evt_param->role);
-
-                    /* Automaticaly try encryption */
-                    RM_BLE_ABS_StartAuthentication(NULL, p_gap_conn_evt_param->conn_hdl);
-                }
-                else
-                {
-                    /* Send the GAPC_CONNECTION_CFM cmd*/
-                    r_ble_gtl_connection_cfm_cmd(p_gap_conn_evt_param->conn_hdl, auth_val);
-
-                    /* Generate and register keys */
-                    r_ble_gtl_sec_gen_pairing_keys();
-
-                    /* New record, new LUT */
-                    db_index = r_ble_gtl_sec_lut_table_info(ADD_ENTRY,
-                                                            p_gap_conn_evt_param->remote_addr,
-                                                            p_gap_conn_evt_param->conn_hdl,
-                                                            p_gap_conn_evt_param->role);
-
-                    /* Add address information to DB, case IRK data is not exchanged. This applies to STATIC address */
-                    bond_info_loc_tmp = r_ble_gtl_sec_get_rem_bond_data(db_index);
-
-                    bond_info_loc_tmp->p_addr.type = p_gap_conn_evt_param->remote_addr_type;
-                    memcpy(bond_info_loc_tmp->p_addr.addr, p_gap_conn_evt_param->remote_addr, BLE_BD_ADDR_LEN);
-
-                    bond_info_loc_tmp->p_keys.p_keys_info.id_addr_info[0] = p_gap_conn_evt_param->remote_addr_type;
-                    memcpy(&bond_info_loc_tmp->p_keys.p_keys_info.id_addr_info[1],
-                           p_gap_conn_evt_param->remote_addr,
-                           BLE_BD_ADDR_LEN);
-                }
-            }
-
+            /* Handle address resolution from driver */
             break;
         }
 
         case BLE_GAP_EVENT_DISCONN_IND:
         {
-            st_ble_gap_disconn_evt_t * p_disconn_param = (st_ble_gap_disconn_evt_t *) p_event_data->p_param;
-
-            /* Free DB entry if empty */
-            r_ble_gtl_sec_lut_table_info(DELETE_DB_ENTRY, NULL, p_disconn_param->conn_hdl, 0);
-
-            /* Free LUT entry */
-            r_ble_gtl_sec_lut_table_info(DELETE_LUT_ENTRY, NULL, p_disconn_param->conn_hdl, 0);
+            /* Handle bonding data update from driver */
             break;
         }
 
-        /* Pairing request from a remote device, reply with own parameters */
         case BLE_GAP_EVENT_PAIRING_REQ:
         {
-            /* Check if bonding slots available */
-            if (r_ble_gtl_sec_get_active_bond_entries() >= BLE_ABS_CFG_NUMBER_BONDING_LOC)
-            {
-                /* No free slots, reject pairing, no reject reason is available to pass on GTL msg */
-                st_ble_gap_pairing_req_evt_t * p_pair_req_param =
-                    (st_ble_gap_pairing_req_evt_t *) p_event_data->p_param;
-                R_BLE_GAP_ReplyPairing(p_pair_req_param->conn_hdl, BLE_GAP_PAIRING_REJECT);
-            }
-            else
-            {
-                /* Free slot available, accept pairing */
-                st_ble_gap_pairing_req_evt_t * p_pair_req_param =
-                    (st_ble_gap_pairing_req_evt_t *) p_event_data->p_param;
-                R_BLE_GAP_ReplyPairing(p_pair_req_param->conn_hdl, BLE_GAP_PAIRING_ACCEPT);
-            }
+            /* Handle this from application, the user must accept or reject */
 
+            // R_BLE_GAP_ReplyPairing()
             break;
         }
 
         /* Remote device distributes the keys */
         case BLE_GAP_EVENT_PEER_KEY_INFO:
         {
-            st_ble_gap_peer_key_info_evt_t * p_peer_key = (st_ble_gap_peer_key_info_evt_t *) p_event_data->p_param;
-            uint8_t bond_index = r_ble_gtl_sec_lut_table_info(GET_ENTRY, NULL, p_peer_key->conn_hdl, 0);
-            sec_ble_gap_bond_info_t * bond_info_loc_tmp = {0};
-            bond_info_loc_tmp = r_ble_gtl_sec_get_rem_bond_data(bond_index);
+            /* Remote device distributes the keys. Handle this from driver */
 
-            // Temporarily Store the keys shared from remote.
-            bond_info_loc_tmp->p_keys.keys = bond_info_loc_tmp->p_keys.keys | p_peer_key->key_ex_param.keys;
-            switch (p_peer_key->key_ex_param.keys)
-            {
-                case 1:                // LTK
-                {
-                    // Peripheral role. Save the LTK only in Secure Connections.
-                    if (r_ble_gtl_sec_get_sec_conn_var() == BLE_GAP_SC_STRICT)
-                    {
-                        memcpy(bond_info_loc_tmp->p_keys.p_keys_info.enc_info,
-                               p_peer_key->key_ex_param.p_keys_info->enc_info,
-                               BLE_GAP_LTK_SIZE);
-                    }
-
-                    // Central role, will receive and must store LTK + EDIV + RN in Legacy Pairing
-                    if ((r_ble_gtl_sec_get_dev_role(p_peer_key->conn_hdl) == R_BLE_GTL_CENTRAL_ROLE) &&
-                        (r_ble_gtl_sec_get_sec_conn_var() == BLE_GAP_SC_BEST_EFFORT))
-                    {
-                        memcpy(bond_info_loc_tmp->p_keys.p_keys_info.enc_info,
-                               p_peer_key->key_ex_param.p_keys_info->enc_info,
-                               BLE_GAP_LTK_SIZE);
-                        memcpy(bond_info_loc_tmp->p_keys.p_keys_info.mid_info,
-                               p_peer_key->key_ex_param.p_keys_info->mid_info,
-                               BLE_GAP_RAND_64_BIT_SIZE + BLE_GAP_EDIV_SIZE);
-                    }
-
-                    break;
-                }
-
-                case 2:                // IRK
-                {
-                    memcpy(bond_info_loc_tmp->p_keys.p_keys_info.id_info,
-                           p_peer_key->key_ex_param.p_keys_info->id_info,
-                           BLE_GAP_IRK_SIZE);
-
-                    /* Store Address here since BOND_IND is providing it. */
-                    if (p_peer_key->bd_addr.addr[5] != 0x00)
-                    {
-                        /* Save resolved remote address to Identity address */
-                        bond_info_loc_tmp->p_keys.p_keys_info.id_addr_info[0] = p_peer_key->bd_addr.type;
-                        memcpy(&bond_info_loc_tmp->p_keys.p_keys_info.id_addr_info[1],
-                               p_peer_key->bd_addr.addr,
-                               BLE_BD_ADDR_LEN);
-                    }
-
-                    break;
-                }
-
-                case 4:                // CSRK
-                {
-                    memcpy(bond_info_loc_tmp->p_keys.p_keys_info.sign_info,
-                           p_peer_key->key_ex_param.p_keys_info->sign_info,
-                           BLE_GAP_CSRK_SIZE);
-                    break;
-                }
-            }
+            // ble_abs_secure_data_recvremkeys()
 
             break;
         }
 
-        /* Local device is required to distribute the keys */
         case BLE_GAP_EVENT_EX_KEY_REQ:
         {
-            st_ble_gap_conn_hdl_evt_t * p_key_req = (st_ble_gap_conn_hdl_evt_t *) p_event_data->p_param;
-            R_BLE_GAP_ReplyExKeyInfoReq(p_key_req->conn_hdl);
+            /* Local device is required to distribute the keys. Handle this from driver */
+            /* DA1453x cannot handle this command with only conn_hdl as input */
+
+            // st_ble_gap_conn_hdl_evt_t *p_key_req = (st_ble_gap_conn_hdl_evt_t *)p_event_data->p_param;
+            // R_BLE_GAP_ReplyExKeyInfoReq(p_key_req->conn_hdl);
+
             break;
         }
 
-        /* The Remote requires LTK from local */
         case BLE_GAP_EVENT_LTK_REQ:
         {
+            /* The Remote requires LTK from local. 
+             * This action is triggered usually when encryption request from remote 
+             */
             st_ble_gap_ltk_req_evt_t * p_pair_req_param = (st_ble_gap_ltk_req_evt_t *) p_event_data->p_param;
             R_BLE_GAP_ReplyLtkReq(p_pair_req_param->conn_hdl,
                                   p_pair_req_param->ediv,
                                   p_pair_req_param->p_peer_rand,
-                                  BLE_GAP_LTK_REQ_DENY);
+                                  BLE_GAP_LTK_REQ_ACCEPT);
+
             break;
         }
 
         /* Pairing is completed*/
         case BLE_GAP_EVENT_PAIRING_COMP:
         {
+            uint8_t   rec_id       = 0;
+            uint8_t   rec_size     = 0;
+            uint8_t * rec_ptr      = NULL;
+            uint8_t   act_num_bond = 0;
+            fsp_err_t err          = FSP_SUCCESS;
+
             st_ble_gap_pairing_info_evt_t * p_param;
             p_param = (st_ble_gap_pairing_info_evt_t *) p_event_data->p_param;
 
             if (FSP_SUCCESS == event_result)
             {
-                uint8_t bond_index = r_ble_gtl_sec_lut_table_info(GET_ENTRY, NULL, p_param->conn_hdl, 0);
-                sec_ble_gap_bond_info_t * bond_info_loc_tmp = {0};
-                bond_info_loc_tmp = r_ble_gtl_sec_get_rem_bond_data(bond_index);
-
-                /* Save authentication info */
-                bond_info_loc_tmp->p_auth_info.bonding   = p_param->auth_info.bonding;
-                bond_info_loc_tmp->p_auth_info.security  = p_param->auth_info.security;
-                bond_info_loc_tmp->p_auth_info.pair_mode = p_param->auth_info.pair_mode;
-                bond_info_loc_tmp->p_auth_info.ekey_size = p_param->auth_info.ekey_size;
-                bond_info_loc_tmp->bonded                = bond_index + 1;
+                /* Store in RAM new bond data */
+                /* Return parameters for storage module to use */
+                r_ble_gtl_sec_pairing_complete(p_param, &rec_id, &rec_size, &rec_ptr);
 
 #ifdef ENABLE_STORAGE
-                if (r_ble_gtl_sec_get_bond_var() == BLE_GAP_BONDING)
-                {
-                    r_ble_gtl_storage_write_bond_data();
-                }
+
+                /* Store in FLASH new bond data */
+                err = rm_ble_abs_gtl_storage_write_bond_data(rec_id, rec_ptr, rec_size);
+
+                /* Update in FLASH, bond number in ref sector*/
+                act_num_bond = r_ble_gtl_sec_get_active_bond_entries();
+                err          = rm_ble_abs_gtl_storage_update_bond_num(act_num_bond);
 #endif
+                FSP_PARAMETER_NOT_USED(act_num_bond);
+                FSP_PARAMETER_NOT_USED(err);
             }
             else
             {
-                r_ble_gtl_sec_lut_table_info(DELETE_DB_ENTRY, NULL, p_param->conn_hdl, 0);
+                r_ble_gtl_sec_pairing_failed(p_param->conn_hdl);
             }
 
             break;
@@ -1691,11 +1612,12 @@ static void ble_abs_gap_callback (uint16_t event_type, ble_status_t event_result
     }
 
     gp_instance_ctrl->abs_gap_callback(event_type, event_result, p_event_data);
-}                                      /* End of function ble_abs_gap_callback() */ /* End of function ble_abs_random_handler() */
+}                                      /* End of function ble_abs_gap_callback() */ 
 
-/*******************************************************************************************************************//**
+
+/******************************************************************************************************************//**
  * Vendor Specific Event handler.
- **********************************************************************************************************************/
+ *********************************************************************************************************************/
 static void ble_abs_vendor_specific_callback (uint16_t               event_type,
                                               ble_status_t           event_result,
                                               st_ble_vs_evt_data_t * p_event_data)

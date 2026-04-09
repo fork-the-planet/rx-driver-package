@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_tfat_driver_rx
-VERSION = 		2.62
+VERSION = 		2.63
 MDF = V2
 
 CONFIG_FOLDER = r_config

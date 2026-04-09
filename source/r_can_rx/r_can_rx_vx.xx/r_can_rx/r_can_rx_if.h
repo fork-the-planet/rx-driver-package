@@ -52,6 +52,7 @@
 *         : 26.12.2025 5.73    - Updated the format of the <package> element in the XML file.
 *                              - Added the condition to check if transmit FIFO is not full in R_CAN_Tx().
 *                              - Updated the source code specifies mailbox 28 instead of "mbox_nr" in R_CAN_RxRead().
+*         : 30.03.2026 5.74    - Included spdx file in the package.
 ***********************************************************************************************************************/
 #ifndef CAN_INTERFACE_HEADER_FILE
 #define CAN_INTERFACE_HEADER_FILE 
@@ -72,7 +73,7 @@ Macro definitions
 
 /* Version Number of API. */
 #define RCAN_RX_VERSION_MAJOR           (5)
-#define RCAN_RX_VERSION_MINOR           (73)
+#define RCAN_RX_VERSION_MINOR           (74)
 /* The process of getting the version number is done through the macro below. The version number is encoded where the
    top 2 bytes are the major version number and the bottom 2 bytes are the minor version number. For example,
    Version 4.25 would be returned as 0x00040019. */

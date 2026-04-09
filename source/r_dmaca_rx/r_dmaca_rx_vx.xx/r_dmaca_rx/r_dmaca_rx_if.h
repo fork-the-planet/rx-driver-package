@@ -37,6 +37,7 @@
 *         : 06.09.2024 3.40    Added support Nested Interrupt.
 *         : 15.03.2025 3.41    Updated disclaimer.
 *         : 23.06.2025 3.42    Removed doc folder and updated .rcpc file in FITDemos.
+*         : 30.03.2026 3.43    Included spdx file in the package.
 *******************************************************************************/
 #ifndef DMACA_RX_IF_H
 #define DMACA_RX_IF_H
@@ -60,7 +61,7 @@ Macro definitions
 
 /* Version Number of API */
 #define DMACA_VERSION_MAJOR  (3)
-#define DMACA_VERSION_MINOR  (42)
+#define DMACA_VERSION_MINOR  (43)
 
 /* DMAC activation is disabled. */
 #define DMACA_ACTIVE_DISABLE              (0x00u)

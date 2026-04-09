@@ -10,7 +10,7 @@ R01AN2167JJ
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -67,9 +67,9 @@ r_usb_hcdc_mini
 |
 +---doc
 |     \en
-|     |   r01an2167ej0131_usb.pdf
+|     |   r01an2167ej0132_usb.pdf
 |     \jp
-|         r01an2167jj0131_usb.pdf
+|         r01an2167jj0132_usb.pdf
 |
 +---ref
 |       r_usb_hcdc_mini_config_reference.h

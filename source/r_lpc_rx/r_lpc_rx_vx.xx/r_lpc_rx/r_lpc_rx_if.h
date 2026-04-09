@@ -38,6 +38,7 @@
  *                              Fixed to comply with GSCE Coding Standards Rev.6.6.0.
  *                              Removed \e in Doxygen comment of API function.
  *                              Modified comment of API function to Doxygen style.
+ *         : 30.03.2026 2.61    Included spdx file in the package.
  ***********************************************************************************************************************/
 
 #ifndef R_LPC_RX_IF_H
@@ -62,7 +63,7 @@
 
 /* Version Number of API. */
     #define LPC_RX_VERSION_MAJOR           (2)
-    #define LPC_RX_VERSION_MINOR           (60)
+    #define LPC_RX_VERSION_MINOR           (61)
 
 /***********************************************************************************************************************
  Typedef definitions

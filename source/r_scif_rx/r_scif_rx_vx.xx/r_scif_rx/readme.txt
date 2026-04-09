@@ -13,8 +13,7 @@ such as issuing a break signal or enabling noise cancellation. The driver
 supports all channels available on the mcu. The driver can be reduced in size 
 by removing code used for parameter checking, unused channels, or unused modes.
 These configuration options can be found in "r_config\r_scif_rx_config.h".
-An original copy of the configuration file is stored in 
-"r_scif_rx\ref\r_scif_rx_config_reference.h".
+
 
 Features
 --------

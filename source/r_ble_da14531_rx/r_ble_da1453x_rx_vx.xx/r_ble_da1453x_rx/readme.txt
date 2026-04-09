@@ -9,7 +9,7 @@ R01AN7174EU (English version)
 
 Version
 -------
-v1.60
+v1.70
 
 Overview
 --------------------------------------------------------------------------------
@@ -67,6 +67,13 @@ Features
   - Secure connection with Numeric Comparison
   - Support security for both roles (Central - Peripheral)
   - Enable security configuration
+  - Enable security from configurator.
+  - Store bonding data to flash using data flash management generic module.
+  - Enable security from configurator.
+  - Delete all bonding data.
+  - Delete bonding data with specific BD address.
+  - Read and Write BD address to storage.
+  - Add crypto libs to encode bonding data in flash.
 
 Supported MCUs
 --------------
@@ -104,7 +111,9 @@ Required Packages
 -----------------
 * r_bsp
 * r_sci_rx
-* r_byteq
+* r_byteq_rx
+* r_flash_rx
+* r_datfrx_rx
 
 How to add to your project
 --------------------------
@@ -137,6 +146,10 @@ r_ble_da1453x_rx
     |       rm_ble_abs.h
     |       rm_ble_abs_api.h
     |       rm_ble_abs_gtl.c
+    |       rm_ble_abs_gtl_storage.h
+    |       rm_ble_abs_gtl_storage.c
+    |       rm_ble_abs_gtl_sw_aes_api.h
+    |       rm_ble_abs_gtl_sw_aes_api.c
     |
     |
     \---r_ble_gtl

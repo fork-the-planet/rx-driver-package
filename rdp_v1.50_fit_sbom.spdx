@@ -1,0 +1,1810 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+DocumentNamespace: https://github.com/renesas/rx-driver-package/spdx/rdp_v1.50_fit_sbom
+DocumentName: rdp_v1.50_fit_sbom
+SPDXID: SPDXRef-DOCUMENT
+
+## Creation Information
+Creator: Organization: Renesas Electronics Corporation
+Created: 2026-04-08T07:40:43Z
+LicenseListVersion: 3.28
+
+## Relationships
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-package-r-bsp
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-rm-comms-uart-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-rm-comms-usb-pcdc-rx
+Relationship: SPDXRef-package-r-usb-pcdc CONTAINS SPDXRef-package-rm-comms-usb-pcdc-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-rm-comms-usb-pcdc-rx
+Relationship: SPDXRef-package-r-flash-rx CONTAINS SPDXRef-package-rm-mcuboot
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-rm-rai-data-collector-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-rm-rai-data-collector-rx
+Relationship: SPDXRef-package-r-dtc-rx CONTAINS SPDXRef-package-rm-rai-data-collector-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-rm-rai-data-shipper-rx
+Relationship: SPDXRef-package-rm-comms-uart-rx CONTAINS SPDXRef-package-rm-rai-data-shipper-rx
+Relationship: SPDXRef-package-rm-comms-usb-pcdc-rx CONTAINS SPDXRef-package-rm-rai-data-shipper-rx
+Relationship: SPDXRef-package-rm-rai-data-collector-rx CONTAINS SPDXRef-package-rm-rai-data-shipper-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-rm-touch-qe
+Relationship: SPDXRef-package-r-ctsu-qe CONTAINS SPDXRef-package-rm-touch-qe
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-aeropoint-rx
+Relationship: SPDXRef-package-r-glcdc-rx CONTAINS SPDXRef-package-r-aeropoint-rx
+Relationship: SPDXRef-package-r-gpio-rx CONTAINS SPDXRef-package-r-aeropoint-rx
+Relationship: SPDXRef-package-r-sci-iic-rx CONTAINS SPDXRef-package-r-aeropoint-rx
+Relationship: SPDXRef-package-r-sys-time-rx CONTAINS SPDXRef-package-r-aeropoint-rx
+Relationship: SPDXRef-package-r-mpc-rx CONTAINS SPDXRef-package-r-aeropoint-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-aes-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-ble-da1453x-rx
+Relationship: SPDXRef-package-r-byteq CONTAINS SPDXRef-package-r-ble-da1453x-rx
+Relationship: SPDXRef-package-r-sci-rx CONTAINS SPDXRef-package-r-ble-da1453x-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-ble-rx23w
+Relationship: SPDXRef-package-r-lpc-rx CONTAINS SPDXRef-package-r-ble-rx23w
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-ble-rx23w
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-byteq
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-canfd-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-can-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-cellular
+Relationship: SPDXRef-package-r-sci-rx CONTAINS SPDXRef-package-r-cellular
+Relationship: SPDXRef-package-r-irq-rx CONTAINS SPDXRef-package-r-cellular
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-cmtw-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-cmt-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-ctsu-qe
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-dac-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-datfrx-rx
+Relationship: SPDXRef-package-r-flash-rx CONTAINS SPDXRef-package-r-datfrx-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-dmaca-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-dsmif-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-dsmif-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-dtc-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-eeprom-spi
+Relationship: SPDXRef-package-r-memdrv-rx CONTAINS SPDXRef-package-r-eeprom-spi
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-elc-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-emwin-rx
+Relationship: SPDXRef-package-r-gpio-rx CONTAINS SPDXRef-package-r-emwin-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-ether-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-flash-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-flash-spi
+Relationship: SPDXRef-package-r-memdrv-rx CONTAINS SPDXRef-package-r-flash-spi
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-fwupcomm
+Relationship: SPDXRef-package-r-sci-rx CONTAINS SPDXRef-package-r-fwupcomm
+Relationship: SPDXRef-package-r-rspi-rx CONTAINS SPDXRef-package-r-fwupcomm
+Relationship: SPDXRef-package-r-flash-rx CONTAINS SPDXRef-package-r-fwup
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-glcdc-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-gpio-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-irda-sci-rx
+Relationship: SPDXRef-package-r-byteq CONTAINS SPDXRef-package-r-irda-sci-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-irq-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-iwdt-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-lcdc-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-longq
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-lpc-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-lpt-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-lvd-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-lwip-driver-rx
+Relationship: SPDXRef-package-r-lwip-rx CONTAINS SPDXRef-package-r-lwip-driver-rx
+Relationship: SPDXRef-package-r-ether-rx CONTAINS SPDXRef-package-r-lwip-driver-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-lwip-driver-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-lwip-rx
+Relationship: SPDXRef-package-r-lwip-driver-rx CONTAINS SPDXRef-package-r-lwip-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-memdrv-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-mesh-rx23w
+Relationship: SPDXRef-package-r-ble-rx23w CONTAINS SPDXRef-package-r-mesh-rx23w
+Relationship: SPDXRef-package-r-flash-rx CONTAINS SPDXRef-package-r-mesh-rx23w
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-mesh-rx23w
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-mmcif-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-mpc-rx
+Relationship: SPDXRef-package-r-gpio-rx CONTAINS SPDXRef-package-r-mpc-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-nfc-ptx-rx
+Relationship: SPDXRef-package-r-byteq CONTAINS SPDXRef-package-r-nfc-ptx-rx
+Relationship: SPDXRef-package-r-sci-rx CONTAINS SPDXRef-package-r-nfc-ptx-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-nfc-ptx-rx
+Relationship: SPDXRef-package-r-gpio-rx CONTAINS SPDXRef-package-r-nfc-ptx-rx
+Relationship: SPDXRef-package-r-irq-rx CONTAINS SPDXRef-package-r-nfc-ptx-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-pdc-rx
+Relationship: SPDXRef-package-r-glcdc-rx CONTAINS SPDXRef-package-r-qe-display-rx
+Relationship: SPDXRef-package-r-sci-rx CONTAINS SPDXRef-package-r-qe-display-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-qe-display-rx
+Relationship: SPDXRef-package-r-gpio-rx CONTAINS SPDXRef-package-r-qe-display-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-qspix-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-qspi-smstr-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-ri3c-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-riichs-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-riic-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rsa-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rscan-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rsci-iic-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rsci-rx
+Relationship: SPDXRef-package-r-byteq CONTAINS SPDXRef-package-r-rsci-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rsip-cm-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rsip-protected-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rspia-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rspi-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-rtc-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-s12ad-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-scif-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sci-iic-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sci-rx
+Relationship: SPDXRef-package-r-byteq CONTAINS SPDXRef-package-r-sci-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sdc-sdmem-rx
+Relationship: SPDXRef-package-r-sdhi-rx CONTAINS SPDXRef-package-r-sdc-sdmem-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sdc-spi-rx
+Relationship: SPDXRef-package-r-memdrv-rx CONTAINS SPDXRef-package-r-sdc-spi-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sdhi-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sdsi-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sha-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-src-api-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-ssi-api-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-sys-time-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-sys-time-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-tfat-driver-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-tfat-driver-rx
+Relationship: SPDXRef-package-r-sys-time-rx CONTAINS SPDXRef-package-r-tfat-driver-rx
+Relationship: SPDXRef-package-r-tfat-rx CONTAINS SPDXRef-package-r-tfat-driver-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-tfat-rx
+Relationship: SPDXRef-package-r-tfat-driver-rx CONTAINS SPDXRef-package-r-tfat-rx
+Relationship: SPDXRef-package-r-cmt-rx CONTAINS SPDXRef-package-r-tfat-rx
+Relationship: SPDXRef-package-r-sys-time-rx CONTAINS SPDXRef-package-r-tfat-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-tsip-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-uid-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-basic-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-basic
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-hcdc-mini
+Relationship: SPDXRef-package-r-usb-basic-mini CONTAINS SPDXRef-package-r-usb-hcdc-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-hcdc
+Relationship: SPDXRef-package-r-usb-basic CONTAINS SPDXRef-package-r-usb-hcdc
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-hhid-mini
+Relationship: SPDXRef-package-r-usb-basic-mini CONTAINS SPDXRef-package-r-usb-hhid-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-hhid
+Relationship: SPDXRef-package-r-usb-basic CONTAINS SPDXRef-package-r-usb-hhid
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-hmsc-mini
+Relationship: SPDXRef-package-r-usb-basic-mini CONTAINS SPDXRef-package-r-usb-hmsc-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-hmsc
+Relationship: SPDXRef-package-r-usb-basic CONTAINS SPDXRef-package-r-usb-hmsc
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-pcdc-mini
+Relationship: SPDXRef-package-r-usb-basic-mini CONTAINS SPDXRef-package-r-usb-pcdc-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-pcdc
+Relationship: SPDXRef-package-r-usb-basic CONTAINS SPDXRef-package-r-usb-pcdc
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-phid-mini
+Relationship: SPDXRef-package-r-usb-basic-mini CONTAINS SPDXRef-package-r-usb-phid-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-phid
+Relationship: SPDXRef-package-r-usb-basic CONTAINS SPDXRef-package-r-usb-phid
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-pmsc-mini
+Relationship: SPDXRef-package-r-usb-basic-mini CONTAINS SPDXRef-package-r-usb-pmsc-mini
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-usb-pmsc
+Relationship: SPDXRef-package-r-usb-basic CONTAINS SPDXRef-package-r-usb-pmsc
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-vbatt-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-wdt-rx
+Relationship: SPDXRef-package-r-bsp CONTAINS SPDXRef-package-r-wifi-da16xxx
+Relationship: SPDXRef-package-r-byteq CONTAINS SPDXRef-package-r-wifi-da16xxx
+Relationship: SPDXRef-package-r-sci-rx CONTAINS SPDXRef-package-r-wifi-da16xxx
+
+## Package Information
+PackageName: r_aeropoint_rx_v1.01
+SPDXID: SPDXRef-package-r-aeropoint-rx
+PackageVersion: v1.01
+PackageFileName: r_aeropoint_rx_v1.01.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: b03c4e57bb9bd5c129ba475994fc04d6346b8a0961e2b7ed90b24da7073ac521
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: (BSD-3-Clause AND LicenseRef-CRI-Proprietary)
+PackageLicenseDeclared: (BSD-3-Clause AND LicenseRef-CRI-Proprietary)
+PackageCopyrightText: <text>Renesas Electronics and CRI Middleware</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_aes_rx_v1.09
+SPDXID: SPDXRef-package-r-aes-rx
+PackageVersion: v1.09
+PackageFileName: r_aes_rx_v1.09.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d17d7f74dac34b19e7253fc0d3251b6c816b626a583ab993c242fb454fe5ecc7
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_ble_da1453x_rx_v1.70
+SPDXID: SPDXRef-package-r-ble-da1453x-rx
+PackageVersion: v1.70
+PackageFileName: r_ble_da1453x_rx_v1.70.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 54f231a7ef1f7c8ccd5e2f328bd439252b3e5fcd50878eecbccda2db24a3594e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_ble_rx23w_v2.62
+SPDXID: SPDXRef-package-r-ble-rx23w
+PackageVersion: v2.62
+PackageFileName: r_ble_rx23w_v2.62.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 8d4f579a7bc1b6daba5d066ae55be924cba6a5879513b4cbd733510f398f8f5e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_bsp_v7.71
+SPDXID: SPDXRef-package-r-bsp
+PackageVersion: v7.71
+PackageFileName: r_bsp_v7.71.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: f00271622c11722e3de7bb73c7c426cd0f89a2390f880d909368187891971fe0
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_byteq_v2.21
+SPDXID: SPDXRef-package-r-byteq
+PackageVersion: v2.21
+PackageFileName: r_byteq_v2.21.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 8449fc30a82f7fd5532fcd811994bc6e53ef06b15adbded1232aa8059034e69b
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_can_rx_v5.74
+SPDXID: SPDXRef-package-r-can-rx
+PackageVersion: v5.74
+PackageFileName: r_can_rx_v5.74.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 138a0fbde60c8c95d6b52fd9e2cf7262883bbec9e6dda4060c847c6ab7b3bd9e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_canfd_rx_v1.52
+SPDXID: SPDXRef-package-r-canfd-rx
+PackageVersion: v1.52
+PackageFileName: r_canfd_rx_v1.52.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 422186b5b2132249e472e4058e01e7f4f15d27ddddea6cb1f91df65c8d040290
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_cellular_v1.14
+SPDXID: SPDXRef-package-r-cellular
+PackageVersion: v1.14
+PackageFileName: r_cellular_v1.14.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 0c3b3d707d78888a09200b4569146f10f83dbd22ea188c4e4663e2b6bb2c76af
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_cmt_rx_v5.81
+SPDXID: SPDXRef-package-r-cmt-rx
+PackageVersion: v5.81
+PackageFileName: r_cmt_rx_v5.81.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 6a45a7230c53af83746e7b139f96509ba987894a8dc3b9b69bd817abdf5bd1e9
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_cmtw_rx_v2.93
+SPDXID: SPDXRef-package-r-cmtw-rx
+PackageVersion: v2.93
+PackageFileName: r_cmtw_rx_v2.93.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 49af51eff2b4b71b052d4cc1a866d636efbac41b817953746a96eefa7323133f
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_ctsu_qe_v3.30
+SPDXID: SPDXRef-package-r-ctsu-qe
+PackageVersion: v3.30
+PackageFileName: r_ctsu_qe_v3.30.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d52bf3699bced39c0af263d8425ec44379a3ba5d62febd3b16244868fe2bcdb3
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_dac_rx_v5.41
+SPDXID: SPDXRef-package-r-dac-rx
+PackageVersion: v5.41
+PackageFileName: r_dac_rx_v5.41.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 07c8c1fe4b0cf800f879d30099d63c0442befbad5282c90f38985b3e254d6beb
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_datfrx_rx_v2.32
+SPDXID: SPDXRef-package-r-datfrx-rx
+PackageVersion: v2.32
+PackageFileName: r_datfrx_rx_v2.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: f1a5842b22b5fa4d6c21c0525b77c5559188db777409026c99000afdc10a9b31
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_dmaca_rx_v3.43
+SPDXID: SPDXRef-package-r-dmaca-rx
+PackageVersion: v3.43
+PackageFileName: r_dmaca_rx_v3.43.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 26188e8e4211e1a083e088fcee9c30afa5682ab81f3b95edb4510434dedce189
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_drw2d_rx_v1.15
+SPDXID: SPDXRef-package-r-drw2d-rx
+PackageVersion: v1.15
+PackageFileName: r_drw2d_rx_v1.15.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: da367b58ac6788b7770c56f8d6bdc2ca43cb3cfab9f4ca349786fe6ae4c4a26c
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: (BSD-3-Clause AND LicenseRef-Renesas-Proprietary1)
+PackageLicenseDeclared: (BSD-3-Clause AND LicenseRef-Renesas-Proprietary1)
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_dsmif_rx_v1.03
+SPDXID: SPDXRef-package-r-dsmif-rx
+PackageVersion: v1.03
+PackageFileName: r_dsmif_rx_v1.03.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 37b27166f0d2f61e5986d836ba69b138128f7507a74a2cf824f72f4fed44b5c1
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_dtc_rx_v4.61
+SPDXID: SPDXRef-package-r-dtc-rx
+PackageVersion: v4.61
+PackageFileName: r_dtc_rx_v4.61.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: cb5aef87b4c66e50c9d997f8c4ad9554b794f680b14c3dbac7d82ef108a12e1d
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_eeprom_spi_v3.23
+SPDXID: SPDXRef-package-r-eeprom-spi
+PackageVersion: v3.23
+PackageFileName: r_eeprom_spi_v3.23.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 3eff57b5397d7becfab03f7ba52bd116ff00011a92d038cad8dd3022a969d254
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_elc_rx_v4.02
+SPDXID: SPDXRef-package-r-elc-rx
+PackageVersion: v4.02
+PackageFileName: r_elc_rx_v4.02.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 0575198160cddd6265ed7749e0765621fa0968e5e8a510839a89b54ff5c739e4
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_emwin_rx_v6.52_101
+SPDXID: SPDXRef-package-r-emwin-rx
+PackageVersion: v6.52.1.01
+PackageFileName: r_emwin_rx_v6.52_101.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9e1b2c6db195d9fc53bdb128d46937d6d3dfed4b229f0ef6833a67dbda103a94
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: (BSD-3-Clause AND LicenseRef-Renesas-Proprietary2)
+PackageLicenseDeclared: (BSD-3-Clause AND LicenseRef-Renesas-Proprietary2)
+PackageCopyrightText: <text>Renesas Electronics and SEGGER</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_ether_rx_v1.25
+SPDXID: SPDXRef-package-r-ether-rx
+PackageVersion: v1.25
+PackageFileName: r_ether_rx_v1.25.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9ada94049477741e2bc2b3cf560b125f4a3e1e45059cec5732c6856ad0196ee9
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_flash_rx_v5.31
+SPDXID: SPDXRef-package-r-flash-rx
+PackageVersion: v5.31
+PackageFileName: r_flash_rx_v5.31.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 76e8fd965a32187709e3e105f85aa5e1b00f0457bec8cd961f6030bdef41210b
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_flash_spi_v3.61
+SPDXID: SPDXRef-package-r-flash-spi
+PackageVersion: v3.61
+PackageFileName: r_flash_spi_v3.61.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 41a8a47a1244db2c2a05df8dbe824612618ae8ce52a077a3350d038d8cc9f16d
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_fwup_v2.06
+SPDXID: SPDXRef-package-r-fwup
+PackageVersion: v2.06
+PackageFileName: r_fwup_v2.06.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 6e480120482f1fc3a4386f8493e901dd9073dded7e364c44c475a0a19f80ad2f
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_fwupcomm_v1.11
+SPDXID: SPDXRef-package-r-fwupcomm
+PackageVersion: v1.11
+PackageFileName: r_fwupcomm_v1.11.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 46b52f36254a334b88bb369dc5543285c7793ab9ad96c330539b25b8a00d7bd0
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_glcdc_rx_v1.62
+SPDXID: SPDXRef-package-r-glcdc-rx
+PackageVersion: v1.62
+PackageFileName: r_glcdc_rx_v1.62.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: e7488618ccd91514509876e38914958eeaf5f9494a42b9c14b002c5e86f78ca0
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_gpio_rx_v5.31
+SPDXID: SPDXRef-package-r-gpio-rx
+PackageVersion: v5.31
+PackageFileName: r_gpio_rx_v5.31.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: c804f3edfc8408d13f0186a6445e8645dd0252599c1dd7f1b591b3ffbdcf8dae
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_irda_sci_rx_v1.04
+SPDXID: SPDXRef-package-r-irda-sci-rx
+PackageVersion: v1.04
+PackageFileName: r_irda_sci_rx_v1.04.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: f46ce7d436af2d1a13ad27d1d9c9c556e9c165658784c7e28832a6de94e9aa9c
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_irq_rx_v4.91
+SPDXID: SPDXRef-package-r-irq-rx
+PackageVersion: v4.91
+PackageFileName: r_irq_rx_v4.91.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: f327e0aa56105f329e339a06c55be8616c0150d15301d50fb0d9d80fb989c481
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_iwdt_rx_v4.61
+SPDXID: SPDXRef-package-r-iwdt-rx
+PackageVersion: v4.61
+PackageFileName: r_iwdt_rx_v4.61.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: ca60cf3f89904a5b5fcb3253ee688af168b17336b70d8d24c9130c6cbbf822ae
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_jpegd_rx_v2.09
+SPDXID: SPDXRef-package-r-jpegd-rx
+PackageVersion: v2.09
+PackageFileName: r_jpegd_rx_v2.09.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: c24a722b499ae9fd327df98dfb5042eed9860790eaee56f8969667284d83e32a
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_jpege_rx_v1.04
+SPDXID: SPDXRef-package-r-jpege-rx
+PackageVersion: v1.04
+PackageFileName: r_jpege_rx_v1.04.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9f342516ad799697d3fbdfbc88ba78c09baeb39878e11459f289e9cc2a004118
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_lcdc_rx_v2.02
+SPDXID: SPDXRef-package-r-lcdc-rx
+PackageVersion: v2.02
+PackageFileName: r_lcdc_rx_v2.02.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d7559368e127161edf0c3830f591bf7eb13855a7aa33af01dc066113fa2fc46b
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_longq_v2.03
+SPDXID: SPDXRef-package-r-longq
+PackageVersion: v2.03
+PackageFileName: r_longq_v2.03.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9d3cb2792a0ede96ad111002e4ce2cb63c0181474b5ea2486c7e3f7b6a3010ef
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_lpc_rx_v2.61
+SPDXID: SPDXRef-package-r-lpc-rx
+PackageVersion: v2.61
+PackageFileName: r_lpc_rx_v2.61.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: c66878e57b82813a37824a2f35965da18cf96d6b1ec29cc2b57c62bbad6c99f8
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_lpt_rx_v5.02
+SPDXID: SPDXRef-package-r-lpt-rx
+PackageVersion: v5.02
+PackageFileName: r_lpt_rx_v5.02.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 3f7b3f19c45fe323294761fffc411f457fb012df065316ef74510b4e0618c09d
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_lvd_rx_v4.91
+SPDXID: SPDXRef-package-r-lvd-rx
+PackageVersion: v4.91
+PackageFileName: r_lvd_rx_v4.91.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 707dae9a53bc3c04a9e65b2cd1da5ef6bc95183e0de71d0afde2f2c6f23b4ca1
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_lwip_driver_rx_v1.11
+SPDXID: SPDXRef-package-r-lwip-driver-rx
+PackageVersion: v1.11
+PackageFileName: r_lwip_driver_rx_v1.11.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 161b9503d57a4ea3072f8049dc8c78cdbe557a2d6aff120dd528f89869ae3000
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_lwip_rx_v1.11
+SPDXID: SPDXRef-package-r-lwip-rx
+PackageVersion: v1.11
+PackageFileName: r_lwip_rx_v1.11.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d2a29146c5bf0f0771e6a5bce07b1929fe20ce01fbaeab68a77d36066c174173
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_memdrv_rx_v1.41
+SPDXID: SPDXRef-package-r-memdrv-rx
+PackageVersion: v1.41
+PackageFileName: r_memdrv_rx_v1.41.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 910964113a8c8a8ccd1e1d80428e4004d0ffe7811601ee037829b6a447ec4c75
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_mesh_rx23w_v1.32
+SPDXID: SPDXRef-package-r-mesh-rx23w
+PackageVersion: v1.32
+PackageFileName: r_mesh_rx23w_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 01b6639a1e4b0275aff4eb9178213100cc36cc0507ae31d4e6c977fd20f830be
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: (BSD-2-Clause AND BSD-3-Clause)
+PackageLicenseDeclared: (BSD-2-Clause AND BSD-3-Clause)
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_mmcif_rx_v1.23
+SPDXID: SPDXRef-package-r-mmcif-rx
+PackageVersion: v1.23
+PackageFileName: r_mmcif_rx_v1.23.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 34c3323214b85eed67d7f83d2c2c2b9870749a0972086b36fcd7ca7c6a5d4cba
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_mpc_rx_v5.21
+SPDXID: SPDXRef-package-r-mpc-rx
+PackageVersion: v5.21
+PackageFileName: r_mpc_rx_v5.21.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 492b6ec2429b0660df7a22bca810b318e1c7d4056621dcbd1741c902de18382b
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_nfc_ptx_rx_v1.20
+SPDXID: SPDXRef-package-r-nfc-ptx-rx
+PackageVersion: v1.20
+PackageFileName: r_nfc_ptx_rx_v1.20.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 16c43ddbe96b8496ab29e21da39233183c0c01dd7cb6f505b1ad3a167d3ed00d
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_pdc_rx_v2.08
+SPDXID: SPDXRef-package-r-pdc-rx
+PackageVersion: v2.08
+PackageFileName: r_pdc_rx_v2.08.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9b383ffbb614f6c6ff01f2bd19266d9509ca46b5fc10fa5992c688568887e1cc
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_qe_display_rx_v1.12
+SPDXID: SPDXRef-package-r-qe-display-rx
+PackageVersion: v1.12
+PackageFileName: r_qe_display_rx_v1.12.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: a7e6de7cd18d454d5ff3560771563d46e4610179a620fb53aa083694c6dc4a13
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_qspi_smstr_rx_v1.31
+SPDXID: SPDXRef-package-r-qspi-smstr-rx
+PackageVersion: v1.31
+PackageFileName: r_qspi_smstr_rx_v1.31.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 402a93eea4ccba9e71469489f64f8b30ba19cd1285435bb5a346d27204936230
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_qspix_rx_v1.44
+SPDXID: SPDXRef-package-r-qspix-rx
+PackageVersion: v1.44
+PackageFileName: r_qspix_rx_v1.44.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 78324439352a583fe3715b0722b18561d5e2887449102b3dcff50bcbcf81a2b2
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_ri3c_rx_v1.14
+SPDXID: SPDXRef-package-r-ri3c-rx
+PackageVersion: v1.14
+PackageFileName: r_ri3c_rx_v1.14.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: b22948f00809ce8d352067092f1ed99b3057bd92fcd51c45bbbeb6af1b8fdbec
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_riic_rx_v3.11
+SPDXID: SPDXRef-package-r-riic-rx
+PackageVersion: v3.11
+PackageFileName: r_riic_rx_v3.11.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: c3ae591490072985b60e1eeca456349bde22265104d1e24b67d36e4b5fdcde2a
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_riichs_rx_v1.23
+SPDXID: SPDXRef-package-r-riichs-rx
+PackageVersion: v1.23
+PackageFileName: r_riichs_rx_v1.23.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 4a005a8fd0277d22d31175fedd6831f83bfca1f5b42a1e5f6c9bdc47e88b56f6
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rsa_rx_v1.06
+SPDXID: SPDXRef-package-r-rsa-rx
+PackageVersion: v1.06
+PackageFileName: r_rsa_rx_v1.06.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 6e6321cec60ab8fd02925effa7570723bc44ac7a6cbb0f3a29b5cf5710e1a4f7
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rscan_rx_v2.93
+SPDXID: SPDXRef-package-r-rscan-rx
+PackageVersion: v2.93
+PackageFileName: r_rscan_rx_v2.93.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d6a3ab71b3f2e3a62a7a6311170f632c6fa85d8645040b4f87ae7464d8523a58
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rsci_iic_rx_v1.01
+SPDXID: SPDXRef-package-r-rsci-iic-rx
+PackageVersion: v1.01
+PackageFileName: r_rsci_iic_rx_v1.01.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 2d593cb178a138daf0bc7fe828d87027f940395b9a772a6f5989820d3d0d65f0
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rsci_rx_v2.73
+SPDXID: SPDXRef-package-r-rsci-rx
+PackageVersion: v2.73
+PackageFileName: r_rsci_rx_v2.73.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: e85b59c5b019250dfc87a31c6e3ecf187b9d5e09b8dce523d7792b24daa2c138
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rsip_cm_rx_v1.01
+SPDXID: SPDXRef-package-r-rsip-cm-rx
+PackageVersion: v1.01
+PackageFileName: r_rsip_cm_rx_v1.01.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d227569a6ca6bf3a4c70bfa38fa9910eaf9e0091b4be66a429b93e3fa29e24de
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: (BSD-3-Clause AND (Apache-2.0 OR GPL-2.0-or-later))
+PackageLicenseDeclared: (BSD-3-Clause AND (Apache-2.0 OR GPL-2.0-or-later))
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>This package includes mbedTLS, which is open source software (OSS). This package see the documentation included in the package.</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:mbed:mbedtls:3.6.2:*:*:*:*:*:*:*
+ExternalRef: PACKAGE-MANAGER purl pkg:github/Mbed-TLS/mbedtls@v3.6.2
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rsip_protected_rx_v2.01
+SPDXID: SPDXRef-package-r-rsip-protected-rx
+PackageVersion: v2.01
+PackageFileName: r_rsip_protected_rx_v2.01.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 66633ee14d83e472fb5d6186dc936530cd43c948ec0e902c4262fe7aa3f1b0fa
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rspi_rx_v3.81
+SPDXID: SPDXRef-package-r-rspi-rx
+PackageVersion: v3.81
+PackageFileName: r_rspi_rx_v3.81.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 779707add1c59d06564b0f2813b57f38869d30b0a5bd88943c6957010147f1f4
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rspia_rx_v1.63
+SPDXID: SPDXRef-package-r-rspia-rx
+PackageVersion: v1.63
+PackageFileName: r_rspia_rx_v1.63.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9b31c54ab87722c692dfd94491695ef23023cc3c5d309be25b1b9a73e8d0636a
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_rtc_rx_v3.11
+SPDXID: SPDXRef-package-r-rtc-rx
+PackageVersion: v3.11
+PackageFileName: r_rtc_rx_v3.11.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 4b7b808fb5efb9098e46e10e34a5db3642c37f3030c2b25866de18498101cdea
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_s12ad_rx_v5.51
+SPDXID: SPDXRef-package-r-s12ad-rx
+PackageVersion: v5.51
+PackageFileName: r_s12ad_rx_v5.51.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9081e056af9dc3f2cdd93501507aae9c0c756072eea47862c9015af5813cc554
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_s2_rx_v3.06
+SPDXID: SPDXRef-package-r-s2-rx
+PackageVersion: v3.06
+PackageFileName: r_s2_rx_v3.06.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 8ab4d3b42a37b0535b68fa83c8eab7635bc1b3f276e335203621668a351c68f5
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sci_iic_rx_v2.91
+SPDXID: SPDXRef-package-r-sci-iic-rx
+PackageVersion: v2.91
+PackageFileName: r_sci_iic_rx_v2.91.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 990b70ce2eaff966240d649411d6e0d8dad18acc1222078490d5a76170a6870f
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sci_rx_v5.61
+SPDXID: SPDXRef-package-r-sci-rx
+PackageVersion: v5.61
+PackageFileName: r_sci_rx_v5.61.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 7865013c86d0d4c6f6e430ca61e347886beae0d371a413b41822d183348496fd
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_scif_rx_v2.03
+SPDXID: SPDXRef-package-r-scif-rx
+PackageVersion: v2.03
+PackageFileName: r_scif_rx_v2.03.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: ac176893ef2ecfeaa57d1a3663631a1f710ebd06675fe7d7857cc33a772b3042
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sdc_sdmem_rx_v3.02
+SPDXID: SPDXRef-package-r-sdc-sdmem-rx
+PackageVersion: v3.02
+PackageFileName: r_sdc_sdmem_rx_v3.02.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: da4244d8422e3858bbba1b86ec8e9cb6ddf98468e0a33804b2173bb276d3a5d2
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sdc_spi_rx_v1.12
+SPDXID: SPDXRef-package-r-sdc-spi-rx
+PackageVersion: v1.12
+PackageFileName: r_sdc_spi_rx_v1.12.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: f4827e9875305fe681054d6ebbe590333c5606755df518fb1f4d34bc35fcbf58
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sdhi_rx_v2.21
+SPDXID: SPDXRef-package-r-sdhi-rx
+PackageVersion: v2.21
+PackageFileName: r_sdhi_rx_v2.21.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 201cee13bddd456054e784dd29f0b73760f562e5d293710c3b3f22ab9bb9c292
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sdsi_rx_v2.07
+SPDXID: SPDXRef-package-r-sdsi-rx
+PackageVersion: v2.07
+PackageFileName: r_sdsi_rx_v2.07.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 44f0562b8f1e09168db2b1d356d4306b1ca9d18a9ef66ed68dc4327596b48f0e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sha_rx_v1.07
+SPDXID: SPDXRef-package-r-sha-rx
+PackageVersion: v1.07
+PackageFileName: r_sha_rx_v1.07.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: fd5aa3bb568520ef3af736844bc1fd79a329231ff3371c0f2998a179f5b93f77
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_src_api_rx_v1.16
+SPDXID: SPDXRef-package-r-src-api-rx
+PackageVersion: v1.16
+PackageFileName: r_src_api_rx_v1.16.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 7b4207bd90f41e05ddebcab9db1b1dafe608d94853df815ec6c98349a33a067c
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_ssi_api_rx_v2.05
+SPDXID: SPDXRef-package-r-ssi-api-rx
+PackageVersion: v2.05
+PackageFileName: r_ssi_api_rx_v2.05.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 18631e49a827a9afcbad7e6978d9d44ccc6fa4cbba285b86cf6ec2e7e05f4245
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_sys_time_rx_v1.03
+SPDXID: SPDXRef-package-r-sys-time-rx
+PackageVersion: v1.03
+PackageFileName: r_sys_time_rx_v1.03.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: fe02bb46dc11f1a7d08c66229eb767f3e9680af673ea4fb31e62621f55763484
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_tfat_driver_rx_v2.63
+SPDXID: SPDXRef-package-r-tfat-driver-rx
+PackageVersion: v2.63
+PackageFileName: r_tfat_driver_rx_v2.63.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: a0da7a6062930d06943fd31479e1060e5da4e21ddc179866176e62b6a7254909
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_tfat_rx_v4.16
+SPDXID: SPDXRef-package-r-tfat-rx
+PackageVersion: v4.16
+PackageFileName: r_tfat_rx_v4.16.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d92b3faf5021179d6babf987cff2b7488aae40728720a8f92ad4a7e08223b92b
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause AND BSD-1-Clause
+PackageLicenseDeclared: BSD-3-Clause AND BSD-1-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_tsip_rx_v1.24
+SPDXID: SPDXRef-package-r-tsip-rx
+PackageVersion: v1.24
+PackageFileName: r_tsip_rx_v1.24.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 9aed43a4f8322e769652aac37dcbfbe70c45ea2f7cfa89777b240e45b64d25aa
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_uid_rx_v1.16
+SPDXID: SPDXRef-package-r-uid-rx
+PackageVersion: v1.16
+PackageFileName: r_uid_rx_v1.16.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 268cb1fe064f02a8a6fd65122f64806f2f5509bb70801095810e5490bb665b8e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_basic_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-basic-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_basic_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 7128fe2de40f31e2d9cd47bae0b86b884f88d9e0c3e6c0c2da5d8948dc3aba4d
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_basic_v1.45
+SPDXID: SPDXRef-package-r-usb-basic
+PackageVersion: v1.45
+PackageFileName: r_usb_basic_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 3d84aabb6da66b943edb8d2ab469c0eddeaa6cd03310dab3e1426a468d85b88c
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_hcdc_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-hcdc-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_hcdc_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 113fd1353e7692393853b7bc4013f19e74904e4b7b39d2a5de7ca1985aff22b1
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_hcdc_v1.45
+SPDXID: SPDXRef-package-r-usb-hcdc
+PackageVersion: v1.45
+PackageFileName: r_usb_hcdc_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: db7073f5c1d3f33caad0ae069c6fce7f551ca1cbf727f5067ad61ebf15ac2fb9
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_hhid_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-hhid-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_hhid_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: dfade58f8f98e760af57f4942329c1c1a6f50e077fcad06ab41bde44d6e6351a
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_hhid_v1.45
+SPDXID: SPDXRef-package-r-usb-hhid
+PackageVersion: v1.45
+PackageFileName: r_usb_hhid_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 4ae7cbd2378dba3d38fe5f61138bf84b7a4a2733033b3c22e4ff730f682a7314
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_hmsc_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-hmsc-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_hmsc_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 7c84a22cd648db01e9b3b29cd9ea7d84b9ed48d2821c50607649822d80a137c4
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_hmsc_v1.45
+SPDXID: SPDXRef-package-r-usb-hmsc
+PackageVersion: v1.45
+PackageFileName: r_usb_hmsc_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: c7ce751f881ce3bf64bd4ac0efd98b3353f280c2eef58b9b5606e7c7f52e2b73
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_pcdc_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-pcdc-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_pcdc_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 39d14ed712a4a6790835a02ad11163cb2b74cb9b6bebb04e9fe3e399d53e48d2
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_pcdc_v1.45
+SPDXID: SPDXRef-package-r-usb-pcdc
+PackageVersion: v1.45
+PackageFileName: r_usb_pcdc_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 8e71e4c9a91db38271e4d4071fe57e2eda81c2fd82a6492e81ec526201e87311
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_phid_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-phid-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_phid_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: dff3dee64d21b2ff4e7f17e9adf9cad7ad85ab05e46c8e1e7e56b4ec394d44d2
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_phid_v1.45
+SPDXID: SPDXRef-package-r-usb-phid
+PackageVersion: v1.45
+PackageFileName: r_usb_phid_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 01a33b906b6bb7341a3478aa6dbaf60eff4f1040db33ae865bae557c838c893e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_pmsc_mini_v1.32
+SPDXID: SPDXRef-package-r-usb-pmsc-mini
+PackageVersion: v1.32
+PackageFileName: r_usb_pmsc_mini_v1.32.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 71bd852e9457e6f36de3ce12178e7e07f4095df3c7de4ee9d0ae78089a52a6eb
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_usb_pmsc_v1.45
+SPDXID: SPDXRef-package-r-usb-pmsc
+PackageVersion: v1.45
+PackageFileName: r_usb_pmsc_v1.45.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: d844c4a93534ee14b65a58780e44c21f57fb0b508b37d7d78c0309c305174049
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_vbatt_rx_v2.33
+SPDXID: SPDXRef-package-r-vbatt-rx
+PackageVersion: v2.33
+PackageFileName: r_vbatt_rx_v2.33.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 978506b29ed5dbfcf8dd9f96d75f1e02e9ad87260121e84590e07256c948e930
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_wdt_rx_v3.13
+SPDXID: SPDXRef-package-r-wdt-rx
+PackageVersion: v3.13
+PackageFileName: r_wdt_rx_v3.13.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 51dfd91211fbc0e2f0ec282edc7e42930956cb480a151c2bdc003ee98277d934
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: r_wifi_da16xxx_v1.41
+SPDXID: SPDXRef-package-r-wifi-da16xxx
+PackageVersion: v1.41
+PackageFileName: r_wifi_da16xxx_v1.41.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 290caa699dd72b9242a53717100f6d63b3ee7456d3a0419ef53d4f033d6712f4
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: rm_comms_uart_rx_v1.01
+SPDXID: SPDXRef-package-rm-comms-uart-rx
+PackageVersion: v1.01
+PackageFileName: rm_comms_uart_rx_v1.01.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 7fc2324b88ecbeb0d702b9c374446b5fffc1947af689307e9be7efb97ac3c693
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: rm_comms_usb_pcdc_rx_v1.31
+SPDXID: SPDXRef-package-rm-comms-usb-pcdc-rx
+PackageVersion: v1.31
+PackageFileName: rm_comms_usb_pcdc_rx_v1.31.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 8f00e7557c50f4c64a8521b34046a4c9fe2b5ea31c00b4c2501a622fc440eb23
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: rm_mcuboot_v1.02
+SPDXID: SPDXRef-package-rm-mcuboot
+PackageVersion: v1.02
+PackageFileName: rm_mcuboot_v1.02.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 22ae69faf29b1fc3ed184ea5a56180ba3220baa4e8112d7f6c6f67100c18486e
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: rm_rai_data_collector_rx_v1.01
+SPDXID: SPDXRef-package-rm-rai-data-collector-rx
+PackageVersion: v1.01
+PackageFileName: rm_rai_data_collector_rx_v1.01.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: f728d91f9034f3323b9b3762a4988ba6c5edbd4821e7d3ea9f46e3b8baa6e3c8
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: rm_rai_data_shipper_rx_v1.21
+SPDXID: SPDXRef-package-rm-rai-data-shipper-rx
+PackageVersion: v1.21
+PackageFileName: rm_rai_data_shipper_rx_v1.21.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: 24c134d731fdc2189dbf492168f60dc5a7a1aff5a1dea09c5595cd39e81fd9c2
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## Package Information
+PackageName: rm_touch_qe_v3.30
+SPDXID: SPDXRef-package-rm-touch-qe
+PackageVersion: v3.30
+PackageFileName: rm_touch_qe_v3.30.zip
+PackageSupplier: Organization: Renesas Electronics
+PackageOriginator: Organization: Renesas Electronics
+PackageDownloadLocation: https://github.com/renesas/rx-driver-package/releases/tag/V1.50
+PackageChecksum: SHA256: cc62f5229741020131ae6ef9f0d106e91aefce87a9d12b3cd38adbc649153f5d
+PackageHomePage: https://github.com/renesas/rx-driver-package
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageCopyrightText: <text>Renesas Electronics Corporation. All rights reserved.</text>
+PackageDescription: <text>See the documentation included in the package.</text>
+FilesAnalyzed: false
+
+## License Information
+
+LicenseID: LicenseRef-CRI-Proprietary
+LicenseName: CRI Middleware Proprietary
+ExtractedText: <text>A license agreement with CRI Middleware is required for commercialization. Please contact CRI Middleware for details.</text>
+
+LicenseID: LicenseRef-Renesas-Proprietary1
+LicenseName: Renesas Open License v1.0
+ExtractedText: <text>https://github.com/renesas/rx-driver-package/blob/master/license.md#renesas-open-license-v10</text>
+
+LicenseID: LicenseRef-Renesas-Proprietary2
+LicenseName: Renesas Sub-license Agreement
+ExtractedText: <text>This software is supplied by SEGGER Microcontroller GmbH and is only intended for use with Renesas products.
+No other uses are authorized.</text>

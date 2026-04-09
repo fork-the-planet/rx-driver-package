@@ -5,12 +5,12 @@ r_uid_rx
 
 Document Number 
 ---------------
-r01an2191ej0115
-r01an2191jj0115
+r01an2191ej0116
+r01an2191jj0116
 
 Version
 -------
-v1.15
+v1.16
 
 Overview
 --------
@@ -51,9 +51,9 @@ Required Packages
 
 Toolchain(s) Used
 -----------------
-* Renesas RX v3.07.00
-* GCC for Renesas RX 8.3.0.202411
-* IAR C/C++ Compiler for Renesas RX version 5.10.1
+* Renesas RXC 3.07.00
+* GNU GNURX 14.2.0.202511
+* IAR ICCRX 5.20.01
 
 
 File Structure
@@ -64,10 +64,10 @@ r_uid_rx
 |
 +---doc
 |   +---en
-|   |   r01an2191ej0115-rx-uid.pdf
+|   |   r01an2191ej0116-rx-uid.pdf
 |   |
 |   +---ja
-|       r01an2191jj0115-rx-uid.pdf
+|       r01an2191jj0116-rx-uid.pdf
 |
 +---src
     +-- r_uid_rx.c

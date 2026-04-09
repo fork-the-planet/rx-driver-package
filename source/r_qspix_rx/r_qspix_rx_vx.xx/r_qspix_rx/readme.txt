@@ -5,12 +5,12 @@ r_qspix_rx (QSPIX driver)
 
 Document Number 
 ---------------
-R01AN5685ES0143
-R01AN5685JS0143
+R01AN5685ES0144
+R01AN5685JS0144
      
 Version
 -------
-v1.43
+v1.44
 
 Overview
 --------

@@ -5,12 +5,12 @@ r_mesh_rx23w
 
 Document Number
 ---------------
-R01AN4930EJ0131
-R01AN4930JJ0131
+R01AN4930EJ0132
+R01AN4930JJ0132
 
 Version
 -------
-v1.31
+v1.32
 
 Overview
 --------
@@ -98,9 +98,9 @@ File Structure
 |   |   |   blemesh_api.chm
 |   |   |   
 |   |   +---en
-|   |   |       r01an4930ej0131-rx23w-blemesh.pdf
+|   |   |       r01an4930ej0132-rx23w-blemesh.pdf
 |   |   +---ja
-|   |           r01an4930jj0131-rx23w-blemesh.pdf
+|   |           r01an4930jj0132-rx23w-blemesh.pdf
 |   |           
 |   +---json
 |   |       mesh_provisioning.service.json

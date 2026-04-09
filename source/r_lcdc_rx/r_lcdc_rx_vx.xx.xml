@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+/*
+* Copyright (c) 2026 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+-->
 <refinfo>
 
     <!-- multiple versions permitted -->
@@ -24,6 +30,7 @@
         <version>8.03.00.201904</version>
         <version>8.03.00.202202</version>
         <version>8.03.00.202411</version>
+        <version>14.02.00.202511</version>
     </toolchain>
     <toolchain>
         <brand>IAR</brand>
@@ -32,6 +39,7 @@
         <version>4.13.01</version>
         <version>4.20.03</version>
         <version>5.10.01</version>
+        <version>5.20.01</version>
     </toolchain>
 
     <!-- only one target entry allowed; multiple sub tags permitted -->

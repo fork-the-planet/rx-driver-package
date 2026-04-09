@@ -1,10 +1,9 @@
 MODULE_NAME = 	r_usb_basic
-VERSION = 		1.44
+VERSION = 		1.45
 MDF = V2
 
 CONFIG_FOLDER = r_config
 TARGET_FOLDER = ../../FITModules
-FILE_PATH = $(MODULE_NAME)_vx.xx/$(MODULE_NAME)/ref
 
 $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).zip: $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION).xml $(TARGET_FOLDER)/$(MODULE_NAME)_v$(VERSION)_extend.mdf
 	cd ./$(MODULE_NAME)_vx.xx; \

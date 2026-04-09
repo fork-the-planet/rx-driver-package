@@ -5,12 +5,12 @@ r_qspi_smstr_rx (QSPI clock synchronous single master driver)
 
 Document Number 
 ---------------
-R01AN1940EJ0130
-R01AN1940JJ0130
+R01AN1940EJ0131
+R01AN1940JJ0131
      
 Version
 -------
-v1.30
+v1.31
 
 Overview
 --------
@@ -85,8 +85,8 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 Toolchain(s) Used
 -----------------
 * Renesas CCRX v3.07
-* GCC for Renesas RX 8.3.0.202411
-* IAR C/C++ Compiler for Renesas RX 5.10.1
+* GCC for Renesas RX 14.2.0.202511
+* IAR C/C++ Compiler for Renesas RX 5.20.1
 
 File Structure
 --------------
@@ -97,9 +97,9 @@ r_qspi_smstr_rx
 +---doc
 |   |
 |   +---en
-|   |       r01an1940ej0130-rx-serial.pdf
+|   |       r01an1940ej0131-rx-serial.pdf
 |   +---ja
-|           r01an1940jj0130-rx-serial.pdf
+|           r01an1940jj0131-rx-serial.pdf
 |
 +---src
     |   r_qspi_smstr.c

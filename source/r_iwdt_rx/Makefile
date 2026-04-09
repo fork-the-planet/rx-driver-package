@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_iwdt_rx
-VERSION = 		4.60
+VERSION = 		4.61
 MDF = V2
 
 CONFIG_FOLDER = r_config

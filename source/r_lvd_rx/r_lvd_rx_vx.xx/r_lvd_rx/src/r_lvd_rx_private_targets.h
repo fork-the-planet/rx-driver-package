@@ -49,6 +49,8 @@
 *              : 23.06.2025 4.82     Removed doc folder and updated .rcpc file in FITDemos.
 *              : 30.10.2025 4.90     Added support for RX14T.
 *                                    Updated MDF using Category.
+*              : 30.03.2026 4.91     Included spdx file in the package.
+*                                    Fixed warnings in GCC.
 ***********************************************************************************************************************/
 #ifndef LVD_PRIVATE_TARGETS_HEADER_FILE
 #define LVD_PRIVATE_TARGETS_HEADER_FILE
@@ -124,7 +126,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define LVD_RX_VERSION_MAJOR                    (4)
-#define LVD_RX_VERSION_MINOR                    (90)
+#define LVD_RX_VERSION_MINOR                    (91)
 
 /***********************************************************************************************************************
 Typedef definitions

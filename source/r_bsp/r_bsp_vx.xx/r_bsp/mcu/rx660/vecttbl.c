@@ -12,6 +12,8 @@
 * History : DD.MM.YYYY Version   Description
 *         : 22.04.2022 1.00      First Release
 *         : 26.02.2025 1.01      Changed the disclaimer.
+*         : 04.03.2026 1.02      Added a compile switch to disable the reset vector table when using User Boot mode.
+*                                Fixed UB Code B for Technical Update Information (TN-RX*-A0292A).
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -60,8 +62,8 @@ R_BSP_ATTRIB_SECTION_CHANGE_UBSETTINGS const uint32_t user_boot_settings[6] =
 {
     0x55736572,                 /* Required setting for UB Code A to get into User Boot */
     0x426f6f74,                 /* Required setting for UB Code A to get into User Boot */
-    0xffffff00,                 /* Required setting for UB Code B to get into User Boot */
-    0x0008c040,                 /* Required setting for UB Code B to get into User Boot */
+    0xffffff07,                 /* Required setting for UB Code B to get into User Boot (TN-RX*-A0292A) */
+    0x0008c04c,                 /* Required setting for UB Code B to get into User Boot (TN-RX*-A0292A) */
     0xFFFFFFFF,                 /* Reserved */
     (uint32_t) R_BSP_UB_POWER_ON_RESET_FUNCTION /* This is the User Boot Reset Vector.
                                                    When using User Boot put in the reset address here */
@@ -228,6 +230,7 @@ R_BSP_ATTRIB_SECTION_CHANGE_END
 /***********************************************************************************************************************
 * The following array fills in the reset vector.
 ***********************************************************************************************************************/
+#if BSP_CFG_USER_BOOT_ENABLE == 0
 #if defined(__CCRX__) || defined(__GNUC__)
 R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 {
@@ -235,8 +238,8 @@ R_BSP_ATTRIB_SECTION_CHANGE_RESETVECT void (* const Reset_Vector[])(void) =
 };
 R_BSP_ATTRIB_SECTION_CHANGE_END
 #endif /* defined(__CCRX__), defined(__GNUC__) */
-
-#endif/* BSP_CFG_RTOS_USED */
+#endif /* BSP_CFG_USER_BOOT_ENABLE == 0 */
+#endif /* BSP_CFG_RTOS_USED */
 
 #endif /* BSP_CFG_STARTUP_DISABLE == 0 */
 

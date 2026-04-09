@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_ether_rx
-VERSION = 		1.24
+VERSION = 		1.25
 MDF = V1,V2
 
 CONFIG_FOLDER = r_config

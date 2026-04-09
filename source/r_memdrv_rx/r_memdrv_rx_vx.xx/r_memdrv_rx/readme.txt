@@ -5,12 +5,12 @@ r_memdrv_rx (Serial memory driver interface software)
 
 Document Number 
 ---------------
-R01AN4548EJ0140
-R01AN4548JJ0140
+R01AN4548EJ0141
+R01AN4548JJ0141
 
 Version
 -------
-v1.40
+v1.41
 
 Overview
 --------

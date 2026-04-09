@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014-2025 Renesas Electronics Corporation and/or its affiliates
+* Copyright (C) 2014-2026 Renesas Electronics Corporation and/or its affiliates
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -10,11 +10,12 @@
 *                                    None change proceedures.
 *              : 15.11.2024 1.02     Changed Minor version to 1.02.
 *              : 20.03.2025 1.03     Changed the disclaimer in program sources
+*              : 20.04.2026 1.04     Changed Minor version to 1.04.
  **********************************************************************************************************************/
 /***********************************************************************************************************************
 * System Name  : interface file for irda fit module.
 * File Name    : r_irda_sci_rx_if.h
-* Version      : 1.03
+* Version      : 1.04
 * Device       : RX
 * Abstract     : include file for using irda fit module.
 * Tool-Chain   : Renesas RXC Toolchain v3.07.00
@@ -42,7 +43,7 @@
  **********************************************************************************************************************/
 /* Version Number of API. */
 #define IRDA_SCI_VERSION_MAJOR  (1)
-#define IRDA_SCI_VERSION_MINOR  (03)
+#define IRDA_SCI_VERSION_MINOR  (04)
 
 /***********************************************************************************************************************
   Typedef definitions

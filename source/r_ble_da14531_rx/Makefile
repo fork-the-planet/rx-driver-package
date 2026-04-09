@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_ble_da1453x_rx
-VERSION = 		1.60
+VERSION = 		1.70
 MDF = V2
 
 CONFIG_FOLDER = r_config

@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_dsmif_rx
-VERSION = 		1.02
+VERSION = 		1.03
 MDF = V1
 
 CONFIG_FOLDER = r_config

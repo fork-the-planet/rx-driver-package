@@ -5,7 +5,7 @@
  */
 /**********************************************************************************************************************
  * File Name    : r_tsip_rx_if.h
- * Version      : 1.23
+ * Version      : 1.24
  * Description  : Interface definition for the r_tsip_rx module.
  *                TSIP means the "Trusted Secure IP" that is Renesas original security IP.
  *                Strong point 1:
@@ -48,6 +48,7 @@
  *         : 10.04.2025 1.22     Added support for RSAES-OAEP, SSH
  *         :                     Updated Firmware Update API
  *         : 15.10.2025 1.23     Updated Open/Close API to store the driver status
+ *         : 20.03.2026 1.24     Updated the minor version
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -81,7 +82,7 @@
 
 /* Version Number of API. */
 #define TSIP_VERSION_MAJOR    (1u)
-#define TSIP_VERSION_MINOR    (23u)
+#define TSIP_VERSION_MINOR    (24u)
 
 /* Various information. */
 #define R_TSIP_SRAM_WORD_SIZE       (20u)

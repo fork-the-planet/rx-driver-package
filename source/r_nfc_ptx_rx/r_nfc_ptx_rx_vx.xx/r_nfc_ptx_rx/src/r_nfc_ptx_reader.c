@@ -20,6 +20,9 @@
 #define NFC_PTX_ZERO                (0)
 #define NFC_PTX_SHUTDOWN_TEMP       (223U)
 
+#define NFC_READER_NATIVE_TAG_OFFSET           (0x100)
+#define NFC_READER_NATIVE_TAG_EXTENDED_SIZE    (0xFF)
+
 /* ASCII conversion from string of "NFC" */
 #define NFC_PTX_OPEN                (0x4e4643ULL)  //It stands for "NFC"
 #define NFC_PTX_CLOSED              (0)
@@ -54,17 +57,18 @@ static bool g_start_temperature_sensor_calibration = true;
  * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
  * @param[in]  p_cfg                Pointer to NFC IoT Reader configuration structure.
  *
- * @retval NFC_SUCCESS              Function completed successfully.
- * @retval NFC_ERR_ASSERTION        Assertion error occurred.
- * @retval NFC_ERR_INVALID_DATA     NFC SDK initialization data was incomplete.
+ * @retval NFC_SUCCESS                  Function completed successfully.
+ * @retval NFC_ERR_ASSERTION            Assertion error occurred.
+ * @retval NFC_ERR_ALREADY_OPEN         Module is already opened.
+ * @retval NFC_ERR_INVALID_DATA         Problem with input parameters or data transmission.
  **********************************************************************************************************************/
-nfc_err_t R_NFC_PTX_Open(nfc_reader_ptx_ctrl_t * const 				p_ctrl,
-							     nfc_reader_ptx_cfg_t const * const      	p_cfg)
+nfc_err_t R_NFC_PTX_Open(nfc_reader_ptx_ctrl_t * const              p_ctrl,
+                                    nfc_reader_ptx_cfg_t const * const         p_cfg)
 {
 	/* Do parameter checking */
 #if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
-	FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
-	FSP_ERROR_RETURN(NULL != p_cfg, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_cfg, NFC_ERR_ASSERTION);
     FSP_ERROR_RETURN(NFC_PTX_OPEN != p_ctrl->open, NFC_ERR_ALREADY_OPEN);
 #endif
 
@@ -103,7 +107,7 @@ nfc_err_t R_NFC_PTX_Open(nfc_reader_ptx_ctrl_t * const 				p_ctrl,
 
     /* Initiate IoT-Reader System. */
     FSP_ERROR_RETURN(ptxStatus_Success == ptxIoTRd_Init(p_cfg->iot_reader_context, &nfc_reader_init_params),
-    				 NFC_ERR_INVALID_DATA);
+                    NFC_ERR_INVALID_DATA);
 
     p_ctrl->open       = NFC_PTX_OPEN;
     p_ctrl->state_flag = NFC_PTX_IDLE;
@@ -120,13 +124,13 @@ nfc_err_t R_NFC_PTX_Open(nfc_reader_ptx_ctrl_t * const 				p_ctrl,
  * @retval NFC_ERR_ASSERTION        Assertion error occurred.
  * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
  * @retval NFC_ERR_INVALID_STATE    NFC module is not in the idle state.
- * @retval NFC_ERR_INVALID_DATA     NFC Discovery parameters were invalid or discovery was not started.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
  **********************************************************************************************************************/
 nfc_err_t R_NFC_PTX_StartDiscovery(nfc_reader_ptx_ctrl_t * const p_ctrl)
 {
     /* Do parameter checking */
 #if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
-	FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
     FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
 
     /* Check device is idle before initiating discovery */
@@ -148,11 +152,14 @@ nfc_err_t R_NFC_PTX_StartDiscovery(nfc_reader_ptx_ctrl_t * const p_ctrl)
     nfc_reader_disc_config.PollTypeBDeviceLimit = NFC_CFG_DEVICE_LIMIT;
     nfc_reader_disc_config.PollTypeVDeviceLimit = NFC_CFG_DEVICE_LIMIT;
     nfc_reader_disc_config.PollTypeFDeviceLimit = NFC_CFG_DEVICE_LIMIT;
+    nfc_reader_disc_config.Discover_Mode        = NFC_CFG_DISCOVER_MODE;
 
     /* Check that at least one poll type option was selected (e.g. Type-A) */
     FSP_ERROR_RETURN(
-        nfc_reader_disc_config.PollTypeA || nfc_reader_disc_config.PollTypeB || nfc_reader_disc_config.PollTypeF212 || nfc_reader_disc_config.PollTypeV,
-        NFC_ERR_INVALID_DATA);
+        nfc_reader_disc_config.PollTypeA || 
+        nfc_reader_disc_config.PollTypeB || 
+        nfc_reader_disc_config.PollTypeF212 || 
+        nfc_reader_disc_config.PollTypeV, NFC_ERR_INVALID_DATA);
 
     FSP_ERROR_RETURN(ptxStatus_Success ==
                      ptxIoTRd_Initiate_Discovery(p_cfg->iot_reader_context, &nfc_reader_disc_config),
@@ -167,15 +174,15 @@ nfc_err_t R_NFC_PTX_StartDiscovery(nfc_reader_ptx_ctrl_t * const p_ctrl)
  *  Gets the status information on the provided status identifier (system, discovery, etc.).
  *  Used during polling to confirm a card was discovered.
  *
- * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
- * @param[in]  status_type          Status identifier for target info.
- * @param[in]  p_status             Pointer to location to store NFC chip status flag.
+ * @param[in]  p_ctrl                   Pointer to NFC IoT Reader control structure.
+ * @param[in]  status_type              Status identifier for target info.
+ * @param[in]  p_status                 Pointer to location to store NFC chip status flag.
  *
- * @retval NFC_SUCCESS              Function completed successfully.
- * @retval NFC_ERR_ASSERTION        Assertion error occurred.
- * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
- * @retval NFC_ERR_INVALID_STATE    NFC module is not in the polling state.
- * @retval NFC_ERR_INVALID_ARGUMENT Invalid input parameters to NFC Status function.
+ * @retval NFC_SUCCESS                  Function completed successfully.
+ * @retval NFC_ERR_ASSERTION            Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN             Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE        NFC module is not in the polling state.
+ * @retval NFC_ERR_INVALID_ARGUMENT     Invalid input parameters to the function.
  **********************************************************************************************************************/
 nfc_err_t R_NFC_PTX_GetStatus(nfc_reader_ptx_ctrl_t * const 		  p_ctrl,
                                        ptxIoTRd_StatusType_t                  status_type,
@@ -245,12 +252,12 @@ nfc_err_t R_NFC_PTX_GetStatus(nfc_reader_ptx_ctrl_t * const 		  p_ctrl,
 /*******************************************************************************************************************//**
  *  Gets the internal card registry.
  *
- * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
- * @param[in]  pp_card_registry     Pointer to card registry for discovered cards.
+ * @param[in]  p_ctrl                   Pointer to NFC IoT Reader control structure.
+ * @param[in]  pp_card_registry         Pointer to card registry for discovered cards.
  *
- * @retval NFC_SUCCESS              Function completed successfully.
- * @retval NFC_ERR_ASSERTION        Assertion error occurred.
- * @retval NFC_ERR_INVALID_ARGUMENT Invalid input parameters to NFC registry function.
+ * @retval NFC_SUCCESS                  Function completed successfully.
+ * @retval NFC_ERR_ASSERTION            Assertion error occurred.
+ * @retval NFC_ERR_INVALID_ARGUMENT     Invalid input parameters to the function.
  **********************************************************************************************************************/
 nfc_err_t R_NFC_PTX_GetCardRegistry(nfc_reader_ptx_ctrl_t * const p_ctrl,
                                             ptxIoTRd_CardRegistry_t       ** pp_card_registry)
@@ -309,11 +316,14 @@ nfc_err_t R_NFC_PTX_ActivateCard(nfc_reader_ptx_ctrl_t * const p_ctrl,
 /*******************************************************************************************************************//**
  *  Sends and receives data to/from the activated card.
  *
- * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
- * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ * @param[in]  p_ctrl                    Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_data_info               Pointer to the NFC TX/RX data.
  *
- * @retval NFC_SUCCESS              Function completed successfully.
- * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_SUCCESS                   Function completed successfully.
+ * @retval NFC_ERR_ASSERTION             Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN              Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE         NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_ARGUMENT      Invalid input parameters to the function.
  **********************************************************************************************************************/
 nfc_err_t R_NFC_PTX_DataExchange(nfc_reader_ptx_ctrl_t * const 			p_ctrl,
                                          nfc_reader_ptx_data_info_t * const     p_data_info)
@@ -346,12 +356,15 @@ nfc_err_t R_NFC_PTX_DataExchange(nfc_reader_ptx_ctrl_t * const 			p_ctrl,
  *
  * @retval NFC_SUCCESS              Function completed successfully.
  * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
  **********************************************************************************************************************/
 nfc_err_t R_NFC_PTX_ReaderDeactivation(nfc_reader_ptx_ctrl_t * const 		  p_ctrl,
                                                nfc_reader_ptx_return_state_t          return_state)
 {
 #if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
-	FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
     FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
 
     /* Check device is active before deactivation */
@@ -362,7 +375,7 @@ nfc_err_t R_NFC_PTX_ReaderDeactivation(nfc_reader_ptx_ctrl_t * const 		  p_ctrl,
     /* Deactivate the activated card */
     FSP_ERROR_RETURN(ptxStatus_Success ==
                      ptxIoTRd_Reader_Deactivation(p_cfg->iot_reader_context, (uint8_t) return_state),
-                     NFC_ERR_INVALID_ARGUMENT);
+                     NFC_ERR_INVALID_DATA);
 
     /* Change the state depending on expected return state */
     switch (return_state)
@@ -406,10 +419,13 @@ nfc_err_t R_NFC_PTX_ReaderDeactivation(nfc_reader_ptx_ctrl_t * const 		  p_ctrl,
 /*******************************************************************************************************************//**
  *  Trigger software reset if there is no response from NFC.
  *
- * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_ctrl                   Pointer to NFC IoT Reader control structure.
  *
- * @retval NFC_SUCCESS              Function completed successfully.
- * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_SUCCESS                  Function completed successfully.
+ * @retval NFC_ERR_ASSERTION            Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN             Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE        NFC module is not in the idle/polling state.
+ * @retval NFC_ERR_INVALID_ARGUMENT     Invalid input parameters to the function.
  **********************************************************************************************************************/
 nfc_err_t R_NFC_PTX_SWReset(nfc_reader_ptx_ctrl_t * const p_ctrl)
 {
@@ -426,7 +442,869 @@ nfc_err_t R_NFC_PTX_SWReset(nfc_reader_ptx_ctrl_t * const p_ctrl)
 }
 
 /*******************************************************************************************************************//**
- *  Closes the FSP NFC module and resets all variables.
+ * Puts the device into either Active (all features) or Stand-by mode (most features off), to cut down energy consumption.
+ * RF communication is not possible from Stand-by mode, and Wake-up is possible only via communication interface.
+ * This function is only available exclusively before starting discovery.
+ *
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  power_mode           Flag to indicate if setting to Active or Stand-by mode.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the idle/polling state.
+ * @retval NFC_ERR_INVALID_ARGUMENT Invalid input parameters to NFC Status function.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_PowerModeSet (nfc_reader_ptx_ctrl_t * const         p_ctrl,
+                                          nfc_reader_ptx_power_mode_t   power_mode)
+{
+    /* Do parameter checking */
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is idle before changing the power mode */
+    FSP_ERROR_RETURN((p_ctrl->state_flag == NFC_PTX_IDLE), NFC_ERR_INVALID_STATE);
+#endif
+
+    nfc_reader_ptx_cfg_t const * p_cfg = p_ctrl->p_cfg;
+
+    /* Set the device to Active or Stand-by power mode */
+    FSP_ERROR_RETURN(ptxStatus_Success ==
+                     ptxIoTRd_Set_Power_Mode(p_cfg->iot_reader_context, (uint8_t) power_mode),
+					 NFC_ERR_INVALID_ARGUMENT);
+
+    return NFC_SUCCESS;
+}
+/*******************************************************************************************************************//**
+ *  Initializes the optional NDEF API add-on. Must be done after NFC stack is initialized.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_ALREADY_OPEN     NDEF API add-on was already initialized.
+ * @retval NFC_ERR_UNSUPPORTED      NDEF API add-on was not included in project configuration.
+ *********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_NDEF_Init (nfc_reader_ptx_ctrl_t * const          p_ctrl,
+                               nfc_reader_ptx_data_info_t * const     p_data_info)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN != p_ctrl->ndef_open, NFC_ERR_ALREADY_OPEN);
+#endif
+
+#if (!NFC_CFG_NDEF_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+    return NFC_ERR_UNSUPPORTED;
+#else
+    nfc_reader_ptx_cfg_t const * p_cfg = p_ctrl->p_cfg;
+
+    /* Generic NDEF-OP Component (Tag-independent) */
+    ptxNDEF_InitParams_t nfc_reader_ndef_init_params;
+
+    /* initialize generic NDEF-OP component */
+    memset(&nfc_reader_ndef_init_params, NFC_PTX_ZERO, sizeof(ptxNDEF_InitParams_t));
+
+    nfc_reader_ndef_init_params.IotRd          = p_cfg->iot_reader_context;
+    nfc_reader_ndef_init_params.TxBuffer       = &p_data_info->p_tx_buf[0];
+    nfc_reader_ndef_init_params.TxBufferSize   = p_data_info->tx_length;
+    nfc_reader_ndef_init_params.RxBuffer       = &p_data_info->p_rx_buf[0];
+    nfc_reader_ndef_init_params.RxBufferSize   = p_data_info->rx_length;
+    nfc_reader_ndef_init_params.WorkBuffer     = (uint8_t *) p_ctrl->ndef_work_buf;
+    nfc_reader_ndef_init_params.WorkBufferSize = NFC_CFG_NDEF_WORK_BUF_SIZE;
+
+    /* Initialize NDEF API */
+    FSP_ERROR_RETURN(ptxStatus_Success == ptxNDEF_Open(p_cfg->p_ndef_context, &nfc_reader_ndef_init_params),
+            NFC_ERR_INVALID_DATA);
+
+    p_ctrl->ndef_open = NFC_PTX_OPEN;
+
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Exchanges NDEF data with an NFC tag by reading from or writing to it.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_ndef_message       Pointer to the buffer to transmit or receive a message.
+ * @param[in]  message_length       Length of the NDEF message buffer.
+ * @param[in]  ndef_read_write_flag Flag to control if the data exchange is a read or a write.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_NOT_INITIALIZED  NDEF add-on is not initialized yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
+ * @retval NFC_ERR_UNSUPPORTED      NDEF API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_NDEF_DataExchange (nfc_reader_ptx_ctrl_t * const          p_ctrl,
+                                       uint8_t                              * p_ndef_message,
+                                       uint32_t                               message_length,
+                                       nfc_reader_ptx_ndef_read_write_t       ndef_read_write_flag)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_ndef_message, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(0 != message_length, NFC_ERR_INVALID_DATA);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->ndef_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NDEF_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_ndef_message);
+    FSP_PARAMETER_NOT_USED(message_length);
+    FSP_PARAMETER_NOT_USED(ndef_read_write_flag);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+    nfc_reader_ptx_cfg_t const * p_cfg = p_ctrl->p_cfg;
+
+    /* Check is required before all NDEF operations */
+    FSP_ERROR_RETURN(ptxStatus_Success == ptxNDEF_CheckMessage(p_cfg->p_ndef_context), NFC_ERR_INVALID_DATA);
+
+    /* Check if the NDEF exchange is read or write */
+    if (NFC_PTX_NDEF_READ == ndef_read_write_flag)
+    {
+        FSP_ERROR_RETURN(ptxStatus_Success == ptxNDEF_ReadMessage(p_cfg->p_ndef_context, p_ndef_message,
+                                                                  &message_length),
+                NFC_ERR_INVALID_DATA);
+    }
+    else
+    {
+        FSP_ERROR_RETURN(ptxStatus_Success == ptxNDEF_WriteMessage(p_cfg->p_ndef_context, p_ndef_message,
+                                                                   message_length),
+                NFC_ERR_INVALID_DATA);
+    }
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Locks an NFC tag to prevent writing to it, making it read-only.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_NOT_INITIALIZED  NDEF add-on is not initialized yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
+ * @retval NFC_ERR_UNSUPPORTED      NDEF API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_NDEF_Lock (nfc_reader_ptx_ctrl_t * const p_ctrl)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->ndef_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NDEF_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+    nfc_reader_ptx_cfg_t const * p_cfg = p_ctrl->p_cfg;
+
+    /* Check is required before all NDEF operations */
+    FSP_ERROR_RETURN(ptxStatus_Success == ptxNDEF_CheckMessage(p_cfg->p_ndef_context), NFC_ERR_INVALID_DATA);
+
+    /* Lock the tag if it is supported */
+    FSP_ERROR_RETURN(ptxStatus_Success == ptxNDEF_LockTag(p_cfg->p_ndef_context), NFC_ERR_INVALID_DATA);
+
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Initializes the optional Native-Tag API add-on. Must be done after NFC stack is initialized.
+ *  For each tag type to be initialized, the tag type bit values must be set in the tag select parameter.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ * @param[in]  tag_select           User-provided bitmask of tags to be initialized.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_ALREADY_OPEN     Native-Tag API add-on was already initialized.
+ * @retval NFC_ERR_INVALID_ARGUMENT Invalid input parameters to the function.
+ * @retval NFC_ERR_UNSUPPORTED      Native-Tag API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_Native_Tag_Init (nfc_reader_ptx_ctrl_t * const p_ctrl,
+                                     nfc_reader_ptx_data_info_t * const     p_data_info,
+                                     uint8_t                                tag_select)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+	FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA);
+    FSP_ERROR_RETURN(NFC_READER_PTX_NATIVE_TAG_TYPE_NONE != tag_select, NFC_ERR_INVALID_DATA);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN != p_ctrl->native_tag_open, NFC_ERR_ALREADY_OPEN);
+#endif
+
+#if (!NFC_CFG_NATIVE_TAG_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+    FSP_PARAMETER_NOT_USED(tag_select);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+    nfc_reader_ptx_cfg_t const * p_cfg = p_ctrl->p_cfg;
+
+    /* Use this variable to track which tags were initialized */
+    p_ctrl->enabled_tag_mask = NFC_READER_PTX_NATIVE_TAG_TYPE_NONE;
+
+    /* For each tag type, initialize if the tag select was set */
+    if (tag_select & NFC_READER_PTX_NATIVE_TAG_TYPE_T2T)
+    {
+        /* Assign the IoT Reader context and TX buffer, which is common to all tag types */
+        p_ctrl->t2t_params.IotRd        = p_cfg->iot_reader_context;
+        p_ctrl->t2t_params.TxBuffer     = p_data_info->p_tx_buf;
+        p_ctrl->t2t_params.TxBufferSize = p_data_info->tx_length;
+
+        FSP_ERROR_RETURN(ptxStatus_Success ==
+                         ptxNativeTag_T2TOpen(&p_ctrl->t2t_comp, &p_ctrl->t2t_params),
+                         NFC_ERR_INVALID_ARGUMENT);
+
+        /* Update the tag mask to signal that T2T was initialized */
+        p_ctrl->enabled_tag_mask |= NFC_READER_PTX_NATIVE_TAG_TYPE_T2T;
+    }
+
+    if (tag_select & NFC_READER_PTX_NATIVE_TAG_TYPE_T3T)
+    {
+        /* Assign the IoT Reader context and TX buffer, which is common to all tag types */
+        p_ctrl->t3t_params.IotRd        = p_cfg->iot_reader_context;
+        p_ctrl->t3t_params.TxBuffer     = p_data_info->p_tx_buf;
+        p_ctrl->t3t_params.TxBufferSize = p_data_info->tx_length;
+
+        /* T3T parameters includes NFCID2, but this can be set later if no card is active  */
+
+        FSP_ERROR_RETURN(ptxStatus_Success ==
+                         ptxNativeTag_T3TOpen(&p_ctrl->t3t_comp, &p_ctrl->t3t_params),
+                         NFC_ERR_INVALID_ARGUMENT);
+
+        /* Update the tag mask to signal that T3T was initialized */
+        p_ctrl->enabled_tag_mask |= NFC_READER_PTX_NATIVE_TAG_TYPE_T3T;
+    }
+
+    if (tag_select & NFC_READER_PTX_NATIVE_TAG_TYPE_T4T)
+    {
+        /* Assign the IoT Reader context and TX buffer, which is common to all tag types */
+        p_ctrl->t4t_params.IotRd        = p_cfg->iot_reader_context;
+        p_ctrl->t4t_params.TxBuffer     = p_data_info->p_tx_buf;
+        p_ctrl->t4t_params.TxBufferSize = p_data_info->tx_length;
+
+        FSP_ERROR_RETURN(ptxStatus_Success ==
+                         ptxNativeTag_T4TOpen(&p_ctrl->t4t_comp, &p_ctrl->t4t_params),
+                         NFC_ERR_INVALID_ARGUMENT);
+
+        /* Update the tag mask to signal that T4T was initialized */
+        p_ctrl->enabled_tag_mask |= NFC_READER_PTX_NATIVE_TAG_TYPE_T4T;
+    }
+
+    if (tag_select & NFC_READER_PTX_NATIVE_TAG_TYPE_T5T)
+    {
+        /* Assign the IoT Reader context and TX buffer, which is common to all tag types */
+        p_ctrl->t5t_params.IotRd        = p_cfg->iot_reader_context;
+        p_ctrl->t5t_params.TxBuffer     = p_data_info->p_tx_buf;
+        p_ctrl->t5t_params.TxBufferSize = p_data_info->tx_length;
+        p_ctrl->t5t_params.UID          = NULL;
+        p_ctrl->t5t_params.UIDLen       = 0;
+
+        /* T5T parameters includes UID, but this can be set later if no card is active  */
+
+        FSP_ERROR_RETURN(ptxStatus_Success ==
+                         ptxNativeTag_T5TOpen(&p_ctrl->t5t_comp, &p_ctrl->t5t_params),
+                         NFC_ERR_INVALID_ARGUMENT);
+
+        /* Update the tag mask to signal that T5T was initialized */
+        p_ctrl->enabled_tag_mask |= NFC_READER_PTX_NATIVE_TAG_TYPE_T5T;
+    }
+
+    /* Return an error if no tags were initialized */
+    FSP_ERROR_RETURN(p_ctrl->enabled_tag_mask != 0U, NFC_ERR_INVALID_MODE);
+
+    p_ctrl->native_tag_open = NFC_PTX_OPEN;
+
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Performs a read operation using the Native-Tag API add-on.
+ *  Optional configurations must be set for the required tag type based on the command to be used.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_read_params        Pointer to optional parameter structure for read operation.
+ * @param[in]  tag_type             The target tag type for the operation.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
+ * @retval NFC_ERR_INVALID_MODE     One of the available tag types was not selected.
+ * @retval NFC_ERR_UNSUPPORTED      Native-Tag API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_Native_Tag_Read (nfc_reader_ptx_ctrl_t * const          p_ctrl,
+                                     nfc_reader_ptx_native_tag_read_params_t * const p_read_params,
+                                     nfc_reader_ptx_native_tag_type_t                tag_type,
+                                     nfc_reader_ptx_data_info_t * const              p_data_info)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION)
+	FSP_ERROR_RETURN(NULL != p_read_params, NFC_ERR_INVALID_DATA)
+	FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA)
+	FSP_ERROR_RETURN(NFC_READER_PTX_NATIVE_TAG_TYPE_NONE != tag_type, NFC_ERR_ASSERTION)
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->native_tag_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NATIVE_TAG_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_read_params);
+    FSP_PARAMETER_NOT_USED(tag_type);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+
+    /* Check that at least one tag type was enabled */
+    FSP_ERROR_RETURN(p_ctrl->enabled_tag_mask != NFC_READER_PTX_NATIVE_TAG_TYPE_NONE, NFC_ERR_INVALID_MODE);
+
+    switch (tag_type)
+    {
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T2T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T2TRead(&p_ctrl->t2t_comp, p_read_params->t2t_block_number,
+                                                  p_data_info->p_rx_buf, (size_t *) &p_data_info->rx_length,
+                                                  NFC_PTX_TIMEOUT_RAW),
+                                                  NFC_ERR_INVALID_DATA);
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T3T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T3TCheck(&p_ctrl->t3t_comp, p_read_params->t3t_nfcid2,
+                                                   p_read_params->t3t_nfcid2_len, p_read_params->t3t_service_info,
+                                                   p_read_params->t3t_block_info,
+                                                   p_data_info->p_rx_buf, (size_t *) &p_data_info->rx_length,
+                                                   NFC_PTX_TIMEOUT_RAW),
+                                                   NFC_ERR_INVALID_DATA);
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T4T:
+        {
+            /* Check for larger offset to use ODO or not */
+            if (p_read_params->t4t_file_offset < NFC_READER_NATIVE_TAG_OFFSET)
+            {
+                FSP_ERROR_RETURN(ptxStatus_Success ==
+                                 ptxNativeTag_T4TReadBinary(&p_ctrl->t4t_comp,
+                                                            (uint16_t) p_read_params->t4t_file_offset,
+                                                            p_read_params->t4t_data_num_bytes, p_data_info->p_rx_buf,
+                                                            (size_t *) &p_data_info->rx_length,
+                                                            NFC_PTX_TIMEOUT_RAW),
+                                                            NFC_ERR_INVALID_DATA);
+            }
+            else
+            {
+                FSP_ERROR_RETURN(ptxStatus_Success ==
+                                 ptxNativeTag_T4TReadBinaryODO(&p_ctrl->t4t_comp, p_read_params->t4t_file_offset,
+                                                               p_read_params->t4t_data_num_bytes, p_data_info->p_rx_buf,
+                                                               (size_t *) &p_data_info->rx_length,
+                                                               NFC_PTX_TIMEOUT_RAW),
+                                                               NFC_ERR_INVALID_DATA);
+            }
+
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T5T:
+        {
+            /* Check for multiple blocks to be read */
+            if (0 == p_read_params->t5t_num_blocks)
+            {
+                /* Check if an extended read is needed based on block number selected */
+                if (p_read_params->t5t_block_number <= NFC_READER_NATIVE_TAG_EXTENDED_SIZE)
+                {
+                    FSP_ERROR_RETURN(ptxStatus_Success ==
+                                     ptxNativeTag_T5TReadSingleBlock(&p_ctrl->t5t_comp, p_read_params->t5t_option_flag,
+                                                                     (uint8_t) p_read_params->t5t_block_number,
+                                                                     p_data_info->p_rx_buf,
+                                                                     (size_t *) &p_data_info->rx_length,
+                                                                     NFC_PTX_TIMEOUT_RAW),
+                                                                     NFC_ERR_INVALID_DATA);
+                }
+                else
+                {
+                    FSP_ERROR_RETURN(ptxStatus_Success ==
+                                     ptxNativeTag_T5TExtReadSingleBlock(&p_ctrl->t5t_comp,
+                                                                        p_read_params->t5t_option_flag,
+                                                                        p_read_params->t5t_block_number,
+                                                                        p_data_info->p_rx_buf,
+                                                                        (size_t *) &p_data_info->rx_length,
+                                                                        NFC_PTX_TIMEOUT_RAW),
+                                                                        NFC_ERR_INVALID_DATA);
+                }
+            }
+            else
+            {
+                /* Check if an extended read is needed based on block number selected */
+                if (p_read_params->t5t_block_number <= NFC_READER_NATIVE_TAG_EXTENDED_SIZE)
+                {
+                    FSP_ERROR_RETURN(ptxStatus_Success ==
+                                     ptxNativeTag_T5TReadMultipleBlock(&p_ctrl->t5t_comp,
+                                                                       p_read_params->t5t_option_flag,
+                                                                       (uint8_t) p_read_params->t5t_block_number,
+                                                                       p_read_params->t5t_num_blocks,
+                                                                       p_data_info->p_rx_buf,
+                                                                       (size_t *) &p_data_info->rx_length,
+                                                                       NFC_PTX_TIMEOUT_RAW),
+                                                                       NFC_ERR_INVALID_DATA);
+                }
+                else
+                {
+                    FSP_ERROR_RETURN(ptxStatus_Success ==
+                                     ptxNativeTag_T5TExtReadMultipleBlock(&p_ctrl->t5t_comp,
+                                                                          p_read_params->t5t_option_flag,
+                                                                          p_read_params->t5t_block_number,
+                                                                          p_read_params->t5t_num_blocks,
+                                                                          p_data_info->p_rx_buf,
+                                                                          (size_t *) &p_data_info->rx_length,
+                                                                          NFC_PTX_TIMEOUT_RAW),
+                                                                          NFC_ERR_INVALID_DATA);
+                }
+            }
+
+            break;
+        }
+
+        default:
+        {
+            return NFC_ERR_INVALID_MODE;
+            break;
+        }
+    }
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Performs a write operation using the Native-Tag API add-on.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_write_params       Pointer to optional parameter structure for write operation.
+ * @param[in]  tag_type             The target tag type for the operation.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
+ * @retval NFC_ERR_INVALID_MODE     One of the available tag types was not selected.
+ * @retval NFC_ERR_UNSUPPORTED      Native-Tag API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_Native_Tag_Write (nfc_reader_ptx_ctrl_t * const           p_ctrl,
+                                     nfc_reader_ptx_native_tag_write_params_t * const p_write_params,
+                                     nfc_reader_ptx_native_tag_type_t                 tag_type,
+                                     nfc_reader_ptx_data_info_t * const               p_data_info)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION)
+	FSP_ERROR_RETURN(NULL != p_write_params, NFC_ERR_INVALID_DATA)
+	FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA)
+    FSP_ERROR_RETURN(NFC_READER_PTX_NATIVE_TAG_TYPE_NONE != tag_type, NFC_ERR_ASSERTION)
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->native_tag_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NATIVE_TAG_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_write_params);
+    FSP_PARAMETER_NOT_USED(tag_type);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+
+    /* Check that at least one tag type was enabled */
+    FSP_ERROR_RETURN(p_ctrl->enabled_tag_mask != NFC_READER_PTX_NATIVE_TAG_TYPE_NONE, NFC_ERR_INVALID_MODE);
+
+    switch (tag_type)
+    {
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T2T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T2TWrite(&p_ctrl->t2t_comp, p_write_params->t2t_block_number,
+                                                   p_data_info->p_tx_buf, (uint8_t) p_data_info->tx_length,
+                                                   p_data_info->p_rx_buf,
+                                                   (size_t *) &p_data_info->rx_length, NFC_PTX_TIMEOUT_RAW),
+                                                   NFC_ERR_INVALID_DATA);
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T3T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T3TUpdate(&p_ctrl->t3t_comp, p_write_params->t3t_nfcid2,
+                                                    p_write_params->t3t_nfcid2_len, p_write_params->t3t_service_info,
+                                                    p_write_params->t3t_block_info,
+                                                    p_data_info->p_tx_buf, (uint8_t) p_data_info->tx_length,
+                                                    p_data_info->p_rx_buf,
+                                                    (size_t *) &p_data_info->rx_length, NFC_PTX_TIMEOUT_RAW),
+                                                    NFC_ERR_INVALID_DATA);
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T4T:
+        {
+            /* Check for larger offset to use ODO or not */
+            if (p_write_params->t4t_file_offset < NFC_READER_NATIVE_TAG_OFFSET)
+            {
+                FSP_ERROR_RETURN(ptxStatus_Success ==
+                                 ptxNativeTag_T4TUpdateBinary(&p_ctrl->t4t_comp,
+                                                              (uint16_t) p_write_params->t4t_file_offset,
+                                                              p_data_info->p_tx_buf, (uint8_t) p_data_info->tx_length,
+                                                              p_data_info->p_rx_buf, (size_t *) &p_data_info->rx_length,
+                                                              NFC_PTX_TIMEOUT_RAW),
+                                                              NFC_ERR_INVALID_DATA);
+            }
+            else
+            {
+                FSP_ERROR_RETURN(ptxStatus_Success ==
+                                 ptxNativeTag_T4TUpdateBinaryODO(&p_ctrl->t4t_comp, p_write_params->t4t_file_offset,
+                                                                 p_data_info->p_tx_buf,
+                                                                 (uint8_t) p_data_info->tx_length,
+                                                                 p_data_info->p_rx_buf,
+                                                                 (size_t *) &p_data_info->rx_length,
+                                                                 NFC_PTX_TIMEOUT_RAW),
+                                                                 NFC_ERR_INVALID_DATA);
+            }
+
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T5T:
+        {
+            /* Check if an extended write is needed based on block number selected */
+            if (p_write_params->t5t_block_number <= NFC_READER_NATIVE_TAG_EXTENDED_SIZE)
+            {
+                FSP_ERROR_RETURN(ptxStatus_Success ==
+                                 ptxNativeTag_T5TWriteSingleBlock(&p_ctrl->t5t_comp, p_write_params->t5t_option_flag,
+                                                                  (uint8_t) p_write_params->t5t_block_number,
+                                                                  p_data_info->p_tx_buf,
+                                                                  (uint8_t) p_data_info->tx_length,
+                                                                  p_data_info->p_rx_buf,
+                                                                  (size_t *) &p_data_info->rx_length,
+                                                                  NFC_PTX_TIMEOUT_RAW),
+                                                                  NFC_ERR_INVALID_DATA);
+            }
+            else
+            {
+                FSP_ERROR_RETURN(ptxStatus_Success ==
+                                 ptxNativeTag_T5TExtWriteSingleBlock(&p_ctrl->t5t_comp, p_write_params->t5t_option_flag,
+                                                                     p_write_params->t5t_block_number,
+                                                                     p_data_info->p_tx_buf,
+                                                                     (uint8_t) p_data_info->tx_length,
+                                                                     p_data_info->p_rx_buf,
+                                                                     (size_t *) &p_data_info->rx_length,
+                                                                     NFC_PTX_TIMEOUT_RAW),
+                                                                     NFC_ERR_INVALID_DATA);
+            }
+
+            break;
+        }
+
+        default:
+        {
+            return NFC_ERR_INVALID_MODE;
+            break;
+        }
+    }
+    return NFC_SUCCESS;
+#endif
+}
+/*******************************************************************************************************************//**
+ *  Performs a Select operation using the Native-Tag API add-on, which is different for each tag type.
+ *  For Type 2 tags, this selects a different sector (memory page).
+ *  For Type 3 tags, they do not use a Select function (returns unsupported).
+ *  For Type 4 tags, it selects a different File and/or Application on the tag.
+ *  For Type 5 tags, this sets a tag as selected, allowing a reader to communicate with a specific tag without its UID.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_select_params      Pointer to optional parameter structure for select operation.
+ * @param[in]  tag_type             The target tag type for the operation.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
+ * @retval NFC_ERR_INVALID_MODE     One of the available tag types was not selected.
+ * @retval NFC_ERR_UNSUPPORTED      Native-Tag API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_Native_Tag_Select (nfc_reader_ptx_ctrl_t * const            p_ctrl,
+                                       nfc_reader_ptx_native_tag_select_params_t * const p_select_params,
+                                       nfc_reader_ptx_native_tag_type_t                  tag_type,
+                                       nfc_reader_ptx_data_info_t * const                p_data_info)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION)
+	FSP_ERROR_RETURN(NULL != p_select_params, NFC_ERR_INVALID_DATA)
+	FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA)
+    FSP_ERROR_RETURN(NFC_READER_PTX_NATIVE_TAG_TYPE_NONE != tag_type, NFC_ERR_ASSERTION)
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->native_tag_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NATIVE_TAG_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_select_params);
+    FSP_PARAMETER_NOT_USED(tag_type);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+
+    /* Check that at least one tag type was enabled */
+    FSP_ERROR_RETURN(p_ctrl->enabled_tag_mask != NFC_READER_PTX_NATIVE_TAG_TYPE_NONE, NFC_ERR_INVALID_MODE);
+
+    switch (tag_type)
+    {
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T2T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T2TSectorSelect(&p_ctrl->t2t_comp, p_select_params->t2t_sector_number,
+                                                          p_data_info->p_rx_buf, (size_t *) &p_data_info->rx_length,
+                                                          NFC_PTX_TIMEOUT_RAW),
+                                                          NFC_ERR_INVALID_DATA);
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T3T:
+        {
+            return NFC_ERR_UNSUPPORTED;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T4T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T4TSelect(&p_ctrl->t4t_comp, p_select_params->t4t_apdu_byte_1,
+                                                    p_select_params->t4t_apdu_byte_2, p_data_info->p_tx_buf,
+                                                    (uint8_t) p_data_info->tx_length,
+                                                    p_select_params->t4t_expected_len, p_data_info->p_rx_buf,
+                                                    (size_t *) &p_data_info->rx_length,
+                                                    NFC_PTX_TIMEOUT_RAW),
+                                                    NFC_ERR_INVALID_DATA);
+            break;
+        }
+
+        case NFC_READER_PTX_NATIVE_TAG_TYPE_T5T:
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T5TSelect(&p_ctrl->t5t_comp, p_select_params->t5t_option_flag,
+                                                    p_select_params->t5t_uid, p_select_params->t5t_uid_len,
+                                                    p_data_info->p_rx_buf,
+                                                    (size_t *) &p_data_info->rx_length, NFC_PTX_TIMEOUT_RAW),
+                                                    NFC_ERR_INVALID_DATA);
+
+            /* Sets / Updates the UID to be used after Select */
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T5TSetUID(&p_ctrl->t5t_comp, p_select_params->t5t_uid,
+                                                    p_select_params->t5t_uid_len),
+                                                    NFC_ERR_INVALID_DATA);
+
+            break;
+        }
+
+        default:
+        {
+            return NFC_ERR_INVALID_MODE;
+        }
+    }
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Performs a Lock operation using the Native-Tag API add-on.
+ *  This function is exclusive to Type 5 tags.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_lock_params        Pointer to optional parameter structure for lock operation.
+ * @param[in]  tag_type             The target tag type for the operation.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_DATA     Problem with input parameters or data transmission.
+ * @retval NFC_ERR_INVALID_MODE     One of the available tag types was not selected.
+ * @retval NFC_ERR_UNSUPPORTED      Native-Tag API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_Native_Tag_Lock (nfc_reader_ptx_ctrl_t * const          p_ctrl,
+                                     nfc_reader_ptx_native_tag_lock_params_t * const p_lock_params,
+                                     nfc_reader_ptx_native_tag_type_t                tag_type,
+                                     nfc_reader_ptx_data_info_t * const              p_data_info)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION)
+	FSP_ERROR_RETURN(NULL != p_lock_params, NFC_ERR_INVALID_DATA)
+	FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA)
+    FSP_ERROR_RETURN(NFC_READER_PTX_NATIVE_TAG_TYPE_NONE != tag_type, NFC_ERR_ASSERTION)
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->native_tag_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NATIVE_TAG_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_lock_params);
+    FSP_PARAMETER_NOT_USED(tag_type);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+
+    /* Check that at least one tag type was enabled */
+    FSP_ERROR_RETURN(p_ctrl->enabled_tag_mask != NFC_READER_PTX_NATIVE_TAG_TYPE_NONE, NFC_ERR_INVALID_MODE);
+
+    if (NFC_READER_PTX_NATIVE_TAG_TYPE_T5T == tag_type)
+    {
+        /* Check if an extended write is needed based on block number selected */
+        if (p_lock_params->t5t_block_number <= NFC_READER_NATIVE_TAG_EXTENDED_SIZE)
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T5TLockSingleBlock(&p_ctrl->t5t_comp, p_lock_params->t5t_option_flag,
+                                                             (uint8_t) p_lock_params->t5t_block_number,
+                                                             p_data_info->p_rx_buf, (size_t *) &p_data_info->rx_length,
+                                                             NFC_PTX_TIMEOUT_RAW),
+                                                             NFC_ERR_INVALID_DATA);
+        }
+        else
+        {
+            FSP_ERROR_RETURN(ptxStatus_Success ==
+                             ptxNativeTag_T5TExtLockSingleBlock(&p_ctrl->t5t_comp, p_lock_params->t5t_option_flag,
+                                                                p_lock_params->t5t_block_number, p_data_info->p_rx_buf,
+                                                                (size_t *) &p_data_info->rx_length,
+                                                                NFC_PTX_TIMEOUT_RAW),
+                                                                NFC_ERR_INVALID_DATA);
+        }
+    }
+    else
+    {
+        return NFC_ERR_UNSUPPORTED;
+    }
+    return NFC_SUCCESS;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ *  Performs a Sleep operation using the Native-Tag API add-on.
+ *  This function is exclusive to Type 5 tags.
+ *
+ * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
+ * @param[in]  p_sleep_params       Pointer to optional parameter structure for sleep operation.
+ * @param[in]  tag_type             The target tag type for the operation.
+ * @param[in]  p_data_info          Pointer to the NFC TX/RX data.
+ *
+ * @retval NFC_SUCCESS              Function completed successfully.
+ * @retval NFC_ERR_ASSERTION        Assertion error occurred.
+ * @retval NFC_ERR_NOT_OPEN         Module is not opened yet.
+ * @retval NFC_ERR_INVALID_STATE    NFC module is not in the activated state.
+ * @retval NFC_ERR_INVALID_ARGUMENT Invalid input parameters to the function.
+ * @retval NFC_ERR_UNSUPPORTED      Native-Tag API add-on was not included in project configuration.
+ **********************************************************************************************************************/
+nfc_err_t R_NFC_PTX_Native_Tag_Sleep (nfc_reader_ptx_ctrl_t * const           p_ctrl,
+                                      nfc_reader_ptx_native_tag_sleep_params_t * const p_sleep_params,
+                                      nfc_reader_ptx_native_tag_type_t                 tag_type,
+                                      nfc_reader_ptx_data_info_t * const               p_data_info)
+{
+#if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION)
+	FSP_ERROR_RETURN(NULL != p_sleep_params, NFC_ERR_INVALID_DATA)
+	FSP_ERROR_RETURN(NULL != p_data_info, NFC_ERR_INVALID_DATA)
+    FSP_ERROR_RETURN(NFC_READER_PTX_NATIVE_TAG_TYPE_NONE != tag_type, NFC_ERR_ASSERTION)
+
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
+    FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->native_tag_open, NFC_ERR_NOT_OPEN);
+
+    /* Check device is activated before exchanging data */
+    FSP_ERROR_RETURN(p_ctrl->state_flag == NFC_PTX_ACTIVATED, NFC_ERR_INVALID_STATE);
+#endif
+
+#if (!NFC_CFG_NATIVE_TAG_SUPPORT)
+    FSP_PARAMETER_NOT_USED(p_ctrl);
+    FSP_PARAMETER_NOT_USED(p_sleep_params);
+    FSP_PARAMETER_NOT_USED(tag_type);
+    FSP_PARAMETER_NOT_USED(p_data_info);
+
+    return NFC_ERR_UNSUPPORTED;
+#else
+
+    /* Check that at least one tag type was enabled */
+    FSP_ERROR_RETURN(p_ctrl->enabled_tag_mask != NFC_READER_PTX_NATIVE_TAG_TYPE_NONE, NFC_ERR_INVALID_MODE);
+
+    if (NFC_READER_PTX_NATIVE_TAG_TYPE_T5T == tag_type)
+    {
+        /* Optionally update the internal context with the activated card's UID */
+        FSP_ERROR_RETURN(ptxStatus_Success ==
+                         ptxNativeTag_T5TSetUID(&p_ctrl->t5t_comp, p_sleep_params->t5t_uid,
+                                                p_sleep_params->t5t_uid_len),
+                                                NFC_ERR_INVALID_ARGUMENT);
+
+        FSP_ERROR_RETURN(ptxStatus_Success ==
+                         ptxNativeTag_T5TSleep(&p_ctrl->t5t_comp, p_sleep_params->t5t_option_flag,
+                                               p_sleep_params->t5t_uid, p_sleep_params->t5t_uid_len,
+                                               p_data_info->p_rx_buf, (size_t *) &p_data_info->rx_length,
+                                               NFC_PTX_TIMEOUT_RAW),
+                                               NFC_ERR_INVALID_ARGUMENT);
+    }
+    else
+    {
+        return NFC_ERR_UNSUPPORTED;
+    }
+    return NFC_SUCCESS;
+#endif
+}
+/*******************************************************************************************************************//**
+ *  Closes the NFC module and resets all variables.
  *
  * @param[in]  p_ctrl               Pointer to NFC IoT Reader control structure.
  *
@@ -437,19 +1315,56 @@ nfc_err_t R_NFC_PTX_SWReset(nfc_reader_ptx_ctrl_t * const p_ctrl)
 nfc_err_t R_NFC_PTX_Close (nfc_reader_ptx_ctrl_t * const p_ctrl)
 {
 #if (1 == NFC_CFG_PARAM_CHECKING_ENABLED)
-	FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
+    FSP_ERROR_RETURN(NULL != p_ctrl, NFC_ERR_ASSERTION);
     FSP_ERROR_RETURN(NFC_PTX_OPEN == p_ctrl->open, NFC_ERR_NOT_OPEN);
 #endif
 
     nfc_reader_ptx_cfg_t const * p_cfg = p_ctrl->p_cfg;
 
+#if (NFC_CFG_NDEF_SUPPORT)
+    if (NFC_PTX_OPEN == p_ctrl->ndef_open)
+    {
+        /* De-initialize NDEF add-on API and reset flag to initial state */
+        ptxNDEF_Close(p_cfg->p_ndef_context);
+
+        p_ctrl->ndef_open = NFC_PTX_CLOSED;
+    }
+#endif
+
+#if (NFC_CFG_NATIVE_TAG_SUPPORT)
+    if (NFC_PTX_OPEN == p_ctrl->native_tag_open)
+    {
+        /* De-initialize Native-Tag add-on API for each open tag type and reset flag to initial state */
+        if (p_ctrl->enabled_tag_mask & NFC_READER_PTX_NATIVE_TAG_TYPE_T2T)
+        {
+            ptxNativeTag_T2TClose(&p_ctrl->t2t_comp);
+        }
+
+        if (p_ctrl->enabled_tag_mask & NFC_READER_PTX_NATIVE_TAG_TYPE_T3T)
+        {
+            ptxNativeTag_T3TClose(&p_ctrl->t3t_comp);
+        }
+
+        if (p_ctrl->enabled_tag_mask & NFC_READER_PTX_NATIVE_TAG_TYPE_T4T)
+        {
+            ptxNativeTag_T4TClose(&p_ctrl->t4t_comp);
+        }
+
+        if (p_ctrl->enabled_tag_mask & NFC_READER_PTX_NATIVE_TAG_TYPE_T5T)
+        {
+            ptxNativeTag_T5TClose(&p_ctrl->t5t_comp);
+        }
+
+        p_ctrl->native_tag_open = NFC_PTX_CLOSED;
+    }
+#endif
+
     /* Reset values to initial state */
     p_ctrl->open       = NFC_PTX_CLOSED;
     p_ctrl->state_flag = NFC_PTX_IDLE;
 
-    /* Deinit reader */
-    FSP_ERROR_RETURN(ptxStatus_Success == ptxIoTRd_Deinit(p_cfg->iot_reader_context),
-                     NFC_ERR_INVALID_ARGUMENT);
+    ptxIoTRd_Deinit(p_cfg->iot_reader_context);
+
     return NFC_SUCCESS;
 }
 

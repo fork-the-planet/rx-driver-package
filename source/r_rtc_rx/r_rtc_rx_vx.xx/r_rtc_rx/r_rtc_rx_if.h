@@ -47,6 +47,7 @@
 *           15.03.2025 3.01    Updated disclaimer.
 *           30.10.2025 3.10    Removed doc folder and updated .rcpc file in FITDemos.
 *                              Added support Nested interrupt.
+*           30.03.2026 3.11    Included spdx file in the package.
 ***********************************************************************************************************************/
 
 #ifndef RTC_RX_INTERFACE_HEADER_FILE
@@ -63,7 +64,7 @@ Macro definitions
 ***********************************************************************************************************************/
 /* Version Number of API. */
 #define RTC_RX_VERSION_MAJOR        (3)
-#define RTC_RX_VERSION_MINOR        (10)
+#define RTC_RX_VERSION_MINOR        (11)
 
 /***********************************************************************************************************************
 BSP version detection

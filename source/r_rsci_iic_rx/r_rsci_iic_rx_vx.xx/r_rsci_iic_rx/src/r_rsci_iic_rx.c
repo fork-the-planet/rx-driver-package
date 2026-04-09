@@ -10,6 +10,7 @@
 /***********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : 30.10.2025 1.00     First Release
+ *         : 30.03.2026 1.01     Fixed warnings in GCC.
  **********************************************************************************************************************/
 /***********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
@@ -30,6 +31,13 @@
 
 /* Include specifics for chosen MCU.  */
 #include "r_rsci_iic_rx_platform.h"
+
+
+/***********************************************************************************************************************
+Macro definitions
+***********************************************************************************************************************/
+
+#define RSCI_IIC_PRV_INTERNAL_NOT_USED(p)        ((void)(p))
 
 /***********************************************************************************************************************
  Private global variables and functions
@@ -1546,6 +1554,9 @@ static rsci_iic_return_t rsci_iic_after_send_slvadr(rsci_iic_info_t * p_rsci_iic
 
     volatile uint8_t uctmp = 0U;
 
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    RSCI_IIC_PRV_INTERNAL_NOT_USED(&uctmp);
+
     rsci_regs_t pregs = g_rsci_iic_handles[p_rsci_iic_info->ch_no]->prom->regs;
 
     switch (g_rsci_iic_handles[p_rsci_iic_info->ch_no]->api_mode)
@@ -1928,6 +1939,9 @@ static rsci_iic_return_t rsci_iic_nack(rsci_iic_info_t * p_rsci_iic_info)
     rsci_iic_return_t ret = RSCI_IIC_SUCCESS;
 
     volatile uint8_t uctmp = 0U;
+
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    RSCI_IIC_PRV_INTERNAL_NOT_USED(&uctmp);
 
     /* Sets the internal status. */
     rsci_iic_set_internal_status(p_rsci_iic_info, RSCI_IIC_STS_SP_COND_WAIT);
@@ -2538,6 +2552,9 @@ static void rsci_iic_reset_setting(rsci_iic_info_t * p_rsci_iic_info)
     rsci_regs_t pregs = g_rsci_iic_handles[p_rsci_iic_info->ch_no]->prom->regs;
 
     volatile uint8_t dummy;
+
+    /* Added to resolve warning [-Wunused-but-set-variable] */
+    RSCI_IIC_PRV_INTERNAL_NOT_USED(&dummy);
 
     /* Initializes the IIC bus interrupt enable register. */
     /* Serial Reception/Transmission is Disabled.*/

@@ -10,7 +10,7 @@ R01AN2028JJ
 
 Version
 -------
-v1.44
+v1.45
 
 Overview
 --------
@@ -76,9 +76,9 @@ r_usb_hhid
 |
 +---doc
 |     \en
-|     |   r01an2028ej0144_usb.pdf
+|     |   r01an2028ej0145_usb.pdf
 |     \jp
-|         r01an2028jj0144_usb.pdf
+|         r01an2028jj0145_usb.pdf
 |
 +---ref
 |       r_usb_hhid_config_reference.h

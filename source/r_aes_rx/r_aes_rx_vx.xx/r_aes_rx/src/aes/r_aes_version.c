@@ -1,7 +1,7 @@
-/*​
-* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates​
-*​
-* SPDX-License-Identifier: BSD-3-Clause​
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
 */
 /***********************************************************************************************************************
  * @file         r_aes_version.c
@@ -19,7 +19,7 @@
  **********************************************************************************************************************/
 #define __COMPLIER_VER_UNDEFINED__ (0xFFFFFFFF)
 /* version define */
-#define __AES_VERSION__ "1.08"
+#define __AES_VERSION__ "1.09"
 
 #if defined(__GNUC__)
     #define __RENESAS_VERSION__  (__GNUC__* 0x1000000 + __GNUC_MINOR__* 0x10000 + __GNUC_PATCHLEVEL__)

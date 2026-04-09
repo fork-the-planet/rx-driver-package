@@ -27,6 +27,7 @@
 *           05.04.2019 4.00    Added support for GNUC and ICCRX.
 *           22.11.2019 4.40    Added support for atomic control.
 *           20.03.2025 5.41    Changed the disclaimer in program sources.
+*           20.04.2026 5.51    Added to resolve waring [-Wunused but-set-variable].
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -159,8 +160,13 @@ adc_err_t adc_open(uint8_t     const   unit,
                     void     (* const   p_callback)(void *p_args))
 {
     aregs_t             *p_regs;
-    volatile uint16_t   u16_dummy;  /* Dummy read for "1" change to "0".(read first) */
-    volatile uint8_t    u8_dummy;   /* Dummy read for "1" change to "0".(read first) */
+    volatile uint16_t   u16_dummy = 0;  /* Dummy read for "1" change to "0".(read first) */
+    volatile uint8_t    u8_dummy = 0;   /* Dummy read for "1" change to "0".(read first) */
+
+#if defined(__GNUC__)
+    ADC_PRV_INTERNAL_NOT_USED(u16_dummy);
+    ADC_PRV_INTERNAL_NOT_USED(u8_dummy);
+#endif
 
 #if ((R_BSP_VERSION_MAJOR == 5) && (R_BSP_VERSION_MINOR >= 30)) || (R_BSP_VERSION_MAJOR >= 6)
     bsp_int_ctrl_t int_ctrl;

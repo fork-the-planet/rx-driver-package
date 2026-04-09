@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_jpege_rx
-VERSION = 		1.03
+VERSION = 		1.04
 MDF = NOT_SUPPORTED
 
 CONFIG_FOLDER = r_config

@@ -5,12 +5,12 @@ r_pdc_rx
 
 Document Number
 ---------------
-R01AN3167EJ0207-rx-pdc (English version)
-R01AN3167JJ0207-rx-pdc (Japanese version)
+R01AN3167EJ0208-rx-pdc (English version)
+R01AN3167JJ0208-rx-pdc (Japanese version)
 
 Version
 -------
-v2.07
+v2.08
 
 Overview
 --------
@@ -72,8 +72,8 @@ NOTE : <mcu> is RX famiry Group name.  (For example, rx64m)
 Toolchain(s) Used
 -----------------
 * Renesas RX v3.07.00
-* GCC for Renesas RX 8.3.0.202411
-* IAR C/C++ Compiler for Renesas RX 5.10.1
+* GCC for Renesas RX 14.02.00.202511
+* IAR C/C++ Compiler for Renesas RX 5.20.1
 
 File Structure
 --------------
@@ -84,10 +84,10 @@ r_pdc_rx
 +---doc
 |   |
 |   +---en
-|   |   r01an3167ej0207-rx-pdc.pdf
+|   |   r01an3167ej0208-rx-pdc.pdf
 |   |
 |   \---ja
-|       r01an3167jj0207-rx-pdc.pdf
+|       r01an3167jj0208-rx-pdc.pdf
 |
 \---src
         r_pdc_rx.c

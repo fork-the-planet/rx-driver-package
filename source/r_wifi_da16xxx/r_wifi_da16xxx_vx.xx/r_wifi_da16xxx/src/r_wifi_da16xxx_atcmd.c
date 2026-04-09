@@ -253,7 +253,7 @@ e_atcmd_err_t uart_port_open(void)
 
     /* Port settings */
     p_cfg->func();
-#if WIFI_CFG_CTS_SW_CTRL == 0
+#if (WIFI_CFG_CTS_SW_CTRL == 0 || WIFI_CFG_DA16600_SUPPORT == 1)
     s_port_cfg = p_cfg;
 #endif
 

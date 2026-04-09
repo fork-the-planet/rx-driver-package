@@ -1,5 +1,5 @@
 MODULE_NAME = 	r_aes_rx
-VERSION = 		1.08
+VERSION = 		1.09
 MDF = V2
 
 CONFIG_FOLDER = r_config

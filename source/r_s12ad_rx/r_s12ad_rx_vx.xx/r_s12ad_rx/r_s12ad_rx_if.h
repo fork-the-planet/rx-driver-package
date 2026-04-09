@@ -47,6 +47,7 @@
 *           13.02.2024 5.40    Added RX260 and RX261 support.
 *           20.03.2025 5.41    Changed the disclaimer in program sources.
 *           20.07.2025 5.50    Added RX14T support.
+*           20.04.2026 5.51    Updated the minor version.
 ***********************************************************************************************************************/
 
 #ifndef S12AD_PRV_IF_H
@@ -122,7 +123,7 @@ Macro definitions
 *******************************************************************************/
 /* Version Number of API. */
 #define ADC_VERSION_MAJOR       (5)
-#define ADC_VERSION_MINOR       (50)
+#define ADC_VERSION_MINOR       (51)
 
 /*****************************************************************************
 Typedef definitions

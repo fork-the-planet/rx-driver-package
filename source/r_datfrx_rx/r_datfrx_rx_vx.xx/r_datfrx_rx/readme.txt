@@ -5,22 +5,19 @@ r_datfrx_rx
 
 Document Number
 ---------------
-R20AN0507JJ0231-RX-DATFRX
-R20AN0507EJ0231-RX-DATFRX
+R20AN0507JJ0232-RX-DATFRX
+R20AN0507EJ0232-RX-DATFRX
 
 Version
 -------
-v2.31
+v2.32
 
 Overview
 --------
 Manage the data of the DATA FLASH .
 Assign the logical number to writing and reading data and manage it.
 It is possible to set the number and size of the data number individually.
-
 These configuration options can be found in "r_config\r_datfrx_rx_config.h". 
-An original copy of the configuration file is stored in 
-"r_datfrx_rx\ref\r_datfrx_rx_config_reference.h".
 
 
 Features
@@ -79,7 +76,6 @@ Refer to "Adding Firmware Integration Technology Modules to CS+ Projects (R01AN1
 
 Toolchain(s) Used
 -----------------
-* Renesas RX Compiler V.3.06.00
 * Renesas RX Compiler V.3.07.00
 
 File Structure
@@ -90,10 +86,10 @@ r_datfrx_rx
 |
 +---doc
 |   +---en
-|   |       r20an0507ej0231-rx-datfrx.pdf
+|   |       r20an0507ej0232-rx-datfrx.pdf
 |   |       DATFRX_BlockNumberCalculation_e_Rev110.xlsx
 |   \---ja
-|           r20an0507jj0231-rx-datfrx.pdf
+|           r20an0507jj0232-rx-datfrx.pdf
 |           DATFRX_BlockNumberCalculation_j_Rev110.xlsx
 |
 \---src

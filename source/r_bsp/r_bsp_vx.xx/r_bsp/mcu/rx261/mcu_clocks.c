@@ -12,6 +12,7 @@
 *         : 31.05.2024 1.00     First Release
 *         : 05.07.2024 1.01     Added lpt_clock_source_select function.
 *         : 26.02.2025 1.02     Changed the disclaimer.
+*         : 04.03.2026 1.03     Fixed the initialization settings of sub-clock.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -553,17 +554,10 @@ static void clock_source_select(void)
         b2  ADJ30 - 30-Second Adjustment - 30-second adjustment is executed.
         b1  RESET - RTC Software Reset - The prescaler and the target registers for RTC software reset are initialized.
         b0  START - start - Prescaler is stopped. */
-        RTC.RCR2.BYTE &= 0x7E;
+        RTC.RCR2.BYTE = 0x00;
 
         /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.START)
-        {
-            /* Confirm that the written value can be read correctly. */
-            R_BSP_NOP();
-        }
-
-        /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.CNTMD)
+        while (0x00 != RTC.RCR2.BYTE)
         {
             /* Confirm that the written value can be read correctly. */
             R_BSP_NOP();

@@ -27,8 +27,8 @@
     <package>
         <type>fitmodule</type>
         <name>r_nfc_ptx_rx</name>
-        <version>1.00</version>
-        <zipsource>r_nfc_ptx_rx_v1.00.zip</zipsource>
+        <version>x.xx</version>
+        <zipsource>r_nfc_ptx_rx_vx.xx.zip</zipsource>
         <dependency>
             <module>r_bsp</module>
             <version>7.53</version>

@@ -10,7 +10,7 @@ R01AN2663JJ
 
 Version
 -------
-v1.44
+v1.45
 
 Overview
 --------
@@ -76,9 +76,9 @@ r_usb_pcdc
 |
 +---doc
 |     \en
-|     |   r01an2663ej0144_usb.pdf
+|     |   r01an2663ej0145_usb.pdf
 |     \jp
-|         r01an2663jj0144_usb.pdf
+|         r01an2663jj0145_usb.pdf
 |
 +---ref
 |       r_usb_phid_config_reference.h

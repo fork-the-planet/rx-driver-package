@@ -52,6 +52,7 @@
 *         : 27.11.2024 3.04      Added version check of smart configurator.
 *         : 26.02.2025 3.05      Changed the disclaimer.
 *                                Fixed comment about BSP_CFG_CONFIGURATOR_VERSION.
+*         : 04.03.2026 3.06      Added compile switch of BSP_CFG_CONFIGURATOR_SELECT.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -66,7 +67,7 @@ Macro definitions
 /* Multiple inclusion prevention macro */
 #ifndef MCU_INFO
 #define MCU_INFO
-
+#if BSP_CFG_CONFIGURATOR_SELECT == 1
 #if BSP_CFG_CONFIGURATOR_VERSION < 2120
 /* The following macros are updated to invalid value by Smart configurator if you are using Smart Configurator for RX 
    V2.11.0 (equivalent to e2 studio 2021-10) or earlier version.
@@ -91,7 +92,7 @@ Macro definitions
      */
     #error "To use this version of BSP, you need to upgrade Smart configurator. Please upgrade Smart configurator. If you don't use Smart Configurator, please change value of BSP_CFG_CONFIGURATOR_VERSION in r_bsp_config.h."
 #endif
-#endif
+#endif /* BSP_CFG_EXPANSION_RAM_ENABLE */
 
 #if BSP_CFG_CONFIGURATOR_VERSION < 2240
     /* If you are using a version earlier than Smart Configurator for RX V2.23.0 (equivalent to e2 studio 2024-10), 
@@ -102,6 +103,7 @@ Macro definitions
      */
     #error "To use this version of BSP, you need to upgrade Smart configurator. Please upgrade Smart configurator. If you don't use Smart Configurator, please change value of BSP_CFG_CONFIGURATOR_VERSION in r_bsp_config.h."
 #endif
+#endif /* BSP_CFG_CONFIGURATOR_SELECT */
 
 /* MCU CPU Version */
 #define BSP_MCU_CPU_VERSION    (2)
@@ -119,6 +121,7 @@ Macro definitions
 #define BSP_MCU_RX65N          (1)
 #if (BSP_CFG_MCU_PART_MEMORY_SIZE == 0xC) || (BSP_CFG_MCU_PART_MEMORY_SIZE == 0xE)
     #define BSP_MCU_RX65N_2MB  (1)
+    #if BSP_CFG_CONFIGURATOR_SELECT == 1
     #if BSP_CFG_CONFIGURATOR_VERSION < 2140
        /* The macro definition of BSP_CFG_CODE_FLASH_BANK_MODE are not updated by Smart configurator if you are using Smart Configurator for RX V2.13.0 
           (equivalent to e2 studio 2022-04) or earlier version.
@@ -126,6 +129,7 @@ Macro definitions
         */
         #error "To use this version of BSP, you need to upgrade Smart configurator. Please upgrade Smart configurator. If you don't use Smart Configurator, please change value of BSP_CFG_CONFIGURATOR_VERSION and BSP_CFG_CODE_FLASH_BANK_MODE in r_bsp_config.h."
     #endif
+    #endif /* BSP_CFG_CONFIGURATOR_SELECT */
 #endif
 
 /* Package. */
@@ -262,7 +266,7 @@ Macro definitions
     (5 <= BSP_CFG_EBMAPCR_5TH_PRIORITY)
  #error "Error! Invalid setting for Extended Bus Master Priority in r_bsp_config.h. Please check BSP_CFG_EX_BUS_1ST_PRIORITY to BSP_CFG_EX_BUS_5TH_PRIORITY"
 #endif
-#endif/* BSP_MCU_RX65N_2MB */
+#endif /* BSP_MCU_RX65N_2MB */
 
 /* System clock speed in Hz. */
 #define BSP_ICLK_HZ                 (BSP_SELECTED_CLOCK_HZ / BSP_CFG_ICK_DIV)

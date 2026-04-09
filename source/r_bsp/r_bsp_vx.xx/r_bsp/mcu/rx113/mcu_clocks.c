@@ -49,6 +49,8 @@
 *                               Added version check of smart configurator.
 *         : 22.04.2022 3.01     Deleted version check of smart configurator.
 *         : 26.02.2025 3.02     Changed the disclaimer.
+*         : 04.03.2026 3.03     Fixed the initialization settings of sub-clock for Technical Update Information
+*                               (TN-RX*-A0238B).
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -555,18 +557,12 @@ static void clock_source_select (void)
         b3  RTCOE - RTCOUT Output Enable - RTCOUT output enabled.
         b2  ADJ30 - 30-Second Adjustment - 30-second adjustment is executed.
         b1  RESET - RTC Software Reset - The prescaler and the target registers for RTC software reset are initialized.
-        b0  START - start - Prescaler is stopped. */
-        RTC.RCR2.BYTE &= 0x7E;
+        b0  START - start - Prescaler is stopped.
+        NOTE: Please refer Tool News(TN-RX*-A0238B) for details. */
+        RTC.RCR2.BYTE = 0x00;
 
         /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.START)
-        {
-            /* Confirm that the written value can be read correctly. */
-            R_BSP_NOP();
-        }
-
-        /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.CNTMD)
+        while (0x00 != RTC.RCR2.BYTE)
         {
             /* Confirm that the written value can be read correctly. */
             R_BSP_NOP();

@@ -53,6 +53,9 @@
 *                               Added process to switch system clock to main clock when initializing RTC with the main 
 *                               clock.
 *         : 26.02.2025 3.03     Changed the disclaimer.
+*         : 04.03.2026 3.04     Fixed the initialization settings of sub-clock for Technical Update Information
+*                               (TN-RX*-A0236B).
+*                               Fixed the warning of clock_source_select function for GCC.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -466,6 +469,9 @@ static void clock_source_select (void)
 #if BSP_CFG_SUB_CLOCK_OSCILLATE_ENABLE == 1
     uint8_t tmp_rtcdv;
 #endif
+#if defined(__GNUC__)
+    INTERNAL_NOT_USED(&dummy);
+#endif
 
     /* Main clock will be not oscillate in software standby or deep software standby modes. */
     SYSTEM.MOFCR.BIT.MOFXIN = 0;
@@ -720,7 +726,7 @@ static void clock_source_select (void)
 
 #if BSP_CFG_RTC_ENABLE == 0 /* TN-RX*-A0278A */
     #if BSP_CFG_MAIN_CLOCK_OSCILLATE_ENABLE == 1
-        /* Satisfy the frequency of the peripheral module clock (PCLKB) ≥ the frequency of the count source. 
+        /* Satisfy the frequency of the peripheral module clock (PCLKB) ≥ the frequency of the count source.
            Therefore, the system clock is temporarily switched to the main clock.
          */
         SYSTEM.SCKCR3.BIT.CKSEL = 2;
@@ -789,18 +795,12 @@ static void clock_source_select (void)
         b3  RTCOE - RTCOUT Output Enable - RTCOUT output enabled.
         b2  ADJ30 - 30-Second Adjustment - 30-second adjustment is executed.
         b1  RESET - RTC Software Reset - The prescaler and the target registers for RTC software reset are initialized.
-        b0  START - start - Prescaler is stopped. */
-        RTC.RCR2.BYTE &= 0x7E;
+        b0  START - start - Prescaler is stopped.
+        NOTE: Please refer Tool News(TN-RX*-A0236B) for details. */
+        RTC.RCR2.BYTE = 0x00;
 
         /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.START)
-        {
-            /* Confirm that the written value can be read correctly. */
-             R_BSP_NOP();
-        }
-
-        /* WAIT_LOOP */
-        while (0 != RTC.RCR2.BIT.CNTMD)
+        while (0x00 != RTC.RCR2.BYTE)
         {
             /* Confirm that the written value can be read correctly. */
             R_BSP_NOP();

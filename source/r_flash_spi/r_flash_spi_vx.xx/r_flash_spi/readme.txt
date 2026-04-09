@@ -5,12 +5,12 @@ r_flash_spi (Serial Flash memory control software)
 
 Document Number 
 ---------------
-R01AN2662EJ0360
-R01AN2662JJ0360
+R01AN2662EJ0361
+R01AN2662JJ0361
 
 Version
 -------
-v3.60
+v3.61
 
 Overview
 --------

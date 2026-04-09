@@ -5,7 +5,7 @@
 */
 /******************************************************************************
 * File Name    : r_ssi_api_rx_if.h
-* Version      : 2.04
+* Version      : 2.05
 * Tool-Chain   : RX Family C Compiler
 *                GCC for Renesas RX
 *                IAR C/C++ Compiler for Renesas RX
@@ -25,6 +25,7 @@
 *         : 30.06.2020   2.02      Version number updated.
 *         : 30.06.2021   2.03      RX671 support added.
 *         : 20.03.2025   2.04      Changed the disclaimer.
+*         : 20.04.2026   2.05      Updated the minor version.
 *
 ******************************************************************************/
 #ifndef SSI_API_RX_H_
@@ -41,7 +42,7 @@ Macro definitions
 ******************************************************************************/
 /* Version Number of API. */
 #define SSI_API_VERSION_MAJOR           (2)
-#define SSI_API_VERSION_MINOR           (04)
+#define SSI_API_VERSION_MINOR           (05)
 
 /******************************************************************************
 Typedef definitions

@@ -53,6 +53,7 @@
 *                              Fixed to comply with GSCE Coding Standards Rev.6.5.0.
 *         : 15.03.2025 4.51    Updated disclaimer.
 *         : 30.10.2025 4.60    Fixed to comply with GSCE Coding Standards Rev.6.6.0.
+*         : 30.03.2026 4.61    Fixed warnings in GCC.
 *******************************************************************************/
 
 /*******************************************************************************
@@ -764,6 +765,9 @@ static dtc_err_t r_dtc_set_transfer_data(dtc_transfer_data_t *p_transfer_data,
     dtc_mrb_t                          t_mrb;
     dtc_cra_t                          t_cra;
     dtc_crb_t                          t_crb;
+
+    /* Added to resolve GCC Warning [-Wmaybe-uninitialized] */
+    t_crb.WORD = 0;
 
     /* Cast type of "p_transfer_data" to match type of "p_td_ptr" */
     volatile dtc_internal_registers_t * p_td_ptr = (volatile dtc_internal_registers_t *)p_transfer_data;

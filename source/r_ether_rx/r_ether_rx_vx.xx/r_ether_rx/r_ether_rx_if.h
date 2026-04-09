@@ -5,7 +5,7 @@
 */
 /***********************************************************************************************************************
  * File Name    : r_ether_rx_if.h
- * Version      : 1.24
+ * Version      : 1.25
  * Description  : Ethernet module device driver
  ***********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -32,6 +32,7 @@
  *         : 10.09.2020 1.21     Changed minor version to '21'.
  *         : 20.03.2025 1.24     Changed minor version to '24'.
  *                               Changed the disclaimer in program sources
+ *         : 20.04.2026 1.25     Changed minor version to '25'.
  ***********************************************************************************************************************/
 
 /* Guards against multiple inclusion */
@@ -57,7 +58,7 @@
 
 /* Version Number of API. */
     #define ETHER_RX_VERSION_MAJOR  (1)
-    #define ETHER_RX_VERSION_MINOR  (24)
+    #define ETHER_RX_VERSION_MINOR  (25)
 
 /* When using the Read functions, ETHER_NO_DATA is the return value that indicates that no received data. */
     #define ETHER_NO_DATA           (0)

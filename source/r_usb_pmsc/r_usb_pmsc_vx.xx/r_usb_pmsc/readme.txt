@@ -10,7 +10,7 @@ R01AN2029JJ
 
 Version
 -------
-v1.44
+v1.45
 
 Overview
 --------
@@ -79,9 +79,9 @@ r_usb_pmsc
 |
 +---doc
 |     \en
-|     |   r01an2029ej0144_usb.pdf
+|     |   r01an2029ej0145_usb.pdf
 |     \jp
-|         r01an2029jj0144_usb.pdf
+|         r01an2029jj0145_usb.pdf
 |
 +---ref
 |       r_usb_pmsc_config_reference.h

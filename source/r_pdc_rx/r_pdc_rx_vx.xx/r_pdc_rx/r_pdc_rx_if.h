@@ -5,7 +5,7 @@
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
  * File Name    : r_pdc_rx_if.h
- * Version      : 2.07
+ * Version      : 2.08
  * Description  : PDC module device driver
  ***********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -20,6 +20,7 @@
  *         : 07.01.2022 2.06    Changed Minor version to 2.06.
  *                              Added PDC_ERR_ONGOING to pdc_return_t.
  *         : 15.03.2025 2.07    Updated disclaimer.
+ *         : 30.03.2026 2.08    Included spdx file in the package.
  ***********************************************************************************************************************/
 /* Guards against multiple inclusion. */
 #ifndef PDC_RX_IF_H
@@ -45,7 +46,7 @@
 
 /* Version Number of API. */
     #define PDC_RX_VERSION_MAJOR  (2)
-    #define PDC_RX_VERSION_MINOR  (7)
+    #define PDC_RX_VERSION_MINOR  (8)
 
 /* Selects the active sense of the VSYNC signal. */
     #define PDC_VSYNC_SIGNAL_POLARITY_HIGH    (0)
